@@ -1,0 +1,1000 @@
+{
+  "shoe-shop": {
+    "domain": "footwear",
+    "assetRoot": "assets/images/curated/retail/shoe-shop",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "size",
+      "color"
+    ]
+  },
+  "fashion-shop": {
+    "domain": "fashion",
+    "assetRoot": "assets/images/curated/retail/fashion-boutique",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "size",
+      "color",
+      "model"
+    ]
+  },
+  "hair-salon": {
+    "domain": "hair",
+    "assetRoot": "assets/images/curated/beauty/hair-salon",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "products",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "barber-shop": {
+    "domain": "hair",
+    "assetRoot": "assets/images/curated/beauty/barber-shop",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "beauty-salon": {
+    "domain": "beauty",
+    "assetRoot": "assets/images/curated/beauty/beauty-salon",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "nail-salon": {
+    "domain": "nails",
+    "assetRoot": "assets/images/curated/beauty/nail-salon",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "massage": {
+    "domain": "spa",
+    "assetRoot": "assets/images/curated/beauty/spa-wellness",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "restaurant": {
+    "domain": "restaurant",
+    "assetRoot": "assets/images/curated/food/restaurant",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "cafe": {
+    "domain": "cafe",
+    "assetRoot": "assets/images/curated/food/cafe",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "bakery": {
+    "domain": "bakery",
+    "assetRoot": "assets/images/curated/food/bakery-pastry",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "pastry": {
+    "domain": "pastry",
+    "assetRoot": "assets/images/curated/food/bakery-pastry",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "fast-food": {
+    "domain": "restaurant",
+    "assetRoot": "assets/images/curated/food/fast food",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "catering": {
+    "domain": "catering",
+    "assetRoot": "assets/images/curated/food/catering",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "wine-shop": {
+    "domain": "wine",
+    "assetRoot": "assets/images/curated/retail/wine-shop",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category",
+      "type",
+      "producer"
+    ],
+    "productAttributes": [
+      "volume",
+      "vintage"
+    ]
+  },
+  "liquor-store": {
+    "domain": "wine",
+    "assetRoot": "assets/images/curated/retail/liquor-store",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "products"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "volume"
+    ]
+  },
+  "butcher-shop": {
+    "domain": "meat",
+    "assetRoot": "assets/images/curated/retail/butcher-shop",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "trust"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "quantity",
+      "weight",
+      "preparation"
+    ]
+  },
+  "grocery-store": {
+    "domain": "grocery",
+    "assetRoot": "assets/images/curated/retail/grocery-store",
+    "assetExists": true,
+    "assetRoles": [
+      "brands",
+      "hero",
+      "products",
+      "promotions"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "quantity"
+    ]
+  },
+  "furniture-store": {
+    "domain": "furniture",
+    "assetRoot": "assets/images/curated/retail/furniture-store",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category",
+      "room",
+      "style"
+    ],
+    "productAttributes": [
+      "color",
+      "material",
+      "dimensions"
+    ]
+  },
+  "home-decor": {
+    "domain": "interior",
+    "assetRoot": "assets/images/curated/retail/home-decor",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "color",
+      "material"
+    ]
+  },
+  "gift-shop": {
+    "domain": "gifts",
+    "assetRoot": "assets/images/curated/retail/flowers-gifts",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": []
+  },
+  "sports-shop": {
+    "domain": "sports",
+    "assetRoot": "assets/images/curated/retail/sports-shop",
+    "assetExists": true,
+    "assetRoles": [
+      "hero"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "size",
+      "color"
+    ]
+  },
+  "auto-service": {
+    "domain": "automotive",
+    "assetRoot": "assets/images/curated/services/auto-service",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "products",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "auto-parts": {
+    "domain": "autoParts",
+    "assetRoot": "assets/images/curated/retail/auto-parts",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category",
+      "vehicle",
+      "oem"
+    ],
+    "productAttributes": [
+      "compatibility",
+      "oem",
+      "brand"
+    ]
+  },
+  "tire-shop": {
+    "domain": "tires",
+    "assetRoot": "assets/images/curated/services/auto-service",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "products",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "size",
+      "season"
+    ]
+  },
+  "car-wash": {
+    "domain": "carWash",
+    "assetRoot": "assets/images/curated/services/car-wash",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "appliance-repair": {
+    "domain": "appliances",
+    "assetRoot": "assets/images/curated/services/appliance-repair",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "hvac": {
+    "domain": "hvac",
+    "assetRoot": "assets/images/curated/services/hvac-service",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "plumber": {
+    "domain": "plumbing",
+    "assetRoot": "assets/images/curated/services/plumbing",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "plumbing-supplies": {
+    "domain": "plumbing",
+    "assetRoot": "assets/images/curated/retail/plumbing-supplies",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category",
+      "dimension"
+    ],
+    "productAttributes": [
+      "dimension",
+      "material"
+    ]
+  },
+  "electrician": {
+    "domain": "electrical",
+    "assetRoot": "assets/images/curated/services/electrical-services",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "electrical-supplies": {
+    "domain": "electricalSupplies",
+    "assetRoot": "assets/images/curated/retail/electrical-supplies",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": [
+      "specification",
+      "dimension",
+      "brand"
+    ]
+  },
+  "electronics-store": {
+    "domain": "electronics",
+    "assetRoot": "assets/images/curated/retail/electronics-store",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category",
+      "brand"
+    ],
+    "productAttributes": [
+      "model",
+      "color"
+    ]
+  },
+  "phone-store": {
+    "domain": "phones",
+    "assetRoot": "assets/images/curated/retail/phone-store",
+    "assetExists": true,
+    "assetRoles": [
+      "controller",
+      "hero",
+      "products",
+      "showcase"
+    ],
+    "catalogDimensions": [
+      "category",
+      "brand"
+    ],
+    "productAttributes": [
+      "model",
+      "color",
+      "storage"
+    ]
+  },
+  "repair-phone": {
+    "domain": "phones",
+    "assetRoot": "assets/images/curated/tech/phone-repair",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "products",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "optician": {
+    "domain": "optics",
+    "assetRoot": "assets/images/curated/healthcare/optician",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "dentist": {
+    "domain": "dentistry",
+    "assetRoot": "assets/images/curated/healthcare/dental-clinic",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "pharmacy": {
+    "domain": "pharmacy",
+    "assetRoot": "assets/images/curated/healthcare/pharmacy",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "products",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [
+      "category"
+    ],
+    "productAttributes": []
+  },
+  "lab": {
+    "domain": "healthcare",
+    "assetRoot": "assets/images/curated/healthcare/medical-laboratory",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "physio": {
+    "domain": "healthcare",
+    "assetRoot": "assets/images/curated/healthcare/physiotherapy",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "clinic": {
+    "domain": "healthcare",
+    "assetRoot": "assets/images/curated/healthcare/private-clinic",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "vet": {
+    "domain": "healthcare",
+    "assetRoot": "assets/images/curated/healthcare/veterinary-clinic",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "accounting": {
+    "domain": "accounting",
+    "assetRoot": "assets/images/curated/professional-office/accounting",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "consultant": {
+    "domain": "consulting",
+    "assetRoot": "assets/images/curated/professional-office/business-consulting",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "law-office": {
+    "domain": "legal",
+    "assetRoot": "assets/images/curated/professional-office/law-firm",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "property-manager": {
+    "domain": "property",
+    "assetRoot": "assets/images/curated/professional-office/property-management",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "marketing-agency": {
+    "domain": "marketing",
+    "assetRoot": null,
+    "assetExists": false,
+    "assetRoles": [],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "software-company": {
+    "domain": "software",
+    "assetRoot": "assets/images/curated/tech/software-agency",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "it-support": {
+    "domain": "itSupport",
+    "assetRoot": "assets/images/curated/tech/it-services",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "security-systems": {
+    "domain": "security",
+    "assetRoot": "assets/images/curated/security/alarm-video-surveillance",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "print-shop": {
+    "domain": "printing",
+    "assetRoot": null,
+    "assetExists": false,
+    "assetRoles": [],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "real-estate": {
+    "domain": "realEstate",
+    "assetRoot": "assets/images/curated/property/real-estate-agency",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "construction": {
+    "domain": "construction",
+    "assetRoot": "assets/images/curated/property/property-development",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "showcase",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "interior-design": {
+    "domain": "interior",
+    "assetRoot": null,
+    "assetExists": false,
+    "assetRoles": [],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "language-school": {
+    "domain": "language",
+    "assetRoot": "assets/images/curated/education/language-school",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "training-center": {
+    "domain": "training",
+    "assetRoot": "assets/images/curated/education/training-center",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "kindergarten": {
+    "domain": "kindergarten",
+    "assetRoot": "assets/images/curated/education/kindergarten",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "kids-playroom": {
+    "domain": "playroom",
+    "assetRoot": "assets/images/curated/events/kids-playroom",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "event-venue": {
+    "domain": "eventVenue",
+    "assetRoot": "assets/images/curated/events/event-venue",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "apartments": {
+    "domain": "accommodation",
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "hotel": {
+    "domain": "accommodation",
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "rent-a-car": {
+    "domain": "rental",
+    "assetRoot": "assets/images/curated/tourism/rent-a-car",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "travel-agency": {
+    "domain": "travel",
+    "assetRoot": "assets/images/curated/tourism/travel-agency",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "fitness-center": {
+    "domain": "fitness",
+    "assetRoot": "assets/images/curated/sport/gym-fitness",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "fitness-trainer": {
+    "domain": "fitness",
+    "assetRoot": "assets/images/curated/sport/gym-fitness",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "yoga-pilates": {
+    "domain": "fitness",
+    "assetRoot": "assets/images/curated/sport/yoga-pilates",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "photo-video": {
+    "domain": "photography",
+    "assetRoot": null,
+    "assetExists": false,
+    "assetRoles": [],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "cleaning": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/cleaning-service",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "carpenter": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/carpenter",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "locksmith": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/metalwork",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "moving": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/moving-service",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "location",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "painter": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/painter",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  },
+  "tiler": {
+    "domain": "service",
+    "assetRoot": "assets/images/curated/services/tiler",
+    "assetExists": true,
+    "assetRoles": [
+      "hero",
+      "services",
+      "team"
+    ],
+    "catalogDimensions": [],
+    "productAttributes": []
+  }
+}

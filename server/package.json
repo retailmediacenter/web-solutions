@@ -1,0 +1,9 @@
+{
+  "name":"@rmc/server",
+  "version":"41.0.0-dev",
+  "private":true,
+  "type":"module",
+  "scripts":{"dev":"node --watch src/app.js","start":"node src/app.js"},
+  "dependencies":{"express":"^4.21.2"},
+  "engines":{"node":">=22.12.0"}
+}

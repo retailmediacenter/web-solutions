@@ -1,0 +1,656 @@
+{
+  "sourceVersion": "V39.5",
+  "sourceArchive": "WEB_SOLUTIONS_V39_5_COMMERCE_STABILIZATION(1).zip",
+  "registrySha256": "8bdbe9539c1daa4eb4ea22fead5d515ee4d9e80de9a87d7c4166e6856a2a7f1a",
+  "registryEntries": 72,
+  "referenceFiles": [
+    {
+      "path": "assets/css/modal-neutral-v34-5.css",
+      "size": 1675
+    },
+    {
+      "path": "assets/css/controller-contract-v34-5-2.css",
+      "size": 2063
+    },
+    {
+      "path": "assets/css/site.css",
+      "size": 630
+    },
+    {
+      "path": "assets/css/core-v13.css",
+      "size": 8732
+    },
+    {
+      "path": "assets/css/media.css",
+      "size": 2014
+    },
+    {
+      "path": "assets/css/styles.css",
+      "size": 8728
+    },
+    {
+      "path": "assets/css/hero-v32.css",
+      "size": 6194
+    },
+    {
+      "path": "assets/css/mobile.css",
+      "size": 7939
+    },
+    {
+      "path": "assets/css/faq-v39.css",
+      "size": 1591
+    },
+    {
+      "path": "assets/css/style-system-v4.css",
+      "size": 16890
+    },
+    {
+      "path": "assets/css/retail-controller-v34-5.css",
+      "size": 2225
+    },
+    {
+      "path": "assets/css/universal-modal-v34-3.css",
+      "size": 11042
+    },
+    {
+      "path": "assets/css/cart-handoff-v34-5-1.css",
+      "size": 1985
+    },
+    {
+      "path": "assets/css/base.css",
+      "size": 7006
+    },
+    {
+      "path": "assets/css/featured-v33.css",
+      "size": 5488
+    },
+    {
+      "path": "assets/css/showcase-v35.css",
+      "size": 3949
+    },
+    {
+      "path": "assets/css/advisor.css",
+      "size": 8109
+    },
+    {
+      "path": "assets/css/reviews-v37.css",
+      "size": 5009
+    },
+    {
+      "path": "assets/css/motion.css",
+      "size": 2897
+    },
+    {
+      "path": "assets/css/about-team-v38.css",
+      "size": 121
+    },
+    {
+      "path": "assets/css/trust-v36.css",
+      "size": 2599
+    },
+    {
+      "path": "assets/css/product.css",
+      "size": 50484
+    },
+    {
+      "path": "assets/css/testimonials.css",
+      "size": 2139
+    },
+    {
+      "path": "assets/css/header-v31.css",
+      "size": 7396
+    },
+    {
+      "path": "assets/css/offer-chips.css",
+      "size": 1624
+    },
+    {
+      "path": "assets/css/advisor-ai-v1.css",
+      "size": 4207
+    },
+    {
+      "path": "assets/css/catalog-v34.css",
+      "size": 10270
+    },
+    {
+      "path": "assets/css/site-extra.css",
+      "size": 7103
+    },
+    {
+      "path": "assets/js/app.js",
+      "size": 1355
+    },
+    {
+      "path": "assets/js/product-app.js",
+      "size": 12576
+    },
+    {
+      "path": "assets/js/ui/demo-polish-v21.js",
+      "size": 4298
+    },
+    {
+      "path": "assets/js/ui/butcher-shop.js",
+      "size": 26319
+    },
+    {
+      "path": "assets/js/ui/header-v31.js",
+      "size": 14219
+    },
+    {
+      "path": "assets/js/ui/plumbing-supplies.js",
+      "size": 29063
+    },
+    {
+      "path": "assets/js/ui/business-proof.js",
+      "size": 7150
+    },
+    {
+      "path": "assets/js/ui/advisor.js",
+      "size": 8079
+    },
+    {
+      "path": "assets/js/ui/booking-visuals.js",
+      "size": 1513
+    },
+    {
+      "path": "assets/js/ui/mobile-ui.js",
+      "size": 3060
+    },
+    {
+      "path": "assets/js/ui/grocery-store.js",
+      "size": 23845
+    },
+    {
+      "path": "assets/js/ui/interactions.js",
+      "size": 6918
+    },
+    {
+      "path": "assets/js/ui/business-booking.js",
+      "size": 7270
+    },
+    {
+      "path": "assets/js/ui/trust-v36.js",
+      "size": 5159
+    },
+    {
+      "path": "assets/js/ui/map-location.js",
+      "size": 3099
+    },
+    {
+      "path": "assets/js/ui/business-forms.js",
+      "size": 4880
+    },
+    {
+      "path": "assets/js/ui/public-demo-fix-v27.js",
+      "size": 13005
+    },
+    {
+      "path": "assets/js/ui/demo-freeze-v28.js",
+      "size": 7359
+    },
+    {
+      "path": "assets/js/ui/catalog-v34.js",
+      "size": 37841
+    },
+    {
+      "path": "assets/js/ui/beauty-integration.js",
+      "size": 4837
+    },
+    {
+      "path": "assets/js/ui/site-motion.js",
+      "size": 2077
+    },
+    {
+      "path": "assets/js/ui/liquor-store.js",
+      "size": 8064
+    },
+    {
+      "path": "assets/js/ui/business-stay-catalog.js",
+      "size": 2568
+    },
+    {
+      "path": "assets/js/ui/controller-contract-v34-5-2.js",
+      "size": 6919
+    },
+    {
+      "path": "assets/js/ui/curated-integration.js",
+      "size": 6308
+    },
+    {
+      "path": "assets/js/ui/final-polish-v10.js",
+      "size": 5196
+    },
+    {
+      "path": "assets/js/ui/wine-shop.js",
+      "size": 19989
+    },
+    {
+      "path": "assets/js/ui/business-presentation.js",
+      "size": 2152
+    },
+    {
+      "path": "assets/js/ui/reviews-v37.js",
+      "size": 10920
+    },
+    {
+      "path": "assets/js/ui/demo-freeze-v28-1.js",
+      "size": 12551
+    },
+    {
+      "path": "assets/js/ui/tech-mobile-fix-v26.js",
+      "size": 2609
+    },
+    {
+      "path": "assets/js/ui/retail-controller-v34-5.js",
+      "size": 7985
+    },
+    {
+      "path": "assets/js/ui/hybrid-polish-v14.js",
+      "size": 8220
+    },
+    {
+      "path": "assets/js/ui/recognition-prompts.js",
+      "size": 3441
+    },
+    {
+      "path": "assets/js/ui/retail-flow-v34-5.js",
+      "size": 4353
+    },
+    {
+      "path": "assets/js/ui/furniture-store.js",
+      "size": 16257
+    },
+    {
+      "path": "assets/js/ui/showcase-v35.js",
+      "size": 11018
+    },
+    {
+      "path": "assets/js/ui/renderers.js",
+      "size": 29846
+    },
+    {
+      "path": "assets/js/ui/universal-modal-v34-3.js",
+      "size": 5752
+    },
+    {
+      "path": "assets/js/ui/demo-freeze-v28-2.js",
+      "size": 17252
+    },
+    {
+      "path": "assets/js/ui/business-counters.js",
+      "size": 4732
+    },
+    {
+      "path": "assets/js/ui/electrical-supplies.js",
+      "size": 22760
+    },
+    {
+      "path": "assets/js/ui/advisor-ai-v1.js",
+      "size": 16678
+    },
+    {
+      "path": "assets/js/ui/featured-v33.js",
+      "size": 19679
+    },
+    {
+      "path": "assets/js/ui/cart-handoff-v34-5-1.js",
+      "size": 5441
+    },
+    {
+      "path": "assets/js/ui/business-locations.js",
+      "size": 3095
+    },
+    {
+      "path": "assets/js/ui/modern-hero-polish-v11.js",
+      "size": 4618
+    },
+    {
+      "path": "assets/js/ui/motion-engine.js",
+      "size": 5132
+    },
+    {
+      "path": "assets/js/ui/offer-chips.js",
+      "size": 3479
+    },
+    {
+      "path": "assets/js/ui/about-team-v38.js",
+      "size": 4480
+    },
+    {
+      "path": "assets/js/ui/beauty-testimonials.js",
+      "size": 6039
+    },
+    {
+      "path": "assets/js/ui/hero-v32.js",
+      "size": 12204
+    },
+    {
+      "path": "assets/js/ui/faq-v39.js",
+      "size": 2815
+    },
+    {
+      "path": "assets/js/ui/motion.js",
+      "size": 1345
+    },
+    {
+      "path": "assets/js/ui/auto-parts.js",
+      "size": 20725
+    },
+    {
+      "path": "assets/js/ui/phone-store.js",
+      "size": 17757
+    },
+    {
+      "path": "assets/js/data/style-profiles.js",
+      "size": 1850
+    },
+    {
+      "path": "assets/js/data/section-defs.js",
+      "size": 1572
+    },
+    {
+      "path": "assets/js/data/business-asset-collection-v34-4.js",
+      "size": 57828
+    },
+    {
+      "path": "assets/js/data/understanding-matrix-v1.js",
+      "size": 14964
+    },
+    {
+      "path": "assets/js/data/business-showcase-registry-v35.js",
+      "size": 3458
+    },
+    {
+      "path": "assets/js/data/business-reviews-registry-v37.js",
+      "size": 7207
+    },
+    {
+      "path": "assets/js/data/business-content-profiles.js",
+      "size": 6809
+    },
+    {
+      "path": "assets/js/data/image-library.js",
+      "size": 4598
+    },
+    {
+      "path": "assets/js/data/business-data-registry-v34-3.js",
+      "size": 1417
+    },
+    {
+      "path": "assets/js/data/copy-profiles.js",
+      "size": 20912
+    },
+    {
+      "path": "assets/js/data/site-bundle.js",
+      "size": 732753
+    },
+    {
+      "path": "assets/js/data/item-copy.js",
+      "size": 7299
+    },
+    {
+      "path": "assets/js/data/asset-module-contract-v35-0-2.js",
+      "size": 1949
+    },
+    {
+      "path": "assets/js/data/business-registry-v1.js",
+      "size": 16163
+    },
+    {
+      "path": "assets/js/data/business-logic.js",
+      "size": 96648
+    },
+    {
+      "path": "assets/js/data/hero-library.js",
+      "size": 8292
+    },
+    {
+      "path": "assets/js/data/curated-packs.js",
+      "size": 289735
+    },
+    {
+      "path": "assets/js/data/business-vocabulary.js",
+      "size": 14426
+    },
+    {
+      "path": "assets/js/data/industry-profiles.js",
+      "size": 6216
+    },
+    {
+      "path": "assets/js/data/business-packs.js",
+      "size": 9921
+    },
+    {
+      "path": "assets/js/data/beauty-packs.js",
+      "size": 5888
+    },
+    {
+      "path": "assets/js/data/business-commerce-registry-v39-5.js",
+      "size": 2233
+    },
+    {
+      "path": "assets/js/data/visual-library.js",
+      "size": 108332
+    },
+    {
+      "path": "assets/js/data/business-trust-registry-v36.js",
+      "size": 10106
+    },
+    {
+      "path": "assets/js/data/understanding-matrix-v2.js",
+      "size": 17535
+    },
+    {
+      "path": "assets/js/data/business-about-team-registry-v38.js",
+      "size": 20573
+    },
+    {
+      "path": "assets/js/data/image-derivatives.js",
+      "size": 144
+    },
+    {
+      "path": "assets/js/data/business-controller-registry-v34-5.js",
+      "size": 13272
+    },
+    {
+      "path": "assets/js/data/business-faq-registry-v39.js",
+      "size": 21145
+    },
+    {
+      "path": "assets/js/config.js",
+      "size": 219
+    },
+    {
+      "path": "assets/js/core/module-builder-v36.js",
+      "size": 1772
+    },
+    {
+      "path": "assets/js/core/module-builder-v38.js",
+      "size": 1469
+    },
+    {
+      "path": "assets/js/core/business-understanding.js",
+      "size": 4592
+    },
+    {
+      "path": "assets/js/core/ai-understanding-v1.js",
+      "size": 10033
+    },
+    {
+      "path": "assets/js/core/universal-orchestrator-v36-0-3.js",
+      "size": 5290
+    },
+    {
+      "path": "assets/js/core/site-generator.js",
+      "size": 18173
+    },
+    {
+      "path": "assets/js/core/business-capabilities.js",
+      "size": 3355
+    },
+    {
+      "path": "assets/js/core/module-builder-v39.js",
+      "size": 1288
+    },
+    {
+      "path": "assets/js/core/module-loader.js",
+      "size": 3914
+    },
+    {
+      "path": "assets/js/core/offer-categories.js",
+      "size": 9147
+    },
+    {
+      "path": "assets/js/core/module-builder-v34-4.js",
+      "size": 4028
+    },
+    {
+      "path": "assets/js/core/module-builder-v35.js",
+      "size": 1886
+    },
+    {
+      "path": "assets/js/core/catalog-contract-v34-5.js",
+      "size": 3998
+    },
+    {
+      "path": "assets/js/core/renderer-registry-v1.js",
+      "size": 2540
+    },
+    {
+      "path": "assets/js/core/module-builder-v34-5.js",
+      "size": 3235
+    },
+    {
+      "path": "assets/js/core/module-builder-v37.js",
+      "size": 1480
+    },
+    {
+      "path": "assets/js/core/retail-module-registry.js",
+      "size": 2605
+    },
+    {
+      "path": "assets/js/core/business-classifier.js",
+      "size": 33390
+    },
+    {
+      "path": "assets/js/core/architecture-engine.js",
+      "size": 4272
+    },
+    {
+      "path": "assets/js/core/context-recognition.js",
+      "size": 8416
+    },
+    {
+      "path": "assets/js/core/universal-shop-engine.js",
+      "size": 55220
+    },
+    {
+      "path": "assets/js/core/universal-orchestrator-v39-0-1.js",
+      "size": 1005
+    },
+    {
+      "path": "assets/js/core/zip-export.js",
+      "size": 4926
+    },
+    {
+      "path": "assets/js/core/recognition-stabilization-v35-0-1.js",
+      "size": 10884
+    },
+    {
+      "path": "assets/js/core/hybrid-business.js",
+      "size": 9514
+    },
+    {
+      "path": "assets/js/core/resolver.js",
+      "size": 7694
+    },
+    {
+      "path": "assets/js/core/site-goals.js",
+      "size": 6264
+    },
+    {
+      "path": "assets/js/core/use-case-actions.js",
+      "size": 4180
+    },
+    {
+      "path": "assets/js/core/visual-resolver.js",
+      "size": 5037
+    },
+    {
+      "path": "assets/js/core/retail-module-dispatch.js",
+      "size": 3104
+    },
+    {
+      "path": "assets/js/core/recognition.js",
+      "size": 2838
+    },
+    {
+      "path": "assets/js/core/technical-retail-engine.js",
+      "size": 3919
+    },
+    {
+      "path": "assets/js/core/confirmed-offer.js",
+      "size": 9838
+    },
+    {
+      "path": "assets/js/core/copy-resolver.js",
+      "size": 15812
+    },
+    {
+      "path": "demo-previews/auto-service/site.css",
+      "size": 563
+    },
+    {
+      "path": "demo-previews/auto-service/site.js",
+      "size": 266
+    },
+    {
+      "path": "demo-previews/namestaj/site.css",
+      "size": 704
+    },
+    {
+      "path": "demo-previews/namestaj/site.js",
+      "size": 798
+    },
+    {
+      "path": "demo-previews/pizzeria/site.css",
+      "size": 1149
+    },
+    {
+      "path": "demo-previews/pizzeria/site.js",
+      "size": 608
+    },
+    {
+      "path": "demo-previews/optika/site.css",
+      "size": 296
+    },
+    {
+      "path": "demo-previews/optika/site.js",
+      "size": 261
+    },
+    {
+      "path": "demo-previews/common.js",
+      "size": 2564
+    },
+    {
+      "path": "demo-previews/salon/site.css",
+      "size": 370
+    },
+    {
+      "path": "demo-previews/salon/site.js",
+      "size": 246
+    },
+    {
+      "path": "demo-previews/common.css",
+      "size": 6160
+    },
+    {
+      "path": "demo-previews/vinoteka/site.css",
+      "size": 864
+    },
+    {
+      "path": "demo-previews/vinoteka/site.js",
+      "size": 255
+    }
+  ]
+}

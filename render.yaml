@@ -1,0 +1,17 @@
+# KREIRATI TEK NAKON sto je lokalni npm test prosao i nakon git push-a.
+services:
+  - type: web
+    name: rmc-web-solutions-api
+    runtime: node
+    region: frankfurt
+    plan: free
+    branch: main
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run start -w server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.15.0
+# CLIENT_ORIGIN se podesava kada novi React frontend bude na Webglobe-u.
