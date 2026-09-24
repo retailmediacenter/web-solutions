@@ -8,13 +8,13 @@ const pilots=[
   {id:'wine-shop',label:'Vinoteka',hint:'Vina, korpa i uslovne degustacije'},
   {id:'shoe-shop',label:'Prodavnica obuće',hint:'Brojevi, cene i standardna korpa'},
   {id:'fashion-shop',label:'Modni butik',hint:'Odeća, boje i veličine'},
-  {id:'grocery-store',label:'Mini market',hint:'Namirnice, korpa i ukupno'},
+  {id:'grocery-store',label:'Mini market',hint:'Posebno pitanje o naručivanju, korpa ili katalog'},
   {id:'liquor-store',label:'Prodavnica pića',hint:'Katalog pića i porudžbine'},
   {id:'home-decor',label:'Kućni dekor',hint:'Katalog dekoracije i porudžbine'},
   {id:'electronics-store',label:'Prodavnica elektronike',hint:'Uređaji, cene i korpa'},
-  {id:'phone-store',label:'Prodavnica telefona',hint:'Model/boja i korpa'},
+  {id:'phone-store',label:'Prodavnica telefona',hint:'Porudžbine po izboru, model/boja i provera dostupnosti'},
   {id:'furniture-store',label:'Salon nameštaja',hint:'Model i dimenzije, upit umesto korpe'},
-  {id:'auto-parts',label:'Auto delovi',hint:'Provera kompatibilnosti, upit'},
+  {id:'auto-parts',label:'Auto delovi',hint:'Opciono naručivanje uz obaveznu proveru kompatibilnosti'},
   {id:'plumbing-supplies',label:'Vodovodni materijal',hint:'Specifikacija proizvoda, upit'},
   {id:'electrical-supplies',label:'Elektromaterijal',hint:'Specifikacija proizvoda, upit'}
 ];
@@ -97,7 +97,7 @@ function App(){
     ?.replace('src="export-runtime.js"','src="'+previewBase+'export-runtime.js"');
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
   return <>
-    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.3 · RETAIL MIGRACIJA</span></div></header>
+    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.4 · COMMERCE UX</span></div></header>
     <main className={'studio '+(result?'with-preview':'')}>
       <aside className="wizard"><div className="wizard-top"><div className="eyebrow">WEB SOLUTIONS ADVISOR</div><h1>{result?'Sajt je spreman za test':'Napravite biznis sajt'}</h1><p>{result?'Preview i ZIP nastaju iz iste Node konfiguracije.':'Od opisa vašeg posla do funkcionalnog test sajta.'}</p>
         <div className="progress" aria-label="Napredak"><div style={{width:(result?100:progress)+'%'}}/></div><small className="step-count">{result?'GENERISANO':definition?`KORAK ${step+2} OD ${count}`:'KORAK 1 — OPIS POSLA'}</small></div>
@@ -128,7 +128,7 @@ function App(){
           {definition&&<button className="quiet back" type="button" onClick={()=>{if(step===0){setDefinition(null);setStep(0)}else setStep(s=>s-1);setError('')}}>← Nazad</button>}
         </div>}
         {error&&<p role="alert" className="error">{error}</p>}
-        <div className="wizard-footer">V39.5 ostaje netaknut · {health?.registryEntries||72} delatnosti u server registru · 13 migriranih retail scenarija
+        <div className="wizard-footer">V39.5 ostaje netaknut · {health?.registryEntries||72} delatnosti u server registru · 13 migriranih testnih scenarija
           {import.meta.env.DEV&&<a href="/legacy/" target="_blank" rel="noreferrer">Otvori stari V39.5 ↗</a>}</div>
       </aside>
       <section className="preview-area" aria-label="Pregled sajta">

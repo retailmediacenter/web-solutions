@@ -7,7 +7,7 @@ import {renderHtml} from '../src/render-site.js';
 import {exportSiteZip} from '../src/exporter.js';
 import {zipFiles} from '../src/zip.js';
 
-const input=(id,answers={})=>({businessId:id,businessName:'Test firma',goal:'purchase',style:'modern',answers});
+const input=(id,answers={})=>({businessId:id,businessName:'Test firma',goal:'purchase',style:'modern',answers:{...(['phone-store','grocery-store'].includes(id)?{ordersEnabled:true}:id==='auto-parts'?{ordersEnabled:false}:{}),...answers}});
 const butcher=(mode='grilled')=>input('butcher-shop',{butcherGrillService:mode});
 const wine=(enabled=true)=>input('wine-shop',{wineTastings:enabled});
 
@@ -120,7 +120,7 @@ test('Purchasing goal keeps add-to-cart and sticky-cart',()=>{
 // V41.3: Retail and catalogue wave based on real V39.5 curated product/image sets.
 const RETAIL_WAVE=['fashion-shop','grocery-store','liquor-store','home-decor',
   'electronics-store','phone-store','furniture-store','auto-parts','plumbing-supplies','electrical-supplies'];
-import {existsSync} from 'node:fs';
+import {existsSync,readFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const publicDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/public');
@@ -149,7 +149,7 @@ test('All 10 new retail catalogues use original accessible curated images and po
   }
 });
 
-test('Advisor respects the legacy V39.5 Commerce mode instead of forcing an incorrect checkout',()=>{
+test('Advisor preserves V39.5 defaults except for explicitly chosen retail ordering',()=>{
   const carts=['fashion-shop','grocery-store','liquor-store','home-decor','electronics-store','phone-store'];
   const inquiries=['furniture-store','auto-parts','plumbing-supplies','electrical-supplies'];
   for(const id of carts){
@@ -212,4 +212,50 @@ test('Advisor recognizes Serbian descriptions for each new audited retail profil
   for(const [description,id] of Object.entries(cases)){
     assert.equal(recognizeBusiness(description),id,description);
   }
+});
+
+
+// V41.4: marketing goal is not an operational permission to take orders.
+test('V41.4 phone, grocery and auto parts require an explicit order-acceptance answer',()=>{
+  for(const id of ['phone-store','grocery-store','auto-parts']){
+    assert.equal(getAdvisorDefinition(id).special.id,'ordersEnabled');
+    const blank={...input(id),answers:{}};
+    assert.throws(()=>resolvePilotSiteConfig(blank),/Odgovorite/);
+  }
+});
+test('V41.4 ordering works independently of marketing goal; explicit NO keeps inquiry',()=>{
+  for(const id of ['phone-store','grocery-store','auto-parts']){
+    for(const goal of ['purchase','visit','catalog']){
+      const yes=buildSitePayload({...input(id,{ordersEnabled:true}),goal});
+      assert.equal(yes.siteConfig.capabilities.commerce,true,`${id}/${goal}`);
+      assert.ok(yes.siteConfig.modules.includes('cart'));
+      const html=renderHtml(yes);
+      assert.ok(html.includes('id="addToCart"'),id);
+      assert.ok(html.includes('id="buyNow"'),id);
+      const no=buildSitePayload({...input(id,{ordersEnabled:false}),goal});
+      assert.equal(no.siteConfig.capabilities.commerce,false,`${id}/${goal}`);
+      assert.equal(no.siteConfig.modules.includes('cart'),false);
+      assert.ok(renderHtml(no).includes('id="availabilityInquiry"'));
+    }
+  }
+});
+test('V41.4 auto parts: cart + optional inquiry, vehicle required in runtime',()=>{
+  const yes=buildSitePayload(input('auto-parts',{ordersEnabled:true}));
+  assert.equal(yes.siteConfig.capabilities.requireVehicle,true);
+  const html=renderHtml(yes);
+  assert.ok(html.includes('id="addToCart"'));
+  assert.ok(html.includes('id="availabilityInquiry"'));
+  assert.ok(html.includes('Marka / model / godište vozila'));
+  assert.ok(html.includes('"requireVehicle":true'));
+});
+test('V41.4 correct order and booking actions: Copy, Viber, WhatsApp; no generic Share',()=>{
+  const html=renderHtml(buildSitePayload(wine(true)));
+  for(const id of ['copyMessage','viberMessage','waMessage','copyBooking','viberBooking','waBooking'])
+    assert.ok(html.includes(`id="${id}"`),id);
+  assert.ok(!html.includes('id="shareMessage"'));
+  assert.ok(!html.includes('id="shareBooking"'));
+  const runtime=readFileSync(path.join(publicDir,'export-runtime.js'),'utf8');
+  assert.ok(runtime.includes('viber://forward?text='));
+  assert.ok(runtime.includes("$('viberMessage').href=viberUrl(prepared)"));
+  assert.ok(runtime.includes('checkedLine()'));
 });

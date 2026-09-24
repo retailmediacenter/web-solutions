@@ -1,4 +1,4 @@
-/* V41.2 standalone browser runtime. Contains ONLY generated-site interactions.
+/* V41.4 standalone browser runtime. Contains ONLY generated-site interactions.
    No Advisor, Business Registry or site generator code is sent to visitors. */
 (()=>{
   'use strict';
@@ -53,8 +53,22 @@
     $('variantWrap').hidden=!site.capabilities.variantNote;
     $('variantLabel').textContent=site.capabilities.variantLabel||'Varijanta / napomena';
     $('variantInput').value='';
+    $('variantInput').required=!!site.capabilities.requireVehicle;
+    $('variantInput').placeholder=site.capabilities.requireVehicle?'Obavezno: marka, model i godište vozila':'Unesite željenu varijantu';
     updateSubtotal();show($('productDialog'));
   }
+  function checkedLine(){
+    const variant=$('variantInput');
+    if(site.capabilities.requireVehicle && !variant.value.trim()){
+      variant.setCustomValidity('Unesite marku, model i godište vozila radi provere kompatibilnosti.');
+      variant.reportValidity();
+      variant.focus();
+      return null;
+    }
+    variant.setCustomValidity('');
+    return getLine();
+  }
+  $('variantInput').addEventListener('input',()=>$('variantInput').setCustomValidity(''));
   function addLine(line){
     if(!line)return;
     const old=cart.find(x=>x.key===line.key);
@@ -114,9 +128,15 @@
     if(!copied){const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(t);t.focus();t.select();try{copied=document.execCommand('copy');}catch{}t.remove();}
     const out=$(statusId);if(out)out.textContent=copied?'Poruka je kopirana.':'Selektujte tekst poruke i kopirajte ručno.';
   }
-  async function shareText(text,statusId){
-    if(navigator.share){try{await navigator.share({text});return}catch(e){if(e?.name==='AbortError')return;}}
-    await copyText(text,statusId);
+  // Viber officially limits the URL-share payload to 200 characters. Never
+  // silently treat that abbreviated text as the complete customer request:
+  // the full request is always available via the separate Copy action.
+  const viberUrl=text=>'viber://forward?text='+encodeURIComponent(text.length<=190?text:
+    text.slice(0,135).replace(/\s+\S*$/,'')+'… (nalepite ceo kopirani zahtev)');
+  function tryCopyBeforeViber(text,statusId){
+    // Best effort; browser/iframe may restrict custom URL schemes or clipboard.
+    // The normal "Kopiraj" button remains the guaranteed fallback.
+    copyText(text,statusId);
   }
   function whatsappUrl(text){
     const phone=String(site.contact?.phone||'').replace(/\D/g,'');
@@ -142,9 +162,9 @@
     if(e.target.closest('[data-close]')){e.target.closest('dialog')?.close();return;}
     if(e.target.closest('#qtyMinus') && chosen){$('qtyInput').value=roundQty(Math.max(minQty(chosen),Number($('qtyInput').value)-stepQty(chosen)));updateSubtotal();return;}
     if(e.target.closest('#qtyPlus') && chosen){$('qtyInput').value=roundQty(Math.min(99,Number($('qtyInput').value)+stepQty(chosen)));updateSubtotal();return;}
-    if(e.target.closest('#addToCart')){addLine(getLine());$('productDialog').close();return;}
-    if(e.target.closest('#buyNow')){const line=getLine();addLine(line);order([line]);return;}
-    if(e.target.closest('#availabilityInquiry')){order([getLine()],'inquiry');return;}
+    if(e.target.closest('#addToCart')){const line=checkedLine();if(!line)return;addLine(line);$('productDialog').close();return;}
+    if(e.target.closest('#buyNow')){const line=checkedLine();if(!line)return;addLine(line);order([line]);return;}
+    if(e.target.closest('#availabilityInquiry')){const line=checkedLine();if(line)order([line],'inquiry');return;}
     if(e.target.closest('#stickyCart')){updateCart();show($('cartDialog'));return;}
     if(e.target.closest('[data-cart-remove]')){const i=Number(e.target.closest('[data-cart-remove]').dataset.cartRemove);if(i>=0&&i<cart.length)cart.splice(i,1);updateCart();return;}
     const minus=e.target.closest('[data-cart-minus]'),plus=e.target.closest('[data-cart-plus]');
@@ -152,9 +172,9 @@
     if(e.target.closest('#clearCart')){cart=[];updateCart();return;}
     if(e.target.closest('#orderFromCart')){order(cart);return;}
     if(e.target.closest('#copyMessage')){copyText(prepared,'copyStatus');return;}
-    if(e.target.closest('#shareMessage')){shareText(prepared,'copyStatus');return;}
+    if(e.target.closest('#viberMessage')){tryCopyBeforeViber(prepared,'copyStatus');return;}
     if(e.target.closest('#copyBooking')){copyText(bookingPrepared);$('copyBooking').textContent='Kopirano ✓';return;}
-    if(e.target.closest('#shareBooking')){shareText(bookingPrepared);return;}
+    if(e.target.closest('#viberBooking')){tryCopyBeforeViber(bookingPrepared);return;}
     const filter=e.target.closest('[data-filter]');if(filter){document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('is-active',x===filter);x.setAttribute('aria-pressed',x===filter?'true':'false');});applyFilter();}
   });
   $('qtyInput').addEventListener('change',updateSubtotal);
@@ -168,7 +188,7 @@
     e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
     const info=Object.fromEntries(new FormData(form).entries());
     prepared=messageFor(orderSelection,info);
-    $('orderMessage').textContent=prepared;$('waMessage').href=whatsappUrl(prepared);
+    $('orderMessage').textContent=prepared;$('waMessage').href=whatsappUrl(prepared);$('viberMessage').href=viberUrl(prepared);
     form.hidden=true;$('sharePanel').hidden=false;
   });
   const tastingForm=$('tastingForm');
@@ -184,7 +204,7 @@
         `Vrsta: ${info.experience}`,`Datum: ${info.date}`,`Željeno vreme: ${info.time}`,`Broj osoba: ${info.partySize}`,
         `Ime: ${info.name}`,`Telefon: ${info.phone}`,info.note?`Napomena: ${info.note}`:'',
         'Molim vas da potvrdite da li je termin dostupan.'].filter(Boolean).join('\n');
-      $('bookingMessage').textContent=bookingPrepared;$('waBooking').href=whatsappUrl(bookingPrepared);
+      $('bookingMessage').textContent=bookingPrepared;$('waBooking').href=whatsappUrl(bookingPrepared);$('viberBooking').href=viberUrl(bookingPrepared);
       $('copyBooking').textContent='Kopiraj zahtev';show($('bookingDialog'));
     });
     tastingForm.elements.date.addEventListener('change',()=>tastingForm.elements.date.setCustomValidity(''));

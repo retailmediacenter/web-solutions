@@ -1,6 +1,6 @@
 # RMC Web Solutions — React + Node
 
-**V41.3: funkcionalni Retail/Commerce migracioni kandidat sa 13 testnih scenarija iz V39.5.**
+**V41.4: Commerce intent + Viber korekcija na V41.3 migracionoj osnovi sa 13 testnih scenarija iz V39.5.**
 
 - **React + Vite:** Advisor tok i interaktivni preview u studiju.
 - **Node + Express:** Advisor odluke, Business Registry V1 (72 činjenice), priprema konfiguracije i ZIP export.
@@ -22,3 +22,5 @@ Otvori **http://localhost:5173**. Node API radi na **http://localhost:3000/api/h
 **Pre objavljivanja:** sve demo cene moraju biti zamenjene stvarnim cenama. Korpa i degustacija pripremaju poruke, bez automatske naplate ili potvrđivanja raspoloživosti. React može statički da se objavi u `/web-solutions/` nakon `npm run build`, ali to *ne treba uraditi* dok kompletan proizvod ne zameni stari sajt.
 
 Za arhitekturu, trenutno stanje, testove i sledeće korake koristiti **PROJECT_STATUS.md** (jedini glavni projektni status dokument).
+
+V41.4: telefon, mini-market i auto-delovi dobijaju eksplicitno Advisor pitanje o porudžbinama. Viber share može biti ograničen na 200 znakova i zavisi od uređaja; ceo zahtev može se kopirati.

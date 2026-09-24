@@ -76,9 +76,17 @@ export function getAdvisorDefinition(id){
     :{question:'Šta prvo prikazujemo?',options:['Najtraženije proizvode','Novu kolekciju','Raznovrsnu ponudu','Dostupnost veličina']});
   return {id,label:businessDisplayName(id),pilot,legacyReference:'V39.5',operation,emphasis,
     special:id==='butcher-shop'?{id:'butcherGrillService',question:'Da li nudite pripremu i pečenje mesa?',options:[{id:'raw',label:'Samo sveže / sirovo meso'},{id:'grilled',label:'Da, priprema i pečenje po dogovoru'}]}
-    :id==='wine-shop'?{id:'wineTastings',question:'Da li organizujete degustacije vina?',options:[{id:'yes',label:'Da, organizujemo degustacije'},{id:'no',label:'Ne, samo prodaja vina'}]}:null,
+    :id==='wine-shop'?{id:'wineTastings',question:'Da li organizujete degustacije vina?',options:[{id:'yes',label:'Da, organizujemo degustacije'},{id:'no',label:'Ne, samo prodaja vina'}]}
+    :orderQuestionIds.has(id)?orderQuestion:null,
     styles:STYLES};
 }
+
+// Business questions live here, not in the fact-only Business Registry.
+const orderQuestionIds=new Set(['phone-store','grocery-store','auto-parts']);
+const orderQuestion={id:'ordersEnabled',question:'Da li kupci mogu da naruče proizvode preko sajta?',options:[
+  {id:'yes',label:'Da — primamo porudžbine (bez automatskog plaćanja)'},
+  {id:'no',label:'Ne — samo katalog i provera dostupnosti'}
+]};
 
 const maxName=100;
 function isNonEmptyChoice(value,options){return typeof value==='string'&&options.includes(value);}
@@ -90,12 +98,18 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
   if(!name||name.length>maxName)throw new Error('Naziv firme mora imati 1–100 znakova.');
   if(!STYLES.some(x=>x.id===style))throw new Error('Nepoznat stil.');
   if(!['purchase','visit','catalog'].includes(goal))throw new Error('Nepoznat cilj sajta.');
-  // V39.5 Commerce matrix is consulted by Advisor, not by Registry or Renderer.
-  // Inquiry-first sectors never silently become a shopping cart.
+  // V39.5 matrix is historical default. The business's explicit answer is
+  // authoritative for the three audited retail profiles, irrespective of the
+  // main marketing goal ('purchase', 'visit' or 'catalog').
   const sourceMode=commerceData[businessId]?.mode||'inquiry';
   const isNewRetail=Object.hasOwn(retailData,businessId);
-  const features={commerce:goal==='purchase' && sourceMode==='cart', inquiry:goal!=='purchase'||sourceMode!=='cart',
-    variantNote:isNewRetail&&!!commerceData[businessId]?.variantNote};
+  const explicitOrders=orderQuestionIds.has(businessId);
+  if(explicitOrders && typeof answers.ordersEnabled!=='boolean')
+    throw new Error('Odgovorite da li radnja prima porudžbine preko sajta.');
+  const canOrder=explicitOrders?answers.ordersEnabled:(goal==='purchase'&&sourceMode==='cart');
+  const features={commerce:canOrder,inquiry:!canOrder,
+    variantNote:isNewRetail&&!!commerceData[businessId]?.variantNote,
+    requireVehicle:businessId==='auto-parts'};
   const variantLabels={'fashion-shop':'Veličina / boja','phone-store':'Model / boja',
     'furniture-store':'Model / dimenzije','auto-parts':'Marka / model / godište vozila',
     'plumbing-supplies':'Dimenzije / specifikacija','electrical-supplies':'Tip / specifikacija',
@@ -117,7 +131,7 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
   modules.push('contact');
   const cleanPhone=String(answers.contactPhone??'').replace(/[^+\d\s()\-]/g,'').slice(0,35);
   return {
-    schemaVersion:'41.3-retail-wave',reference:'V39.5',siteStatus:'preview-and-export',
+    schemaVersion:'41.4-commerce-intent',reference:'V39.5',siteStatus:'preview-and-export',
     business:{id:businessId,name,label:def.label},
     input:{description:String(description??'').slice(0,800),goal,mode,emphasis},
     style,capabilities:features,modules,

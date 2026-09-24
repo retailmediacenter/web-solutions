@@ -653,7 +653,7 @@
       "size": 255
     }
   ],
-  "currentStage": "V41.3-retail-migration-candidate",
+  "currentStage": "V41.4-commerce-intent-viber",
   "migratedFunctionalIDs": [
     "butcher-shop",
     "wine-shop",
