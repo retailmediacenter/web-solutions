@@ -20,7 +20,7 @@ app.use((req,res,next)=>{
   if(req.method==='OPTIONS')return origins.includes(origin)?res.status(204).end():res.status(403).end();
   next();
 });
-app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v41.1-functional-pilot',registryEntries:getRegistryCount(),export:true}));
+app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v41.5-universal-booking',registryEntries:getRegistryCount(),export:true}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));
 app.get('/api/advisor/recognize',(req,res)=>res.json({businessId:recognizeBusiness(String(req.query.text||'').slice(0,800))}));
 app.get('/api/advisor/questions/:id',(req,res)=>{

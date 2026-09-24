@@ -126,9 +126,9 @@ import path from 'node:path';
 const publicDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/public');
 
 test('V41.3 registers exactly 10 additional functional retail/catalogue profiles',()=>{
-  assert.equal(PILOT_BUSINESSES.length,13);
+  assert.equal(PILOT_BUSINESSES.length,37);
   const supported=listBusinesses().filter(x=>x.pilot);
-  assert.equal(supported.length,13);
+  assert.equal(supported.length,37);
   for(const id of RETAIL_WAVE){
     const d=getAdvisorDefinition(id);
     assert.equal(d.pilot,true);

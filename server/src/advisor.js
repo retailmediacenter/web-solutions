@@ -1,3 +1,4 @@
+import {SERVICE_BUSINESSES,serviceProfile,getServiceSpecial,resolveServiceSiteConfig} from './service-engine.js';
 import { getBusinessFacts } from './registry.js';
 import advisorData from './data/business-advisor-v395.json' with { type: 'json' };
 import pilotData from './data/pilot-catalog-v395.json' with { type: 'json' };
@@ -5,7 +6,7 @@ import retailData from './data/retail-catalog-v395.json' with { type: 'json' };
 import commerceData from './data/commerce-capabilities-v395.json' with { type: 'json' };
 
 // Advisor owns meaning, choices, capabilities and module plan. Registry owns ONLY facts.
-export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData)]);
+export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData), ...SERVICE_BUSINESSES]);
 export const STYLES = Object.freeze([
   {id:'traditional',label:'Tradicionalni'}, {id:'modern',label:'Moderni'},
   {id:'warm',label:'Topao'}, {id:'tech',label:'Tehnološki'}, {id:'premium',label:'Premium'}
@@ -19,7 +20,7 @@ const legacyNames={
 };
 const clean=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('sr').trim();
 const readable=id=>id.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
-export function businessDisplayName(id){return pilotData[id]?.label||retailData[id]?.label||advisorData[id]?.label||legacyNames[id]||readable(id);}
+export function businessDisplayName(id){return pilotData[id]?.label||retailData[id]?.label||serviceProfile(id)?.label||advisorData[id]?.label||legacyNames[id]||readable(id);}
 export function listBusinesses(){
   return Object.keys(advisorRegistry()).map(id=>({id,label:businessDisplayName(id),group:advisorData[id]?.group||'Ostalo',pilot:PILOT_BUSINESSES.includes(id)}));
 }
@@ -53,6 +54,27 @@ export function recognizeBusiness(description){
   const matched=retailAliases.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);
   if(matched.length===1)return matched[0];
   if(matched.length>1)return null;
+  // Four generic booking modes; aliases affect recognition only, never booking configuration.
+  const serviceAliases=[
+    ['hair-salon',/\b(frizersk|frizer|frizur)/],['barber-shop',/\b(barber|berber)/],
+    ['beauty-salon',/\b(kozmetick|beauty salon)/],['nail-salon',/\b(nokt|manikir|pedikir)/],
+    ['massage',/\b(masaz|spa |wellness)/],['physio',/\b(fizioterap|fizio)/],
+    ['optician',/\b(optik|opticarsk|pregled vida)/],
+    ['restaurant',/\b(restoran|picerij|pizzeria|pizza restoran)/],['cafe',/\b(kafic|kafe bar|coffee shop)/],
+    ['auto-service',/\b(auto ?servis|autoservis|mehanicarsk)/],['tire-shop',/\b(vulkanizer|zamena gum|pneumatik)/],
+    ['appliance-repair',/\b(bel[eai] tehnike|kucnih aparata|servis aparat)/],
+    ['hvac',/\b(klima servis|servis klimatiz|klima uredjaj)/],
+    ['plumber',/\b(vodoinstalater|vodoinstalacij)/],['electrician',/\b(elektricar|elektroinstalater)/],
+    ['repair-phone',/\b(servis mobilnih telefon|popravka telefona)/],
+    ['accounting',/\b(knjigovodst|racunovodst)/],['consultant',/\b(konsultant|konsalting|poslovne konsultacij)/],
+    ['law-office',/\b(advokat|advokatsk)/],
+    ['kids-playroom',/\b(igraonic|deciji rodjendan)/],['event-venue',/\b(sala za proslav|prostor za dogadjaj|event venue)/],
+    ['carpenter',/\b(stolar|stolarsk)/],['painter',/\b(moler|krecenje|farbar)/],
+    ['tiler',/\b(keramicar|postavljanje plocica)/]
+  ];
+  const serviceMatches=serviceAliases.filter(([,re])=>re.test(text)).map(([id])=>id);
+  if(serviceMatches.length===1)return serviceMatches[0];
+  if(serviceMatches.length>1)return null;
   const aliases=Object.keys(registryFacts).map(id=>({id,label:clean(businessDisplayName(id))}));
   const hits=aliases.filter(x=>x.label.length>5 && text.includes(x.label));
   return hits.length===1?hits[0].id:null;
@@ -63,6 +85,7 @@ export function getAdvisorDefinition(id){
   if(!facts)throw new Error('Nepoznata delatnost.');
   const old=advisorData[id]?.logic?.advisor;
   const pilot=PILOT_BUSINESSES.includes(id);
+  const service=serviceProfile(id);
   const operation= id==='butcher-shop' ? {
     question:'Kako kupci najčešće poručuju?',
     options:['Dolaze u mesaru','Pozivom telefonom','Viber / WhatsApp porukom','Online poručivanje']
@@ -77,8 +100,8 @@ export function getAdvisorDefinition(id){
   return {id,label:businessDisplayName(id),pilot,legacyReference:'V39.5',operation,emphasis,
     special:id==='butcher-shop'?{id:'butcherGrillService',question:'Da li nudite pripremu i pečenje mesa?',options:[{id:'raw',label:'Samo sveže / sirovo meso'},{id:'grilled',label:'Da, priprema i pečenje po dogovoru'}]}
     :id==='wine-shop'?{id:'wineTastings',question:'Da li organizujete degustacije vina?',options:[{id:'yes',label:'Da, organizujemo degustacije'},{id:'no',label:'Ne, samo prodaja vina'}]}
-    :orderQuestionIds.has(id)?orderQuestion:null,
-    styles:STYLES};
+    :service?getServiceSpecial(id):orderQuestionIds.has(id)?orderQuestion:null,
+    serviceMode:service?.mode||null,styles:STYLES};
 }
 
 // Business questions live here, not in the fact-only Business Registry.
@@ -92,6 +115,7 @@ const maxName=100;
 function isNonEmptyChoice(value,options){return typeof value==='string'&&options.includes(value);}
 export function resolvePilotSiteConfig({businessId,businessName,description='',answers={},style='modern',goal='purchase'}={}){
   if(!PILOT_BUSINESSES.includes(businessId))throw new Error('Delatnost još nije migrirana.');
+  if(SERVICE_BUSINESSES.includes(businessId))return resolveServiceSiteConfig({businessId,businessName,description,answers,style,goal},STYLES).siteConfig;
   const facts=getBusinessFacts(businessId),def=getAdvisorDefinition(businessId);
   if(!facts)throw new Error('Nepoznata delatnost.');
   const name=String(businessName??'').trim();

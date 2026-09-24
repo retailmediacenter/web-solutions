@@ -9,12 +9,14 @@ function staticFile(name){return readFileSync(path.join(publicRoot,name));}
 export function exportSiteZip(payload){
   const siteHtml=renderHtml(payload);
   const catalog=payload.catalog;
-  const requested=new Set([catalog.hero,...catalog.products.map(x=>x.image)]);
+  const isService=!!payload.siteConfig.capabilities?.serviceProfile;
+  const requested=new Set([catalog.hero,...(isService?catalog.services:catalog.products).map(x=>x.image)]);
   if(payload.siteConfig.capabilities.wineTastings&&catalog.tastingImage)requested.add(catalog.tastingImage);
   const files=[
     {name:'index.html',data:siteHtml},
     {name:'site.css',data:staticFile('site.css')},
-    {name:'export-runtime.js',data:staticFile('export-runtime.js')}
+    {name:'export-runtime.js',data:staticFile('export-runtime.js')},
+    ...(isService?[{name:'booking.css',data:staticFile('booking.css')},{name:'booking-runtime.js',data:staticFile('booking-runtime.js')}]:[])
   ];
   for(const image of requested){
     if(typeof image!=='string'||!/^assets\/images\/curated\/[a-z0-9/_-]+\.jpe?g$/.test(image))throw new Error('Asset putanja nije dozvoljena.');

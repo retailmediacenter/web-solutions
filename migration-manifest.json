@@ -653,7 +653,7 @@
       "size": 255
     }
   ],
-  "currentStage": "V41.4-commerce-intent-viber",
+  "currentStage": "V41.5 — Universal Booking wave",
   "migratedFunctionalIDs": [
     "butcher-shop",
     "wine-shop",
@@ -667,8 +667,70 @@
     "furniture-store",
     "auto-parts",
     "plumbing-supplies",
-    "electrical-supplies"
+    "electrical-supplies",
+    "hair-salon",
+    "barber-shop",
+    "beauty-salon",
+    "nail-salon",
+    "massage",
+    "physio",
+    "optician",
+    "restaurant",
+    "cafe",
+    "auto-service",
+    "tire-shop",
+    "appliance-repair",
+    "hvac",
+    "plumber",
+    "electrician",
+    "repair-phone",
+    "accounting",
+    "consultant",
+    "law-office",
+    "kids-playroom",
+    "event-venue",
+    "carpenter",
+    "painter",
+    "tiler"
   ],
-  "migratedFunctionalCount": 13,
-  "remainingBusinessCount": 59
+  "migratedFunctionalCount": 37,
+  "remainingBusinessCount": 35,
+  "bookingModes": [
+    "appointment",
+    "reservation",
+    "consultation",
+    "request-slot"
+  ],
+  "bookingFunctionalIDs": [
+    "hair-salon",
+    "barber-shop",
+    "beauty-salon",
+    "nail-salon",
+    "massage",
+    "physio",
+    "optician",
+    "restaurant",
+    "cafe",
+    "auto-service",
+    "tire-shop",
+    "appliance-repair",
+    "hvac",
+    "plumber",
+    "electrician",
+    "repair-phone",
+    "accounting",
+    "consultant",
+    "law-office",
+    "kids-playroom",
+    "event-venue",
+    "carpenter",
+    "painter",
+    "tiler"
+  ],
+  "notes": [
+    "Business Registry V1 remains fact-only; booking mode and module plan are Advisor concerns.",
+    "Booking is always explicit DA/NE; no business receives booking merely because the industry could support it.",
+    "All booking flows generate requests only; no live availability or automatic confirmation is claimed.",
+    "Preview and standalone ZIP share the same HTML/runtime."
+  ]
 }

@@ -1,0 +1,35 @@
+/* V41.5 service wave only — existing Commerce styles left unchanged. */
+.service-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
+.service-card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);min-width:0}
+.service-card>img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.service-card-body{padding:18px;display:grid;gap:12px}
+.service-card-body h3{font-size:19px;margin:0;line-height:1.25}
+.service-card-body p{color:var(--muted);margin:0}
+.service-card-body .secondary{justify-self:start;text-decoration:none}
+.booking-service{background:var(--surface2);scroll-margin-top:95px}
+.booking-service>.section-heading{max-width:730px;display:block}
+.service-request-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-width:770px;gap:18px;padding:0;margin:25px 0 0}
+.service-request-form>label{display:flex;min-width:0;flex-direction:column;gap:7px;font-size:13px;font-weight:800}
+.service-request-form label.wide,.service-request-form button.wide{grid-column:1/-1}
+.service-request-form input,.service-request-form select,.service-request-form textarea{min-height:47px;border:1px solid var(--line);border-radius:12px;max-width:100%;width:100%;padding:10px 12px;background:var(--surface);color:var(--ink)}
+.service-request-form textarea{min-height:90px;resize:vertical}
+.service-request-form>.primary{justify-self:start}
+.service-contact-form{padding:22px 0 0;max-width:770px}
+.service-contact-form h3{margin:0 0 5px}
+.service-contact-form .service-request-form{margin-top:12px}
+.service-mobile-cta{display:none}
+.service-dialog{width:min(94vw,620px);max-height:min(84vh,680px);overflow-y:auto}
+.service-dialog .dialog-pad{padding:27px 26px 23px}
+.service-dialog h2{margin:.25em 0}
+.service-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;border-radius:12px;border:1px solid var(--line);background:var(--surface2);padding:16px;line-height:1.6;max-height:270px;overflow-y:auto;font-family:inherit;font-size:13px}
+.service-dialog .dialog-actions{display:flex;gap:9px;flex-wrap:wrap}
+.service-dialog .hint{font-size:12px}
+@media(max-width:760px){
+ .service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ .service-card-body{padding:13px}.service-card-body h3{font-size:15px}
+ .site-footer{padding-bottom:85px}
+ .service-mobile-cta{display:flex;align-items:center;justify-content:center;position:fixed;bottom:env(safe-area-inset-bottom,0px);left:10px;right:10px;min-height:48px;z-index:40;border-radius:12px;background:var(--accent);color:white;font-weight:800;text-decoration:none;box-shadow:0 5px 25px rgba(15,23,42,.25)}
+ .booking-service,.service-contact{scroll-margin-top:100px}
+ .service-dialog .dialog-pad{padding:24px 15px}
+}
+@media(max-width:490px){.service-grid{grid-template-columns:1fr}.service-request-form{grid-template-columns:1fr}.service-request-form label.wide,.service-request-form button.wide{grid-column:auto}.service-request-form>.primary{justify-self:stretch}}

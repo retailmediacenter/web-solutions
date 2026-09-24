@@ -1,0 +1,927 @@
+{
+  "hair-salon": {
+    "label": "Frizerski salon",
+    "group": "Beauty",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zatraže termin preko sajta?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Šišanje",
+      "Farbanje",
+      "Feniranje",
+      "Nega kose"
+    ],
+    "hero": "assets/images/curated/beauty/hair-salon/hero/hair_hero_01.jpg",
+    "headline": "Frizura kojoj se vraćate.",
+    "subtitle": "Upoznajte usluge, stiliste i jednostavno izaberite termin koji vam odgovara.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "hairsalon-1",
+        "title": "Šišanje",
+        "image": "assets/images/curated/beauty/hair-salon/services/hair_salon_curly_cut_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "hairsalon-2",
+        "title": "Farbanje",
+        "image": "assets/images/curated/beauty/hair-salon/services/hair_service_color_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "hairsalon-3",
+        "title": "Feniranje",
+        "image": "assets/images/curated/beauty/hair-salon/services/hair_service_blowdry_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "barber-shop": {
+    "label": "Barber shop",
+    "group": "Beauty",
+    "mode": "appointment",
+    "question": "Da li prihvatate zahteve za termin ili radite samo bez zakazivanja?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Šišanje",
+      "Brada",
+      "Šišanje i brada"
+    ],
+    "hero": "assets/images/curated/beauty/barber-shop/hero/barber_hero_01.jpg",
+    "headline": "Vaš Barber shop — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "barbershop-1",
+        "title": "Muško šišanje",
+        "image": "assets/images/curated/beauty/barber-shop/services/barber_service_haircut_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "barbershop-2",
+        "title": "Oblikovanje brade",
+        "image": "assets/images/curated/beauty/barber-shop/services/barber_service_beard_trim_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "barbershop-3",
+        "title": "Brijanje",
+        "image": "assets/images/curated/beauty/barber-shop/services/barber_service_shave_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "beauty-salon": {
+    "label": "Beauty salon",
+    "group": "Beauty",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zatraže termin za tretman?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Tretman lica",
+      "Obrve",
+      "Depilacija"
+    ],
+    "hero": "assets/images/curated/beauty/beauty-salon/hero/beauty_salon_hero_01.jpg",
+    "headline": "Vaš Beauty salon — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "beautysalon-1",
+        "title": "Tretman lica",
+        "image": "assets/images/curated/beauty/beauty-salon/services/beauty_salon_facial_cleansing_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "beautysalon-2",
+        "title": "Obrve",
+        "image": "assets/images/curated/beauty/beauty-salon/services/beauty_salon_service_brow_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "beautysalon-3",
+        "title": "Manikir",
+        "image": "assets/images/curated/beauty/beauty-salon/services/beauty_salon_service_manicure_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "nail-salon": {
+    "label": "Nail salon",
+    "group": "Beauty",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zakažu tretman noktiju?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Manikir",
+      "Gel nokti",
+      "Pedikir"
+    ],
+    "hero": "assets/images/curated/beauty/nail-salon/hero/nail_salon_hero_01.jpg",
+    "headline": "Vaš Nail salon — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "nailsalon-1",
+        "title": "Gel manikir",
+        "image": "assets/images/curated/beauty/nail-salon/services/nail_salon_service_gel_manicure_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "nailsalon-2",
+        "title": "Pedikir",
+        "image": "assets/images/curated/beauty/nail-salon/services/nail_salon_service_pedicure_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "nailsalon-3",
+        "title": "Klasični manikir",
+        "image": "assets/images/curated/beauty/nail-salon/services/nail_salon_service_manicure_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "massage": {
+    "label": "Masaža / Spa / Wellness",
+    "group": "Beauty",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zatraže termin za masažu?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Relaks masaža",
+      "Terapeutska masaža",
+      "Hot stone"
+    ],
+    "hero": "assets/images/curated/beauty/spa-wellness/hero/spa_wellness_hero_01.jpg",
+    "headline": "Vaš Masaža / Spa / Wellness — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "massage-1",
+        "title": "Relaks masaža",
+        "image": "assets/images/curated/beauty/spa-wellness/services/spa_wellness_service_massage_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "massage-2",
+        "title": "Masaža toplim kamenjem",
+        "image": "assets/images/curated/beauty/spa-wellness/services/spa_wellness_service_hotstone_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "massage-3",
+        "title": "Tretman lica",
+        "image": "assets/images/curated/beauty/spa-wellness/services/spa_wellness_service_facial_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "physio": {
+    "label": "Fizioterapija",
+    "group": "Healthcare",
+    "mode": "appointment",
+    "question": "Da li pacijenti mogu da zatraže termin za tretman?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Fizioterapijski tretman",
+      "Rehabilitacija",
+      "Procena pokretljivosti"
+    ],
+    "hero": "assets/images/curated/healthcare/physiotherapy/hero/physiotherapy_hero_work_01.jpg",
+    "headline": "Vaš Fizioterapija — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "physio-1",
+        "title": "Rehabilitacija",
+        "image": "assets/images/curated/healthcare/physiotherapy/services/physiotherapy_service_rehabilitation_exercise_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "physio-2",
+        "title": "Procena pokretljivosti",
+        "image": "assets/images/curated/healthcare/physiotherapy/services/physiotherapy_service_mobility_assessment_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "physio-3",
+        "title": "Manualna terapija",
+        "image": "assets/images/curated/healthcare/physiotherapy/services/physiotherapy_service_manual_therapy_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "optician": {
+    "label": "Optika",
+    "group": "Healthcare",
+    "mode": "appointment",
+    "question": "Da li u vašoj optici radite pregled vida i primate zahteve za termin?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Pregled vida"
+    ],
+    "hero": "assets/images/curated/healthcare/optician/hero/optician_hero_work_01.jpg",
+    "headline": "Pregled vida i okvir koji vam odgovara.",
+    "subtitle": "Zakažite pregled, pogledajte izbor okvira ili posetite optiku.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "optician-1",
+        "title": "Pregled vida",
+        "image": "assets/images/curated/healthcare/optician/services/optician_service_vision_test_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "optician-2",
+        "title": "Izbor okvira",
+        "image": "assets/images/curated/healthcare/optician/services/optician_service_optical_frames_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "optician-3",
+        "title": "Podešavanje okvira",
+        "image": "assets/images/curated/healthcare/optician/services/optician_service_frame_fitting_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "restaurant": {
+    "label": "Restoran",
+    "group": "Food",
+    "mode": "reservation",
+    "question": "Da li primate rezervacije stolova?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Rezervacija stola"
+    ],
+    "hero": "assets/images/curated/food/restaurant/hero/restaurant_hero_01.jpg",
+    "headline": "Meni i sto za vaš sledeći dolazak.",
+    "subtitle": "Pogledajte specijalitete, ambijent i pošaljite zahtev za rezervaciju.",
+    "offerTitle": "Ponuda i iskustva",
+    "services": [
+      {
+        "id": "restaurant-1",
+        "title": "Specijalitet kuće",
+        "image": "assets/images/curated/food/restaurant/services/restaurant_product_03_biftek.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "restaurant-2",
+        "title": "Pice",
+        "image": "assets/images/curated/food/restaurant/services/restaurant_product_pizza_margherita_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "restaurant-3",
+        "title": "Domaći desert",
+        "image": "assets/images/curated/food/restaurant/services/restaurant_product_08_kolac.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "cafe": {
+    "label": "Kafić",
+    "group": "Food",
+    "mode": "reservation",
+    "question": "Da li gosti mogu da rezervišu sto?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Rezervacija stola"
+    ],
+    "hero": "assets/images/curated/food/cafe/hero/cafe_hero_01.jpg",
+    "headline": "Vaš Kafić — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Ponuda i iskustva",
+    "services": [
+      {
+        "id": "cafe-1",
+        "title": "Kafa i topli napici",
+        "image": "assets/images/curated/food/cafe/services/cafe_product_02_ledena_kafa.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "cafe-2",
+        "title": "Poslastice",
+        "image": "assets/images/curated/food/cafe/services/cafe_product_08_tres_leches.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "cafe-3",
+        "title": "Osveženje",
+        "image": "assets/images/curated/food/cafe/services/drink_product_sparkling_water_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "auto-service": {
+    "label": "Auto servis",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li klijenti preko sajta mogu da traže željeni termin za servis?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Mali servis",
+      "Dijagnostika",
+      "Kočioni sistem"
+    ],
+    "hero": "assets/images/curated/services/auto-service/hero/auto_service_hero_01.jpg",
+    "headline": "Vaš Auto servis — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "autoservice-1",
+        "title": "Servis kočnica",
+        "image": "assets/images/curated/services/auto-service/services/auto_service_service_03_brake_service.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "autoservice-2",
+        "title": "Zamena ulja",
+        "image": "assets/images/curated/services/auto-service/services/auto_service_service_02_oil_change.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "autoservice-3",
+        "title": "Dijagnostika",
+        "image": "assets/images/curated/services/auto-service/services/auto_service_service_04_vehicle_diagnostics.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "tire-shop": {
+    "label": "Vulkanizer / gume",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže termin u vulkanizerskoj radnji?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Zamena pneumatika",
+      "Balansiranje",
+      "Provera guma"
+    ],
+    "hero": "assets/images/curated/services/auto-service/hero/auto_service_hero_01.jpg",
+    "headline": "Vaš Vulkanizer / gume — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "tireshop-1",
+        "title": "Zamena pneumatika",
+        "image": "assets/images/curated/services/auto-service/services/auto_service_service_01_tire_service.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "tireshop-2",
+        "title": "Balansiranje",
+        "image": "assets/images/curated/services/auto-service/services/auto_service_wheel_alignment_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "appliance-repair": {
+    "label": "Servis kućnih aparata",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li prihvatate zahteve za termin intervencije preko sajta?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Veš mašina",
+      "Frižider",
+      "Mašina za sudove"
+    ],
+    "hero": "assets/images/curated/services/appliance-repair/hero/appliance_repair_hero_work_01.jpg",
+    "headline": "Vaš Servis kućnih aparata — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "appliancerepair-1",
+        "title": "Popravka veš mašine",
+        "image": "assets/images/curated/services/appliance-repair/services/appliance_repair_service_washing_machine_repair_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "appliancerepair-2",
+        "title": "Servis frižidera",
+        "image": "assets/images/curated/services/appliance-repair/services/appliance_repair_service_fridge_repair_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "appliancerepair-3",
+        "title": "Popravka sudomašine",
+        "image": "assets/images/curated/services/appliance-repair/services/appliance_repair_service_dishwasher_repair_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "hvac": {
+    "label": "Klima servis",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li korisnici mogu da zatraže termin za klima-servis?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Servis klime",
+      "Montaža",
+      "Provera rashladnog sistema"
+    ],
+    "hero": "assets/images/curated/services/hvac-service/hero/hvac_service_hero_01.jpg",
+    "headline": "Vaš Klima servis — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "hvac-1",
+        "title": "Popravka klime",
+        "image": "assets/images/curated/services/hvac-service/services/hvac_service_service_01_outdoor_unit_repair.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "hvac-2",
+        "title": "Provera ventilacije",
+        "image": "assets/images/curated/services/hvac-service/services/hvac_service_service_03_vent_inspection.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "hvac-3",
+        "title": "Čišćenje klime",
+        "image": "assets/images/curated/services/hvac-service/services/hvac_service_indoor_unit_cleaning_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "plumber": {
+    "label": "Vodoinstalater",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li korisnici mogu da traže okvirni termin izlaska na teren?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Popravka slavine",
+      "Odgušenje",
+      "Vodovodne instalacije"
+    ],
+    "hero": "assets/images/curated/services/plumbing/hero/plumbing_hero_01.jpg",
+    "headline": "Vaš Vodoinstalater — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "plumber-1",
+        "title": "Vodovodne instalacije",
+        "image": "assets/images/curated/services/plumbing/services/plumbing_service_02_pipe_repair.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "plumber-2",
+        "title": "Popravka slavina",
+        "image": "assets/images/curated/services/plumbing/services/plumbing_service_01_faucet_repair.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "plumber-3",
+        "title": "Odgušenje",
+        "image": "assets/images/curated/services/plumbing/services/plumbing_service_03_drain_service.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "electrician": {
+    "label": "Električar",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li korisnici mogu da traže okvirni termin intervencije?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Elektroinstalacije",
+      "Rasveta",
+      "Razvodna tabla"
+    ],
+    "hero": "assets/images/curated/services/electrical-services/hero/electrical_services_hero_01.jpg",
+    "headline": "Vaš Električar — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "electrician-1",
+        "title": "Rad na razvodnoj tabli",
+        "image": "assets/images/curated/services/electrical-services/services/electrical_services_service_02_breaker_panel_service.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "electrician-2",
+        "title": "Elektroinstalacije",
+        "image": "assets/images/curated/services/electrical-services/services/electrical_services_service_01_wiring_installation.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "electrician-3",
+        "title": "Ugradnja rasvete",
+        "image": "assets/images/curated/services/electrical-services/services/electrical_services_service_03_light_fixture_installation.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "repair-phone": {
+    "label": "Servis telefona",
+    "group": "Tech",
+    "mode": "request-slot",
+    "question": "Da li primate zahteve za termin predaje telefona na servis?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Zamena ekrana",
+      "Zamena baterije",
+      "Dijagnostika"
+    ],
+    "hero": "assets/images/curated/tech/phone-repair/hero/phone_repair_hero_work_01.jpg",
+    "headline": "Vaš Servis telefona — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "repairphone-1",
+        "title": "Zamena baterije",
+        "image": "assets/images/curated/tech/phone-repair/services/phone_repair_service_battery_replacement_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "repairphone-2",
+        "title": "Dijagnostika",
+        "image": "assets/images/curated/tech/phone-repair/services/phone_repair_service_phone_diagnostics_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "repairphone-3",
+        "title": "Zamena ekrana",
+        "image": "assets/images/curated/tech/phone-repair/services/phone_repair_service_screen_replacement_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "accounting": {
+    "label": "Knjigovodstvo",
+    "group": "Professional",
+    "mode": "consultation",
+    "question": "Da li novi klijenti mogu da zatraže termin prvog razgovora?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Knjigovodstvene usluge",
+      "Poresko savetovanje",
+      "Početne konsultacije"
+    ],
+    "hero": "assets/images/curated/professional-office/accounting/hero/accounting_hero_01.jpg",
+    "headline": "Knjigovodstvo koje prati vaš posao.",
+    "subtitle": "Recite nam kakva vam je podrška potrebna i dogovorite prvi razgovor.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "accounting-1",
+        "title": "Knjigovodstvene usluge",
+        "image": "assets/images/curated/professional-office/accounting/services/accounting_service_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "accounting-2",
+        "title": "Obračuni",
+        "image": "assets/images/curated/professional-office/accounting/services/accounting_service_02.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "accounting-3",
+        "title": "Poslovno savetovanje",
+        "image": "assets/images/curated/professional-office/accounting/services/accounting_service_03.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "consultant": {
+    "label": "Poslovni konsultant",
+    "group": "Professional",
+    "mode": "consultation",
+    "question": "Da li klijenti mogu da zatraže termin konsultacije?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Poslovne konsultacije",
+      "Strategija",
+      "Analiza poslovanja"
+    ],
+    "hero": "assets/images/curated/professional-office/business-consulting/hero/business_consulting_hero_01.jpg",
+    "headline": "Vaš Poslovni konsultant — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "consultant-1",
+        "title": "Poslovna analiza",
+        "image": "assets/images/curated/professional-office/business-consulting/services/business_consulting_service_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "consultant-2",
+        "title": "Strategija",
+        "image": "assets/images/curated/professional-office/business-consulting/services/business_consulting_service_02.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "consultant-3",
+        "title": "Konsultacije",
+        "image": "assets/images/curated/professional-office/business-consulting/services/business_consulting_service_03.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "law-office": {
+    "label": "Advokatska kancelarija",
+    "group": "Professional",
+    "mode": "consultation",
+    "question": "Da li primate zahteve za termin konsultacije preko sajta?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Početne konsultacije",
+      "Pravna podrška",
+      "Ugovori"
+    ],
+    "hero": "assets/images/curated/professional-office/law-firm/hero/law_firm_hero_01.jpg",
+    "headline": "Vaš Advokatska kancelarija — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "lawoffice-1",
+        "title": "Pravne konsultacije",
+        "image": "assets/images/curated/professional-office/law-firm/services/law_firm_service_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "lawoffice-2",
+        "title": "Ugovori",
+        "image": "assets/images/curated/professional-office/law-firm/services/law_firm_service_02.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "lawoffice-3",
+        "title": "Oblasti prakse",
+        "image": "assets/images/curated/professional-office/law-firm/services/law_firm_service_03.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "kids-playroom": {
+    "label": "Dečija igraonica",
+    "group": "Events",
+    "mode": "reservation",
+    "question": "Da li primate zahteve za rezervaciju rođendana?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Dečiji rođendan",
+      "Tematska proslava",
+      "Igraonica"
+    ],
+    "hero": "assets/images/curated/events/kids-playroom/hero/kids_playroom_hero_work_01.jpg",
+    "headline": "Vaš Dečija igraonica — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Ponuda i iskustva",
+    "services": [
+      {
+        "id": "kidsplayroom-1",
+        "title": "Rođendanski paket",
+        "image": "assets/images/curated/events/kids-playroom/services/kids_playroom_service_birthday_table_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "kidsplayroom-2",
+        "title": "Radionice",
+        "image": "assets/images/curated/events/kids-playroom/services/kids_playroom_service_creative_workshop_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "kidsplayroom-3",
+        "title": "Igra i aktivnosti",
+        "image": "assets/images/curated/events/kids-playroom/services/kids_playroom_service_play_area_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "event-venue": {
+    "label": "Prostor za događaje",
+    "group": "Events",
+    "mode": "reservation",
+    "question": "Da li primate upite za datum i termin događaja?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Proslava",
+      "Poslovni događaj",
+      "Privatni događaj"
+    ],
+    "hero": "assets/images/curated/events/event-venue/hero/event_venue_hero_work_01.jpg",
+    "headline": "Vaš Prostor za događaje — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Ponuda i iskustva",
+    "services": [
+      {
+        "id": "eventvenue-1",
+        "title": "Prijem",
+        "image": "assets/images/curated/events/event-venue/services/event_venue_service_reception_area_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "eventvenue-2",
+        "title": "Svečana sala",
+        "image": "assets/images/curated/events/event-venue/services/event_venue_service_banquet_table_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "eventvenue-3",
+        "title": "Scena i događaji",
+        "image": "assets/images/curated/events/event-venue/services/event_venue_service_stage_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "carpenter": {
+    "label": "Stolar",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže termin za izlazak ili merenje?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Izrada kuhinje",
+      "Plakari po meri",
+      "Stolarski radovi"
+    ],
+    "hero": "assets/images/curated/services/carpenter/hero/carpenter_hero_space_01.jpg",
+    "headline": "Vaš Stolar — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "carpenter-1",
+        "title": "Ugradnja kuhinje",
+        "image": "assets/images/curated/services/carpenter/services/carpenter_service_kitchen_installation_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "carpenter-2",
+        "title": "Plakari po meri",
+        "image": "assets/images/curated/services/carpenter/services/carpenter_service_custom_wardrobe_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "carpenter-3",
+        "title": "Stolarski radovi",
+        "image": "assets/images/curated/services/carpenter/services/carpenter_service_woodworking_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "painter": {
+    "label": "Moler / farbar",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže termin obilaska i procene radova?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Krečenje",
+      "Gletovanje",
+      "Fasaderski radovi"
+    ],
+    "hero": "assets/images/curated/services/painter/hero/painter_hero_work_01.jpg",
+    "headline": "Krečenje i fasaderski radovi, uz jasnu procenu.",
+    "subtitle": "Pošaljite fotografije i lokaciju ili nas pozovite. Dogovaramo obim radova i sledeći korak.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "painter-1",
+        "title": "Fasaderski radovi",
+        "image": "assets/images/curated/services/painter/services/painter_service_facade_work_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "painter-2",
+        "title": "Gletovanje",
+        "image": "assets/images/curated/services/painter/services/painter_service_wall_smoothing_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "painter-3",
+        "title": "Krečenje",
+        "image": "assets/images/curated/services/painter/services/painter_service_wall_painting_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  },
+  "tiler": {
+    "label": "Keramičar",
+    "group": "Services",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže termin obilaska i procene radova?",
+    "options": [
+      "Da — želim da primam zahteve za termin preko sajta",
+      "Ne — samo kontakt i prikaz ponude"
+    ],
+    "offerings": [
+      "Postavljanje pločica",
+      "Fugovanje",
+      "Adaptacija kupatila"
+    ],
+    "hero": "assets/images/curated/services/tiler/hero/tiler_hero_work_01.jpg",
+    "headline": "Vaš Keramičar — tu za vas.",
+    "subtitle": "Pogledajte naše usluge i kontaktirajte nas za više informacija.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "tiler-1",
+        "title": "Postavljanje pločica",
+        "image": "assets/images/curated/services/tiler/services/tiler_service_tile_installation_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "tiler-2",
+        "title": "Sečenje pločica",
+        "image": "assets/images/curated/services/tiler/services/tiler_service_tile_cutting_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      },
+      {
+        "id": "tiler-3",
+        "title": "Fugovanje",
+        "image": "assets/images/curated/services/tiler/services/tiler_service_grouting_01.jpg",
+        "description": "Dogovorite detalje i raspoloživost direktno sa nama."
+      }
+    ]
+  }
+}

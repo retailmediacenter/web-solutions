@@ -1,3 +1,4 @@
+import {renderServiceHtml} from './render-service.js';
 // Single renderer shared by in-app preview and standalone ZIP export.
 // Business decisions are already resolved by Advisor; this module only renders.
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -5,10 +6,11 @@ const money=n=>`${new Intl.NumberFormat('sr-RS',{maximumFractionDigits:0}).forma
 const safeJson=value=>JSON.stringify(value).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026').replace(/\u2028/g,'\\u2028');
 
 export function renderHtml({siteConfig:site,catalog}){
+  if(site?.capabilities?.serviceProfile)return renderServiceHtml({siteConfig:site,catalog});
   if(!site?.business?.name || !catalog?.products?.length)throw new Error('Nepotpuna konfiguracija sajta.');
   const wine=site.capabilities.wineTastings;
   const butcher=site.business.id==='butcher-shop';
-  const inquiryLabel=site.business.id==='shoe-shop'?'Proveri dostupnost':site.business.id==='auto-parts'?'Proveri kompatibilnost':site.business.id==='phone-store'?'Proveri dostupnost':'Pošalji upit';
+  const inquiryLabel=site.business.id==='shoe-shop'?'Proveri dostupnost':site.business.id==='auto-parts'?'Zatraži potvrdu dostupnosti':site.business.id==='phone-store'?'Proveri dostupnost':'Pošalji upit';
   const asset=s=>esc(s);
   const itemCard=p=>`<article class="shop-card" data-card data-category="${esc(p.category)}" data-search="${esc(`${p.title} ${p.category}`.toLowerCase())}">
     <button class="product-image" type="button" data-product="${esc(p.id)}" aria-label="Detalji: ${esc(p.title)}"><img src="${asset(p.image)}" loading="lazy" alt="${esc(p.title)}"></button>

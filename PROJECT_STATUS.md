@@ -1,62 +1,93 @@
 # RMC Web Solutions — jedinstveni projektni status
 
-**Verzija:** V41.4 — Commerce intent / Viber korekcije, 24.09.2026.  
-**Status:** 13 funkcionalnih testnih scenarija od 72 registrovane delatnosti. Nije potpuna zamena za V39.5.
+**Verzija:** V41.5 — Universal Booking, 24.09.2026.  
+**Status:** **37 funkcionalnih scenarija od 72** registrovane delatnosti. Preostalih **35** još nije kompletno migrirano. V39.5 ostaje referentna i rollback verzija.
 
 ## Autoritativna polazna tačka
 
-- **V39.5 je zamrznuta referenca:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions` — ne menjati.
-- **Nova aplikacija:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions-react-node` — React/Vite frontend, Express/Node backend, jedan izvorni SiteConfig, isti HTML za iframe Preview i ZIP.
-- **GitHub:** privatni `retailmediacenter/web-solutions`. V41.3 instalirati na novu testnu granu `migration/v41-3-retail`, ne na `main`.
-- **Render:** postojeći API na `main` ostaje netaknut do odobrenog spajanja nove grane. **Webglobe** ostaje na postojećoj verziji tokom migracije.
-- **Business Registry V1:** 72 fakta: ID, domain, assetRoot/roles, catalogDimensions, productAttributes. **Ne sadrži CTA, renderer, style, module plan ni modal ponašanje.** Advisor je autoritet za cilj i module plan.
+- **V39.5 referenca:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions` — ne menjati.
+- **React + Node radni projekat:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions-react-node`.
+- **GitHub:** privatni `retailmediacenter/web-solutions`. V41.5 se šalje samo na testnu granu `migration/v41-5-booking` dok ne prođe lokalnu proveru.
+- **Render:** `main` ostaje netaknut dok se V41.5 ne odobri; postojeći API nije automatski redeploy-ovan ovim paketom.
+- **Business Registry V1:** i dalje sadrži samo business/data činjenice i asset namespace. **Booking mode, CTA, section order i modal ponašanje nisu u Registriju.**
 
-## Šta je već radilo u V41.2 i ostaje neizmenjeno
+## Stabilna osnova iz V41.4
 
-1. Mesara: obavezno DA/NE za pripremu, Sirovo/Grilovano samo gde ima smisla, kg ±0,5, cena i sticky subtotal.
-2. Vinoteka: obavezno DA/NE za degustacije, sekcija i forma samo ako je DA; link „Vođena degustacija“ radi i unutar React Preview iframe-a, kao i u preuzetom ZIP-u.
-3. Obuća: veličine, korpa ako je cilj kupovina, odnosno upit o dostupnosti ako nije. 
-4. Jedinstveni statički renderer i pregled bez propuštanja Advisor/Registry/Generator izvornog koda u export.
+Ostaju funkcionalni Mesara, Vinoteka, Obuća i 10 retail/catalog scenarija. Zadržani su Commerce, sticky cart, varijante, Viber/WhatsApp/kopiranje zahteva i dogovorena oznaka za auto-delove **„Zatraži potvrdu dostupnosti“**.
 
-## V41.3 — prethodnih 10 novih scenarija (ukupno 13)
+## V41.5 — Universal Booking Engine
 
-| Delatnost | V39.5 osnova | Testna logika |
+Jedan data-driven Booking renderer pokriva četiri poslovna režima:
+
+- `appointment` — usluga + datum + vreme;
+- `reservation` — rezervacija + datum + vreme + broj osoba/gostiju;
+- `consultation` — tema + način razgovora + datum + vreme;
+- `request-slot` — zahtev za okvirni termin; kod terenskih/servisnih poslova koristi datum + doba dana, uz relevantne podatke (vozilo, lokacija, problem).
+
+**Ključno pravilo:** Advisor uvek postavlja eksplicitno poslovno pitanje. Odgovor **NE** ne prikazuje lažnu booking formu ni datum/vreme; ostaje običan kontakt upit. Odgovor **DA** uključuje Booking modul. Sistem priprema zahtev; **ne tvrdi da je termin slobodan niti potvrđen**.
+
+| Delatnost | Mode | Advisor pitanje |
 |---|---|---|
-| Modni butik | 17 originalnih kuriranih proizvoda/slika | korpa + veličina/boja |
-| Mini market | 12 originalnih proizvoda/slika | korpa + sticky total |
-| Prodavnica pića | 15 originalnih proizvoda/slika | korpa + opciona varijanta |
-| Kućni dekor | 6 originalnih proizvoda/slika | korpa + boja/dimenzije |
-| Prodavnica elektronike | 7 originalnih proizvoda/slika | korpa + model/varijanta |
-| Prodavnica telefona | 10 originalnih proizvoda/slika | korpa + model/boja |
-| Salon nameštaja | 12 originalnih proizvoda/slika | **upit**, bez izmišljene kupovine |
-| Auto delovi | 12 originalnih proizvoda/slika | porudžbine ili upit (poseban odgovor), marka/model/godište |
-| Vodovodni materijal | 12 originalnih proizvoda/slika | **upit** + specifikacija |
-| Elektromaterijal | 12 originalnih proizvoda/slika | **upit** + specifikacija |
+| Frizerski salon | `appointment` | Da li klijenti mogu da zatraže termin preko sajta? |
+| Barber shop | `appointment` | Da li prihvatate zahteve za termin ili radite samo bez zakazivanja? |
+| Beauty salon | `appointment` | Da li klijenti mogu da zatraže termin za tretman? |
+| Nail salon | `appointment` | Da li klijenti mogu da zakažu tretman noktiju? |
+| Masaža / Spa / Wellness | `appointment` | Da li klijenti mogu da zatraže termin za masažu? |
+| Fizioterapija | `appointment` | Da li pacijenti mogu da zatraže termin za tretman? |
+| Optika | `appointment` | Da li u vašoj optici radite pregled vida i primate zahteve za termin? |
+| Restoran | `reservation` | Da li primate rezervacije stolova? |
+| Kafić | `reservation` | Da li gosti mogu da rezervišu sto? |
+| Auto servis | `request-slot` | Da li klijenti preko sajta mogu da traže željeni termin za servis? |
+| Vulkanizer / gume | `request-slot` | Da li klijenti mogu da zatraže termin u vulkanizerskoj radnji? |
+| Servis kućnih aparata | `request-slot` | Da li prihvatate zahteve za termin intervencije preko sajta? |
+| Klima servis | `request-slot` | Da li korisnici mogu da zatraže termin za klima-servis? |
+| Vodoinstalater | `request-slot` | Da li korisnici mogu da traže okvirni termin izlaska na teren? |
+| Električar | `request-slot` | Da li korisnici mogu da traže okvirni termin intervencije? |
+| Servis telefona | `request-slot` | Da li primate zahteve za termin predaje telefona na servis? |
+| Knjigovodstvo | `consultation` | Da li novi klijenti mogu da zatraže termin prvog razgovora? |
+| Poslovni konsultant | `consultation` | Da li klijenti mogu da zatraže termin konsultacije? |
+| Advokatska kancelarija | `consultation` | Da li primate zahteve za termin konsultacije preko sajta? |
+| Dečija igraonica | `reservation` | Da li primate zahteve za rezervaciju rođendana? |
+| Prostor za događaje | `reservation` | Da li primate upite za datum i termin događaja? |
+| Stolar | `request-slot` | Da li klijenti mogu da zatraže termin za izlazak ili merenje? |
+| Moler / farbar | `request-slot` | Da li klijenti mogu da zatraže termin obilaska i procene radova? |
+| Keramičar | `request-slot` | Da li klijenti mogu da zatraže termin obilaska i procene radova? |
 
-V39.5 `business-commerce-registry-v39-5` čuva istorijski početni `cart`/`inquiry` model. U V41.4 Advisor za telefon, mini-market i auto-delove postavlja izričito DA/NE o porudžbinama; odgovor definiše operativni modul nezavisno od marketinškog cilja. Auto-delovi zadržavaju obavezne podatke o vozilu i zasebnu proveru kompatibilnosti. Testne pozitivne cene su **ilustrativne, nisu stvarni cenovnici**. Korisnik može da proveri prikaz i sumiranje; potvrda dostupnosti i plaćanje ne postoje. Model/boja/specifikacija pamte se zasebno po korpinoj stavci ili se šalju kao deo upita. Nove delatnosti koriste svoje originalne JPEG-ove iz V39.5 arhive, ne generičke placeholder slike.
+### Posebna pravila
 
-**Granice:** izvorni V39.5 sadrži i dodatnu business-specific logiku, Trust, Reviews, razne uslužne/booking sekcije i 5 stilova. V41.4 još **ne dokazuje potpun vizuelni i poslovni paritet** tih dodatnih modula, niti uvodi Universal Booking za nove kategorije. Cena u testu se mora zameniti realnom pre objavljivanja klijenta. U produkciji se i dalje koristi stari frontend.
+- **Optika:** pregled vida i zakazivanje postoje samo ako korisnik potvrdi da optika zaista radi pregled vida.
+- **Healthcare (fizioterapija):** nema polja za simptome, dijagnozu ili osetljive zdravstvene podatke; samo usluga, termin i kontakt.
+- **Restoran/kafić:** rezervacija koristi broj osoba; nema izmišljene live dostupnosti.
+- **Igraonica/event venue:** rezervacija može da prikupi tip događaja i broj gostiju.
+- **Auto-servis/vulkanizer:** vozilo je relevantno polje; `request-slot` koristi željeni datum i doba dana umesto lažno preciznog raspoloživog termina.
+- **Majstori/terenske intervencije:** lokacija i kratak opis posla se prikazuju gde imaju poslovnog smisla.
+- **Profesionalne usluge:** konsultacije mogu biti u kancelariji, telefonom ili onlajn.
 
-## V41.4 — kontrolisane UX izmene (24.09.2026)
+## Preview i ZIP
 
-- Obavezno **„Da li kupci mogu da naruče proizvode preko sajta?“** za telefon, mini-market i auto-delove. DA uključuje korpu nezavisno od primarnog marketinškog cilja; NE daje katalog i proveru dostupnosti.
-- Auto-delovi: kada je korpa uključena, postoji i odvojeno dugme **Proveri kompatibilnost**, a marka, model i godište vozila su obavezni za slanje.
-- Izbačena generička akcija „Podeli“. Nakon pripreme poruke nude se **Kopiraj / Viber / WhatsApp** za porudžbine i degustacije.
-- **Ograničenje Vibera:** zvaničan deljeni tekst do 200 znakova i mobilni URL scheme; može biti blokiran u iframe Preview-u. Za duge poruke dugme Kopiraj čuva pun zahtev. Za pravo slanje testirati mobilni ZIP sa instaliranim Viberom; generisanje poruke nije potvrda porudžbine.
-- Mesara, Vinoteka, Obuća i preostali V41.3 katalozi ne menjaju se; V39.5 i Render `main` ostaju netaknuti.
+- React Preview i preuzeti ZIP koriste isti server-rendered HTML.
+- `booking.css` i `booking-runtime.js` ulaze u svaki servisni ZIP.
+- Interni anchor linkovi rade u Preview iframe-u bez napuštanja studija.
+- Modal nakon submit-a nudi **Kopiraj zahtev / Viber / WhatsApp**.
+- Mobile ima sticky CTA za termin/upit.
 
-## Provera i primena
+## Provere V41.5
 
-1. Raspakovati V41.4 ZIP **van** postojećih foldera.
-2. Pokrenuti `APPLY_V41_4.bat` sa lokalnim V41.3 projektom (čist Git). Skripta pravi rezervnu kopiju i novu testnu granu, pokreće `npm test` i `npm run build` i nudi opciono slanje **samo te grane** na GitHub.
-3. Restartovati lokalni server i testirati oba odgovora DA/NE za telefon, mini-market i auto-delove pri ciljevima kupovine, posete i kataloga. Proveriti Viber dugme i obaveznu kompatibilnost; isto proveriti i kroz preuzeti ZIP.
-4. U ovom paketu Node regresija i generisani HTML testovi su pokrenuti lokalno u sandbox-u. Vite build na Windowsu ostaje obavezan pre eventualnog push-a; Render nije automatski ažuriran.
+U sandbox proveri:
 
-## Redosled završetka preostalih 59 delatnosti
+- `npm test`: **37/37 PASS** (11 novih V41.5 booking testova + sve prethodne regresije).
+- Provereno: 72 Registry entry-ja ostaju očuvana; V41.5 dodaje 24 servisna scenarija bez unošenja renderer/CTA logike u Registry.
+- Provereni su appointment, reservation, consultation i request-slot HTML/field ugovori, uslovna optika, absence-of-booking scenario, ZIP sadržaj i originalni asset namespace.
+- Vite produkcijski build **mora da prođe na Windows računaru** kroz `APPLY_V41_5.bat`, jer sandbox nema instalirane npm zavisnosti (`vite` nije dostupan bez `node_modules`). Skripta neće ponuditi push ako build padne.
 
-1. **V41.5 – preostali retail/hibridne usluge:** kategorije s mešovitim Commerce i servisnim modelom (optika, servis telefona, farmacija, gume i dr.).
-2. **V41.6 – Universal Booking** za beauty, ugostiteljstvo, healthcare, profesionalne usluge, majstore, događaje i rental. Svaka varijanta ima poslovno uslovno Advisor pitanje, polja i svoj request/confirmation model; nikad lažno potvrđivanje bez persistence/availability servisa.
-3. **V41.7 – ostale industrije i puni modulni paritet** (reviews, trust, team, FAQ, hibridi, lokacije/mapa, svih pet stilova) i automatizovani QA za svih 72.
-4. **V41.8 – Editor, export/publish i finalno usaglašavanje** sa originalnim V39.5 frontendom. Tek tada odluka o zameni javnog Webglobe sajta.
+## Kako primeniti V41.5
 
-**Politika kvaliteta:** nijedna delatnost nije „migrirana“ samo zato što je u registru. Za svaki ID mora da prođe Advisor → završni korak → Node Generate → Preview → relevantna poslovna akcija → samostalan ZIP, plus bar jedna mobilna provera po vrsti modula.
+1. Raspakovati V41.5 paket **van** radnog projekta.
+2. Zaustaviti stari `npm run dev` prozor.
+3. Pokrenuti `APPLY_V41_5.bat`. Skripta zahteva čistu V41.4 bazu, pravi backup, otvara granu `migration/v41-5-booking`, kopira patch, zatim pokreće `npm test` i `npm run build`.
+4. Restartovati `START_LOCAL_DEV.bat` i praktično proveriti bar: Frizerski salon, Restoran, Auto-servis, Konsultant, Optiku sa DA i NE, plus jedan majstorski scenario na mobile.
+5. Push na GitHub je opcion i ide samo na testnu granu. **Render main i Webglobe se ne menjaju automatski.**
+
+## Sledeće
+
+Nakon odobrene V41.5 baze: migracija preostalih 35 delatnosti i hibrida, zatim reviews/trust/team/FAQ/lokacije/mapa i puni petostilski paritet. Nijedna delatnost nije „migrirana“ dok ne prođe Advisor → Generate → Preview → poslovna akcija → samostalan ZIP.
