@@ -1,10 +1,24 @@
-# RMC Web Solutions — React + Node (V41 foundation)
+# RMC Web Solutions — React + Node
 
-Migraciona osnova iz stabilnog V39.5, **nije završen generator**.
+**V41.1: funkcionalna migracija prva 3 poslovna scenarija iz V39.5.**
 
-1. `npm install`
-2. `npm test`
-3. `npm run dev`
-4. `http://localhost:5173` (novi React pilot), `http://localhost:3000/legacy/` (stari V39.5 lokalno)
+- **React + Vite:** Advisor tok i interaktivni preview u studiju.
+- **Node + Express:** Advisor odluke, Business Registry V1 (72 činjenice), priprema konfiguracije i ZIP export.
+- **Jedan generator sajta:** isti HTML/CSS/JS dobija React preview i preuzeti ZIP. Posetiocu se ne šalju Advisor, Registry i kod generatora.
+- **Radi trenutno:** Mesara, Vinoteka, Prodavnica obuće. Preostalih 69 scenarija i ostali moduli još nisu kompletno migrirani.
 
-Pročitaj **PROJECT_STATUS.md** za status, arhitekturu, testove i sled rada.
+Lokalno pokretanje iz ovog foldera na Windowsu:
+
+```cmd
+npm test
+npm run build
+npm run dev
+```
+
+Otvori **http://localhost:5173**. Node API radi na **http://localhost:3000/api/health**. Originalni V39.5 ostaje na disku zasebno; u lokalnom studiju postoji link za otvaranje preko Node servera.
+
+**Render:** produkcijski API je `rmc-web-solutions-api.onrender.com`. Za React na Webglobe-u postaviti `CLIENT_ORIGIN=https://retailmediacenter.com` na Renderu (ili odgovarajući novi domen) radi CORS-a. Ne objavljivati stari izvorni kod V39.5 na Render.
+
+**Pre objavljivanja:** sve demo cene moraju biti zamenjene stvarnim cenama. Korpa i degustacija pripremaju poruke, bez automatske naplate ili potvrđivanja raspoloživosti. React može statički da se objavi u `/web-solutions/` nakon `npm run build`, ali to *ne treba uraditi* dok kompletan proizvod ne zameni stari sajt.
+
+Za arhitekturu, trenutno stanje, testove i sledeće korake koristiti **PROJECT_STATUS.md** (jedini glavni projektni status dokument).

@@ -1,0 +1,90 @@
+{
+  "shoe-shop": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "fashion-shop": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "hair-salon": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "wine-shop": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "liquor-store": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "butcher-shop": {
+    "mode": "cart",
+    "variantNote": true,
+    "preorder": true,
+    "preparation": true
+  },
+  "grocery-store": {
+    "mode": "cart",
+    "variantNote": false,
+    "pickup": true
+  },
+  "furniture-store": {
+    "mode": "inquiry",
+    "variantNote": true
+  },
+  "home-decor": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "gift-shop": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "sports-shop": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "auto-service": {
+    "mode": "inquiry",
+    "variantNote": true
+  },
+  "auto-parts": {
+    "mode": "inquiry",
+    "variantNote": true,
+    "compatibility": true
+  },
+  "tire-shop": {
+    "mode": "inquiry",
+    "variantNote": true,
+    "compatibility": true
+  },
+  "plumbing-supplies": {
+    "mode": "inquiry",
+    "variantNote": true,
+    "specification": true
+  },
+  "electrical-supplies": {
+    "mode": "inquiry",
+    "variantNote": true,
+    "specification": true
+  },
+  "electronics-store": {
+    "mode": "cart",
+    "variantNote": true
+  },
+  "phone-store": {
+    "mode": "cart",
+    "variantNote": true,
+    "reserve": true
+  },
+  "repair-phone": {
+    "mode": "inquiry",
+    "variantNote": true
+  },
+  "pharmacy": {
+    "mode": "availability",
+    "variantNote": false
+  }
+}

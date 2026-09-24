@@ -1,0 +1,267 @@
+{
+  "butcher-shop": {
+    "label": "Mesara",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/butcher-shop/hero/butcher_shop_hero_counter_01.jpg",
+    "headline": "Sveže meso. Spremno za vašu trpezu.",
+    "subtitle": "Kvalitetni komadi, dnevna ponuda i priprema po dogovoru.",
+    "products": [
+      {
+        "id": "butcher-1",
+        "title": "Juneći steak",
+        "category": "Premium komadi",
+        "price": 2290,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_beef_steak_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-2",
+        "title": "Juneće pečenje",
+        "category": "Junetina",
+        "price": 849,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_beef_roast_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-3",
+        "title": "Svinjski vrat",
+        "category": "Roštilj",
+        "price": 999,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_pork_neck_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-4",
+        "title": "Svinjske krmenadle",
+        "category": "Svinjetina",
+        "price": 1090,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_pork_chops_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-5",
+        "title": "Pileći file",
+        "category": "Piletina",
+        "price": 899,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_chicken_breast_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-6",
+        "title": "Pileći batak",
+        "category": "Piletina",
+        "price": 649,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_chicken_thighs_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-7",
+        "title": "Jagnjeće kotlete",
+        "category": "Premium komadi",
+        "price": 2890,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_lamb_chops_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-8",
+        "title": "Mleveno meso",
+        "category": "Za ručak",
+        "price": 990,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_minced_meat_01.jpg",
+        "grillable": false
+      },
+      {
+        "id": "butcher-9",
+        "title": "Ćevapi",
+        "category": "Roštilj",
+        "price": 1190,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_cevapi_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-10",
+        "title": "Kobasice",
+        "category": "Roštilj",
+        "price": 1390,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_sausages_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-11",
+        "title": "Ražnjići",
+        "category": "Roštilj",
+        "price": 1290,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_skewers_01.jpg",
+        "grillable": true
+      },
+      {
+        "id": "butcher-12",
+        "title": "Marinirano meso",
+        "category": "Spremno za pripremu",
+        "price": 1490,
+        "unit": "kg",
+        "step": 0.5,
+        "image": "assets/images/curated/retail/butcher-shop/products/butcher_shop_product_marinated_meat_01.jpg",
+        "grillable": true
+      }
+    ]
+  },
+  "wine-shop": {
+    "label": "Vinoteka",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/wine-shop/hero/wine_shop_hero_signature_selection.jpg",
+    "tastingImage": "assets/images/curated/retail/wine-shop/showcase/experience/wine_shop_tasting_event_01.jpg",
+    "headline": "Vina za trenutke koji se pamte.",
+    "subtitle": "Selekcija vina za svaku priliku, uz degustacije kada ih organizujemo.",
+    "products": [
+      {
+        "id": "wine-1",
+        "title": "Cabernet izbor",
+        "category": "Crvena vina",
+        "price": 4790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_premium_red_wine_01.jpg"
+      },
+      {
+        "id": "wine-2",
+        "title": "Chardonnay izbor",
+        "category": "Bela vina",
+        "price": 4890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_premium_white_wine_01.jpg"
+      },
+      {
+        "id": "wine-3",
+        "title": "Prosecco",
+        "category": "Penušava vina",
+        "price": 2290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_prosecco_01.jpg"
+      },
+      {
+        "id": "wine-4",
+        "title": "Rosé selekcija",
+        "category": "Rosé",
+        "price": 2690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_rose_wine_01.jpg"
+      },
+      {
+        "id": "wine-5",
+        "title": "Penušavo vino",
+        "category": "Penušava vina",
+        "price": 3590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_sparkling_wine_01.jpg"
+      },
+      {
+        "id": "wine-6",
+        "title": "Penušava selekcija",
+        "category": "Penušava vina",
+        "price": 3190,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/wine-shop/products/wine_shop_product_sparkling_wine_02.jpg"
+      }
+    ]
+  },
+  "shoe-shop": {
+    "label": "Prodavnica obuće",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/shoe-shop/hero/shoe_store_hero_01.jpg",
+    "headline": "Pravi par za svaki korak.",
+    "subtitle": "Obuća za svaki dan i posebne prilike.",
+    "products": [
+      {
+        "id": "shoe-1",
+        "title": "Elegantne mokasine",
+        "category": "Muška obuća",
+        "price": 7990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/shoe_shop_product_loafers_01.jpg"
+      },
+      {
+        "id": "shoe-2",
+        "title": "Sandale",
+        "category": "Ženska obuća",
+        "price": 5990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/shoe_shop_product_sandals_01.jpg"
+      },
+      {
+        "id": "shoe-3",
+        "title": "Kopačke",
+        "category": "Sport",
+        "price": 8990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/fashion_product_02_kopacke.jpg"
+      },
+      {
+        "id": "shoe-4",
+        "title": "Patike",
+        "category": "Sport",
+        "price": 9990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/fashion_product_01_patike.jpg"
+      },
+      {
+        "id": "shoe-5",
+        "title": "Elegantne cipele",
+        "category": "Ženska obuća",
+        "price": 11990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/fashion_boutique_service_04_product_shoes.jpg"
+      },
+      {
+        "id": "shoe-6",
+        "title": "Duboke čizme",
+        "category": "Ženska obuća",
+        "price": 13990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/shoe_shop_product_ankle_boots_01.jpg"
+      },
+      {
+        "id": "shoe-7",
+        "title": "Duboke patike",
+        "category": "Sport",
+        "price": 10990,
+        "unit": "par",
+        "step": 1,
+        "image": "assets/images/curated/retail/shoe-shop/services/fashion_product_03_duboke_patike.jpg"
+      }
+    ]
+  }
+}

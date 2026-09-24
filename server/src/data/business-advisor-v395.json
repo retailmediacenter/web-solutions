@@ -1,0 +1,4498 @@
+{
+  "hair-salon": {
+    "label": "Frizerski salon",
+    "group": "Beauty",
+    "logic": {
+      "goal": "Termin / poziv",
+      "cta": "Zakaži / Pozovi",
+      "trust": "stilista/ekipa + portfolio + ocene + realni radovi",
+      "modules": [
+        "Usluge",
+        "galerija",
+        "cene",
+        "ljudi",
+        "mapa",
+        "reviews"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće zakazuju kod vas?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Online rezervacija"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite posebno da istaknemo?",
+          "options": [
+            "Frizure i radovi",
+            "Stiliste",
+            "Cenovnik",
+            "Recenzije",
+            "Brzo zakazivanje"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "gallery",
+          "people",
+          "reviews",
+          "map",
+          "pricing",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "booking",
+          "whatsapp",
+          "viber",
+          "promotions"
+        ],
+        "disabled": [
+          "ecommerce",
+          "generic lead form"
+        ]
+      },
+      "form": {
+        "description": "Usluga + željeni termin + telefon",
+        "fields": [
+          "telefon",
+          "adresa",
+          "radno vreme",
+          "način zakazivanja",
+          "ključne usluge"
+        ]
+      },
+      "counterPool": [
+        "broj klijenata",
+        "broj frizura/tretmana",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako imaju smisla"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Booking se uključuje samo ako ga salon realno koristi; mali salon može biti phone/message-first.",
+      "hero": {
+        "title": "Frizura kojoj se vraćate.",
+        "subtitle": "Upoznajte usluge, stiliste i jednostavno izaberite termin koji vam odgovara."
+      }
+    }
+  },
+  "barber-shop": {
+    "label": "Barber shop",
+    "group": "Beauty",
+    "logic": {
+      "goal": "Termin / dolazak",
+      "cta": "Pozovi / Zakaži",
+      "trust": "barber + portfolio + reviews + jasna cena",
+      "modules": [
+        "Usluge",
+        "cenovnik",
+        "galerija",
+        "mapa",
+        "reviews"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće zakazuju?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Walk-in",
+            "Online rezervacija"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda barber shop?",
+          "options": [
+            "Barbera",
+            "Fade/brada radove",
+            "Cenovnik",
+            "Recenzije",
+            "Atmosferu"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "gallery",
+          "people",
+          "reviews",
+          "map",
+          "pricing",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "booking",
+          "whatsapp",
+          "walk-in info"
+        ],
+        "disabled": [
+          "ecommerce",
+          "long generic forms"
+        ]
+      },
+      "form": {
+        "description": "Jednostavan termin ili direktan kontakt",
+        "fields": [
+          "telefon",
+          "adresa",
+          "radno vreme",
+          "način zakazivanja"
+        ]
+      },
+      "counterPool": [
+        "broj klijenata",
+        "šišanja mesečno",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Walk-in mora biti podržan kao legitiman business mode."
+    }
+  },
+  "beauty-salon": {
+    "label": "Beauty salon",
+    "group": "Beauty",
+    "logic": {
+      "goal": "Booking",
+      "cta": "Zakaži tretman",
+      "trust": "stručnost + pre/posle gde je primereno + reviews",
+      "modules": [
+        "Tretmani",
+        "cene",
+        "ljudi",
+        "booking",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti rezervišu tretmane?",
+          "options": [
+            "Telefon/poruka",
+            "Rezervaciona forma",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da bude glavni razlog za izbor salona?",
+          "options": [
+            "Tretmani",
+            "Rezultati",
+            "Stručnost",
+            "Recenzije",
+            "Cenovnik"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "pricing",
+          "booking",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "gallery",
+          "packages",
+          "promotions"
+        ],
+        "disabled": [
+          "ecommerce unless explicitly needed"
+        ]
+      },
+      "form": {
+        "description": "Tretman + datum + vreme + telefon",
+        "fields": [
+          "telefon",
+          "adresa",
+          "tretmani",
+          "radno vreme",
+          "način zakazivanja"
+        ]
+      },
+      "counterPool": [
+        "broj tretmana",
+        "broj klijenata",
+        "ocena",
+        "broj recenzija",
+        "sertifikati kao zaseban trust element"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Tretman je centralna jedinica sadržaja."
+    }
+  },
+  "nail-salon": {
+    "label": "Nail salon",
+    "group": "Beauty",
+    "logic": {
+      "goal": "Booking",
+      "cta": "Zakaži termin",
+      "trust": "portfolio + reviews + higijena/stručnost",
+      "modules": [
+        "Usluge",
+        "galerija",
+        "cenovnik",
+        "booking",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti zakazuju termin?",
+          "options": [
+            "Telefon/poruka",
+            "Rezervaciona forma",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da najviše istaknemo?",
+          "options": [
+            "Portfolio noktiju",
+            "Usluge",
+            "Cenovnik",
+            "Recenzije",
+            "Brzo zakazivanje"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "gallery",
+          "reviews",
+          "map",
+          "pricing",
+          "booking",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "people",
+          "instagram/social proof",
+          "promotions"
+        ],
+        "disabled": [
+          "generic corporate sections"
+        ]
+      },
+      "form": {
+        "description": "Usluga + termin",
+        "fields": [
+          "telefon",
+          "adresa",
+          "usluge",
+          "radno vreme",
+          "način zakazivanja"
+        ]
+      },
+      "counterPool": [
+        "broj tretmana",
+        "broj klijenata",
+        "ocena",
+        "broj recenzija",
+        "broj dizajna/boja ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Vizuelni portfolio ima prioritet nad dugim tekstom."
+    }
+  },
+  "massage": {
+    "label": "Masaža / Spa / Wellness",
+    "group": "Beauty",
+    "logic": {
+      "goal": "Booking",
+      "cta": "Zakaži tretman",
+      "trust": "terapeut + stručnost + ambijent + reviews",
+      "modules": [
+        "Tretmani",
+        "trajanje",
+        "cena",
+        "ljudi",
+        "booking",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako se kod vas rezervišu tretmani?",
+          "options": [
+            "Telefon/poruka",
+            "Rezervaciona forma",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Vrste masaža",
+            "Terapeuta",
+            "Ambijent",
+            "Pakete",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "pricing",
+          "booking",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "packages",
+          "gift vouchers",
+          "gallery"
+        ],
+        "disabled": [
+          "ecommerce unless vouchers are sold"
+        ]
+      },
+      "form": {
+        "description": "Tretman + trajanje + termin",
+        "fields": [
+          "telefon",
+          "adresa",
+          "tretmani",
+          "trajanje",
+          "cene",
+          "način zakazivanja"
+        ]
+      },
+      "counterPool": [
+        "broj tretmana",
+        "broj klijenata",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Trajanje tretmana i paket ponuda su poslovno važni."
+    }
+  },
+  "kindergarten": {
+    "label": "Vrtić",
+    "group": "Education",
+    "logic": {
+      "goal": "Zakazivanje posete",
+      "cta": "Zakažite posetu",
+      "trust": "vaspitači + prostor + roditeljske recenzije",
+      "modules": [
+        "Program",
+        "prostor",
+        "ljudi",
+        "aktivnosti",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako roditelji najčešće dolaze do upisa?",
+          "options": [
+            "Zakažu posetu",
+            "Pozovu",
+            "Pošalju upit"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da roditelji prvo vide?",
+          "options": [
+            "Program",
+            "Vaspitače",
+            "Prostor",
+            "Aktivnosti",
+            "Iskustva roditelja"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "programs",
+          "people",
+          "gallery",
+          "reviews",
+          "map",
+          "visit-form",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "FAQ",
+          "daily schedule"
+        ],
+        "disabled": [
+          "generic booking calendar",
+          "ecommerce"
+        ]
+      },
+      "form": {
+        "description": "Uzrast deteta + termin + telefon",
+        "fields": [
+          "telefon",
+          "adresa",
+          "uzrast/grupe",
+          "radno vreme",
+          "termini posete"
+        ]
+      },
+      "counterPool": [
+        "broj grupa",
+        "broj dece",
+        "broj aktivnosti",
+        "ocena",
+        "godine rada ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Forma: uzrast deteta + željeni termin posete + telefon."
+    }
+  },
+  "language-school": {
+    "label": "Škola jezika",
+    "group": "Education",
+    "logic": {
+      "goal": "Prijava",
+      "cta": "Prijavi se / Testiraj nivo",
+      "trust": "predavači + rezultati + metodologija",
+      "modules": [
+        "Jezici",
+        "nivoi",
+        "format nastave",
+        "predavači"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako se polaznici prijavljuju?",
+          "options": [
+            "Telefon/poruka",
+            "Prijavna forma",
+            "Test nivoa + prijava"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Jezike",
+            "Predavače",
+            "Metodologiju",
+            "Termine",
+            "Rezultate"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "courses",
+          "teachers",
+          "reviews",
+          "lead-form",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "map",
+          "booking",
+          "level-test",
+          "pricing"
+        ],
+        "disabled": [
+          "ecommerce by default"
+        ]
+      },
+      "form": {
+        "description": "Jezik + nivo + grupa/individualno",
+        "fields": [
+          "jezici",
+          "nivoi",
+          "format nastave",
+          "kontakt",
+          "način prijave"
+        ]
+      },
+      "counterPool": [
+        "broj polaznika",
+        "broj kurseva",
+        "broj jezika",
+        "ocena",
+        "prolaznost ako postoji"
+      ],
+      "mapDefault": "OPCIONO",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Step 2 odlučuje da li se koristi booking/prijava ili samo lead forma."
+    }
+  },
+  "training-center": {
+    "label": "Training centar",
+    "group": "Education",
+    "logic": {
+      "goal": "Prijava na kurs",
+      "cta": "Prijavi se",
+      "trust": "predavači + program + dokaz rezultata",
+      "modules": [
+        "Kursevi",
+        "program",
+        "termini",
+        "predavači"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako se polaznici prijavljuju na kurs?",
+          "options": [
+            "Prijavna forma",
+            "Poziv/poruka",
+            "Online rezervacija mesta"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Kurseve",
+            "Program",
+            "Predavače",
+            "Sertifikate",
+            "Termine"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "courses",
+          "curriculum",
+          "people",
+          "reviews",
+          "enrollment-form",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "map",
+          "booking",
+          "pricing",
+          "certificates"
+        ],
+        "disabled": [
+          "generic contact-only flow"
+        ]
+      },
+      "form": {
+        "description": "Kurs + termin + kontakt",
+        "fields": [
+          "kursevi",
+          "termini",
+          "kontakt",
+          "način prijave"
+        ]
+      },
+      "counterPool": [
+        "broj polaznika",
+        "broj kurseva",
+        "broj sertifikovanih polaznika",
+        "ocena"
+      ],
+      "mapDefault": "OPCIONO",
+      "bookingDefault": "DA/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Termin i program kursa imaju prioritet."
+    }
+  },
+  "event-venue": {
+    "label": "Prostor za događaje",
+    "group": "Events",
+    "logic": {
+      "goal": "Upit za datum",
+      "cta": "Proverite dostupnost termina",
+      "trust": "prostor + realni događaji + reviews",
+      "modules": [
+        "Galerija",
+        "kapacitet",
+        "tipovi događaja",
+        "pogodnosti"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate upite za događaje?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za dostupnost termina"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da bude glavni razlog za izbor prostora?",
+          "options": [
+            "Ambijent",
+            "Kapacitet",
+            "Lokacija",
+            "Oprema",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "gallery",
+          "capacity",
+          "event-types",
+          "reviews",
+          "availability-inquiry",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "packages",
+          "pricing",
+          "people"
+        ],
+        "disabled": [
+          "real-time availability unless integrated"
+        ]
+      },
+      "form": {
+        "description": "Datum + vrsta događaja + broj gostiju",
+        "fields": [
+          "datum događaja",
+          "tip događaja",
+          "broj gostiju",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj događaja",
+        "maksimalni kapacitet",
+        "broj tipova postavki",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "UPIT",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Ne tvrditi da je termin slobodan; forma samo kvalifikuje upit."
+    }
+  },
+  "kids-playroom": {
+    "label": "Dečija igraonica",
+    "group": "Events",
+    "logic": {
+      "goal": "Rezervacija rođendana",
+      "cta": "Rezerviši termin",
+      "trust": "prostor + iskustva roditelja + bezbednost",
+      "modules": [
+        "Paketi",
+        "galerija",
+        "aktivnosti",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako roditelji rezervišu rođendan?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za termin",
+            "Online rezervacija"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Pakete",
+            "Prostor",
+            "Aktivnosti",
+            "Bezbednost",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "packages",
+          "gallery",
+          "activities",
+          "reviews",
+          "map",
+          "booking-or-inquiry",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "people",
+          "FAQ"
+        ],
+        "disabled": [
+          "generic contact-only form"
+        ]
+      },
+      "form": {
+        "description": "Datum + uzrast + broj dece",
+        "fields": [
+          "datum",
+          "uzrast",
+          "broj dece",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj rođendana",
+        "broj dece",
+        "broj aktivnosti",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Forma mora biti rođendanska, ne generička."
+    }
+  },
+  "bakery": {
+    "label": "Pekara",
+    "group": "Food",
+    "logic": {
+      "goal": "Dovesti kupca",
+      "cta": "Posetite nas",
+      "trust": "proizvod + svežina + reviews + lokacija",
+      "modules": [
+        "Proizvodi",
+        "dnevna ponuda",
+        "radno vreme",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da ljudi koriste sajt?",
+          "options": [
+            "Da dođu u pekaru",
+            "Da vide ponudu",
+            "Da pozovu za veću porudžbinu"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da istaknemo?",
+          "options": [
+            "Svežu ponudu",
+            "Najprodavanije proizvode",
+            "Lokaciju",
+            "Recenzije",
+            "Akcije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "daily-offer",
+          "reviews",
+          "map",
+          "opening-hours",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "order-inquiry",
+          "promotions",
+          "multiple-locations"
+        ],
+        "disabled": [
+          "booking",
+          "generic lead form"
+        ]
+      },
+      "form": {
+        "description": "Bez forme po defaultu",
+        "fields": [
+          "adresa",
+          "radno vreme",
+          "glavne kategorije proizvoda",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj artikala",
+        "broj vrsta peciva",
+        "dnevna proizvodnja",
+        "broj lokacija",
+        "broj porudžbina",
+        "godine tradicije samo ako ima smisla"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Counter vrednosti se generišu dinamički i menjaju po sajtu; nova pekara ne dobija izmišljene godine tradicije.",
+      "hero": {
+        "title": "Sveže iz peći, kad vam zatreba.",
+        "subtitle": "Pogledajte dnevnu ponudu, radno vreme i pronađite najbližu lokaciju."
+      }
+    }
+  },
+  "pastry": {
+    "label": "Poslastičarnica",
+    "group": "Food",
+    "logic": {
+      "goal": "Porudžbina / dolazak",
+      "cta": "Poruči / Pozovi",
+      "trust": "izgled proizvoda + custom rad + reviews",
+      "modules": [
+        "Proizvodi",
+        "galerija",
+        "prigode",
+        "lokacija"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate porudžbine?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za porudžbinu",
+            "Samo prodaja u lokalu"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Torte po meri",
+            "Kolače",
+            "Galeriju",
+            "Recenzije",
+            "Lokaciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "gallery",
+          "reviews",
+          "map",
+          "order-inquiry",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "occasion-categories",
+          "delivery-info"
+        ],
+        "disabled": [
+          "booking"
+        ]
+      },
+      "form": {
+        "description": "Datum + vrsta proizvoda + broj osoba",
+        "fields": [
+          "datum",
+          "tip proizvoda",
+          "broj osoba",
+          "telefon",
+          "lokacija ako dostava"
+        ]
+      },
+      "counterPool": [
+        "broj porudžbina",
+        "broj torti/kolača u ponudi",
+        "ocena",
+        "broj recenzija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Za custom torte forma mora pitati datum i broj osoba."
+    }
+  },
+  "cafe": {
+    "label": "Kafić",
+    "group": "Food",
+    "logic": {
+      "goal": "Dolazak",
+      "cta": "Posetite nas / Rezerviši",
+      "trust": "ambijent + ponuda + reviews",
+      "modules": [
+        "Ponuda",
+        "galerija",
+        "radno vreme",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Šta želite da bude glavna akcija?",
+          "options": [
+            "Dolazak u lokal",
+            "Poziv",
+            "Rezervacija stola"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da istaknemo?",
+          "options": [
+            "Atmosferu",
+            "Ponudu",
+            "Lokaciju",
+            "Događaje",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "menu-or-offer",
+          "gallery",
+          "reviews",
+          "map",
+          "opening-hours",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "table-inquiry",
+          "events",
+          "people"
+        ],
+        "disabled": [
+          "complex booking unless selected"
+        ]
+      },
+      "form": {
+        "description": "Bez booking forme po defaultu",
+        "fields": [
+          "adresa",
+          "radno vreme",
+          "telefon",
+          "način rezervacije ako postoji"
+        ]
+      },
+      "counterPool": [
+        "broj napitaka",
+        "broj gostiju mesečno",
+        "ocena",
+        "broj recenzija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Rezervacija nije default; uključuje se samo ako je deo poslovanja."
+    }
+  },
+  "restaurant": {
+    "label": "Restoran",
+    "group": "Food",
+    "logic": {
+      "goal": "Rezervacija / dolazak",
+      "cta": "Rezerviši sto",
+      "trust": "chef/kuvar + hrana + reviews + ambijent",
+      "modules": [
+        "Meni",
+        "specijaliteti",
+        "galerija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da gosti rezervišu?",
+          "options": [
+            "Telefon",
+            "Forma za rezervaciju",
+            "Spoljni booking sistem"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da bude srce sajta?",
+          "options": [
+            "Meni",
+            "Specijaliteti",
+            "Kuvar",
+            "Ambijent",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "menu",
+          "gallery",
+          "reviews",
+          "map",
+          "reservation",
+          "chef/people",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "events",
+          "delivery",
+          "awards",
+          "wine-list"
+        ],
+        "disabled": [
+          "generic lead form"
+        ]
+      },
+      "form": {
+        "description": "Datum + vreme + broj osoba",
+        "fields": [
+          "datum",
+          "vreme",
+          "broj osoba",
+          "telefon",
+          "booking način"
+        ]
+      },
+      "counterPool": [
+        "broj jela",
+        "broj gostiju",
+        "broj specijaliteta",
+        "ocena",
+        "broj recenzija",
+        "godine rada samo ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Kuvar je poseban trust/prodajni element, ne samo generički team.",
+      "hero": {
+        "title": "Meni i sto za vaš sledeći dolazak.",
+        "subtitle": "Pogledajte specijalitete, ambijent i pošaljite zahtev za rezervaciju."
+      }
+    }
+  },
+  "fast-food": {
+    "label": "Fast food",
+    "group": "Food",
+    "logic": {
+      "goal": "Porudžbina",
+      "cta": "Poruči / Pozovi",
+      "trust": "hrana + brzina + cena + reviews",
+      "modules": [
+        "Meni",
+        "paketi",
+        "dostava/preuzimanje"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate porudžbine?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Link ka dostavi",
+            "Preuzimanje u lokalu"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Meni",
+            "Bestsellere",
+            "Brzinu",
+            "Cene/pakete",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "menu",
+          "products",
+          "reviews",
+          "order-action",
+          "opening-hours",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "map",
+          "delivery-link",
+          "promotions"
+        ],
+        "disabled": [
+          "table booking",
+          "cafe fallback"
+        ]
+      },
+      "form": {
+        "description": "Izbor jela ili link ka dostavi / poziv",
+        "fields": [
+          "telefon",
+          "radno vreme",
+          "kanal porudžbine",
+          "glavne stavke menija"
+        ]
+      },
+      "counterPool": [
+        "broj jela",
+        "broj porudžbina",
+        "prosečno vreme pripreme",
+        "ocena",
+        "broj recenzija"
+      ],
+      "mapDefault": "DA/OPCIONO",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Nikada ne koristiti cafe business logiku kao zamenu."
+    }
+  },
+  "catering": {
+    "label": "Catering",
+    "group": "Food",
+    "logic": {
+      "goal": "Kvalifikovan lead",
+      "cta": "Zatraži ponudu",
+      "trust": "reference + hrana + organizaciono iskustvo",
+      "modules": [
+        "Ponuda",
+        "vrste događaja",
+        "galerija",
+        "reviews"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako najčešće dolazite do posla?",
+          "options": [
+            "Upit za ponudu",
+            "Telefon/poruka",
+            "Preporuka + kontakt"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da ubedi klijenta?",
+          "options": [
+            "Ponuda",
+            "Događaji",
+            "Hrana",
+            "Reference",
+            "Kapacitet"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "event-types",
+          "offer",
+          "gallery",
+          "reviews",
+          "quote-form",
+          "people",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "packages",
+          "pricing examples"
+        ],
+        "disabled": [
+          "booking calendar",
+          "map unless customer-facing location matters"
+        ]
+      },
+      "form": {
+        "description": "Datum + događaj + broj gostiju + lokacija",
+        "fields": [
+          "datum",
+          "tip događaja",
+          "broj gostiju",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj događaja",
+        "broj posluženih gostiju",
+        "broj menija/paketa",
+        "ocena"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Forma je centralna i business-specific.",
+      "hero": {
+        "title": "Hrana i organizacija za događaj koji pripremate.",
+        "subtitle": "Recite nam datum, broj gostiju i lokaciju. Pripremićemo ponudu prema vašem događaju."
+      }
+    }
+  },
+  "dentist": {
+    "label": "Stomatološka ordinacija",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Termin",
+      "cta": "Zakaži pregled",
+      "trust": "doktor + stručnost + reviews + tehnologija",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "tehnologija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako pacijenti zakazuju pregled?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za termin",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Doktore",
+            "Usluge",
+            "Tehnologiju",
+            "Recenzije",
+            "Rezultate"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "doctors",
+          "reviews",
+          "map",
+          "appointment",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "gallery",
+          "technology",
+          "pricing"
+        ],
+        "disabled": [
+          "ecommerce"
+        ]
+      },
+      "form": {
+        "description": "Usluga/problem + termin",
+        "fields": [
+          "usluga/problem",
+          "termin",
+          "telefon",
+          "adresa"
+        ]
+      },
+      "counterPool": [
+        "broj pacijenata",
+        "broj zahvata",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Medicinski sadržaj mora ostati informativan, bez izmišljanja ishoda."
+    }
+  },
+  "lab": {
+    "label": "Medicinska laboratorija",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Poseta / informacija",
+      "cta": "Pronađi laboratoriju / Kontakt",
+      "trust": "pouzdanost + stručnost + jasne informacije",
+      "modules": [
+        "Analize",
+        "priprema",
+        "radno vreme",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako pacijenti najčešće koriste laboratoriju?",
+          "options": [
+            "Dolaze bez najave",
+            "Zakazuju vađenje",
+            "Zovu za informacije"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Analize",
+            "Pripremu",
+            "Brzinu rezultata",
+            "Lokaciju",
+            "Radno vreme"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "preparation-info",
+          "opening-hours",
+          "map",
+          "reviews",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "appointment",
+          "pricing",
+          "multiple-locations"
+        ],
+        "disabled": [
+          "generic booking if walk-in is normal"
+        ]
+      },
+      "form": {
+        "description": "Vrsta analize opciono",
+        "fields": [
+          "adresa",
+          "radno vreme",
+          "kontakt",
+          "tipovi analiza"
+        ]
+      },
+      "counterPool": [
+        "broj analiza",
+        "broj pacijenata",
+        "broj lokacija",
+        "vreme obrade gde je realno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Booking nije obavezan; walk-in scenario mora biti podržan."
+    }
+  },
+  "optician": {
+    "label": "Optika",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Pregled + dolazak",
+      "cta": "Zakaži pregled / Posetite nas",
+      "trust": "stručnost + izbor + reviews",
+      "modules": [
+        "Pregled vida",
+        "okviri",
+        "ljudi",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da kupci koriste sajt?",
+          "options": [
+            "Zakažu pregled vida",
+            "Dođu u optiku",
+            "Pitaju za model/okvir"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Pregled vida",
+            "Okvire",
+            "Stručnost",
+            "Brendove",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "products",
+          "people",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "appointment",
+          "brands",
+          "availability-inquiry",
+          "pricing"
+        ],
+        "disabled": [
+          "generic healthcare-only layout"
+        ]
+      },
+      "form": {
+        "description": "Termin + telefon",
+        "fields": [
+          "adresa",
+          "telefon",
+          "način zakazivanja",
+          "ključne usluge/proizvodi"
+        ]
+      },
+      "counterPool": [
+        "broj pregleda",
+        "broj modela",
+        "broj brendova",
+        "ocena",
+        "broj klijenata"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Optika je hibrid usluge i retaila.",
+      "hero": {
+        "title": "Pregled vida i okvir koji vam odgovara.",
+        "subtitle": "Zakažite pregled, pogledajte izbor okvira ili posetite optiku."
+      }
+    }
+  },
+  "pharmacy": {
+    "label": "Apoteka",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Dolazak / kontakt",
+      "cta": "Pozovi / Posetite nas",
+      "trust": "dostupnost + stručnost + lokacija",
+      "modules": [
+        "Usluge",
+        "PROIZVODI , radno vreme",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Šta je najvažnije da korisnik uradi?",
+          "options": [
+            "Dođe u apoteku",
+            "Pozove",
+            "Pogleda proizvode/ponudu"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Proizvode",
+            "Usluge",
+            "Radno vreme",
+            "Lokaciju",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "services",
+          "opening-hours",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "reviews",
+          "multiple-locations",
+          "promotions"
+        ],
+        "disabled": [
+          "booking"
+        ]
+      },
+      "form": {
+        "description": "Bez booking-a",
+        "fields": [
+          "adresa",
+          "radno vreme",
+          "telefon",
+          "kategorije proizvoda/usluga"
+        ]
+      },
+      "counterPool": [
+        "broj proizvoda/kategorija",
+        "broj lokacija",
+        "broj klijenata",
+        "godine tradicije ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "OPCIONO",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Proizvodi su važan modul, ne samo healthcare usluge."
+    }
+  },
+  "physio": {
+    "label": "Fizioterapija",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Tretman",
+      "cta": "Zakaži tretman",
+      "trust": "terapeut + stručnost + reviews",
+      "modules": [
+        "Problemi",
+        "tretmani",
+        "ljudi",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako pacijenti zakazuju tretmane?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za termin",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda uslugu?",
+          "options": [
+            "Terapeuta",
+            "Probleme koje rešavate",
+            "Tretmane",
+            "Recenzije",
+            "Rezultate"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "appointment",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "gallery",
+          "packages",
+          "pricing"
+        ],
+        "disabled": [
+          "generic clinic layout"
+        ]
+      },
+      "form": {
+        "description": "Problem + termin",
+        "fields": [
+          "problem",
+          "termin",
+          "telefon",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj tretmana",
+        "broj klijenata",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Struktura treba da krene od problema korisnika, ne od generičke liste usluga."
+    }
+  },
+  "clinic": {
+    "label": "Privatna klinika",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Pregled",
+      "cta": "Zakaži pregled",
+      "trust": "lekari + specijalnosti + stručnost",
+      "modules": [
+        "Specijalnosti",
+        "ljudi",
+        "termini",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako pacijenti zakazuju?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za pregled",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Specijalnosti",
+            "Lekare",
+            "Dijagnostiku",
+            "Recenzije",
+            "Lokaciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "specialties",
+          "doctors",
+          "reviews",
+          "map",
+          "appointment",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "technology",
+          "pricing",
+          "multiple-locations"
+        ],
+        "disabled": [
+          "generic retail modules"
+        ]
+      },
+      "form": {
+        "description": "Specijalnost + termin",
+        "fields": [
+          "specijalnost",
+          "termin",
+          "kontakt",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj lekara",
+        "broj pacijenata",
+        "broj specijalnosti",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Specijalnosti i lekari imaju prioritet nad generičkim about sadržajem."
+    }
+  },
+  "vet": {
+    "label": "Veterinarska ambulanta",
+    "group": "Healthcare",
+    "logic": {
+      "goal": "Poziv / pregled",
+      "cta": "Pozovi / Zakaži",
+      "trust": "veterinar + dostupnost + reviews",
+      "modules": [
+        "Usluge",
+        "hitne informacije",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako vlasnici ljubimaca najčešće dolaze do vas?",
+          "options": [
+            "Pozovu",
+            "Zakažu termin",
+            "Dođu bez najave"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da istaknemo?",
+          "options": [
+            "Veterinare",
+            "Usluge",
+            "Hitni kontakt",
+            "Recenzije",
+            "Lokaciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "emergency-contact",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "appointment",
+          "gallery",
+          "pricing"
+        ],
+        "disabled": [
+          "complex booking unless selected"
+        ]
+      },
+      "form": {
+        "description": "Ljubimac + problem + termin",
+        "fields": [
+          "vrsta ljubimca",
+          "problem",
+          "termin ako treba",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj pacijenata",
+        "broj intervencija",
+        "ocena",
+        "broj recenzija",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Hitni kontakt mora biti vidljiv; booking je opcija, ne obaveza."
+    }
+  },
+  "accounting": {
+    "label": "Knjigovodstvo",
+    "group": "Professional",
+    "logic": {
+      "goal": "Lead / konsultacija",
+      "cta": "Zatraži konsultaciju / Ponudu",
+      "trust": "stručnost + pouzdanost + reference",
+      "modules": [
+        "Usluge",
+        "kome pomažemo",
+        "reference",
+        "FAQ"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da novi klijent stupi u kontakt?",
+          "options": [
+            "Poziv",
+            "Forma za ponudu",
+            "Zakaži razgovor bez booking sistema"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda saradnju?",
+          "options": [
+            "Iskustvo",
+            "Usluge",
+            "Reference",
+            "Specijalizaciju",
+            "Brz odziv"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "references",
+          "reviews",
+          "counters",
+          "contact",
+          "map"
+        ],
+        "optional": [
+          "FAQ",
+          "lead-form",
+          "pricing packages"
+        ],
+        "disabled": [
+          "online booking calendar"
+        ]
+      },
+      "form": {
+        "description": "Tip firme + broj zaposlenih + potreba",
+        "fields": [
+          "tip firme",
+          "broj zaposlenih",
+          "potreba",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj klijenata",
+        "broj obračuna",
+        "broj firmi iz određene niše",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Fizička lokacija postoji; booking sistem nije potreban.",
+      "hero": {
+        "title": "Knjigovodstvo koje prati vaš posao.",
+        "subtitle": "Recite nam kakva vam je podrška potrebna i dogovorite prvi razgovor."
+      }
+    }
+  },
+  "consultant": {
+    "label": "Poslovni konsultant",
+    "group": "Professional",
+    "logic": {
+      "goal": "Konsultacija",
+      "cta": "Zakaži razgovor",
+      "trust": "ekspert + rezultati + reference",
+      "modules": [
+        "Problemi",
+        "metod",
+        "reference",
+        "ljudi"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da potencijalni klijent započne razgovor?",
+          "options": [
+            "Poziv",
+            "Forma za konsultaciju",
+            "Zakaži razgovor"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Eksperta",
+            "Probleme koje rešavate",
+            "Rezultate",
+            "Case studies",
+            "Reference"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "people",
+          "expertise",
+          "case-studies",
+          "references",
+          "counters",
+          "lead-form",
+          "contact"
+        ],
+        "optional": [
+          "booking",
+          "thought-leadership",
+          "services"
+        ],
+        "disabled": [
+          "map unless location matters"
+        ]
+      },
+      "form": {
+        "description": "Tema + firma + kontakt",
+        "fields": [
+          "tema",
+          "firma",
+          "veličina/izazov",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj projekata",
+        "broj klijenata",
+        "rezultat/učinak gde je dokaziv",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "NE/OPCIONO",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Problem → pristup → rezultat, ne generički corporate flow."
+    }
+  },
+  "law-office": {
+    "label": "Advokatska kancelarija",
+    "group": "Professional",
+    "logic": {
+      "goal": "Konsultacija",
+      "cta": "Zatraži konsultaciju",
+      "trust": "advokat + stručnost + diskrecija",
+      "modules": [
+        "Oblasti rada",
+        "ljudi",
+        "reference",
+        "FAQ"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent stupi u kontakt?",
+          "options": [
+            "Poziv",
+            "Forma za konsultaciju",
+            "Email/poruka"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Advokate",
+            "Oblasti prava",
+            "Iskustvo",
+            "Reference",
+            "Diskreciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "people",
+          "practice-areas",
+          "trust",
+          "counters",
+          "contact",
+          "map"
+        ],
+        "optional": [
+          "FAQ",
+          "lead-form",
+          "publications"
+        ],
+        "disabled": [
+          "online booking calendar",
+          "aggressive sales modules"
+        ]
+      },
+      "form": {
+        "description": "Oblast problema + kontakt",
+        "fields": [
+          "oblast problema",
+          "kontakt",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj predmeta",
+        "broj klijenata",
+        "godine prakse ako relevantno",
+        "broj oblasti prakse"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Booking sistem ne forsirati."
+    }
+  },
+  "property-manager": {
+    "label": "Profesionalni upravnik",
+    "group": "Professional",
+    "logic": {
+      "goal": "Ponuda",
+      "cta": "Zatraži ponudu",
+      "trust": "ljudi + dokaz obima + dostupnost",
+      "modules": [
+        "Usluge",
+        "proces",
+        "reference",
+        "područje"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da stambene zajednice traže ponudu?",
+          "options": [
+            "Poziv",
+            "Forma za ponudu",
+            "Viber/WhatsApp"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Broj objekata",
+            "Usluge",
+            "Dostupnost",
+            "Reference",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "references",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "FAQ",
+          "emergency-contact"
+        ],
+        "disabled": [
+          "booking",
+          "shop-style map"
+        ]
+      },
+      "form": {
+        "description": "Broj stanova + lokacija + kontakt",
+        "fields": [
+          "broj stanova",
+          "lokacija objekta",
+          "kontakt",
+          "potrebe"
+        ]
+      },
+      "counterPool": [
+        "broj zgrada",
+        "broj stanova",
+        "broj intervencija",
+        "godine iskustva"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Teritorija rada je važnija od kancelarijske mape."
+    }
+  },
+  "construction": {
+    "label": "Investitor / gradnja",
+    "group": "Property",
+    "logic": {
+      "goal": "Prodajni lead",
+      "cta": "Zatraži informacije",
+      "trust": "projekti + investitor/tim + dokaz realizacije",
+      "modules": [
+        "Projekti",
+        "lokacija",
+        "stanovi",
+        "napredak radova"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da kupac iskaže interesovanje?",
+          "options": [
+            "Forma za projekat/stan",
+            "Poziv",
+            "Zakaži prezentaciju"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Projekte",
+            "Lokaciju",
+            "Tim",
+            "Napredak gradnje",
+            "Reference"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "projects",
+          "people",
+          "progress",
+          "references",
+          "counters",
+          "lead-form",
+          "contact"
+        ],
+        "optional": [
+          "map-per-project",
+          "floorplans",
+          "gallery",
+          "booking"
+        ],
+        "disabled": [
+          "generic single-company map as main module"
+        ]
+      },
+      "form": {
+        "description": "Tip + kvadratura + budžet",
+        "fields": [
+          "projekat",
+          "tip nekretnine",
+          "kvadratura",
+          "budžet",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj projekata",
+        "izgrađeni m²",
+        "broj stanova",
+        "broj završenih objekata"
+      ],
+      "mapDefault": "PO PROJEKTU",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Mape pripadaju projektima/lokacijama, ne nužno sedištu firme."
+    }
+  },
+  "real-estate": {
+    "label": "Agencija za nekretnine",
+    "group": "Property",
+    "logic": {
+      "goal": "Razgledanje / lead",
+      "cta": "Zakaži razgledanje",
+      "trust": "agent + portfolio + reference",
+      "modules": [
+        "Nekretnine",
+        "filteri",
+        "agenti",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da kupac reaguje na nekretninu?",
+          "options": [
+            "Zakaže razgledanje",
+            "Pozove agenta",
+            "Pošalje upit"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Nekretnine",
+            "Agente",
+            "Lokacije nekretnina",
+            "Reference",
+            "Brz odziv"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "listings",
+          "agents",
+          "reviews",
+          "inquiry",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "filters",
+          "map-per-listing",
+          "booking",
+          "mortgage-info"
+        ],
+        "disabled": [
+          "company map as dominant section"
+        ]
+      },
+      "form": {
+        "description": "Nekretnina + termin + kontakt",
+        "fields": [
+          "nekretnina",
+          "termin",
+          "kontakt",
+          "želje kupca"
+        ]
+      },
+      "counterPool": [
+        "broj nekretnina",
+        "realizovane prodaje",
+        "broj kupaca",
+        "godine rada ako relevantno"
+      ],
+      "mapDefault": "PO OGLASU",
+      "bookingDefault": "DA/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Lokacije su vezane za oglase; nema potrebe za generičkom mapom kao ključnom sekcijom.",
+      "hero": {
+        "title": "Nekretnine uz podršku agenta koji poznaje teren.",
+        "subtitle": "Pregledajte ponudu i zakažite razgledanje kada pronađete ono što vam odgovara."
+      }
+    }
+  },
+  "electronics-shop": {
+    "label": "Prodavnica elektronike",
+    "group": "Retail",
+    "logic": {
+      "goal": "Proizvod → radnja/upit",
+      "cta": "Proveri dostupnost / Kupi",
+      "trust": "asortiman + brendovi + dostupnost + reviews",
+      "modules": [
+        "Kategorije",
+        "proizvodi",
+        "akcije",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako prodajete?",
+          "options": [
+            "Samo u radnji",
+            "Radnja + upiti za dostupnost",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Proizvode",
+            "Brendove",
+            "Akcije",
+            "Dostupnost",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "categories",
+          "brands",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "ecommerce",
+          "availability-inquiry",
+          "promotions"
+        ],
+        "disabled": [
+          "booking"
+        ]
+      },
+      "form": {
+        "description": "Proizvod + kontakt",
+        "fields": [
+          "adresa",
+          "telefon",
+          "prodajni model",
+          "kategorije proizvoda"
+        ]
+      },
+      "counterPool": [
+        "broj artikala",
+        "broj kategorija",
+        "broj kupaca",
+        "broj lokacija",
+        "broj brendova samo kao broj ako ima smisla"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "OPCIONO",
+      "peopleDefault": "NE",
+      "note": "Brendovi prvenstveno idu u logo/trust strip; nisu samo counter.",
+      "hero": {
+        "title": "Tehnika koju želite, uz jasnu dostupnost.",
+        "subtitle": "Pogledajte kategorije, proverite dostupnost i pronađite nas u prodavnici."
+      }
+    }
+  },
+  "fashion-shop": {
+    "label": "Fashion butik",
+    "group": "Retail",
+    "logic": {
+      "goal": "Kolekcija → poseta",
+      "cta": "Pogledaj kolekciju / Kupi",
+      "trust": "proizvod + stil + vizuelni identitet",
+      "modules": [
+        "Kolekcije",
+        "izdvojeni proizvodi",
+        "lookbook",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako prodajete?",
+          "options": [
+            "Samo u radnji",
+            "Radnja + upiti",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Kolekcije",
+            "Proizvode",
+            "Stil/lookbook",
+            "Akcije",
+            "Lokaciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "collections",
+          "gallery",
+          "map",
+          "contact"
+        ],
+        "optional": [
+          "ecommerce",
+          "reviews",
+          "promotions",
+          "counters"
+        ],
+        "disabled": [
+          "booking",
+          "forced people section"
+        ]
+      },
+      "form": {
+        "description": "Minimalno / kontakt po potrebi",
+        "fields": [
+          "adresa",
+          "telefon",
+          "prodajni model",
+          "glavne kolekcije"
+        ]
+      },
+      "counterPool": [
+        "broj kolekcija",
+        "broj artikala",
+        "broj lokacija",
+        "broj kupaca"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "OPCIONO",
+      "peopleDefault": "NE",
+      "note": "People/team nije potreban po defaultu."
+    }
+  },
+  "gift-shop": {
+    "label": "Cveće i pokloni",
+    "group": "Retail",
+    "logic": {
+      "goal": "Kupovina / upit",
+      "cta": "Poruči / Pitaj",
+      "trust": "lični pristup + izbor + reviews",
+      "modules": [
+        "Prigode",
+        "proizvodi",
+        "galerija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate porudžbine?",
+          "options": [
+            "U radnji",
+            "Telefon/poruka",
+            "Forma za porudžbinu",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Prigode",
+            "Proizvode",
+            "Personalizaciju",
+            "Ljude",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "occasions",
+          "people",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "order-form",
+          "ecommerce",
+          "delivery",
+          "gallery"
+        ],
+        "disabled": [
+          "booking"
+        ]
+      },
+      "form": {
+        "description": "Proizvod + prigoda + kontakt",
+        "fields": [
+          "proizvod/prigoda",
+          "datum ako relevantno",
+          "kontakt",
+          "način porudžbine"
+        ]
+      },
+      "counterPool": [
+        "broj porudžbina",
+        "broj proizvoda",
+        "broj prigoda",
+        "broj klijenata",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Ljudi i counteri su jaki trust elementi jer je usluga često personalizovana."
+    }
+  },
+  "home-decor": {
+    "label": "Home decor",
+    "group": "Retail",
+    "logic": {
+      "goal": "Inspiracija → prodaja",
+      "cta": "Pitaj za proizvod / Kupi",
+      "trust": "ambijent + proizvod + reviews",
+      "modules": [
+        "Kolekcije",
+        "inspiracija",
+        "proizvodi",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako prodajete?",
+          "options": [
+            "Samo u salonu",
+            "Salon + upiti",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Kolekcije",
+            "Ambijente",
+            "Proizvode",
+            "Brendove",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "collections",
+          "inspiration",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "ecommerce",
+          "brands",
+          "gallery"
+        ],
+        "disabled": [
+          "booking",
+          "forced people"
+        ]
+      },
+      "form": {
+        "description": "Proizvod + kontakt",
+        "fields": [
+          "prodajni model",
+          "adresa",
+          "telefon",
+          "kategorije proizvoda"
+        ]
+      },
+      "counterPool": [
+        "broj proizvoda",
+        "broj kolekcija",
+        "broj projekata/ambijenata",
+        "broj lokacija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "OPCIONO",
+      "note": "Inspiration/bento sadržaj ima veću vrednost od generičkog about-a."
+    }
+  },
+  "shoe-shop": {
+    "label": "Prodavnica obuće",
+    "group": "Retail",
+    "logic": {
+      "goal": "Proizvod → poseta",
+      "cta": "Proveri dostupnost / Kupi",
+      "trust": "asortiman + dostupnost + reviews",
+      "modules": [
+        "Kategorije",
+        "proizvodi",
+        "veličine",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako prodajete?",
+          "options": [
+            "Samo u radnji",
+            "Radnja + upiti za model/broj",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Modele",
+            "Kategorije",
+            "Brendove",
+            "Dostupnost veličina",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "categories",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "ecommerce",
+          "brands",
+          "availability-inquiry",
+          "promotions"
+        ],
+        "disabled": [
+          "booking",
+          "forced people"
+        ]
+      },
+      "form": {
+        "description": "Model + broj",
+        "fields": [
+          "model",
+          "broj/veličina",
+          "kontakt",
+          "prodajni model"
+        ]
+      },
+      "counterPool": [
+        "broj modela",
+        "broj kategorija",
+        "broj kupaca",
+        "broj lokacija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "NE",
+      "note": "Brendovi u logo strip; model + broj su smisleniji od generičke forme."
+    }
+  },
+  "sports-shop": {
+    "label": "Sportska prodavnica",
+    "group": "Retail",
+    "logic": {
+      "goal": "Proizvod → poseta",
+      "cta": "Proveri dostupnost / Kupi",
+      "trust": "specijalizacija + brendovi + reviews",
+      "modules": [
+        "Sport/kategorije",
+        "proizvodi",
+        "brendovi",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako prodajete?",
+          "options": [
+            "Samo u radnji",
+            "Radnja + upiti",
+            "Online prodaja"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Sportove/kategorije",
+            "Proizvode",
+            "Brendove",
+            "Akcije",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "products",
+          "categories",
+          "brands",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "ecommerce",
+          "availability-inquiry",
+          "promotions"
+        ],
+        "disabled": [
+          "booking",
+          "fashion-shop fallback"
+        ]
+      },
+      "form": {
+        "description": "Proizvod + kontakt",
+        "fields": [
+          "prodajni model",
+          "proizvod",
+          "kontakt",
+          "adresa"
+        ]
+      },
+      "counterPool": [
+        "broj artikala",
+        "broj sportskih kategorija",
+        "broj kupaca",
+        "broj lokacija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "NE",
+      "note": "Ne koristiti fashion logiku kao zamenu; sadržaj ostaje sportski i kad je asset pack manji."
+    }
+  },
+  "security-systems": {
+    "label": "Alarm / video nadzor",
+    "group": "Security",
+    "logic": {
+      "goal": "Procena / ponuda",
+      "cta": "Zatraži procenu",
+      "trust": "reference + tehnička stručnost + partneri",
+      "modules": [
+        "Video nadzor",
+        "alarm",
+        "access",
+        "proces",
+        "reference"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da kupac traži procenu?",
+          "options": [
+            "Telefon",
+            "Forma za procenu",
+            "Terenski obilazak po dogovoru"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Instalacije",
+            "Sisteme",
+            "Reference",
+            "Partnerstva",
+            "Iskustvo"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "systems",
+          "references",
+          "people",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "service-area",
+          "case-studies",
+          "partner-logos"
+        ],
+        "disabled": [
+          "booking",
+          "generic retail map"
+        ]
+      },
+      "form": {
+        "description": "Objekat + površina + sistem",
+        "fields": [
+          "tip objekta",
+          "površina",
+          "potreban sistem",
+          "lokacija",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj instalacija",
+        "broj objekata",
+        "broj kamera/sistema instaliranih",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "NE/OPCIONO",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Lead forma mora razumeti objekat i sistem."
+    }
+  },
+  "appliance-repair": {
+    "label": "Servis kućnih aparata",
+    "group": "Services",
+    "logic": {
+      "goal": "Brz kontakt / intervencija",
+      "cta": "Pozovi majstora",
+      "trust": "majstor/ekipa + reviews + dokaz rada",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "radovi",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće zovu servis?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma sa opisom kvara"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Majstora",
+            "Brzinu dolaska",
+            "Tipove uređaja",
+            "Recenzije",
+            "Garanciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quick-contact",
+          "quote-form"
+        ],
+        "optional": [
+          "photo-upload",
+          "brands-serviced"
+        ],
+        "disabled": [
+          "booking",
+          "shop map"
+        ]
+      },
+      "form": {
+        "description": "Uređaj + marka + kvar + telefon",
+        "fields": [
+          "uređaj",
+          "marka",
+          "kvar",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj intervencija",
+        "broj popravljenih uređaja",
+        "broj marki",
+        "broj klijenata",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Mobilni sticky CTA: Pozovi + Viber/WhatsApp."
+    }
+  },
+  "auto-service": {
+    "label": "Auto servis",
+    "group": "Services",
+    "logic": {
+      "goal": "Zakazivanje servisa / poziv",
+      "cta": "Zakaži servis / Pozovi",
+      "trust": "majstori + oprema + reviews + dokaz obima",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "radovi",
+        "lokacija"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti zakazuju servis?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma za termin"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Majstore",
+            "Usluge",
+            "Opremljenost",
+            "Recenzije",
+            "Brzinu servisa"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "counters",
+          "appointment-inquiry",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "gallery",
+          "diagnostics"
+        ],
+        "disabled": [
+          "complex booking calendar unless selected"
+        ]
+      },
+      "form": {
+        "description": "Vozilo + problem + termin",
+        "fields": [
+          "vozilo",
+          "problem",
+          "termin",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj servisiranih vozila",
+        "broj stalnih klijenata",
+        "broj usluga",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Lokacija je bitna jer vozilo dolazi u servis."
+    }
+  },
+  "tire-shop": {
+    "label": "Vulkanizer / gume",
+    "group": "Services",
+    "logic": {
+      "goal": "Termin / poziv",
+      "cta": "Zakaži zamenu / Pozovi",
+      "trust": "oprema + iskustvo + reviews",
+      "modules": [
+        "Usluge",
+        "gume",
+        "sezonske akcije",
+        "lokacija"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti dogovaraju zamenu?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma za termin"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Gume",
+            "Usluge",
+            "Brzinu",
+            "Opremljenost",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "products",
+          "reviews",
+          "map",
+          "counters",
+          "appointment-inquiry",
+          "contact"
+        ],
+        "optional": [
+          "seasonal-promotions",
+          "brands",
+          "pricing"
+        ],
+        "disabled": [
+          "complex booking calendar"
+        ]
+      },
+      "form": {
+        "description": "Dimenzija + vozilo + termin",
+        "fields": [
+          "vozilo",
+          "dimenzija gume",
+          "termin",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj setova guma",
+        "broj vozila",
+        "broj zamena sezonski",
+        "broj klijenata"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Sezonske kampanje mogu privremeno menjati hero/CTA."
+    }
+  },
+  "car-wash": {
+    "label": "Auto perionica",
+    "group": "Services",
+    "logic": {
+      "goal": "Dolazak / poziv",
+      "cta": "Dođi / Pozovi",
+      "trust": "rezultat + reviews + cena",
+      "modules": [
+        "Paketi",
+        "usluge",
+        "cena",
+        "lokacija"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti koriste uslugu?",
+          "options": [
+            "Dođu bez najave",
+            "Pozovu",
+            "Zakažu termin"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Pakete",
+            "Rezultat",
+            "Cene",
+            "Recenzije",
+            "Lokaciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "pricing",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "appointment",
+          "gallery",
+          "memberships"
+        ],
+        "disabled": [
+          "complex booking"
+        ]
+      },
+      "form": {
+        "description": "Vozilo + usluga",
+        "fields": [
+          "vozilo",
+          "usluga",
+          "kontakt ako se zakazuje"
+        ]
+      },
+      "counterPool": [
+        "broj opranih vozila",
+        "broj paketa",
+        "broj klijenata",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Walk-in mora biti podržan kao default mogućnost."
+    }
+  },
+  "carpenter": {
+    "label": "Stolar",
+    "group": "Services",
+    "logic": {
+      "goal": "Procena / lead",
+      "cta": "Zatraži procenu",
+      "trust": "majstor + izvedeni radovi + reviews",
+      "modules": [
+        "Usluge",
+        "portfolio",
+        "ljudi",
+        "reviews",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent traži procenu?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma + fotografija/mere"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda posao?",
+          "options": [
+            "Majstora",
+            "Portfolio",
+            "Kuhinje/nameštaj",
+            "Recenzije",
+            "Preciznost"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "portfolio",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "process"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Šta treba + dimenzije + fotografija",
+        "fields": [
+          "šta treba",
+          "mere",
+          "fotografija",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj kuhinja",
+        "broj komada nameštaja",
+        "broj projekata",
+        "obrađeni m²",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Forma sa fotografijom/marama je vrednija od rezervacionog sistema."
+    }
+  },
+  "cleaning": {
+    "label": "Servis za čišćenje",
+    "group": "Services",
+    "logic": {
+      "goal": "Ponuda / lead",
+      "cta": "Zatraži cenu",
+      "trust": "ekipa + reviews + dokaz obima",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "reference",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent traži cenu?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma za procenu"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Ekipa",
+            "Tipove čišćenja",
+            "Recenzije",
+            "Pouzdanost",
+            "Brzinu"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "recurring-plans"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Tip prostora + m² + lokacija",
+        "fields": [
+          "tip prostora",
+          "m²",
+          "lokacija",
+          "učestalost",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj objekata",
+        "očišćeni m²",
+        "broj klijenata",
+        "broj redovnih ugovora"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Forma kvalifikuje veličinu i vrstu prostora."
+    }
+  },
+  "electrician": {
+    "label": "Električar",
+    "group": "Services",
+    "logic": {
+      "goal": "Brz kontakt / procena",
+      "cta": "Pozovi",
+      "trust": "majstor + reviews + brzina + iskustvo",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "radovi",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće traže pomoć?",
+          "options": [
+            "Poziv",
+            "Viber/WhatsApp",
+            "Forma sa opisom problema"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Majstora",
+            "Intervencije",
+            "Recenzije",
+            "Brz odziv",
+            "Garanciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quick-contact",
+          "quote-form"
+        ],
+        "optional": [
+          "photo-upload",
+          "emergency-contact"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Kvar/radovi + lokacija",
+        "fields": [
+          "problem",
+          "lokacija",
+          "telefon",
+          "fotografija opciono"
+        ]
+      },
+      "counterPool": [
+        "broj intervencija",
+        "broj objekata",
+        "broj instalacija",
+        "broj klijenata"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Mobilni poziv je primarni CTA."
+    }
+  },
+  "hvac": {
+    "label": "Klima servis",
+    "group": "Services",
+    "logic": {
+      "goal": "Servis / poziv",
+      "cta": "Pozovi servis",
+      "trust": "tehničar + reviews + dokaz obima",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "servisne intervencije"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti zakazuju servis?",
+          "options": [
+            "Poziv",
+            "Viber/WhatsApp",
+            "Forma za servis"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Tehničare",
+            "Servis",
+            "Montažu",
+            "Recenzije",
+            "Brzinu"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "brands",
+          "seasonal-promotions",
+          "photo-upload"
+        ],
+        "disabled": [
+          "booking calendar",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Uređaj + problem + lokacija",
+        "fields": [
+          "uređaj",
+          "marka",
+          "problem",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj servisa",
+        "broj montaža",
+        "broj klima pod održavanjem",
+        "broj klijenata"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Sezonska logika (leto/zima) može menjati prioritet usluga."
+    }
+  },
+  "locksmith": {
+    "label": "Metalac / bravarski radovi",
+    "group": "Services",
+    "logic": {
+      "goal": "Procena / lead",
+      "cta": "Zatraži procenu",
+      "trust": "majstor + radovi + reviews",
+      "modules": [
+        "Usluge",
+        "portfolio",
+        "ljudi",
+        "reviews",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijent traži procenu?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma + mere/fotografija"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda posao?",
+          "options": [
+            "Majstora",
+            "Ograde/konstrukcije",
+            "Portfolio",
+            "Recenzije",
+            "Preciznost"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "portfolio",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "process"
+        ],
+        "disabled": [
+          "booking",
+          "emergency-locksmith flow unless explicitly intended"
+        ]
+      },
+      "form": {
+        "description": "Tip radova + mere + fotografija",
+        "fields": [
+          "tip radova",
+          "mere",
+          "fotografija",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj ograda",
+        "broj konstrukcija",
+        "metri izrađenih ograda",
+        "broj projekata"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Ovaj ID predstavlja metalwork/bravarske radove, ne hitno otključavanje vrata."
+    }
+  },
+  "moving": {
+    "label": "Selidbe",
+    "group": "Services",
+    "logic": {
+      "goal": "Ponuda / lead",
+      "cta": "Zatraži cenu",
+      "trust": "ekipa + reviews + logistički kapacitet",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "vozila",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent dobije cenu?",
+          "options": [
+            "Telefon",
+            "Viber/WhatsApp",
+            "Forma za procenu selidbe"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Ekipu",
+            "Vozila",
+            "Recenzije",
+            "Pažljivo rukovanje",
+            "Brzinu"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "packing-service"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Odakle + gde + veličina selidbe",
+        "fields": [
+          "odakle",
+          "gde",
+          "veličina selidbe",
+          "sprat/lift",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "broj selidbi",
+        "broj klijenata",
+        "broj vozila",
+        "broj gradova/lokacija"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Forma mora pomoći proceni obima posla."
+    }
+  },
+  "painter": {
+    "label": "Moler / farbar",
+    "group": "Services",
+    "logic": {
+      "goal": "Procena / poziv",
+      "cta": "Pozovi / Zatraži procenu",
+      "trust": "majstor + reviews + radovi + različiti animirani counteri",
+      "modules": [
+        "Usluge",
+        "portfolio",
+        "ljudi",
+        "reviews",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent traži procenu?",
+          "options": [
+            "Poziv",
+            "Viber/WhatsApp",
+            "Forma + fotografija"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda posao?",
+          "options": [
+            "Majstora",
+            "Radove",
+            "Recenzije",
+            "Brojke",
+            "Brzinu/urednost"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "portfolio",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "process"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "m² + tip radova + fotografija",
+        "fields": [
+          "m²",
+          "tip radova",
+          "fotografija",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "okrečeni stanovi",
+        "obrađeni m²",
+        "broj klijenata",
+        "broj projekata",
+        "godine iskustva ako relevantno"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Counteri se menjaju po sajtu; ne koristiti uvek iste 3 metrike.",
+      "hero": {
+        "title": "Krečenje i fasaderski radovi, uz jasnu procenu.",
+        "subtitle": "Pošaljite fotografije i lokaciju ili nas pozovite. Dogovaramo obim radova i sledeći korak."
+      }
+    }
+  },
+  "plumber": {
+    "label": "Vodoinstalater",
+    "group": "Services",
+    "logic": {
+      "goal": "Brz kontakt / intervencija",
+      "cta": "Pozovi",
+      "trust": "majstor + reviews + brz odziv",
+      "modules": [
+        "Usluge",
+        "ljudi",
+        "reviews",
+        "radovi",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće traže pomoć?",
+          "options": [
+            "Poziv",
+            "Viber/WhatsApp",
+            "Forma sa opisom problema"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Majstora",
+            "Brzinu",
+            "Recenzije",
+            "Intervencije",
+            "Garanciju"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "service-area",
+          "counters",
+          "quick-contact",
+          "quote-form"
+        ],
+        "optional": [
+          "photo-upload",
+          "emergency-contact"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "Problem + lokacija + fotografija opciono",
+        "fields": [
+          "problem",
+          "lokacija",
+          "telefon",
+          "fotografija opciono"
+        ]
+      },
+      "counterPool": [
+        "broj intervencija",
+        "broj kupatila",
+        "broj klijenata",
+        "broj instalacija"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Hitnost i telefon imaju prioritet."
+    }
+  },
+  "tiler": {
+    "label": "Keramičar",
+    "group": "Services",
+    "logic": {
+      "goal": "Procena / lead",
+      "cta": "Zatraži procenu",
+      "trust": "majstor + radovi + reviews + relevantni counteri",
+      "modules": [
+        "Usluge",
+        "portfolio",
+        "ljudi",
+        "reviews",
+        "područje rada"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da klijent traži procenu?",
+          "options": [
+            "Poziv",
+            "Viber/WhatsApp",
+            "Forma + fotografija/m²"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda posao?",
+          "options": [
+            "Majstora",
+            "Portfolio",
+            "Recenzije",
+            "Preciznost",
+            "Brojke"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "portfolio",
+          "reviews",
+          "service-area",
+          "counters",
+          "quote-form",
+          "contact"
+        ],
+        "optional": [
+          "photo-upload",
+          "process"
+        ],
+        "disabled": [
+          "booking",
+          "map"
+        ]
+      },
+      "form": {
+        "description": "m² + prostor + fotografija",
+        "fields": [
+          "m²",
+          "prostor",
+          "fotografija",
+          "lokacija",
+          "telefon"
+        ]
+      },
+      "counterPool": [
+        "završena kupatila",
+        "postavljeni m²",
+        "broj projekata",
+        "broj klijenata"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Counteri moraju biti specifični za keramičara."
+    }
+  },
+  "fitness-center": {
+    "label": "Fitness centar",
+    "group": "Sport",
+    "logic": {
+      "goal": "Članstvo",
+      "cta": "Probni trening",
+      "trust": "treneri + prostor + reviews",
+      "modules": [
+        "Programi",
+        "članarine",
+        "treneri",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da novi član započne?",
+          "options": [
+            "Probni trening",
+            "Poziv/poruka",
+            "Online prijava"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Programe",
+            "Trenere",
+            "Prostor",
+            "Članarine",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "programs",
+          "people",
+          "reviews",
+          "map",
+          "counters",
+          "lead-or-booking",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "schedule",
+          "transformations"
+        ],
+        "disabled": [
+          "ecommerce unless memberships sold online"
+        ]
+      },
+      "form": {
+        "description": "Cilj + termin",
+        "fields": [
+          "cilj",
+          "termin",
+          "kontakt",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj članova",
+        "broj treninga nedeljno",
+        "broj trenera",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Probni trening je prirodna konverzija."
+    }
+  },
+  "fitness-trainer": {
+    "label": "Personalni trener",
+    "group": "Sport",
+    "logic": {
+      "goal": "Konsultacija",
+      "cta": "Zakaži konsultaciju",
+      "trust": "lična ekspertiza + rezultat + reviews",
+      "modules": [
+        "Trener",
+        "programi",
+        "rezultati",
+        "reviews"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijent započinje saradnju?",
+          "options": [
+            "Poziv/poruka",
+            "Konsultaciona forma",
+            "Rezervacija konsultacije"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda trenera?",
+          "options": [
+            "Trenera",
+            "Transformacije",
+            "Program",
+            "Recenzije",
+            "Rezultate"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "people",
+          "programs",
+          "results",
+          "reviews",
+          "counters",
+          "lead-form",
+          "contact"
+        ],
+        "optional": [
+          "booking",
+          "pricing",
+          "online-coaching"
+        ],
+        "disabled": [
+          "map unless studio/location matters"
+        ]
+      },
+      "form": {
+        "description": "Cilj + iskustvo + kontakt",
+        "fields": [
+          "cilj",
+          "iskustvo",
+          "kontakt",
+          "lokacija opciono"
+        ]
+      },
+      "counterPool": [
+        "broj klijenata",
+        "broj transformacija",
+        "broj programa",
+        "ocena"
+      ],
+      "mapDefault": "NE/OPCIONO",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Owner-led logic, slična majstorima ali sa rezultatima/transformacijama."
+    }
+  },
+  "yoga-pilates": {
+    "label": "Yoga / Pilates studio",
+    "group": "Sport",
+    "logic": {
+      "goal": "Čas / rezervacija",
+      "cta": "Rezerviši čas",
+      "trust": "instruktori + atmosfera + reviews",
+      "modules": [
+        "Programi",
+        "raspored",
+        "instruktori",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako se rezervišu časovi?",
+          "options": [
+            "Telefon/poruka",
+            "Forma",
+            "Online booking"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Raspored",
+            "Instruktore",
+            "Vrste časova",
+            "Ambijent",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "classes",
+          "schedule",
+          "people",
+          "reviews",
+          "map",
+          "booking",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "pricing",
+          "packages",
+          "trial-class"
+        ],
+        "disabled": [
+          "generic lead-only flow"
+        ]
+      },
+      "form": {
+        "description": "Čas + termin",
+        "fields": [
+          "čas",
+          "termin",
+          "kontakt",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj časova",
+        "broj polaznika",
+        "broj instruktora",
+        "ocena"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Raspored i booking su centralni."
+    }
+  },
+  "it-support": {
+    "label": "IT podrška",
+    "group": "Tech",
+    "logic": {
+      "goal": "B2B lead",
+      "cta": "Zatraži ponudu",
+      "trust": "reference + stručnost + odziv",
+      "modules": [
+        "Problemi",
+        "podrška",
+        "paketi",
+        "reference"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da firma zatraži pomoć/ponudu?",
+          "options": [
+            "Poziv",
+            "Forma za ponudu",
+            "Forma za IT problem"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da gradi poverenje?",
+          "options": [
+            "Reference",
+            "SLA/podršku",
+            "Eksperte",
+            "Pakete",
+            "Brz odziv"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "references",
+          "counters",
+          "lead-form",
+          "contact"
+        ],
+        "optional": [
+          "SLA",
+          "packages",
+          "case-studies"
+        ],
+        "disabled": [
+          "booking",
+          "consumer-style map"
+        ]
+      },
+      "form": {
+        "description": "Firma + broj korisnika + problem",
+        "fields": [
+          "firma",
+          "broj korisnika/uređaja",
+          "problem",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj korisnika pod podrškom",
+        "broj uređaja",
+        "broj klijenata",
+        "broj rešenih tiketa"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "B2B problem-solution logika."
+    }
+  },
+  "repair-phone": {
+    "label": "Servis telefona",
+    "group": "Tech",
+    "logic": {
+      "goal": "Servis / poziv",
+      "cta": "Pozovi / Donesi uređaj",
+      "trust": "serviser + brzina + garancija + reviews",
+      "modules": [
+        "Kvarovi",
+        "usluge",
+        "garancija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti najčešće dolaze do servisa?",
+          "options": [
+            "Dođu u servis",
+            "Pozovu",
+            "Pošalju upit za kvar"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Brzinu",
+            "Tipične kvarove",
+            "Servisera",
+            "Garanciju",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "services",
+          "people",
+          "reviews",
+          "map",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "quote-form",
+          "pricing",
+          "brands"
+        ],
+        "disabled": [
+          "booking"
+        ]
+      },
+      "form": {
+        "description": "Uređaj + kvar + kontakt",
+        "fields": [
+          "uređaj",
+          "kvar",
+          "kontakt",
+          "lokacija"
+        ]
+      },
+      "counterPool": [
+        "broj popravljenih uređaja",
+        "broj zamena ekrana",
+        "broj baterija",
+        "broj klijenata"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "NE",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Lokacija je jaka jer korisnik donosi uređaj."
+    }
+  },
+  "software-company": {
+    "label": "Software agencija",
+    "group": "Tech",
+    "logic": {
+      "goal": "Projekat / razgovor",
+      "cta": "Zakaži razgovor",
+      "trust": "portfolio + tim + rezultati",
+      "modules": [
+        "Rešenja",
+        "projekti",
+        "proces",
+        "tehnologije"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako želite da potencijalni klijent započne projekat?",
+          "options": [
+            "Forma za projekat",
+            "Poziv",
+            "Zakaži razgovor"
+          ]
+        },
+        "step3": {
+          "question": "Šta treba da proda agenciju?",
+          "options": [
+            "Portfolio",
+            "Tim",
+            "Case studies",
+            "Proces",
+            "Tehnologije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "portfolio",
+          "people",
+          "case-studies",
+          "process",
+          "counters",
+          "lead-form",
+          "contact"
+        ],
+        "optional": [
+          "booking",
+          "technology",
+          "testimonials"
+        ],
+        "disabled": [
+          "map unless needed"
+        ]
+      },
+      "form": {
+        "description": "Tip projekta + okvirni scope + kontakt",
+        "fields": [
+          "tip projekta",
+          "okvirni scope",
+          "budžet opciono",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj projekata",
+        "broj klijenata",
+        "broj proizvoda/launch-eva",
+        "godine rada ako relevantno"
+      ],
+      "mapDefault": "NE",
+      "bookingDefault": "OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Case study ima veću vrednost od generičke liste usluga."
+    }
+  },
+  "hotel": {
+    "label": "Hotel",
+    "group": "Tourism",
+    "logic": {
+      "goal": "Rezervacija",
+      "cta": "Rezerviši",
+      "trust": "sobe + lokacija + reviews",
+      "modules": [
+        "Sobe",
+        "pogodnosti",
+        "galerija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate rezervacije?",
+          "options": [
+            "Direktan upit",
+            "Rezervaciona forma",
+            "Spoljni booking sistem"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Sobe",
+            "Lokaciju",
+            "Pogodnosti",
+            "Recenzije",
+            "Ponude"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "rooms",
+          "gallery",
+          "amenities",
+          "reviews",
+          "map",
+          "reservation",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "offers",
+          "restaurant",
+          "wellness",
+          "people"
+        ],
+        "disabled": [
+          "generic contact form"
+        ]
+      },
+      "form": {
+        "description": "Od-do + broj gostiju",
+        "fields": [
+          "datum od-do",
+          "broj gostiju",
+          "tip sobe",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj soba",
+        "broj gostiju",
+        "broj pogodnosti",
+        "ocena",
+        "broj recenzija"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA",
+      "note": "Booking način iz Step 2 direktno menja CTA i formu.",
+      "hero": {
+        "title": "Smeštaj za period koji planirate.",
+        "subtitle": "Proverite dostupnost soba, pogodnosti i uslove rezervacije za svoj boravak."
+      }
+    }
+  },
+  "apartments": {
+    "label": "Apartmani",
+    "group": "Tourism",
+    "logic": {
+      "goal": "Rezervacija / upit",
+      "cta": "Proveri dostupnost",
+      "trust": "jedinice + galerija + reviews + lokacija",
+      "modules": [
+        "Jedinice",
+        "pogodnosti",
+        "galerija",
+        "mapa"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate rezervacije?",
+          "options": [
+            "Direktan upit",
+            "Forma za dostupnost",
+            "Spoljni booking sistem"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Apartmane",
+            "Galeriju",
+            "Lokaciju",
+            "Pogodnosti",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "units",
+          "gallery",
+          "amenities",
+          "reviews",
+          "map",
+          "reservation-or-inquiry",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "offers",
+          "people"
+        ],
+        "disabled": [
+          "generic lead form"
+        ]
+      },
+      "form": {
+        "description": "Od-do + broj gostiju",
+        "fields": [
+          "datum od-do",
+          "broj gostiju",
+          "jedinica",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj apartmana",
+        "broj gostiju",
+        "ocena",
+        "broj recenzija",
+        "broj pogodnosti"
+      ],
+      "mapDefault": "DA",
+      "bookingDefault": "DA/UPIT",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Ne tvrditi real-time availability bez integracije."
+    }
+  },
+  "rent-a-car": {
+    "label": "Rent-a-car",
+    "group": "Tourism",
+    "logic": {
+      "goal": "Rezervacija / upit",
+      "cta": "Rezerviši vozilo",
+      "trust": "vozila + jasni uslovi + reviews",
+      "modules": [
+        "Vozila",
+        "klase",
+        "uslovi",
+        "lokacije"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako primate rezervacije?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za upit",
+            "Online rezervacija"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Vozila",
+            "Klase",
+            "Uslove",
+            "Lokacije",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "vehicles",
+          "classes",
+          "terms",
+          "reviews",
+          "reservation-or-inquiry",
+          "counters",
+          "contact"
+        ],
+        "optional": [
+          "map",
+          "delivery/pickup",
+          "pricing"
+        ],
+        "disabled": [
+          "generic booking unrelated to date range"
+        ]
+      },
+      "form": {
+        "description": "Od-do + pickup + klasa vozila",
+        "fields": [
+          "od-do",
+          "pickup",
+          "klasa vozila",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj vozila",
+        "broj klasa",
+        "broj klijenata",
+        "broj rezervacija"
+      ],
+      "mapDefault": "OPCIONO",
+      "bookingDefault": "DA/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Forma mora razumeti period najma i mesto preuzimanja."
+    }
+  },
+  "travel-agency": {
+    "label": "Turistička agencija",
+    "group": "Tourism",
+    "logic": {
+      "goal": "Upit / aranžman",
+      "cta": "Pošalji upit",
+      "trust": "destinacije + iskustvo + reviews",
+      "modules": [
+        "Aranžmani",
+        "destinacije",
+        "termini"
+      ],
+      "advisor": {
+        "step2": {
+          "question": "Kako klijenti šalju upit za putovanje?",
+          "options": [
+            "Telefon/poruka",
+            "Forma za aranžman",
+            "Rezervacija konsultacije"
+          ]
+        },
+        "step3": {
+          "question": "Šta želite da istaknemo?",
+          "options": [
+            "Destinacije",
+            "Aranžmane",
+            "Termine",
+            "Iskustvo",
+            "Recenzije"
+          ]
+        }
+      },
+      "capabilities": {
+        "required": [
+          "destinations",
+          "packages",
+          "reviews",
+          "counters",
+          "inquiry-form",
+          "contact"
+        ],
+        "optional": [
+          "map",
+          "booking",
+          "people",
+          "promotions"
+        ],
+        "disabled": [
+          "generic ecommerce unless real"
+        ]
+      },
+      "form": {
+        "description": "Destinacija + datum + broj putnika",
+        "fields": [
+          "destinacija",
+          "datum",
+          "broj putnika",
+          "budžet opciono",
+          "kontakt"
+        ]
+      },
+      "counterPool": [
+        "broj putnika",
+        "broj destinacija",
+        "broj aranžmana",
+        "ocena"
+      ],
+      "mapDefault": "OPCIONO",
+      "bookingDefault": "NE/OPCIONO",
+      "reviewsDefault": "DA",
+      "peopleDefault": "DA/OPCIONO",
+      "note": "Lead forma prati putovanje, ne generički kontakt."
+    }
+  }
+}

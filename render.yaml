@@ -1,4 +1,5 @@
-# KREIRATI TEK NAKON sto je lokalni npm test prosao i nakon git push-a.
+# Existing Render service was created manually. This is its declarative reference;
+# do not create a duplicate service by importing a new Blueprint.
 services:
   - type: web
     name: rmc-web-solutions-api
@@ -14,4 +15,5 @@ services:
         value: production
       - key: NODE_VERSION
         value: 22.15.0
-# CLIENT_ORIGIN se podesava kada novi React frontend bude na Webglobe-u.
+# Later: set CLIENT_ORIGIN=https://retailmediacenter.com on the existing
+# service, once the React frontend is actually published on Webglobe.
