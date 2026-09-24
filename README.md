@@ -1,11 +1,11 @@
 # RMC Web Solutions — React + Node
 
-**V41.1: funkcionalna migracija prva 3 poslovna scenarija iz V39.5.**
+**V41.3: funkcionalni Retail/Commerce migracioni kandidat sa 13 testnih scenarija iz V39.5.**
 
 - **React + Vite:** Advisor tok i interaktivni preview u studiju.
 - **Node + Express:** Advisor odluke, Business Registry V1 (72 činjenice), priprema konfiguracije i ZIP export.
 - **Jedan generator sajta:** isti HTML/CSS/JS dobija React preview i preuzeti ZIP. Posetiocu se ne šalju Advisor, Registry i kod generatora.
-- **Radi trenutno:** Mesara, Vinoteka, Prodavnica obuće. Preostalih 69 scenarija i ostali moduli još nisu kompletno migrirani.
+- **Radi trenutno:** Mesara, Vinoteka, Prodavnica obuće i 10 dodatnih Retail/Catalogue scenarija. Preostalih 59 scenarija i ostali moduli još nisu kompletno migrirani.
 
 Lokalno pokretanje iz ovog foldera na Windowsu:
 

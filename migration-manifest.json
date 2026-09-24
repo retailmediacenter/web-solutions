@@ -652,5 +652,23 @@
       "path": "demo-previews/vinoteka/site.js",
       "size": 255
     }
-  ]
+  ],
+  "currentStage": "V41.3-retail-migration-candidate",
+  "migratedFunctionalIDs": [
+    "butcher-shop",
+    "wine-shop",
+    "shoe-shop",
+    "fashion-shop",
+    "grocery-store",
+    "liquor-store",
+    "home-decor",
+    "electronics-store",
+    "phone-store",
+    "furniture-store",
+    "auto-parts",
+    "plumbing-supplies",
+    "electrical-supplies"
+  ],
+  "migratedFunctionalCount": 13,
+  "remainingBusinessCount": 59
 }

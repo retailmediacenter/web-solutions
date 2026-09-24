@@ -1,99 +1,60 @@
-# V41.2 — Preview / Commerce UX stabilization (24.09.2026)
+# RMC Web Solutions — jedinstveni projektni status
 
-**Osnova:** lokalno instalirana V41.1; ne dirati V39.5 i ne objavljivati automatski na Render MAIN.
+**Verzija:** V41.3 — Retail / Commerce migracioni kandidat, 24.09.2026.  
+**Status:** 13 funkcionalnih testnih scenarija od 72 registrovane delatnosti. Nije potpuna zamena za V39.5.
 
-## Popravke
-- **Vinoteka u React preview-u:** uklonjen je privremeni `<base href>` iz `iframe srcDoc` jer je menjao odredište `#degustacije` u URL nadređene React aplikacije i ostavljao prazan preview. `site.css` i `export-runtime.js` sada koriste potpune adrese u preview-u, a svi `#` linkovi skroluju unutar svog dokumenta. Izvezeni ZIP i dalje koristi relativne adrese kako bi radio samostalno.
-- **Sticky korpa tokom pregleda:** radna visina ugrađenog iframe-a prilagođava se vidljivom delu ekrana; uklonjena je neprimerena minimalna visina unutrašnjeg preview kontejnera. Samostalni sajt i njegova mobilna korpa nisu redizajnirani.
-- **Prodavnica obuće, bez korpe:** `catalog`/`visit` goal sada prikazuje akciju *Proveri dostupnost*, sa izborom veličine i porukom za upit. Samo kupovni `purchase` cilj daje *Dodaj u korpu / Poruči sada*; različiti ciljevi se ne mešaju.
-- **Degustacije i porudžbine:** postojeći zahtevi i dalje su poruke, a ne automatski potvrđene rezervacije ili naplata.
+## Autoritativna polazna tačka
 
-## Provere u ovom paketu
-- 15/15 Node regresionih testova PASS, uključujući tri pilotska poslovanja, ZIP, i razlikovanje upita od kupovine.
-- Headless Chromium: verifikovana navigacija `Vođena degustacija → Pronađi termin` **unutar izolovanog iframe srcDoc-a**, uspešno slanje test forme; obuća `Proveri dostupnost → validacija → pripremljena poruka`. Lokalni HTTP browser server nije bio dostupan u izvršnom test okruženju, pa su HTML, CSS i JS umetnuti u test da bi se izolovala navigacija i interakcije.
-- React `npm run build` **mora proći lokalno u instalacionoj skripti pre bilo kakvog Git push-a**.
+- **V39.5 je zamrznuta referenca:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions` — ne menjati.
+- **Nova aplikacija:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions-react-node` — React/Vite frontend, Express/Node backend, jedan izvorni SiteConfig, isti HTML za iframe Preview i ZIP.
+- **GitHub:** privatni `retailmediacenter/web-solutions`. V41.3 instalirati na novu testnu granu `migration/v41-3-retail`, ne na `main`.
+- **Render:** postojeći API na `main` ostaje netaknut do odobrenog spajanja nove grane. **Webglobe** ostaje na postojećoj verziji tokom migracije.
+- **Business Registry V1:** 72 fakta: ID, domain, assetRoot/roles, catalogDimensions, productAttributes. **Ne sadrži CTA, renderer, style, module plan ni modal ponašanje.** Advisor je autoritet za cilj i module plan.
 
-## Obuhvat
-Samo V41.2 popravke za tri pilotska scenarija. Preostalih 69 delatnosti još nije migrirano. V39.5 i Render MAIN ostaju netaknuti. Nema punog React redizajna ili univerzalnog Booking engine-a u ovom paketu.
+## Šta je već radilo u V41.2 i ostaje neizmenjeno
 
----
+1. Mesara: obavezno DA/NE za pripremu, Sirovo/Grilovano samo gde ima smisla, kg ±0,5, cena i sticky subtotal.
+2. Vinoteka: obavezno DA/NE za degustacije, sekcija i forma samo ako je DA; link „Vođena degustacija“ radi i unutar React Preview iframe-a, kao i u preuzetom ZIP-u.
+3. Obuća: veličine, korpa ako je cilj kupovina, odnosno upit o dostupnosti ako nije. 
+4. Jedinstveni statički renderer i pregled bez propuštanja Advisor/Registry/Generator izvornog koda u export.
 
-# RMC Web Solutions — glavni status dokument
+## V41.3 — novih 10 scenarija (ukupno 13)
 
-**Poslednja ažurirana verzija:** V41.1, 24.09.2026.  
-**Status:** funkcionalni React + Node pilot (3 od 72 delatnosti). Nije potpuna zamena za V39.5.
+| Delatnost | V39.5 osnova | Testna logika |
+|---|---|---|
+| Modni butik | 17 originalnih kuriranih proizvoda/slika | korpa + veličina/boja |
+| Mini market | 12 originalnih proizvoda/slika | korpa + sticky total |
+| Prodavnica pića | 15 originalnih proizvoda/slika | korpa + opciona varijanta |
+| Kućni dekor | 6 originalnih proizvoda/slika | korpa + boja/dimenzije |
+| Prodavnica elektronike | 7 originalnih proizvoda/slika | korpa + model/varijanta |
+| Prodavnica telefona | 10 originalnih proizvoda/slika | korpa + model/boja |
+| Salon nameštaja | 12 originalnih proizvoda/slika | **upit**, bez izmišljene kupovine |
+| Auto delovi | 12 originalnih proizvoda/slika | **upit** + marka/model/godište |
+| Vodovodni materijal | 12 originalnih proizvoda/slika | **upit** + specifikacija |
+| Elektromaterijal | 12 originalnih proizvoda/slika | **upit** + specifikacija |
 
-## Odluka i izvor istine
+V39.5 `business-commerce-registry-v39-5` ostaje autoritet za izvorni `cart`/`inquiry` način. Testne pozitivne cene su **ilustrativne, nisu stvarni cenovnici**. Korisnik može da proveri prikaz i sumiranje; potvrda dostupnosti i plaćanje ne postoje. Model/boja/specifikacija pamte se zasebno po korpinoj stavci ili se šalju kao deo upita. Nove delatnosti koriste svoje originalne JPEG-ove iz V39.5 arhive, ne generičke placeholder slike.
 
-- **Zamrznut V39.5:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions`. Ne menjati ga; predstavlja referencu za izgled, poslovnu logiku, module i postojeće regresione scenarije.
-- **Novi V41:** `D:\RMC\AI - chat GPT (BOB)\web solutions\web-solutions-react-node`.
-- **GitHub:** privatni repo `retailmediacenter/web-solutions`. Promene iz ovog paketa prvo stavljati na granu `migration/v41-1-functional`; **ne** spajati u `main` pre lokalnog ručnog testa.
-- **Render:** postojeći Web Service `rmc-web-solutions-api`, trenutno objavljen sa V41 početnom verzijom. Deployment ostaje na main dok se nova grana ne proveri.
-- **Webglobe:** postojeći retailmediacenter.com/web-solutions/ ne dirati tokom migracije.
+**Granice:** izvorni V39.5 sadrži i dodatnu business-specific logiku, Trust, Reviews, razne uslužne/booking sekcije i 5 stilova. V41.3 još **ne dokazuje potpun vizuelni i poslovni paritet** tih dodatnih modula, niti uvodi Universal Booking za nove kategorije. Cena u testu se mora zameniti realnom pre objavljivanja klijenta. U produkciji se i dalje koristi stari frontend.
 
-## Autoritativna arhitektura
+## Provera
 
-- **Business Registry V1:** originalne 72 činjenice iz V39.5; samo domen, identitet i namespace asseta, katalog dimenzije i atributi proizvoda. Bez CTA-a, stila, renderera, redosleda sekcija, ponašanja modala ili business decisions.
-- **Advisor (Node):** identifikacija delatnosti, originalni profil pitanja (59 opštih scenarija preneto iz V39.5 data sloja), poseban flow za Mesaru / Vinoteku, cilj, stil i module plan. Preostalih 13 profila nema punu migraciju pitanja.
-- **Commerce podaci:** 20 konfiguracija iz V39.5 registry-ja; runtime Commerce trenutno izveden samo za 3 testirana scenarija. Cene su demonstracione.
-- **SiteConfig:** Node autoritet. React Studio ga dobija preko API-ja. Pregled generisanog sajta je sandbox iframe sa **istim statičkim HTML-om/CSS-om/JS-om koji ide u ZIP**. Ovo smanjuje mogućnost razilaženja preview-a i exporta.
-- **Editor:** menjaće SiteConfig, još nije prenesen.
-- **Images:** 29 originalnih, kuriranih JPEG-ova samo za 3 pilot scenarija uključeno u novi repo. Ostatak velike V39.5 biblioteke ostaje u postojećem direktorijumu/Webglobe-u.
+- **Node regresije:** 22/22 PASS, uključujući sve iz V41.2, novu grupu 10, proveru izvornih asset putanja, V39.5 cart/inquiry granica, 10 ZIP-ova i prepoznavanje srpskog opisa.
+- **Chromium funkcionalni test bez mreže:** 13/13 samostalnih HTML verzija otvara proizvod i modal bez JS exception; dodatno testirani telefon varijanta/korpa, auto delovi specifikacija/upit i sticky cart mini-marketa na 393×852. Test je rađen sa inline identičnim izvoznim CSS/JS radi mrežnih ograničenja sandbox-a. Slike su potvrđene kao prisutne i ZIP ih pakuje, ali browser screenshot ovde ne dokazuje konačan izgled na korisnikovom Windowsu.
+- **Kompletan Vite React build nije pokrenut u ovom kontejneru** zbog nedostupnog npm paketa; lokalna Windows skripta obavezno izvršava `npm test` i `npm run build` pre opcije GitHub push.
 
-## V41.1 — već urađeno i dokazano
+## Kako primeniti ovu verziju
 
-### Mesara
+1. Raspakovati `WEB_SOLUTIONS_V41_3_RETAIL_WAVE.zip` u zaseban folder, van postojećeg projekta.
+2. Pokrenuti `APPLY_V41_3.bat`. Skripta proverava da li je postojeća baza V41.2, čisto Git stanje i pravi rezervnu kopiju **nove** aplikacije pre nego što menja fajlove.
+3. Kreira se nova lokalna Git grana `migration/v41-3-retail` iz trenutno testirane V41.2 verzije. Pokreću se Node testovi i kompletan React build. **Nema automatskog objavljivanja na Renderu ni izmene V39.5**. Opcioni GitHub push je isključivo na novoj testnoj grani.
+4. Ponovo pokrenuti `START_LOCAL_DEV.bat`, zatim lokalno otvoriti React sajt i testirati: Mini market sticky subtotal; Telefon model/boja u korpi; Auto delovi upit; ponovno proveriti Mesaru, Vinoteku i Obuću; preuzeti ZIP iz najmanje jednog novog scenarija.
 
-- Originalni naziv/kategorije/asset slike 12 proizvoda iz V39.5.
-- Odvojeno Advisor pitanje o načinu poručivanja **i obavezno** pitanje da li se meso priprema (`raw`/`grilled`). Server ne dozvoljava da se obavezno pitanje preskoči.
-- Priprema `Sirovo / Grilovano` samo ako je aktivirana, i samo kod smislenih proizvoda.
-- Cena po kg, količina +/- u koracima 0,5 kg, obračun ukupnog iznosa, cart modal i sticky bar sa totalom.
+## Redosled završetka preostalih 59 delatnosti
 
-### Vinoteka
+1. **V41.4 – preostali retail/hibridne usluge:** kategorije s mešovitim Commerce i servisnim modelom (optika, servis telefona, farmacija, gume i dr.).
+2. **V41.5 – Universal Booking** za beauty, ugostiteljstvo, healthcare, profesionalne usluge, majstore, događaje i rental. Svaka varijanta ima poslovno uslovno Advisor pitanje, polja i svoj request/confirmation model; nikad lažno potvrđivanje bez persistence/availability servisa.
+3. **V41.6 – ostale industrije i puni modulni paritet** (reviews, trust, team, FAQ, hibridi, lokacije/mapa, svih pet stilova) i automatizovani QA za svih 72.
+4. **V41.7 – Editor, export/publish i finalno usaglašavanje** sa originalnim V39.5 frontendom. Tek tada odluka o zameni javnog Webglobe sajta.
 
-- Originalnih 6 proizvoda i vizuali iz V39.5 sa demonstracionim cenama.
-- Uslovna degustacija: Advisor **pita** da li postoje degustacije. Ne podrazumevamo je.
-- Ako DA: kartica „Vođena degustacija” vodi na sekciju „Degustacije” sa formom vrsta, datum, vreme, broj osoba, ime, telefon i napomena. Ovo je **zahtev** bez potvrde zauzetosti/rezervacije od strane servera.
-- Ako NE: nema sekcije degustacije ni pripadajućeg CTA-a.
-
-### Prodavnica obuće
-
-- Kurirane slike sa postojećim V39.5 `shoe-shop` putanjama, demonstracione cene i izbor veličine. Korpa sa brojem i ukupnom vrednošću.
-
-### Zajednički engine
-
-- Server validira sve obavezne odgovore, dozvoljeni stil/cilj/naziv.
-- Cene su ispisane jednom kada je količina 1; kada je veća, cena × količina i subtotal.
-- Cart prilagođen mobilnom, uključujući vidljiva oba `−/+` dugmeta na 393 px.
-- Korpa i degustacija generišu poruku za kopiranje/deljenje/WhatsApp; nema API naplate niti backend potvrđivanja dostupnosti.
-- `POST /api/site/generate` vraća SiteConfig i identičan HTML koji Node koristi u `POST /api/site/export`.
-- ZIP sadrži `index.html`, `site.css`, `export-runtime.js` i **samo** relevantne pilot slike. Nema kompletnog Advisor koda, Registry-ja ni Node izvornog koda u preuzetom sajtu.
-- Cilj `purchase` uključuje korpu; `visit` ili `catalog` u ovom pilotu ne uključuju korpu.
-
-## Status provera — precizno
-
-- **Node testovi:** 13/13 PASS (izvornih 72 registry faktova, pitanja za obuću, prepoznavanje, obavezni special odgovori, sirovo/grilovano, DA/NE degustacije, sigurnost imenovanja, ZIP i primeri generisanja).
-- **ZIP kontrola:** tri testna paketa (mesara, vinoteka, obuća) prošla `unzip -t`, bez grešaka.
-- **Headless Chromium:** testiran render istog eksportovanog HTML/CSS/JS, korpa (računanje i sticky total), qty +/- na 393×852, izbor Grilovano, veličina obuće, navigacija ka degustaciji, forma i generisanje poruka. Browser QA je pokrenut sa inline CSS/JS i ugrađenim demo slikama jer je lokalna navigacija u test okruženju blokirana.
-- **React parser:** `tsc --jsx preserve --noEmit` prolazi bez JSX sintaksnih grešaka.
-- **NIJE potvrđeno u ovom okruženju:** pun `npm run build`/React + Express test uživo, jer ovaj kontejner nema pristup npm registru. Windows skripta korisnika **zahteva oba** (`npm test` + `npm run build`) pre nego što ponudi GitHub push.
-- **NIJE migrirano:** preostalih 69 preview-a, dodatni V39.5 moduli, univerzalni Booking modovi osim degustacije, Editor, automatski publish i pravi podaci svih retail cena.
-
-## Koraci za korisnika
-
-1. Raspakovati `WEB_SOLUTIONS_V41_1_FUNCTIONAL_MIGRATION.zip` van postojećih projekata.
-2. Pokrenuti `APPLY_V41_1.bat`: pravi backup nove V41 osnove, novu Git granu, kopira potrebne fajlove i pokreće oba testa.
-3. Ako testovi prođu, skripta pita za **push na test granu**, nikada ne šalje direktno u `main`.
-4. `START_LOCAL_DEV.bat` u `web-solutions-react-node`; otvoriti localhost:5173.
-5. Ručno pregledati: Mesara DA/NE priprema, količina +/- i sticky total; Vinoteka DA/NE degustacije i booking forma; Obuća veličina i cart; završetak Advisora i preuzeti ZIP.
-6. Tek potom napraviti Pull Request u main. Render automatski redeploy-uje svoj main servis. Zadržati Webglobe frontend netaknut do potpune migracije.
-
-## Naredne migracione faze
-
-1. Uvesti ostalih 69 poslovnih scenarija i njihove specifične Advisor odgovore, kataloge, proizvode i usluge. Stari `Business Registry` se **ne** proširuje UI logikom.
-2. Universal Booking: `appointment`, `reservation`, `consultation`, `request-slot`, `pickup-slot`, `rental` (sa odgovarajućim tipovima polja); realna raspoloživost samo uz stvarnu backend persistenciju.
-3. Portovati stari izgled indeks strane, 5 stilova kroz sve scenarije, ostale modulare (trust, reviews, lokacije, hibridi).
-4. Editor iz SiteConfig-a i workflow za Publish/Export, uključujući bezbedno autentifikovano objavljivanje na Webglobe-u.
-5. Realne cene i upravljanje katalogom; produkcijska sigurnost i stres testovi.
-
-**Princip:** ni jedan scenario nije „migriran” samo zato što Business Registry sadrži njegov unos. Potrebno je da kompletan Advisor → Generate → Preview → poslovna interakcija → ZIP prođe test.
+**Politika kvaliteta:** nijedna delatnost nije „migrirana“ samo zato što je u registru. Za svaki ID mora da prođe Advisor → završni korak → Node Generate → Preview → relevantna poslovna akcija → samostalan ZIP, plus bar jedna mobilna provera po vrsti modula.

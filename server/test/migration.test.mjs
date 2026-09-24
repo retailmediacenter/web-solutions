@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {getRegistryCount,getBusinessFacts} from '../src/registry.js';
-import {listBusinesses,getAdvisorDefinition,recognizeBusiness,resolvePilotSiteConfig} from '../src/advisor.js';
+import {PILOT_BUSINESSES,listBusinesses,getAdvisorDefinition,recognizeBusiness,resolvePilotSiteConfig} from '../src/advisor.js';
 import {buildSitePayload} from '../src/site.js';
 import {renderHtml} from '../src/render-site.js';
 import {exportSiteZip} from '../src/exporter.js';
@@ -115,4 +115,101 @@ test('Purchasing goal keeps add-to-cart and sticky-cart',()=>{
   assert.ok(html.includes('id="addToCart"'));
   assert.ok(html.includes('id="stickyCart"'));
   assert.ok(!html.includes('id="availabilityInquiry"'));
+});
+
+// V41.3: Retail and catalogue wave based on real V39.5 curated product/image sets.
+const RETAIL_WAVE=['fashion-shop','grocery-store','liquor-store','home-decor',
+  'electronics-store','phone-store','furniture-store','auto-parts','plumbing-supplies','electrical-supplies'];
+import {existsSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const publicDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/public');
+
+test('V41.3 registers exactly 10 additional functional retail/catalogue profiles',()=>{
+  assert.equal(PILOT_BUSINESSES.length,13);
+  const supported=listBusinesses().filter(x=>x.pilot);
+  assert.equal(supported.length,13);
+  for(const id of RETAIL_WAVE){
+    const d=getAdvisorDefinition(id);
+    assert.equal(d.pilot,true);
+    assert.ok(d.operation.question && d.operation.options.length>0);
+  }
+});
+
+test('All 10 new retail catalogues use original accessible curated images and positive illustrative prices',()=>{
+  for(const id of RETAIL_WAVE){
+    const payload=buildSitePayload(input(id));
+    assert.ok(payload.catalog.products.length>=6,`Missing curated catalog: ${id}`);
+    const images=[payload.catalog.hero,...payload.catalog.products.map(p=>p.image)];
+    for(const asset of images)assert.ok(existsSync(path.resolve(publicDir,asset)),`Missing asset: ${asset}`);
+    for(const p of payload.catalog.products)assert.ok(p.price>0 && p.unit && p.title,`${id} missing product data`);
+    assert.equal(payload.siteConfig.business.id,id);
+    assert.equal(payload.siteConfig.modules.includes('featured'),true);
+    assert.equal(payload.siteConfig.modules.includes('contact'),true);
+  }
+});
+
+test('Advisor respects the legacy V39.5 Commerce mode instead of forcing an incorrect checkout',()=>{
+  const carts=['fashion-shop','grocery-store','liquor-store','home-decor','electronics-store','phone-store'];
+  const inquiries=['furniture-store','auto-parts','plumbing-supplies','electrical-supplies'];
+  for(const id of carts){
+    const site=buildSitePayload(input(id));
+    assert.equal(site.siteConfig.capabilities.commerce,true,id);
+    assert.ok(renderHtml(site).includes('id="addToCart"'),id);
+  }
+  for(const id of inquiries){
+    const site=buildSitePayload(input(id));
+    assert.equal(site.siteConfig.capabilities.commerce,false,id);
+    assert.equal(site.siteConfig.capabilities.inquiry,true,id);
+    const html=renderHtml(site);
+    assert.ok(html.includes('id="availabilityInquiry"'),id);
+    assert.ok(!html.includes('id="addToCart"'),id);
+  }
+});
+
+test('Compatibility and product variant are retained as separate customer-entered fields',()=>{
+  const vehicle=buildSitePayload(input('auto-parts'));
+  const json=renderHtml(vehicle);
+  assert.ok(json.includes('Marka / model / godište vozila'));
+  assert.ok(json.includes('id="variantInput"'));
+  const phone=renderHtml(buildSitePayload(input('phone-store')));
+  assert.ok(phone.includes('Model / boja'));
+  assert.ok(phone.includes('id="addToCart"'));
+});
+
+test('V41.3 first retail wave exports standalone ZIP from the same HTML as preview',()=>{
+  for(const id of RETAIL_WAVE){
+    const payload=buildSitePayload(input(id));
+    const html=renderHtml(payload);
+    assert.ok(html.includes(payload.catalog.headline),id);
+    const zip=exportSiteZip(payload);
+    assert.ok(zip.length>100000,id);
+    assert.ok(zip.includes(Buffer.from('index.html')),id);
+    assert.ok(zip.includes(Buffer.from(payload.catalog.hero)),id);
+  }
+});
+
+test('Existing 3 pilot behaviours stay unchanged in V41.3',()=>{
+  assert.equal(buildSitePayload(butcher('grilled')).siteConfig.capabilities.butcherGrillService,true);
+  assert.equal(buildSitePayload(wine(true)).siteConfig.modules.includes('wine-tasting'),true);
+  assert.equal(buildSitePayload(wine(false)).siteConfig.modules.includes('wine-tasting'),false);
+  assert.ok(renderHtml(buildSitePayload(input('shoe-shop'))).includes('id="shoeSize"'));
+});
+
+test('Advisor recognizes Serbian descriptions for each new audited retail profile',()=>{
+  const cases={
+    'Prodajem garderobu u butiku':'fashion-shop',
+    'Vodim mini market i prodajem namirnice':'grocery-store',
+    'Imam prodavnicu pića u Beogradu':'liquor-store',
+    'Prodajem dekoracije za dom':'home-decor',
+    'Prodavnica elektronike i računara':'electronics-store',
+    'Imam radnju za mobilne telefone':'phone-store',
+    'Prodajem nameštaj i ugaone garniture':'furniture-store',
+    'Prodajem auto delove':'auto-parts',
+    'Radnja za vodovodni materijal':'plumbing-supplies',
+    'Prodajem elektromaterijal':'electrical-supplies'
+  };
+  for(const [description,id] of Object.entries(cases)){
+    assert.equal(recognizeBusiness(description),id,description);
+  }
 });

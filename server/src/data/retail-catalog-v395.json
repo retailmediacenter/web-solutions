@@ -1,0 +1,1137 @@
+{
+  "fashion-shop": {
+    "label": "Modni butik",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/fashion-boutique/hero/fashion_boutique_hero_01.jpg",
+    "headline": "Nova kolekcija za vaš stil.",
+    "subtitle": "Otkrijte pažljivo odabrane komade odeće i modne dodatke.",
+    "offerTitle": "Kolekcija",
+    "products": [
+      {
+        "id": "fashion-shop-1",
+        "title": "Haljina",
+        "category": "Moda",
+        "price": 5490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_boutique_service_01_product_dress.jpg"
+      },
+      {
+        "id": "fashion-shop-2",
+        "title": "Torba",
+        "category": "Moda",
+        "price": 6990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_boutique_service_02_product_handbag.jpg"
+      },
+      {
+        "id": "fashion-shop-3",
+        "title": "Sunčane naočare",
+        "category": "Moda",
+        "price": 3490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_boutique_service_03_product_sunglasses.jpg"
+      },
+      {
+        "id": "fashion-shop-4",
+        "title": "Dres",
+        "category": "Moda",
+        "price": 2790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_04_dres.jpg"
+      },
+      {
+        "id": "fashion-shop-5",
+        "title": "Trenerka",
+        "category": "Moda",
+        "price": 4990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_05_trenerka.jpg"
+      },
+      {
+        "id": "fashion-shop-6",
+        "title": "Šuškavac",
+        "category": "Moda",
+        "price": 4490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_06_suskavac.jpg"
+      },
+      {
+        "id": "fashion-shop-7",
+        "title": "Jakna",
+        "category": "Moda",
+        "price": 5990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_07_jakna.jpg"
+      },
+      {
+        "id": "fashion-shop-8",
+        "title": "Kapa",
+        "category": "Moda",
+        "price": 1490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_08_kapa.jpg"
+      },
+      {
+        "id": "fashion-shop-9",
+        "title": "Sunčane naočare – model 1",
+        "category": "Moda",
+        "price": 3890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_09_naocare_suncane_model_01.jpg"
+      },
+      {
+        "id": "fashion-shop-10",
+        "title": "Sunčane naočare – model 2",
+        "category": "Moda",
+        "price": 3890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_10_naocare_suncane_model_02.jpg"
+      },
+      {
+        "id": "fashion-shop-11",
+        "title": "Sunčane naočare – model 3",
+        "category": "Moda",
+        "price": 3890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_11_naocare_suncane_model_03.jpg"
+      },
+      {
+        "id": "fashion-shop-12",
+        "title": "Farmerke",
+        "category": "Moda",
+        "price": 5490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_jeans_01.jpg"
+      },
+      {
+        "id": "fashion-shop-13",
+        "title": "Dečji komplet",
+        "category": "Moda",
+        "price": 3990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_kids_outfit_01.jpg"
+      },
+      {
+        "id": "fashion-shop-14",
+        "title": "Muška košulja",
+        "category": "Moda",
+        "price": 4190,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_mens_shirt_01.jpg"
+      },
+      {
+        "id": "fashion-shop-15",
+        "title": "Midi suknja",
+        "category": "Moda",
+        "price": 3290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_midi_skirt_01.jpg"
+      },
+      {
+        "id": "fashion-shop-16",
+        "title": "Majica",
+        "category": "Moda",
+        "price": 1690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_tshirt_01.jpg"
+      },
+      {
+        "id": "fashion-shop-17",
+        "title": "Ženska bluza",
+        "category": "Moda",
+        "price": 2790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/fashion-boutique/services/fashion_product_womens_blouse_01.jpg"
+      }
+    ]
+  },
+  "grocery-store": {
+    "label": "Mini market",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/grocery-store/hero/grocery_store_hero_interior_01.jpg",
+    "headline": "Sve što vam je potrebno, na jednom mestu.",
+    "subtitle": "Svakodnevne namirnice i proizvodi za dom, uz jednostavno poručivanje.",
+    "offerTitle": "Dnevna ponuda",
+    "products": [
+      {
+        "id": "grocery-store-1",
+        "title": "Čips",
+        "category": "Grickalice i slatkiši",
+        "price": 269,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_chips_01.jpg"
+      },
+      {
+        "id": "grocery-store-2",
+        "title": "Čokolada",
+        "category": "Grickalice i slatkiši",
+        "price": 189,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_chocolate_01.jpg"
+      },
+      {
+        "id": "grocery-store-3",
+        "title": "Kafa",
+        "category": "Osnovne namirnice",
+        "price": 849,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_coffee_01.jpg"
+      },
+      {
+        "id": "grocery-store-4",
+        "title": "Deterdžent",
+        "category": "Domaćinstvo",
+        "price": 799,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_detergent_01.jpg"
+      },
+      {
+        "id": "grocery-store-5",
+        "title": "Sok",
+        "category": "Piće",
+        "price": 199,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_juice_01.jpg"
+      },
+      {
+        "id": "grocery-store-6",
+        "title": "Mleko",
+        "category": "Mlečni proizvodi",
+        "price": 149,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_milk_01.jpg"
+      },
+      {
+        "id": "grocery-store-7",
+        "title": "Ulje",
+        "category": "Osnovne namirnice",
+        "price": 179,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_oil_01.jpg"
+      },
+      {
+        "id": "grocery-store-8",
+        "title": "Testenina",
+        "category": "Osnovne namirnice",
+        "price": 349,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_pasta_01.jpg"
+      },
+      {
+        "id": "grocery-store-9",
+        "title": "Pirinač",
+        "category": "Osnovne namirnice",
+        "price": 249,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_rice_01.jpg"
+      },
+      {
+        "id": "grocery-store-10",
+        "title": "Toalet papir",
+        "category": "Domaćinstvo",
+        "price": 199,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_toilet_paper_01.jpg"
+      },
+      {
+        "id": "grocery-store-11",
+        "title": "Voda",
+        "category": "Piće",
+        "price": 499,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_water_01.jpg"
+      },
+      {
+        "id": "grocery-store-12",
+        "title": "Jogurt",
+        "category": "Mlečni proizvodi",
+        "price": 289,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/grocery-store/products/grocery_store_product_yogurt_01.jpg"
+      }
+    ]
+  },
+  "liquor-store": {
+    "label": "Prodavnica pića",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/liquor-store/hero/liquor_store_hero_interior_01.jpg",
+    "headline": "Piće za svaku priliku.",
+    "subtitle": "Bezalkoholna i druga pića iz aktuelnog asortimana.",
+    "offerTitle": "Asortiman pića",
+    "products": [
+      {
+        "id": "liquor-store-1",
+        "title": "Pivo u flaši",
+        "category": "Piće",
+        "price": 219,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_beer_bottle_01.jpg"
+      },
+      {
+        "id": "liquor-store-2",
+        "title": "Pivo u limenci",
+        "category": "Piće",
+        "price": 179,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_beer_can_01.jpg"
+      },
+      {
+        "id": "liquor-store-3",
+        "title": "Kola",
+        "category": "Piće",
+        "price": 189,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_cola_01.jpg"
+      },
+      {
+        "id": "liquor-store-4",
+        "title": "Energetsko piće",
+        "category": "Piće",
+        "price": 249,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_energy_drink_01.jpg"
+      },
+      {
+        "id": "liquor-store-5",
+        "title": "Led",
+        "category": "Piće",
+        "price": 219,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_ice_bag_01.jpg"
+      },
+      {
+        "id": "liquor-store-6",
+        "title": "Mineralna voda",
+        "category": "Piće",
+        "price": 349,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_mineral_water_01.jpg"
+      },
+      {
+        "id": "liquor-store-7",
+        "title": "Sok od pomorandže",
+        "category": "Piće",
+        "price": 329,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_orange_juice_01.jpg"
+      },
+      {
+        "id": "liquor-store-8",
+        "title": "Party paket",
+        "category": "Piće",
+        "price": 449,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_party_mix_01.jpg"
+      },
+      {
+        "id": "liquor-store-9",
+        "title": "Rakija",
+        "category": "Piće",
+        "price": 159,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_rakija_01.jpg"
+      },
+      {
+        "id": "liquor-store-10",
+        "title": "Crveno vino",
+        "category": "Piće",
+        "price": 189,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_red_wine_01.jpg"
+      },
+      {
+        "id": "liquor-store-11",
+        "title": "Paket sokova",
+        "category": "Piće",
+        "price": 349,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_soft_drink_family_pack_01.jpg"
+      },
+      {
+        "id": "liquor-store-12",
+        "title": "Negazirana voda",
+        "category": "Piće",
+        "price": 499,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_still_water_01.jpg"
+      },
+      {
+        "id": "liquor-store-13",
+        "title": "Vodka",
+        "category": "Piće",
+        "price": 499,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_vodka_01.jpg"
+      },
+      {
+        "id": "liquor-store-14",
+        "title": "Viski",
+        "category": "Piće",
+        "price": 249,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_whisky_01.jpg"
+      },
+      {
+        "id": "liquor-store-15",
+        "title": "Belo vino",
+        "category": "Piće",
+        "price": 349,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/liquor-store/products/liquor_store_product_white_wine_01.jpg"
+      }
+    ]
+  },
+  "home-decor": {
+    "label": "Kućni dekor",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/home-decor/hero/home_decor_hero_01.jpg",
+    "headline": "Detalji koji čine dom.",
+    "subtitle": "Uredite svoj prostor uz odabrane dodatke i komade nameštaja.",
+    "offerTitle": "Inspiracija za dom",
+    "products": [
+      {
+        "id": "home-decor-1",
+        "title": "Fotelja",
+        "category": "Dekoracija i nameštaj",
+        "price": 36900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_armchair_01.jpg"
+      },
+      {
+        "id": "home-decor-2",
+        "title": "Tepih",
+        "category": "Dekoracija i nameštaj",
+        "price": 12990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_rug_01.jpg"
+      },
+      {
+        "id": "home-decor-3",
+        "title": "Stona lampa",
+        "category": "Dekoracija i nameštaj",
+        "price": 7490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_service_01_product_table_lamp.jpg"
+      },
+      {
+        "id": "home-decor-4",
+        "title": "Keramička vaza",
+        "category": "Dekoracija i nameštaj",
+        "price": 2990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_service_02_product_ceramic_vase.jpg"
+      },
+      {
+        "id": "home-decor-5",
+        "title": "Dekorativno ćebe",
+        "category": "Dekoracija i nameštaj",
+        "price": 8490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_service_03_product_throw_blanket.jpg"
+      },
+      {
+        "id": "home-decor-6",
+        "title": "Viseća lampa",
+        "category": "Dekoracija i nameštaj",
+        "price": 3290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/home-decor/services/home_decor_service_04_product_pendant_light.jpg"
+      }
+    ]
+  },
+  "electronics-store": {
+    "label": "Prodavnica elektronike",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/electronics-store/hero/electronics_store_hero_01.jpg",
+    "headline": "Tehnologija za svaki dan.",
+    "subtitle": "Izaberite uređaje i dodatke iz savremene ponude.",
+    "offerTitle": "Elektronika i oprema",
+    "products": [
+      {
+        "id": "electronics-store-1",
+        "title": "Tastatura",
+        "category": "Tehnika",
+        "price": 4990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_keyboard_01.jpg"
+      },
+      {
+        "id": "electronics-store-2",
+        "title": "Monitor",
+        "category": "Tehnika",
+        "price": 25990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_monitor_01.jpg"
+      },
+      {
+        "id": "electronics-store-3",
+        "title": "Laptop",
+        "category": "Tehnika",
+        "price": 89990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_service_01_product_laptop.jpg"
+      },
+      {
+        "id": "electronics-store-4",
+        "title": "Smart telefon",
+        "category": "Tehnika",
+        "price": 36990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_service_02_product_smartphone.jpg"
+      },
+      {
+        "id": "electronics-store-5",
+        "title": "Slušalice",
+        "category": "Tehnika",
+        "price": 3990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_service_03_product_headphones.jpg"
+      },
+      {
+        "id": "electronics-store-6",
+        "title": "Pametni sat",
+        "category": "Tehnika",
+        "price": 7990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_service_04_product_smartwatch.jpg"
+      },
+      {
+        "id": "electronics-store-7",
+        "title": "Televizor",
+        "category": "Tehnika",
+        "price": 18990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electronics-store/services/electronics_store_television_01.jpg"
+      }
+    ]
+  },
+  "phone-store": {
+    "label": "Prodavnica telefona",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/phone-store/hero/phone_store_hero_interior_01.jpg",
+    "headline": "Telefoni i oprema na jednom mestu.",
+    "subtitle": "Pogledajte telefone i izaberite model koji vam odgovara.",
+    "offerTitle": "Izabrani telefoni",
+    "products": [
+      {
+        "id": "phone-store-1",
+        "title": "Povoljan telefon",
+        "category": "Telefoni",
+        "price": 16990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_budget_black_01.jpg"
+      },
+      {
+        "id": "phone-store-2",
+        "title": "Poslovni telefon",
+        "category": "Telefoni",
+        "price": 42990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_business_phone_01.jpg"
+      },
+      {
+        "id": "phone-store-3",
+        "title": "Telefon sa naprednom kamerom",
+        "category": "Telefoni",
+        "price": 62990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_camera_phone_01.jpg"
+      },
+      {
+        "id": "phone-store-4",
+        "title": "Kompaktni telefon",
+        "category": "Telefoni",
+        "price": 28990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_compact_01.jpg"
+      },
+      {
+        "id": "phone-store-5",
+        "title": "Premium telefon",
+        "category": "Telefoni",
+        "price": 74990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_flagship_black_01.jpg"
+      },
+      {
+        "id": "phone-store-6",
+        "title": "Premium telefon",
+        "category": "Telefoni",
+        "price": 89990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_flagship_silver_01.jpg"
+      },
+      {
+        "id": "phone-store-7",
+        "title": "Preklopni telefon",
+        "category": "Telefoni",
+        "price": 34990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_foldable_01.jpg"
+      },
+      {
+        "id": "phone-store-8",
+        "title": "Gaming telefon",
+        "category": "Telefoni",
+        "price": 44990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_gaming_phone_01.jpg"
+      },
+      {
+        "id": "phone-store-9",
+        "title": "Telefon srednje klase",
+        "category": "Telefoni",
+        "price": 37990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_midrange_blue_01.jpg"
+      },
+      {
+        "id": "phone-store-10",
+        "title": "Telefon srednje klase",
+        "category": "Telefoni",
+        "price": 39990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/phone-store/products/phone_store_product_midrange_green_01.jpg"
+      }
+    ]
+  },
+  "furniture-store": {
+    "label": "Salon nameštaja",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/furniture-store/hero/furniture_store_hero_living_room_01.jpg",
+    "headline": "Pronađite nameštaj za svoj prostor.",
+    "subtitle": "Pregledajte kolekcije i pošaljite upit za željeni model i dimenzije.",
+    "offerTitle": "Kolekcija nameštaja",
+    "products": [
+      {
+        "id": "furniture-store-1",
+        "title": "Fotelja",
+        "category": "Dnevna soba",
+        "price": 39900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_armchair_01.jpg"
+      },
+      {
+        "id": "furniture-store-2",
+        "title": "Krevet",
+        "category": "Spavaća soba",
+        "price": 69900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_bed_01.jpg"
+      },
+      {
+        "id": "furniture-store-3",
+        "title": "Polica za knjige",
+        "category": "Dnevna soba",
+        "price": 19900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_bookshelf_01.jpg"
+      },
+      {
+        "id": "furniture-store-4",
+        "title": "Klub sto",
+        "category": "Dnevna soba",
+        "price": 12900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_coffee_table_01.jpg"
+      },
+      {
+        "id": "furniture-store-5",
+        "title": "Trpezarijska stolica",
+        "category": "Trpezarija",
+        "price": 45900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_dining_chair_01.jpg"
+      },
+      {
+        "id": "furniture-store-6",
+        "title": "Trpezarijski sto",
+        "category": "Trpezarija",
+        "price": 23900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_dining_table_01.jpg"
+      },
+      {
+        "id": "furniture-store-7",
+        "title": "Noćni stočić",
+        "category": "Spavaća soba",
+        "price": 11900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_nightstand_01.jpg"
+      },
+      {
+        "id": "furniture-store-8",
+        "title": "Ugaona garnitura",
+        "category": "Dnevna soba",
+        "price": 24900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_sectional_sofa_01.jpg"
+      },
+      {
+        "id": "furniture-store-9",
+        "title": "Komoda",
+        "category": "Dnevna soba",
+        "price": 119900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_sideboard_01.jpg"
+      },
+      {
+        "id": "furniture-store-10",
+        "title": "Sofa",
+        "category": "Dnevna soba",
+        "price": 22900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_sofa_01.jpg"
+      },
+      {
+        "id": "furniture-store-11",
+        "title": "TV komoda",
+        "category": "Dnevna soba",
+        "price": 19900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_tv_console_01.jpg"
+      },
+      {
+        "id": "furniture-store-12",
+        "title": "Ormar",
+        "category": "Spavaća soba",
+        "price": 69900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/furniture-store/products/furniture_store_product_wardrobe_01.jpg"
+      }
+    ]
+  },
+  "auto-parts": {
+    "label": "Auto delovi",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/auto-parts/hero/auto_parts_hero_interior_01.jpg",
+    "headline": "Delovi koji odgovaraju vašem vozilu.",
+    "subtitle": "Izaberite deo i pošaljite upit sa markom i modelom vozila.",
+    "offerTitle": "Delovi i oprema",
+    "products": [
+      {
+        "id": "auto-parts-1",
+        "title": "Filter vazduha",
+        "category": "Filteri",
+        "price": 1790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_air_filter_01.jpg"
+      },
+      {
+        "id": "auto-parts-2",
+        "title": "Kočioni disk",
+        "category": "Kočioni sistem",
+        "price": 4590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_brake_disc_01.jpg"
+      },
+      {
+        "id": "auto-parts-3",
+        "title": "Kočione pločice",
+        "category": "Kočioni sistem",
+        "price": 3490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_brake_pads_01.jpg"
+      },
+      {
+        "id": "auto-parts-4",
+        "title": "Filter kabine",
+        "category": "Filteri",
+        "price": 1990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_cabin_filter_01.jpg"
+      },
+      {
+        "id": "auto-parts-5",
+        "title": "Akumulator",
+        "category": "Elektrika",
+        "price": 1390,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_car_battery_01.jpg"
+      },
+      {
+        "id": "auto-parts-6",
+        "title": "Viljuška trapa",
+        "category": "Vešanje i trap",
+        "price": 8990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_control_arm_01.jpg"
+      },
+      {
+        "id": "auto-parts-7",
+        "title": "Motorno ulje",
+        "category": "Održavanje",
+        "price": 2490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_engine_oil_01.jpg"
+      },
+      {
+        "id": "auto-parts-8",
+        "title": "Sijalica fara",
+        "category": "Elektrika",
+        "price": 5990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_headlight_bulb_01.jpg"
+      },
+      {
+        "id": "auto-parts-9",
+        "title": "Filter ulja",
+        "category": "Filteri",
+        "price": 2990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_oil_filter_01.jpg"
+      },
+      {
+        "id": "auto-parts-10",
+        "title": "Amortizer",
+        "category": "Vešanje i trap",
+        "price": 3990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_shock_absorber_01.jpg"
+      },
+      {
+        "id": "auto-parts-11",
+        "title": "Svećice",
+        "category": "Elektrika",
+        "price": 2990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_spark_plugs_01.jpg"
+      },
+      {
+        "id": "auto-parts-12",
+        "title": "Metlice brisača",
+        "category": "Održavanje",
+        "price": 3990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/auto-parts/products/auto_parts_product_wiper_blades_01.jpg"
+      }
+    ]
+  },
+  "plumbing-supplies": {
+    "label": "Vodovodni materijal",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/plumbing-supplies/hero/plumbing_supplies_hero_interior_01.jpg",
+    "headline": "Materijal za pouzdanu instalaciju.",
+    "subtitle": "Oprema, slavine i spojni materijal uz proveru odgovarajućih specifikacija.",
+    "offerTitle": "Vodoinstalaterska oprema",
+    "products": [
+      {
+        "id": "plumbing-supplies-1",
+        "title": "Ugaoni ventil",
+        "category": "Ventili",
+        "price": 690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_angle_valve_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-2",
+        "title": "Kuglasti ventil",
+        "category": "Ventili",
+        "price": 1190,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_ball_valve_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-3",
+        "title": "Kupatilska slavina",
+        "category": "Slavine",
+        "price": 5490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_bathroom_faucet_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-4",
+        "title": "Bojler",
+        "category": "Oprema",
+        "price": 26900,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_boiler_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-5",
+        "title": "Fleksibilno crevo",
+        "category": "Instalacioni materijal",
+        "price": 1290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_flexible_hose_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-6",
+        "title": "Kuhinjska slavina",
+        "category": "Slavine",
+        "price": 590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_kitchen_faucet_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-7",
+        "title": "PEX cev",
+        "category": "Instalacioni materijal",
+        "price": 890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_pex_pipe_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-8",
+        "title": "Set fitinga",
+        "category": "Instalacioni materijal",
+        "price": 1290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_pipe_fittings_set_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-9",
+        "title": "Radijatorski ventil",
+        "category": "Ventili",
+        "price": 1790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_radiator_valve_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-10",
+        "title": "Tuš set",
+        "category": "Kupatilo",
+        "price": 1290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_shower_set_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-11",
+        "title": "Sifon za sudoperu",
+        "category": "Instalacioni materijal",
+        "price": 3690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_sink_siphon_01.jpg"
+      },
+      {
+        "id": "plumbing-supplies-12",
+        "title": "Pumpa za vodu",
+        "category": "Oprema",
+        "price": 590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/plumbing-supplies/products/plumbing_supplies_product_water_pump_01.jpg"
+      }
+    ]
+  },
+  "electrical-supplies": {
+    "label": "Elektromaterijal",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/electrical-supplies/hero/electrical_supplies_hero_interior_01.jpg",
+    "headline": "Sve za električne instalacije.",
+    "subtitle": "Kablovi, oprema i instalacioni materijal uz proveru specifikacija.",
+    "offerTitle": "Elektro oprema",
+    "products": [
+      {
+        "id": "electrical-supplies-1",
+        "title": "Razvodni orman",
+        "category": "Instalacioni materijal",
+        "price": 7490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_distribution_box_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-2",
+        "title": "Električni kabl",
+        "category": "Kablovi",
+        "price": 199,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_electrical_wire_roll_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-3",
+        "title": "Produžni kabl",
+        "category": "Instalacioni materijal",
+        "price": 1490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_extension_cord_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-4",
+        "title": "Razvodna kutija",
+        "category": "Instalacioni materijal",
+        "price": 490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_junction_box_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-5",
+        "title": "LED sijalica",
+        "category": "Rasveta",
+        "price": 390,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_led_bulb_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-6",
+        "title": "LED napajanje",
+        "category": "Rasveta",
+        "price": 890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_led_power_supply_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-7",
+        "title": "LED traka",
+        "category": "Rasveta",
+        "price": 690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_led_strip_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-8",
+        "title": "Automatski osigurač",
+        "category": "Zaštita",
+        "price": 890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_mcb_breaker_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-9",
+        "title": "Napojni kabl",
+        "category": "Kablovi",
+        "price": 590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_power_cable_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-10",
+        "title": "RCD zaštitni prekidač",
+        "category": "Zaštita",
+        "price": 1290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_rcd_breaker_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-11",
+        "title": "Utičnica sa uzemljenjem",
+        "category": "Prekidači i utičnice",
+        "price": 490,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_wall_socket_01.jpg"
+      },
+      {
+        "id": "electrical-supplies-12",
+        "title": "Zidni prekidač",
+        "category": "Prekidači i utičnice",
+        "price": 2190,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_wall_switch_01.jpg"
+      }
+    ]
+  }
+}

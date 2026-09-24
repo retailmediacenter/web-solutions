@@ -12,3 +12,5 @@ html[data-style="premium"]{--ink:#262220;--accent:#926b3e;--surface2:#faf9f6;--r
 
 /* Optional fulfillment is hidden for availability inquiries. */
 #orderForm #fulfillmentWrap[hidden]{display:none!important}
+/* V41.3: optional specification field in the shared product modal. */
+#variantWrap input{min-width:0}

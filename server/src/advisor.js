@@ -1,10 +1,11 @@
 import { getBusinessFacts } from './registry.js';
 import advisorData from './data/business-advisor-v395.json' with { type: 'json' };
 import pilotData from './data/pilot-catalog-v395.json' with { type: 'json' };
+import retailData from './data/retail-catalog-v395.json' with { type: 'json' };
 import commerceData from './data/commerce-capabilities-v395.json' with { type: 'json' };
 
 // Advisor owns meaning, choices, capabilities and module plan. Registry owns ONLY facts.
-export const PILOT_BUSINESSES = Object.freeze(['butcher-shop','wine-shop','shoe-shop']);
+export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData)]);
 export const STYLES = Object.freeze([
   {id:'traditional',label:'Tradicionalni'}, {id:'modern',label:'Moderni'},
   {id:'warm',label:'Topao'}, {id:'tech',label:'Tehnološki'}, {id:'premium',label:'Premium'}
@@ -18,7 +19,7 @@ const legacyNames={
 };
 const clean=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('sr').trim();
 const readable=id=>id.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
-export function businessDisplayName(id){return pilotData[id]?.label||advisorData[id]?.label||legacyNames[id]||readable(id);}
+export function businessDisplayName(id){return pilotData[id]?.label||retailData[id]?.label||advisorData[id]?.label||legacyNames[id]||readable(id);}
 export function listBusinesses(){
   return Object.keys(advisorRegistry()).map(id=>({id,label:businessDisplayName(id),group:advisorData[id]?.group||'Ostalo',pilot:PILOT_BUSINESSES.includes(id)}));
 }
@@ -30,11 +31,28 @@ const registryIdsHolder = registryFacts;
 export function recognizeBusiness(description){
   const text=clean(description);
   if(text.length<3)return null;
-  // Explicit, audited recognition for first 3 scenarios. Remaining categories
-  // remain selectable from the authoritative 72-entry registry.
+  // Preserve explicit recognition for the first three audited scenarios;
+  // additional migrated IDs remain selectable by name, no guessed synonyms.
   if(/\b(mesar|mesnic|butcher)/.test(text))return 'butcher-shop';
   if(/\b(vinotek|wine shop|prodavnic.*vin|vino.*degust)/.test(text))return 'wine-shop';
   if(/\b(obuc|obuv|cipel|patik|shoe shop)/.test(text))return 'shoe-shop';
+  // Explicit Serbian synonyms for the ten new profiles. Do not infer unknown
+  // professions from a generic retail description: ask the user to select.
+  const retailAliases=[
+    ['fashion-shop', /\b(butik|garderob|odec|modn(?:a|i|e) radnj)/],
+    ['grocery-store', /\b(mini ?market|samoposlug|namirnic|prodavnica hrane)/],
+    ['liquor-store', /\b(prodavnic[aue] pica|pice na veliko|alkoholna pica)/],
+    ['home-decor', /\b(kucn(?:i|e|a) dekor|dekoracij.*dom|home decor)/],
+    ['electronics-store', /\b(elektronik|laptop|racunar|kompjuter)/],
+    ['phone-store', /\b(mobiln(?:e|i|og|im) telefon|prodaj.*telefon|phone store)/],
+    ['furniture-store', /\b(namestaj|salon namestaja)/],
+    ['auto-parts', /\b(auto ?delov|delov.*automobil|rezervn.*delov)/],
+    ['plumbing-supplies', /\b(vodovodn.*materijal|vodoinstalatersk.*materijal|sanitarij)/],
+    ['electrical-supplies', /\b(elektromaterijal|elektro oprem|instalacion.*materijal)/]
+  ];
+  const matched=retailAliases.filter(([,pattern])=>pattern.test(text)).map(([id])=>id);
+  if(matched.length===1)return matched[0];
+  if(matched.length>1)return null;
   const aliases=Object.keys(registryFacts).map(id=>({id,label:clean(businessDisplayName(id))}));
   const hits=aliases.filter(x=>x.label.length>5 && text.includes(x.label));
   return hits.length===1?hits[0].id:null;
@@ -65,14 +83,24 @@ export function getAdvisorDefinition(id){
 const maxName=100;
 function isNonEmptyChoice(value,options){return typeof value==='string'&&options.includes(value);}
 export function resolvePilotSiteConfig({businessId,businessName,description='',answers={},style='modern',goal='purchase'}={}){
-  if(!PILOT_BUSINESSES.includes(businessId))throw new Error('Delatnost nije u funkcionalnoj pilot fazi.');
+  if(!PILOT_BUSINESSES.includes(businessId))throw new Error('Delatnost još nije migrirana.');
   const facts=getBusinessFacts(businessId),def=getAdvisorDefinition(businessId);
   if(!facts)throw new Error('Nepoznata delatnost.');
   const name=String(businessName??'').trim();
   if(!name||name.length>maxName)throw new Error('Naziv firme mora imati 1–100 znakova.');
   if(!STYLES.some(x=>x.id===style))throw new Error('Nepoznat stil.');
   if(!['purchase','visit','catalog'].includes(goal))throw new Error('Nepoznat cilj sajta.');
-  const features={commerce:goal==='purchase'};
+  // V39.5 Commerce matrix is consulted by Advisor, not by Registry or Renderer.
+  // Inquiry-first sectors never silently become a shopping cart.
+  const sourceMode=commerceData[businessId]?.mode||'inquiry';
+  const isNewRetail=Object.hasOwn(retailData,businessId);
+  const features={commerce:goal==='purchase' && sourceMode==='cart', inquiry:goal!=='purchase'||sourceMode!=='cart',
+    variantNote:isNewRetail&&!!commerceData[businessId]?.variantNote};
+  const variantLabels={'fashion-shop':'Veličina / boja','phone-store':'Model / boja',
+    'furniture-store':'Model / dimenzije','auto-parts':'Marka / model / godište vozila',
+    'plumbing-supplies':'Dimenzije / specifikacija','electrical-supplies':'Tip / specifikacija',
+    'electronics-store':'Model / varijanta','liquor-store':'Pakovanje / varijanta','home-decor':'Boja / dimenzije'};
+  features.variantLabel=variantLabels[businessId]||'Varijanta / napomena';
   const modules=['hero','featured','catalog'];
   if(features.commerce)modules.push('cart');
   const mode=typeof answers.businessMode==='string'&&def.operation.options.includes(answers.businessMode)?answers.businessMode:'';
@@ -89,11 +117,11 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
   modules.push('contact');
   const cleanPhone=String(answers.contactPhone??'').replace(/[^+\d\s()\-]/g,'').slice(0,35);
   return {
-    schemaVersion:'41.1-pilot',reference:'V39.5',siteStatus:'preview-and-export',
+    schemaVersion:'41.3-retail-wave',reference:'V39.5',siteStatus:'preview-and-export',
     business:{id:businessId,name,label:def.label},
     input:{description:String(description??'').slice(0,800),goal,mode,emphasis},
     style,capabilities:features,modules,
-    commerce:{...commerceData[businessId],mode:features.commerce?'cart':goal==='visit'?'visit':'catalog',currency:'RSD',prices:'illustrative-demo'},
+    commerce:{...commerceData[businessId],mode:features.commerce?'cart':features.inquiry?'inquiry':'catalog',currency:'RSD',prices:'illustrative-demo'},
     contact:{phone:cleanPhone},
     assets:{assetRoot:facts.assetRoot,assetRoles:[...facts.assetRoles]},
     registryAssetRoot:facts.assetRoot // compatibility with first V41 checkpoint

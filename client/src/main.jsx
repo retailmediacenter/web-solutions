@@ -6,7 +6,17 @@ import './style.css';
 const pilots=[
   {id:'butcher-shop',label:'Mesara',hint:'Sirovo / grilovano, količina u kg, korpa'},
   {id:'wine-shop',label:'Vinoteka',hint:'Vina, korpa i uslovne degustacije'},
-  {id:'shoe-shop',label:'Prodavnica obuće',hint:'Brojevi, cene i standardna korpa'}
+  {id:'shoe-shop',label:'Prodavnica obuće',hint:'Brojevi, cene i standardna korpa'},
+  {id:'fashion-shop',label:'Modni butik',hint:'Odeća, boje i veličine'},
+  {id:'grocery-store',label:'Mini market',hint:'Namirnice, korpa i ukupno'},
+  {id:'liquor-store',label:'Prodavnica pića',hint:'Katalog pića i porudžbine'},
+  {id:'home-decor',label:'Kućni dekor',hint:'Katalog dekoracije i porudžbine'},
+  {id:'electronics-store',label:'Prodavnica elektronike',hint:'Uređaji, cene i korpa'},
+  {id:'phone-store',label:'Prodavnica telefona',hint:'Model/boja i korpa'},
+  {id:'furniture-store',label:'Salon nameštaja',hint:'Model i dimenzije, upit umesto korpe'},
+  {id:'auto-parts',label:'Auto delovi',hint:'Provera kompatibilnosti, upit'},
+  {id:'plumbing-supplies',label:'Vodovodni materijal',hint:'Specifikacija proizvoda, upit'},
+  {id:'electrical-supplies',label:'Elektromaterijal',hint:'Specifikacija proizvoda, upit'}
 ];
 const goals=[
   {id:'purchase',label:'Prodaja i porudžbine',desc:'Kupac pronalazi proizvode i priprema porudžbinu.'},
@@ -50,8 +60,8 @@ function App(){
       const understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800)));
       const chosen=selectedId||understood.businessId;
       setRecognizedId(understood.businessId||'');
-      if(!chosen){throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi Mesaru, Vinoteku ili Prodavnicu obuće.');}
-      if(!pilots.some(x=>x.id===chosen))throw new Error('Prepoznata delatnost još čeka migraciju u React preview. Odaberi jedan od tri završena scenarija.');
+      if(!chosen){throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');}
+      if(!pilots.some(x=>x.id===chosen))throw new Error('Prepoznata delatnost još čeka migraciju u React preview. Izaberi jednu od podržanih delatnosti.');
       const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
       setSelectedId(chosen);setDefinition(def);setAnswers({});setGoal('purchase');setStyle('modern');setBusinessName('');setStep(0);setResult(null);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
@@ -87,7 +97,7 @@ function App(){
     ?.replace('src="export-runtime.js"','src="'+previewBase+'export-runtime.js"');
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
   return <>
-    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.2 · UX POPRAVKE</span></div></header>
+    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.3 · RETAIL MIGRACIJA</span></div></header>
     <main className={'studio '+(result?'with-preview':'')}>
       <aside className="wizard"><div className="wizard-top"><div className="eyebrow">WEB SOLUTIONS ADVISOR</div><h1>{result?'Sajt je spreman za test':'Napravite biznis sajt'}</h1><p>{result?'Preview i ZIP nastaju iz iste Node konfiguracije.':'Od opisa vašeg posla do funkcionalnog test sajta.'}</p>
         <div className="progress" aria-label="Napredak"><div style={{width:(result?100:progress)+'%'}}/></div><small className="step-count">{result?'GENERISANO':definition?`KORAK ${step+2} OD ${count}`:'KORAK 1 — OPIS POSLA'}</small></div>
@@ -99,7 +109,7 @@ function App(){
           <button className="quiet" type="button" onClick={()=>{setDefinition(null);setResult(null);setStep(0);setError('');setSelectedId('');}}>Napravi drugi sajt</button>
           <p className="small-note">Demo cene su ilustrativne. Porudžbine i degustacije generišu poruku, bez lažne potvrde ili naplate.</p>
         </div>:<div className="wizard-content">
-          {current==='intro'&&<section className="question"><div className="eyebrow">1 · OPIS</div><h2>Čime se bavite?</h2><p>Opišite posao, a Advisor će predložiti delatnost. Za sada su migrirana tri referentna scenarija.</p>
+          {current==='intro'&&<section className="question"><div className="eyebrow">1 · OPIS</div><h2>Čime se bavite?</h2><p>Opišite posao, a Advisor će predložiti delatnost. Migrirane su tri referentne delatnosti i prva dodatna Retail grupa.</p>
             <form id="introForm" onSubmit={begin}><label className="field">Vaš opis<textarea rows={4} maxLength={800} minLength={3} required value={description} onChange={e=>setDescription(e.target.value)} placeholder="Imam mesaru i nudim pripremu mesa..."/></label>
             <label className="field">Delatnost (opciono — za testiranje)<select value={selectedId} onChange={e=>setSelectedId(e.target.value)}><option value="">Advisor prepoznaje iz opisa</option>{pilots.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}</select></label>
             {defOfRecognized&&<p>Razumeo sam: {defOfRecognized.label}</p>}
@@ -118,7 +128,7 @@ function App(){
           {definition&&<button className="quiet back" type="button" onClick={()=>{if(step===0){setDefinition(null);setStep(0)}else setStep(s=>s-1);setError('')}}>← Nazad</button>}
         </div>}
         {error&&<p role="alert" className="error">{error}</p>}
-        <div className="wizard-footer">V39.5 ostaje netaknut · {health?.registryEntries||72} delatnosti u server registru · 3 migrirana scenarija
+        <div className="wizard-footer">V39.5 ostaje netaknut · {health?.registryEntries||72} delatnosti u server registru · 13 migriranih retail scenarija
           {import.meta.env.DEV&&<a href="/legacy/" target="_blank" rel="noreferrer">Otvori stari V39.5 ↗</a>}</div>
       </aside>
       <section className="preview-area" aria-label="Pregled sajta">

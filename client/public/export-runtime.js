@@ -21,12 +21,13 @@
   };
   const formatQty=(n,p)=>`${new Intl.NumberFormat('sr-RS',{maximumFractionDigits:2}).format(n)} ${p.unit==='kg'?'kg':p.unit==='par'?'par':'kom'}`;
   const escapeHtml=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-  const variantText=line=>[line.preparation,line.size&&`Broj ${line.size}`].filter(Boolean).join(' · ');
+  const variantText=line=>[line.preparation,line.size&&`Broj ${line.size}`,line.variant].filter(Boolean).join(' · ');
   const getLine=()=>{
     if(!chosen)return null;
     const qty=cleanQty(chosen,$('qtyInput').value),prep=$('prepWrap').hidden?'':$('preparation').value,size=$('sizeWrap').hidden?'':$('shoeSize').value;
-    const key=[chosen.id,prep,size].join('|');
-    return {key,id:chosen.id,title:chosen.title,image:chosen.image,price:chosen.price,unit:chosen.unit,step:chosen.step,qty,preparation:prep,size};
+    const variant=$('variantWrap').hidden?'':$('variantInput').value.trim().slice(0,110);
+    const key=[chosen.id,prep,size,variant].join('|');
+    return {key,id:chosen.id,title:chosen.title,image:chosen.image,price:chosen.price,unit:chosen.unit,step:chosen.step,qty,preparation:prep,size,variant};
   };
   const total=lines=>roundQty(lines.reduce((sum,l)=>sum+l.qty*l.price,0));
   const plural=n=>n===1?'artikal':n>=2&&n<=4?'artikla':'artikala';
@@ -49,6 +50,9 @@
     $('prepWrap').hidden=!(site.capabilities.butcherGrillService && p.grillable);
     $('preparation').value='Sveže';
     $('sizeWrap').hidden=site.business.id!=='shoe-shop';$('shoeSize').value='41';
+    $('variantWrap').hidden=!site.capabilities.variantNote;
+    $('variantLabel').textContent=site.capabilities.variantLabel||'Varijanta / napomena';
+    $('variantInput').value='';
     updateSubtotal();show($('productDialog'));
   }
   function addLine(line){
