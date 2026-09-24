@@ -1,4 +1,4 @@
-/* V41.1 standalone browser runtime. Contains ONLY generated-site interactions.
+/* V41.2 standalone browser runtime. Contains ONLY generated-site interactions.
    No Advisor, Business Registry or site generator code is sent to visitors. */
 (()=>{
   'use strict';
@@ -9,7 +9,7 @@
   const $=id=>document.getElementById(id);
   const money=n=>new Intl.NumberFormat('sr-RS',{maximumFractionDigits:0}).format(n)+' RSD';
   const products=new Map(catalog.products.map(p=>[p.id,p]));
-  let chosen=null,cart=[],orderSelection=[],prepared='',bookingPrepared='';
+  let chosen=null,cart=[],orderSelection=[],orderIntent='purchase',prepared='',bookingPrepared='';
   const minQty=p=>p?.unit==='kg'?.5:1;
   const stepQty=p=>p?.step||1;
   const roundQty=n=>Math.round(n*100)/100;
@@ -36,7 +36,7 @@
     if(!chosen)return;
     const n=cleanQty(chosen,$('qtyInput').value);
     $('qtyInput').value=n;
-    $('detailSubtotal').textContent='Ukupno: '+money(roundQty(n*chosen.price));
+    $('detailSubtotal').textContent=(site.capabilities.commerce?'Ukupno: ':'Informativno: ')+money(roundQty(n*chosen.price));
   }
   function openProduct(id){
     const p=products.get(id);if(!p)return;
@@ -75,9 +75,14 @@
         <div class="cart-quantity"><button type="button" data-cart-minus="${i}" aria-label="Smanji količinu">−</button><button type="button" data-cart-plus="${i}" aria-label="Povećaj količinu">+</button></div></div><button type="button" class="cart-remove" data-cart-remove="${i}">Ukloni</button></article>`;
     }).join('');
   }
-  function order(lines){
+  function order(lines,intent='purchase'){
     if(!lines?.length)return;
     orderSelection=structuredClone(lines);
+    orderIntent=intent;
+    $('orderKicker').textContent=intent==='inquiry'?'UPIT':'PORUDŽBINA';
+    $('orderHeading').textContent=intent==='inquiry'?'Proverite dostupnost proizvoda':'Proverite i pošaljite zahtev';
+    $('orderSubmit').textContent=intent==='inquiry'?'Pripremi upit':'Pripremi poruku';
+    $('fulfillmentWrap').hidden=intent==='inquiry';
     $('orderForm').hidden=false;$('sharePanel').hidden=true;$('orderForm').reset();prepared='';
     show($('orderDialog'));
   }
@@ -86,6 +91,13 @@
       const details=variantText(l);
       return `• ${l.title} — ${formatQty(l.qty,l)}${details?' ('+details+')':''}: ${money(roundQty(l.qty*l.price))}`;
     });
+    if(orderIntent==='inquiry'){
+      return ['Pozdrav, želeo/la bih da proverim dostupnost:',...rows,
+        `Informativna demo vrednost: ${money(total(lines))}`,
+        `Ime: ${info.name}`,`Telefon: ${info.phone}`,
+        info.note?`Napomena: ${info.note}`:'',
+        'Molim vas da potvrdite dostupnost, stvarne cene i mogućnost preuzimanja.'].filter(Boolean).join('\n');
+    }
     return ['Pozdrav, želeo/la bih da pošaljem zahtev za porudžbinu:',...rows,
       `Ukupno (demo): ${money(total(lines))}`,
       `Način: ${info.fulfillment}`,`Ime: ${info.name}`,`Telefon: ${info.phone}`,
@@ -107,6 +119,20 @@
     return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
   }
   document.addEventListener('click',e=>{
+    // Never allow a relative fragment inside an iframe srcDoc preview to navigate
+    // to the parent React URL. Scroll this document's own window instead.
+    const jump=e.target.closest('a[href^="#"]');
+    if(jump){
+      const hash=jump.getAttribute('href');
+      const target=hash&&hash.length>1?document.getElementById(hash.slice(1)):null;
+      if(target){
+        e.preventDefault();
+        const offset=(document.querySelector('.site-header')?.offsetHeight||0)+14;
+        const top=window.scrollY+target.getBoundingClientRect().top-offset;
+        window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+        return;
+      }
+    }
     const productButton=e.target.closest('[data-product]');
     if(productButton){openProduct(productButton.dataset.product);return;}
     if(e.target.closest('[data-close]')){e.target.closest('dialog')?.close();return;}
@@ -114,6 +140,7 @@
     if(e.target.closest('#qtyPlus') && chosen){$('qtyInput').value=roundQty(Math.min(99,Number($('qtyInput').value)+stepQty(chosen)));updateSubtotal();return;}
     if(e.target.closest('#addToCart')){addLine(getLine());$('productDialog').close();return;}
     if(e.target.closest('#buyNow')){const line=getLine();addLine(line);order([line]);return;}
+    if(e.target.closest('#availabilityInquiry')){order([getLine()],'inquiry');return;}
     if(e.target.closest('#stickyCart')){updateCart();show($('cartDialog'));return;}
     if(e.target.closest('[data-cart-remove]')){const i=Number(e.target.closest('[data-cart-remove]').dataset.cartRemove);if(i>=0&&i<cart.length)cart.splice(i,1);updateCart();return;}
     const minus=e.target.closest('[data-cart-minus]'),plus=e.target.closest('[data-cart-plus]');

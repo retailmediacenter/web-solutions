@@ -1,4 +1,4 @@
-/* V41.1 self-contained shared CSS: preview and ZIP; system Montserrat fallback */
+/* V41.2 self-contained shared CSS: preview and ZIP; system Montserrat fallback */
 :root{--ink:#19273b;--muted:#64748b;--surface:#fff;--surface2:#f4f7fb;--accent:#2463eb;--line:#e0e7f1;--radius:17px;--max-width:1130px;color-scheme:light;font-family:Montserrat,Arial,Helvetica,sans-serif}
 html[data-style="traditional"]{--ink:#40392f;--accent:#9a5733;--surface2:#faf7f2;--radius:7px}
 html[data-style="warm"]{--ink:#40352e;--accent:#b36a42;--surface2:#fff5ed;--radius:24px}
@@ -9,3 +9,6 @@ html[data-style="premium"]{--ink:#262220;--accent:#926b3e;--surface2:#faf9f6;--r
 .shop-card[hidden]{display:none!important}.cart-quantity{display:flex;gap:6px;margin-top:7px}.cart-quantity button{width:29px;height:27px;border:1px solid var(--line);border-radius:7px;background:var(--surface2);color:var(--ink);font-size:17px;font-weight:800}button:disabled{opacity:.45;cursor:not-allowed}
 
 .detail-buy[hidden],.detail-actions[hidden]{display:none!important}
+
+/* Optional fulfillment is hidden for availability inquiries. */
+#orderForm #fulfillmentWrap[hidden]{display:none!important}

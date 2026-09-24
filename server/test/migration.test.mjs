@@ -90,10 +90,29 @@ test('Advisor goal is applied: catalog-only does not enable cart',()=>{
   const page=buildSitePayload({...butcher('raw'),goal:'catalog'});
   assert.equal(page.siteConfig.capabilities.commerce,false);
   assert.equal(page.siteConfig.modules.includes('cart'),false);
-  assert.ok(renderHtml(page).includes('class="detail-buy" hidden'));
+  assert.ok(!page.siteConfig.modules.includes('cart'));
+  assert.ok(renderHtml(page).includes('id="availabilityInquiry"'));
+  assert.ok(!renderHtml(page).includes('id="addToCart"'));
 });
 test('Input validation and ZIP traversal protection',()=>{
   assert.throws(()=>resolvePilotSiteConfig({...butcher(),style:'strange'}),/Nepoznat/);
   assert.throws(()=>resolvePilotSiteConfig({...butcher(),businessName:' '}),/Naziv/);
   assert.throws(()=>zipFiles([{name:'../secret',data:'x'}]),/putanja/);
+});
+
+// V41.2 regression: a catalog visitor can still ask about availability without a cart.
+test('Shoe catalog mode offers availability inquiry, preserves size and contact form',()=>{
+  const page=buildSitePayload({...input('shoe-shop'),goal:'visit'});
+  const html=renderHtml(page);
+  assert.equal(page.siteConfig.capabilities.commerce,false);
+  assert.ok(html.includes('id="availabilityInquiry"'));
+  assert.ok(html.includes('id="shoeSize"'));
+  assert.ok(html.includes('id="orderHeading"'));
+  assert.ok(html.includes('id="fulfillmentWrap"'));
+});
+test('Purchasing goal keeps add-to-cart and sticky-cart',()=>{
+  const html=renderHtml(buildSitePayload(input('shoe-shop')));
+  assert.ok(html.includes('id="addToCart"'));
+  assert.ok(html.includes('id="stickyCart"'));
+  assert.ok(!html.includes('id="availabilityInquiry"'));
 });

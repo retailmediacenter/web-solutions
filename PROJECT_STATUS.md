@@ -1,3 +1,23 @@
+# V41.2 — Preview / Commerce UX stabilization (24.09.2026)
+
+**Osnova:** lokalno instalirana V41.1; ne dirati V39.5 i ne objavljivati automatski na Render MAIN.
+
+## Popravke
+- **Vinoteka u React preview-u:** uklonjen je privremeni `<base href>` iz `iframe srcDoc` jer je menjao odredište `#degustacije` u URL nadređene React aplikacije i ostavljao prazan preview. `site.css` i `export-runtime.js` sada koriste potpune adrese u preview-u, a svi `#` linkovi skroluju unutar svog dokumenta. Izvezeni ZIP i dalje koristi relativne adrese kako bi radio samostalno.
+- **Sticky korpa tokom pregleda:** radna visina ugrađenog iframe-a prilagođava se vidljivom delu ekrana; uklonjena je neprimerena minimalna visina unutrašnjeg preview kontejnera. Samostalni sajt i njegova mobilna korpa nisu redizajnirani.
+- **Prodavnica obuće, bez korpe:** `catalog`/`visit` goal sada prikazuje akciju *Proveri dostupnost*, sa izborom veličine i porukom za upit. Samo kupovni `purchase` cilj daje *Dodaj u korpu / Poruči sada*; različiti ciljevi se ne mešaju.
+- **Degustacije i porudžbine:** postojeći zahtevi i dalje su poruke, a ne automatski potvrđene rezervacije ili naplata.
+
+## Provere u ovom paketu
+- 15/15 Node regresionih testova PASS, uključujući tri pilotska poslovanja, ZIP, i razlikovanje upita od kupovine.
+- Headless Chromium: verifikovana navigacija `Vođena degustacija → Pronađi termin` **unutar izolovanog iframe srcDoc-a**, uspešno slanje test forme; obuća `Proveri dostupnost → validacija → pripremljena poruka`. Lokalni HTTP browser server nije bio dostupan u izvršnom test okruženju, pa su HTML, CSS i JS umetnuti u test da bi se izolovala navigacija i interakcije.
+- React `npm run build` **mora proći lokalno u instalacionoj skripti pre bilo kakvog Git push-a**.
+
+## Obuhvat
+Samo V41.2 popravke za tri pilotska scenarija. Preostalih 69 delatnosti još nije migrirano. V39.5 i Render MAIN ostaju netaknuti. Nema punog React redizajna ili univerzalnog Booking engine-a u ovom paketu.
+
+---
+
 # RMC Web Solutions — glavni status dokument
 
 **Poslednja ažurirana verzija:** V41.1, 24.09.2026.  

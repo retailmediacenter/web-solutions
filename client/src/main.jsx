@@ -81,11 +81,13 @@ function App(){
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
-  const baseHref=window.location.origin+import.meta.env.BASE_URL;
-  const previewHtml=result?.previewHtml?.replace('<head>','<head><base href="'+baseHref+'">');
+  const previewBase=window.location.origin+import.meta.env.BASE_URL;
+  const previewHtml=result?.previewHtml
+    ?.replace('href="site.css"','href="'+previewBase+'site.css"')
+    ?.replace('src="export-runtime.js"','src="'+previewBase+'export-runtime.js"');
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
   return <>
-    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.1 · FUNKCIONALNA MIGRACIJA</span></div></header>
+    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{health?.status==='ok'?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V41.2 · UX POPRAVKE</span></div></header>
     <main className={'studio '+(result?'with-preview':'')}>
       <aside className="wizard"><div className="wizard-top"><div className="eyebrow">WEB SOLUTIONS ADVISOR</div><h1>{result?'Sajt je spreman za test':'Napravite biznis sajt'}</h1><p>{result?'Preview i ZIP nastaju iz iste Node konfiguracije.':'Od opisa vašeg posla do funkcionalnog test sajta.'}</p>
         <div className="progress" aria-label="Napredak"><div style={{width:(result?100:progress)+'%'}}/></div><small className="step-count">{result?'GENERISANO':definition?`KORAK ${step+2} OD ${count}`:'KORAK 1 — OPIS POSLA'}</small></div>
