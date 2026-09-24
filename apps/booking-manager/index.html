@@ -2,11 +2,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#12344d"><meta name="description" content="RMC Booking Manager — rezervacije koje rade lokalno.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon-192.png">
-<title>RMC Booking Manager · V43.1.1</title><link rel="stylesheet" href="./src/style.css">
+<title>RMC Booking Manager · V43.2</title><link rel="stylesheet" href="./src/style.css">
 </head><body>
 <div id="app" class="shell">
   <aside class="sidebar">
-    <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>BOOKING <span>MANAGER</span></strong><small>RMC WEB SOLUTIONS / V43.1.2.1</small></div></div>
+    <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>BOOKING <span>MANAGER</span></strong><small>RMC WEB SOLUTIONS / V43.2</small></div></div>
     <div class="workspace"><label class="small-label" for="business-switch">AKTIVNA FIRMA</label><select id="business-switch" aria-label="Izbor firme"></select></div>
     <nav class="nav" aria-label="Glavna navigacija">
       <button type="button" data-view="day" class="nav-item active"><span class="nav-icon">▦</span><span>Dan</span></button>
@@ -19,8 +19,8 @@
     <button type="button" class="side-backup" data-action="export">↧ &nbsp;Sačuvaj rezervnu kopiju</button>
   </aside>
   <main class="main">
-    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BOOKING</p><h1 id="page-title">Kalendar</h1><p class="page-subtitle" id="page-subtitle">Lokalni pregled i potvrđivanje rezervacija.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button></header>
-    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>V43.1.1 — lokalni prototip.</strong> Zahtevi se zasad unose ručno. Automatski link iz Vibera/WhatsAppa uvodimo u V43.2.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
+    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BOOKING</p><h1 id="page-title">Kalendar</h1><p class="page-subtitle" id="page-subtitle">Lokalni pregled i potvrđivanje rezervacija.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button><button type="button" class="btn btn-light" data-action="import-secure">Uvezi Booking link</button></header>
+    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>V43.2 — povezivanje sa sajtom.</strong> Podešavanja → kopiraj JAVNI kod u Advisor. Zahtevi sa sajta stižu šifrovanim linkom. Ne testiraj stvarnim podacima.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
     <div id="notice" aria-live="polite"></div><div id="main-view"></div>
   </main>
 </div>

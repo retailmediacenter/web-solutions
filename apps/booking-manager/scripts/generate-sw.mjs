@@ -18,7 +18,7 @@ const resources=(await files(rootPath)).map(p=>'./'+relative(rootPath,p).split(s
 if(!resources.includes('./index.html') || !resources.includes('./manifest.webmanifest')) throw new Error('Nepotpuna Vite izgradnja: nedostaje index ili manifest.');
 const version=createHash('sha256');
 for(const path of resources){version.update(path);version.update(await readFile(join(rootPath,path.slice(2))));}
-const cache='rmc-booking-v43-1-2-'+version.digest('hex').slice(0,12);
+const cache='rmc-booking-v43-2-'+version.digest('hex').slice(0,12);
 const script=`const CACHE=${JSON.stringify(cache)};
 const ASSETS=${JSON.stringify(resources)};
 const SHELL='./index.html';

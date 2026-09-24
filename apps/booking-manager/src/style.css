@@ -11,3 +11,8 @@
 .share-viber{background:#6654a4;color:#fff;border:1px solid #6654a4}
 .share-bar p{font-size:11px;color:#647d8b;line-height:1.45;margin:8px 0 0}
 @media(max-width:480px){.share-bar{padding:12px 17px}.share-actions .btn{flex:1;min-width:90px;font-size:12px;padding:10px 8px}}
+
+/* V43.2 pairing/import: do not let long tokens overflow mobile */
+#public-pairing-code{display:block;width:100%;min-height:105px;max-width:100%;overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:11px;resize:vertical}
+.topbar{flex-wrap:wrap;gap:12px}.topbar>button{margin-left:0}
+#notice .helper-box{overflow-wrap:anywhere}

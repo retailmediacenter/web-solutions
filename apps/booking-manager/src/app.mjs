@@ -1,5 +1,6 @@
 import {STATUS,DAYS,clone,makeId,makeProfile,demoState,normalizeRequest,slotCheck,alternatives,addDays,dateKey,dateOf,formatDate,weekStart,formatRequest,validateImport,icsFor,isDate,isTime,toMin,fromMin} from './booking-core.mjs';
 import {whatsappUrl,viberUrl,hasWhatsAppRecipient} from './messaging.mjs';
+import {createPairing,decodePairing,openEncryptedLink} from './secure-link.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8,6 +9,7 @@ const isoNow = () => new Date().toISOString();
 const statName = {[STATUS.PENDING]:'Čeka odgovor',[STATUS.CONFIRMED]:'Potvrđeno',[STATUS.PROPOSED]:'Predlog pripremljen',[STATUS.DECLINED]:'Odbijeno',[STATUS.CANCELLED]:'Otkazano'};
 const stateUI = {view:'day',date:today(),filter:'all',selectedId:null,proposal:null};
 const CHANNEL='rmc-booking-local'; let channel; let state,writing=Promise.resolve(),toastTimer;
+let pendingIncoming=(location.hash.match(/^#rmb=(B1\.[a-zA-Z0-9_-]+)$/)||[])[1]||null;
 
 // IndexedDB stores one complete snapshot. There are no cloud/API calls.
 const openDatabase = () => new Promise((resolve,reject)=>{
@@ -109,12 +111,15 @@ function renderDay(){const bs=bookings().filter(b=>b.date===stateUI.date),st=run
 function renderWeek(){const start=weekStart(stateUI.date),p=profile();return `${toolbar(true)}<div class="panel"><div class="panel-head"><h2>Nedelja</h2><span class="tiny-label">KLIK ZA DAN</span></div><div class="panel-body"><div class="week-grid">${Array.from({length:7},(_,i)=>{const d=addDays(start,i),arr=bookings().filter(b=>b.date===d),confirmed=arr.filter(b=>b.status===STATUS.CONFIRMED).length,pending=arr.filter(b=>b.status===STATUS.PENDING).length,day=p.hours[(dateOf(d).getDay()+6)%7];return `<button class="day-card ${d===stateUI.date?'selected':''}" data-action="choose-day" data-date="${d}"><div class="day-name">${DAYS[i]}</div><div class="day-num">${Number(d.slice(-2))}</div>${!day?.enabled||p.closedDates?.includes(d)?'<span class="closed">Neradni dan</span>':`<span class="week-pill">${confirmed} potvrđeno</span>${pending?`<span class="week-pill secondary">${pending} čeka</span>`:''}`}</button>`;}).join('')}</div></div></div><div class="helper-box">Nedelja prikazuje potvrđene rezervacije i zahteve. Detalje proveravaš u dnevnom prikazu.</div>`;}
 function renderRequests(){let bs=bookings().sort((a,b)=>{const rank={pending:0,proposed:1,confirmed:2,declined:3,cancelled:4};return rank[a.status]-rank[b.status]||b.createdAt.localeCompare(a.createdAt);});
   if(stateUI.filter!=='all')bs=bs.filter(b=>b.status===stateUI.filter);
-  return `<div class="toolbar"><strong>${bs.length} zahteva</strong><button class="btn btn-light" data-action="import-test">↥ Unesi test JSON</button></div><div class="filter-bar">${[['all','Svi'],['pending','Čekaju'],['confirmed','Potvrđeni'],['proposed','Predlozi'],['cancelled','Otkazani'],['declined','Odbijeni']].map(([id,label])=>`<button class="filter ${stateUI.filter===id?'active':''}" data-action="filter" data-filter="${id}">${label}</button>`).join('')}</div><div class="request-grid">${bs.map(b=>`<article class="request-card"><div class="request-card-head"><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><span class="tiny-label">${safe(b.source==='manual'?'RUČNI UNOS':b.source==='test-json'?'TEST JSON':'ZAHTEV')}</span></div><h3>${safe(b.clientName)}</h3><p>${safe(b.serviceName)}<br>${safe(summaryLine(b))}</p>${b.proposal?`<p style="color:#2d8e86">Predlog: ${safe(formatDate(b.proposal.date))} u ${safe(b.proposal.time)}</p>`:''}<div class="request-card-bottom"><small>${safe(b.phone||'Bez telefona')}</small><button class="tiny" data-action="detail" data-id="${safe(b.id)}">Otvori →</button></div></article>`).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
+  return `<div class="toolbar"><strong>${bs.length} zahteva</strong><div style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn btn-primary" data-action="import-secure">↥ Uvezi Booking link</button><button class="btn btn-light" data-action="import-test">Test JSON</button></div></div><div class="filter-bar">${[['all','Svi'],['pending','Čekaju'],['confirmed','Potvrđeni'],['proposed','Predlozi'],['cancelled','Otkazani'],['declined','Odbijeni']].map(([id,label])=>`<button class="filter ${stateUI.filter===id?'active':''}" data-action="filter" data-filter="${id}">${label}</button>`).join('')}</div><div class="request-grid">${bs.map(b=>`<article class="request-card"><div class="request-card-head"><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><span class="tiny-label">${safe(b.source==='manual'?'RUČNI UNOS':b.source==='test-json'?'TEST JSON':'ZAHTEV')}</span></div><h3>${safe(b.clientName)}</h3><p>${safe(b.serviceName)}<br>${safe(summaryLine(b))}</p>${b.proposal?`<p style="color:#2d8e86">Predlog: ${safe(formatDate(b.proposal.date))} u ${safe(b.proposal.time)}</p>`:''}<div class="request-card-bottom"><small>${safe(b.phone||'Bez telefona')}</small><button class="tiny" data-action="detail" data-id="${safe(b.id)}">Otvori →</button></div></article>`).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
 function renderSettings(){const p=profile();return `<div class="toolbar"><strong>Poslovni profil</strong><button class="btn btn-light" data-action="add-profile">＋ Nova firma</button></div>
 <div class="panel"><div class="setting-group"><h3>Osnovna podešavanja</h3><div class="form-grid"><label>Naziv firme<input id="set-name" value="${safe(p.name)}" maxlength="100"></label><label>Istovremeni kapacitet<input type="number" id="set-capacity" min="1" max="99" value="${p.capacity}"></label><label>Korak termina<select id="set-slot">${[15,30,60].map(n=>`<option value="${n}" ${p.slotStep===n?'selected':''}>${n} minuta</option>`).join('')}</select></label><label>Pauza između potvrđenih rezervacija<select id="set-buffer">${[0,5,10,15,30,60].map(n=>`<option value="${n}" ${p.buffer===n?'selected':''}>${n} minuta</option>`).join('')}</select></label></div><p class="hint" style="margin:12px 0 0">Kapacitet 1 = jedan frizer / jedno radno mesto. Restorani i višestruki resursi zahtevaju pažljivo podešavanje; V43.1 ne upravlja različitim osobljem ili stolovima.</p></div>
 <div class="setting-group"><h3>Radno vreme</h3><div class="hours-grid">${DAYS.map((label,i)=>{const x=p.hours[i];return `<div class="hours-row" data-day="${i}"><label>${label}</label><label class="checkbox-inline"><input type="checkbox" data-field="enabled" ${x.enabled?'checked':''}> Radi</label><input class="field" type="time" data-field="start" value="${safe(x.start)}" aria-label="${label} od"><input class="field" type="time" data-field="end" value="${safe(x.end)}" aria-label="${label} do"></div>`;}).join('')}</div></div>
 <div class="setting-group"><h3>Pauza i neradni dani</h3><div class="form-grid"><label class="checkbox-inline"><input id="set-break-enabled" type="checkbox" ${p.breaks?.enabled?'checked':''}> Uključi dnevnu pauzu</label><span></span><label>Pauza od<input id="set-break-start" type="time" value="${safe(p.breaks?.start||'12:00')}"></label><label>Pauza do<input id="set-break-end" type="time" value="${safe(p.breaks?.end||'12:30')}"></label></div><label style="margin-top:15px">Posebni neradni datumi (YYYY-MM-DD, odvojeni zarezom)<input id="set-closed" value="${safe((p.closedDates||[]).join(', '))}" placeholder="2026-12-31, 2027-01-01"></label></div>
 <div class="setting-group"><div class="section-title"><h3>Usluge i trajanje</h3><button class="text-btn" data-action="add-service">＋ Dodaj uslugu</button></div><div class="hours-grid" id="service-list">${p.services.map(s=>serviceRow(s)).join('')}</div><p class="hint" style="margin:13px 0 0">Trajanje se snima uz svaki zahtev. Naknadna izmena usluge ne menja već primljene rezervacije.</p></div>
+<div class="setting-group"><h3>Povezivanje sa besplatnim sajtom (V43.2)</h3><p class="hint">Svaka firma dobija jedinstven JAVNI kod za povezivanje. Njega nalepi u Web Solutions Advisor pri generisanju sajta. Privatni ključ OSTAjE na ovom uređaju. Samo ovaj kalendar može otvoriti šifrovane zahteve.</p>
+    ${p.pairing?.publicToken?`<label>Javni kod za povezivanje<textarea id="public-pairing-code" readonly rows="4" aria-label="Javni kod za povezivanje">${safe(p.pairing.publicToken)}</textarea></label><button class="btn btn-light" data-action="copy-pairing">Kopiraj JAVNI kod</button> <button class="btn btn-soft" data-action="create-pairing">Promeni ključ (stari sajtovi prestaju da rade)</button>`:`<button class="btn btn-primary" data-action="create-pairing">Poveži ovu firmu sa sajtom</button>`}
+    <p class="hint">Testna faza: rezervna kopija trenutno sadrži i privatni ključ kao običan JSON. Nikome je ne šalji. Pre rada sa stvarnim klijentima uvodimo zaštitu rezervnih kopija.</p></div>
 <div class="settings-actions"><button class="btn btn-primary" data-action="save-settings">Sačuvaj podešavanja</button><button class="btn btn-light" data-action="export">↧ Izvezi rezervnu kopiju</button><button class="btn btn-light" data-action="import">↥ Vrati kopiju</button></div></div>
 <div class="helper-box">Podaci su u lokalnoj bazi ovog browsera/instalirane aplikacije. Nisu automatski dostupni u Viber browseru, na drugom telefonu ili posle brisanja podataka browsera. Redovno izvozi kopiju.</div>`;}
 function serviceRow(s={id:makeId(),name:'',duration:30,units:1}){return `<div class="service-row" data-service-id="${safe(s.id)}"><input class="field" data-field="name" maxlength="90" placeholder="Naziv usluge" value="${safe(s.name)}" aria-label="Naziv usluge"><input class="field" data-field="duration" type="number" min="5" max="1440" step="5" value="${s.duration}" aria-label="Trajanje u minutima"><input class="field" data-field="units" type="number" min="1" max="99" value="${s.units||1}" aria-label="Potrebni resursi"><button class="service-remove" data-action="remove-service" title="Ukloni uslugu" aria-label="Ukloni uslugu">×</button></div>`;}
@@ -184,6 +189,50 @@ function exportState(){download(`RMC_BOOKING_BACKUP_${today()}.json`,'applicatio
 async function importState(file){if(!file)return;if(file.size>15*1024*1024)throw new Error('Datoteka je prevelika.');const contents=await file.text(),parsed=validateImport(JSON.parse(contents));if(!window.confirm('UVOZ ZAMENJUJE SVE postojeće lokalne podatke, uključujući sve firme i rezervacije. Nastaviti?'))return;
   state=parsed;if(!state.profiles.find(x=>x.id===state.activeProfileId))state.activeProfileId=state.profiles[0].id;await persist();refresh();toast('Rezervna kopija uspešno učitana.');
 }
+async function createProfilePairing(){
+ const p=profile();
+ if(p.pairing?.privateJwk&&!window.confirm('Novi ključ će učiniti SVE ranije generisane Booking linkove nečitljivim. Moraćeš da ponovo generišeš povezane sajtove. Zaista promeniti ključ?'))return;
+ if(!globalThis.crypto?.subtle)throw new Error('Povezivanje zahteva HTTPS ili localhost.');
+ const pair=await createPairing(p.id);
+ p.pairing=pair;await persist();refresh();toast('Javni kod je spreman. Kopiraj ga u Web Solutions Advisor.');
+}
+async function copyPairing(){
+ const token=profile().pairing?.publicToken;if(!token)throw new Error('Prvo poveži firmu.');
+ const el=byId('public-pairing-code');if(el){el.focus();el.select();}
+ try{await navigator.clipboard.writeText(token);toast('Javni kod kopiran. Nalepi u Web Solutions Advisor.');}
+ catch{window.prompt('Kopiraj JAVNI kod za Advisor:',token);}
+}
+async function importSecureRequest(raw){
+ const {profile:p,payload}=await openEncryptedLink(raw,state.profiles);
+ if(state.bookings.some(b=>b.sourceRequestId===payload.requestId)){
+  const existing=state.bookings.find(b=>b.sourceRequestId===payload.requestId);
+  state.activeProfileId=existing.profileId;stateUI.view='requests';refresh();openDetails(existing.id);
+  toast('Zahtev je već u kalendaru. Duplikat nije dodat.');return;
+ }
+ const service=p.services.find(x=>x.name.toLocaleLowerCase('sr').trim()===payload.serviceName.toLocaleLowerCase('sr').trim());
+ if(!service)throw new Error('Usluga „'+payload.serviceName.slice(0,65)+'” ne postoji u kalendaru „'+p.name+'”. Dodaj istu uslugu u podešavanjima, pa ponovo uvezi link.');
+ if(!payload.phone.trim()||payload.phone.length>45)throw new Error('Zahtev sa sajta mora imati telefon klijenta.');
+ const candidate=normalizeRequest({serviceId:service.id,clientName:payload.clientName,phone:payload.phone,date:payload.date,time:payload.time,notes:payload.notes||'',units:Math.max(1,Number(payload.units)||1),source:'site-encrypted'},p);
+ candidate.sourceRequestId=payload.requestId;
+ state.bookings.push(candidate);state.activeProfileId=p.id;stateUI.view='requests';await persist();refresh();openDetails(candidate.id);
+ const check=slotCheck(p,bookings(),{...candidate,excludeId:candidate.id});
+ toast(check.ok?'Šifrovani zahtev uvezen. Termin čeka tvoju potvrdu.':'Zahtev je uvezen, ali je traženi termin zauzet. Predloži drugi.');
+}
+async function promptSecureImport(){
+ const raw=window.prompt('Nalepi ceo Booking link iz Vibera/WhatsAppa ili šifrovani kod B1.... Nema potrebe da prepisuješ podatke.');
+ if(raw===null||!raw.trim())return;
+ await importSecureRequest(raw.trim());
+}
+async function handleDirectLink(){
+ if(!pendingIncoming)return;
+ const token=pendingIncoming;
+ try{await importSecureRequest('B1.'+token.slice(3));history.replaceState(null,'',location.pathname+location.search);pendingIncoming=null;}
+ catch(e){
+  byId('notice').innerHTML='<div class="helper-box"><strong>Primljen je Booking link, ali ga ovaj pregledac ne moze obraditi.</strong><br><span id="import-error-text"></span><p>Ako imas instalirani Booking Manager, otvori ga i izaberi „Uvezi Booking link“. Kopiraj ceo link sa ove stranice.</p><button class="btn btn-light" id="copy-incoming-booking" type="button">Kopiraj ulazni link</button></div>';
+  byId('import-error-text').textContent=e.message;
+  byId('copy-incoming-booking').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);toast('Link je kopiran. Nalepi u instaliranu aplikaciju.');}catch{window.prompt('Kopiraj ceo šifrovani link:',location.href);}};
+ }
+}
 function parseTestJSON(){const input=window.prompt('Nalepi JSON test-zahtev. Primer: {"clientName":"Test korisnik","serviceName":"Muško šišanje","date":"2026-09-28","time":"10:00"}');if(input===null)return;let raw;try{raw=JSON.parse(input);}catch(e){throw new Error('JSON format nije ispravan.');}
   if(typeof raw!=='object'||Array.isArray(raw)||raw===null||Object.hasOwn(raw,'__proto__'))throw new Error('Test zahtev mora biti JSON objekat.');
   const s=profile().services.find(x=>x.id===raw.serviceId||x.name===raw.serviceName);
@@ -214,6 +263,9 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='export')return exportState();
     if(a==='import'){byId('backup-file').click();return;}
     if(a==='import-test')return parseTestJSON();
+    if(a==='import-secure')return await promptSecureImport();
+    if(a==='create-pairing')return await createProfilePairing();
+    if(a==='copy-pairing')return await copyPairing();
     if(a==='choose-proposal')return chooseProposal(btn.dataset.date,btn.dataset.time);
     if(['confirm-booking','save-proposal','confirm-proposal','cancel-booking','decline-booking'].includes(a))return mutateBooking(a);
     const b=reservation(stateUI.selectedId);
@@ -233,5 +285,6 @@ async function init(){state=(await readState())||demoState();
   byId('backup-file').addEventListener('change',async e=>{try{await importState(e.target.files[0]);}catch(err){toast('Uvoz nije uspeo: '+err.message);}finally{e.target.value='';}});
   if(import.meta.env.PROD && 'serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});
   refresh();
+  await handleDirectLink();
 }
 init().catch(e=>{byId('notice').textContent='Greška pokretanja: '+e.message;});

@@ -1,7 +1,7 @@
 {
   "name": "@rmc/booking-manager",
   "private": true,
-  "version": "43.1.2",
+  "version": "43.2.0",
   "type": "module",
   "description": "Samostalni Vite build za RMC Booking Manager PWA, bez backend-a.",
   "scripts": {
