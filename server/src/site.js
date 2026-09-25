@@ -17,6 +17,15 @@ function baseSitePayload(input){
   return resolveHybrid(input,{siteConfig,catalog});
 }
 
+function bookingProfile(siteConfig){
+ const booking=siteConfig?.capabilities?.booking;
+ if(!siteConfig?.capabilities?.serviceProfile||!booking?.enabled)return null;
+ const data=siteConfig.businessData||{},location=(data.locations||[])[0]||{};
+ return {version:1,business:{name:siteConfig.business.name,phone:data.phone||'',email:data.email||'',
+   city:location.city||data.city||'',address:location.address||data.address||'',hours:location.hours||data.hours||''},
+   services:(booking.services||[]).map(service=>({id:service.id,name:service.name}))};
+}
+
 // Advisor-owned presentation preference; never write renderer details into fact-only Registry.
 export function buildSitePayload(input){
  const payload=baseSitePayload(input);
@@ -28,5 +37,6 @@ export function buildSitePayload(input){
  payload.siteConfig.siteMode='demo';
  payload.siteConfig.demoBrand=demoBrandFromEnvironment();
  payload.siteConfig.presentation={...(payload.siteConfig.presentation||{}),showWelcome:input?.answers?.showWelcome===true};
+ payload.siteConfig.bookingProfile=bookingProfile(payload.siteConfig);
  return payload;
 }

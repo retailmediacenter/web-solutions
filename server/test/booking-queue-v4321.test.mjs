@@ -21,7 +21,8 @@ function mockRedis(){
   throw Error('Mock unknown command '+cmd);
  };
 }
-const booking={requestId:'fb716e15-3a44-4d11-8077-a34d576ceff2',clientName:'Mira',phone:'060123456',serviceName:'Šišanje',date:'2026-11-15',time:'11:30',duration:30,note:'Test'};
+const booking={requestId:'fb716e15-3a44-4d11-8077-a34d576ceff2',clientName:'Mira',phone:'060123456',serviceId:'hairsalon-1',serviceName:'Šišanje',date:'2026-11-15',time:'11:30',duration:30,note:'Test'};
+const siteProfile={version:1,business:{name:'Coka frizerka',phone:'+381601234567',email:'',city:'Beograd',address:'Primer 1',hours:'09–17'},services:[{id:'hairsalon-1',name:'Šišanje'},{id:'hairsalon-2',name:'Farbanje'}]};
 test('pairing is short, single-use and private token never leaves manager claim',async()=>{
  const q=createBookingQueue(mockRedis());const issued=await q.issue();
  assert.match(issued.pairingCode,/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{2}$/);
@@ -31,6 +32,10 @@ test('pairing is short, single-use and private token never leaves manager claim'
  await assert.rejects(()=>q.claim(issued.pairingCode),/iskorišćen/);
  await assert.rejects(()=>q.pending(issued.siteId,'a'.repeat(43)),/nije dozvoljen/);
  assert.deepEqual(await q.pending(issued.siteId,claimed.accessToken),[]);
+});
+test('pairing transports the source-owned business profile only to the Manager claim',async()=>{
+ const q=createBookingQueue(mockRedis());const issued=await q.issue(siteProfile),claimed=await q.claim(issued.pairingCode);
+ assert.deepEqual(claimed.profile,siteProfile);assert.equal(claimed.accessToken.length,43);
 });
 test('booking arrives once, persists until acknowledged, and foreign manager cannot read it',async()=>{
  const q=createBookingQueue(mockRedis());const a=await q.issue();const b=await q.issue();

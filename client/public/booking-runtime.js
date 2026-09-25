@@ -24,7 +24,12 @@ if(servicePicker && options.length){
   if(unique.includes(previous))servicePicker.value=previous;
   else servicePicker.value=unique.length===1?unique[0]:'';
 }
+const serviceDefinitions=Array.isArray(site.booking?.services)?site.booking.services.filter(item=>item&&typeof item.id==='string'&&typeof item.name==='string'):[];
+const serviceIdFor=name=>serviceDefinitions.find(item=>item.name===name)?.id||'';
 const date=form.elements.namedItem('date');if(date)date.min=todayLocal();
+let retryRequest=null;
+const clearRetry=()=>{retryRequest=null;};
+form.addEventListener('input',clearRetry);form.addEventListener('change',clearRetry);
 function jump(target){if(!target)return;const sticky=document.querySelector('.site-header')?.offsetHeight||0;
  const top=window.scrollY+target.getBoundingClientRect().top-sticky-12;
  window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
@@ -76,7 +81,10 @@ form.addEventListener('submit',async e=>{
   try{
    if(!window.RMCBookingSubmit)throw new Error('Nedostaje modul za slanje rezervacija.');
    const extra=keys.filter(k=>!['service','date','time','name','phone'].includes(k)&&String(entry[k]||'').trim()).map(k=>names[k]+': '+entry[k]).join('; ');
-   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{clientName:entry.name,phone:entry.phone,serviceName:entry.service||entry.eventType||'',date:entry.date,time:entry.time,note:extra});
+   const serviceName=entry.service||entry.eventType||'',serviceId=serviceIdFor(serviceName);
+   const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,name:entry.name,phone:entry.phone,note:extra});
+   if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
+   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:entry.time,note:extra});
    status.textContent='Zahtev je poslat firmi. Referenca: '+result.requestId+'. Termin još nije potvrđen.';
    dialog.showModal();return;
   }catch(err){status.textContent='Zahtev NIJE potvrđeno poslat: '+err.message+' Kontaktirajte firmu telefonom ako je hitno.';dialog.showModal();return;}

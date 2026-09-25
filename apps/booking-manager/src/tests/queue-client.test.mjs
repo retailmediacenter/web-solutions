@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {claimPairing,pullInbox,validApiOrigin,validPairingCode} from '../queue-client.mjs';
+import {applySiteProfile,claimPairing,pullInbox,validApiOrigin,validPairingCode} from '../queue-client.mjs';
 const conn={apiOrigin:'https://api.example.test',siteId:'A'.repeat(24),accessToken:'a'.repeat(43)};
 const req={requestId:'e4d7c38d-52ba-409a-944d-3881e679ebf1',clientName:'Test Primer',phone:'+381600000000',serviceName:'Usluga',date:'2026-09-28',time:'10:00',duration:30,note:'Proba'};
 const response=(body,ok=true)=>({ok,status:ok?200:400,json:async()=>body});
@@ -17,6 +17,21 @@ test('uparivanje bez prosleđivanja poverljivih podataka sajtu',async()=>{
  assert.equal(out.siteId,conn.siteId);
  assert.equal(called[0],'https://api.example.test/api/booking/pairings/claim');
  assert.equal(JSON.parse(called[1].body).pairingCode,'ABCD-2345-EF');
+});
+test('profil sa sajta inicijalizuje usluge bez menjanja lokalnih pravila ili dupliranja',()=>{
+ const profile={id:'local',name:'Stari naziv',capacity:3,slotStep:15,buffer:10,hours:[{enabled:true,start:'08:00',end:'16:00'}],breaks:{enabled:true,start:'12:00',end:'12:30'},closedDates:['2026-12-31'],services:[{id:'local-cut',name:'Šišanje',duration:30,units:1}]};
+ const source={version:1,business:{name:'Coka frizerka',phone:'+381601234567',city:'Beograd'},services:[{id:'hairsalon-1',name:'Šišanje'},{id:'hairsalon-2',name:'Farbanje'}]};
+ applySiteProfile(profile,source);applySiteProfile(profile,source);
+ assert.equal(profile.name,'Coka frizerka');assert.equal(profile.capacity,3);assert.equal(profile.buffer,10);assert.equal(profile.hours[0].start,'08:00');
+ assert.equal(profile.services.length,2);assert.equal(profile.services[0].id,'local-cut');assert.equal(profile.services[0].siteServiceId,'hairsalon-1');
+ assert.equal(profile.services[1].siteServiceId,'hairsalon-2');
+});
+test('stable source service ID wins when a service label changes',async()=>{
+ const stable={...req,serviceId:'hairsalon-1',serviceName:'Novo ime'};
+ const bookings=[];let selected='';
+ await pullInbox({connection:conn,profile:{name:'Firma',services:[{id:'local',siteServiceId:'hairsalon-1',name:'Šišanje',units:1}]},bookings,
+   save:async()=>{},normalize:input=>{selected=input.serviceId;return {id:'stable'};},fetcher:async(url)=>response(url.endsWith('/ack')?{ok:true}:{requests:[stable]})});
+ assert.equal(selected,'local');
 });
 test('ACK isključivo posle završenog upisa',async()=>{
  let persisted=false;const calls=[];const bookings=[];

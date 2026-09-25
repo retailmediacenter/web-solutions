@@ -56,7 +56,7 @@ app.post('/api/site/export',async(req,res)=>{
     let issued=null;
     if(needsPairing){
       if(payload.siteConfig.bookingPairing)throw Object.assign(new Error('Stari kod za šifrovane linkove nije kompatibilan sa novim izvozom. Uklonite ga i ponovite izvoz.'),{status:400});
-      issued=await createBookingQueue().issue();
+      issued=await createBookingQueue().issue(payload.siteConfig.bookingProfile);
       payload.siteConfig.bookingTransport={siteId:issued.siteId,apiBaseUrl:process.env.PUBLIC_API_BASE_URL||(process.env.NODE_ENV==='production'?(()=>{throw Object.assign(new Error('PUBLIC_API_BASE_URL nije konfigurisan.'),{status:503});})():`http://localhost:${process.env.PORT||3000}`)};
     }
     const zip=exportSiteZip(payload,{pairingCode:issued?.pairingCode,expiresIn:issued?.expiresIn});

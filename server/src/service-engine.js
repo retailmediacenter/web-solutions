@@ -63,6 +63,13 @@ export function resolveServiceSiteConfig(input,STYLES){
   const modules=['hero','services',...(enabled?['booking']:[]),'contact'];
   const cleanPhone=String(answers.contactPhone??'').replace(/[^+\d\s()\-]/g,'').slice(0,35);
   const mode=enabled?source.mode:'contact';
+  // The same offerings drive the public form and the Manager bootstrap. Catalog
+  // IDs are stable where available; the ordered fallback covers an offering that
+  // intentionally has no separate presentation card.
+  const bookingServices=profile.offerings.map((name,index)=>{
+    const card=profile.services.find(service=>service.title===name);
+    return {id:card?.id||`${businessId}-booking-${index+1}`,name};
+  });
   return {
     siteConfig:{
       schemaVersion:'41.6-service-and-hybrid-migration',reference:'V39.5',siteStatus:'preview-and-export',
@@ -72,7 +79,7 @@ export function resolveServiceSiteConfig(input,STYLES){
       style,modules,contact:{phone:cleanPhone},
       capabilities:{serviceProfile:true,bookingEnabled:enabled,bookingMode:mode,
         booking:{enabled,mode,fields:enabled?bookingFields(businessId,source.mode):{service:true,note:true},
-          offerings:profile.offerings,confirmation:'request'}},
+          offerings:profile.offerings,services:bookingServices,confirmation:'request'}},
       assets:{assetRoot:facts.assetRoot,assetRoles:[...(facts.assetRoles||[])]}
     },
     catalog:{type:'services',id:businessId,hero:profile.hero,headline:profile.headline,

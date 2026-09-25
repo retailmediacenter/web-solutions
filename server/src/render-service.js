@@ -42,7 +42,7 @@ export function renderServiceHtml({siteConfig:site,catalog}){
   const actionLabel=book.enabled?book.mode==='appointment'?'Zatraži termin':book.mode==='reservation'?'Pošalji rezervaciju':book.mode==='consultation'?'Zatraži konsultaciju':'Zatraži termin':'Kontaktirajte nas';
   // Only public-facing presentation data crosses the server/browser boundary.
   const publicData={business:{name:business.name,id:business.id},contact:{phone:contact.phone||''},
-    booking:{enabled:book.enabled,mode:book.mode,offerings:book.offerings},bookingManager:site.bookingPairing||null,bookingTransport:site.bookingTransport||null};
+    booking:{enabled:book.enabled,mode:book.mode,offerings:book.offerings,services:book.services||[]},bookingManager:site.bookingPairing||null,bookingTransport:site.bookingTransport||null};
   const cards=catalog.services.map(s=>`<article class="service-card"><img src="${esc(s.image)}" loading="lazy" alt="${esc(s.title)}"><div class="service-card-body"><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p><a href="#${actionTarget}" class="secondary" ${book.mode==='reservation'?'':`data-service="${esc(s.title)}"`}>${book.enabled?book.mode==='reservation'?'Pošalji rezervaciju':'Zatraži termin':'Pošalji upit'} →</a></div></article>`).join('');
   const form=serviceForm(book);
   const booking=book.enabled?`<section class="site-section booking-service" id="zakazivanje"><div class="section-heading"><div class="kicker">${book.mode==='reservation'?'REZERVACIJE':book.mode==='consultation'?'KONSULTACIJE':'ZAKAZIVANJE'}</div><h2>${actionLabel}</h2><p>Izaberite željeni termin. Zahtev je spreman za slanje, a termin nije potvrđen dok vam ${esc(business.name)} ne odgovori.</p></div>${form}</section>`:'';

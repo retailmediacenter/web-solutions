@@ -1,7 +1,7 @@
 import {STATUS,DAYS,clone,makeId,makeProfile,demoState,normalizeRequest,slotCheck,alternatives,addDays,dateKey,dateOf,formatDate,weekStart,formatRequest,validateImport,icsFor,isDate,isTime,toMin,fromMin} from './booking-core.mjs';
 import {whatsappUrl,viberUrl,hasWhatsAppRecipient} from './messaging.mjs';
 import {createPairing,decodePairing,openEncryptedLink} from './secure-link.mjs';
-import {claimPairing,pullInbox,validApiOrigin,validPairingCode} from './queue-client.mjs';
+import {applySiteProfile,claimPairing,pullInbox,validApiOrigin,validPairingCode} from './queue-client.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -54,7 +54,8 @@ async function connectShortCode(){
  if(!db)throw new Error('Lokalna baza nije dostupna. Ne povezuj uređaj.');
  if(p.queueConnection&&!window.confirm('Ova firma je već povezana. Zameniti pristup na ovom uređaju? Staro sanduče više neće biti dostupno kroz ovaj profil.'))return;
  const connected=await claimPairing(origin,code);
- p.queueConnection={...connected,apiOrigin:origin,connectedAt:isoNow()};
+ if(connected.profile)applySiteProfile(p,connected.profile);
+ p.queueConnection={siteId:connected.siteId,accessToken:connected.accessToken,apiOrigin:origin,connectedAt:isoNow()};
  try{await persistStrict();}
  catch(e){
   // Claim consumes the short code. Give user a recovery route if local persistence fails.
