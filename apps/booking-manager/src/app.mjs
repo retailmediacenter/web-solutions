@@ -1,7 +1,7 @@
 import {STATUS,DAYS,clone,makeId,makeProfile,demoState,normalizeRequest,slotCheck,alternatives,addDays,dateKey,dateOf,formatDate,weekStart,formatRequest,validateImport,icsFor,isDate,isTime,toMin,fromMin} from './booking-core.mjs';
 import {whatsappUrl,viberUrl,hasWhatsAppRecipient} from './messaging.mjs';
 import {createPairing,decodePairing,openEncryptedLink} from './secure-link.mjs';
-import {applySiteProfile,claimPairing,pullInbox,validApiOrigin,validPairingCode} from './queue-client.mjs';
+import {applySiteProfile,claimPairing,getPushPublicKey,pullInbox,subscribePush,validApiOrigin,validPairingCode} from './queue-client.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11,6 +11,7 @@ const statName = {[STATUS.PENDING]:'Čeka odgovor',[STATUS.CONFIRMED]:'Potvrđen
 const stateUI = {view:'day',date:today(),filter:'all',selectedId:null,proposal:null};
 const CHANNEL='rmc-booking-local'; let channel; let state,writing=Promise.resolve(),toastTimer;
 let polling=false,pollTimer=null;
+let serviceWorkerReady=null;
 let pendingIncoming=(location.hash.match(/^#rmb=(B1\.[a-zA-Z0-9_-]+)$/)||[])[1]||null;
 
 // IndexedDB stores one complete snapshot. There are no cloud/API calls.
@@ -172,7 +173,7 @@ function renderSettings(){const p=profile();return `<div class="toolbar"><strong
 <div class="setting-group"><div class="section-title"><h3>Usluge i trajanje</h3><button class="text-btn" data-action="add-service">＋ Dodaj uslugu</button></div><div class="hours-grid" id="service-list">${p.services.map(s=>serviceRow(s)).join('')}</div><p class="hint" style="margin:13px 0 0">Trajanje se snima uz svaki zahtev. Naknadna izmena usluge ne menja već primljene rezervacije.</p></div>
 <div class="setting-group"><h3>Povezivanje kratkim kodom (V43.2.1)</h3>
   <p class="hint">Preuzmi sajt i otvori datoteku BOOKING_UPARIVANJE.txt iz ZIP-a. Ovde unesi jednokratni kod od najviše 12 znakova. Kod nije trajna lozinka.</p>
-  ${p.queueConnection?`<div class="helper-box"><strong>Povezano sanduče</strong><br>ID sajta: ${safe(p.queueConnection.siteId)}<br>Server: ${safe(p.queueConnection.apiOrigin)}</div><button type="button" class="btn btn-light" data-action="queue-sync">Proveri nove rezervacije</button>`:
+  ${p.queueConnection?`<div class="helper-box"><strong>Povezano sanduče</strong><br>ID sajta: ${safe(p.queueConnection.siteId)}<br>Server: ${safe(p.queueConnection.apiOrigin)}</div><button type="button" class="btn btn-light" data-action="queue-sync">Proveri nove rezervacije</button> <button type="button" class="btn btn-light" data-action="push-enable">${p.pushEnabledAt?'Push obaveštenja uključena':'Uključi Push obaveštenja'}</button>`:
     `<label>Adresa Booking API servera<input id="queue-api" inputmode="url" type="url" placeholder="https://vas-api.onrender.com" value="${safe(apiDefault)}"></label>
      <label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label>
      <button type="button" class="btn btn-primary" data-action="queue-connect">Poveži firmu</button>`}
@@ -263,6 +264,16 @@ async function copyPairing(){
  try{await navigator.clipboard.writeText(token);toast('Javni kod kopiran. Nalepi u Web Solutions Advisor.');}
  catch{window.prompt('Kopiraj JAVNI kod za Advisor:',token);}
 }
+const vapidBytes=value=>Uint8Array.from(atob(value.replace(/-/g,'+').replace(/_/g,'/')),char=>char.charCodeAt(0));
+async function enablePush(){
+ const p=profile(),connection=p.queueConnection;
+ if(!connection)throw new Error('Prvo poveži firmu kratkim kodom.');
+ if(!('Notification' in window)||!('PushManager' in window)||!serviceWorkerReady)throw new Error('Ovaj preglednik trenutno ne podržava Push obaveštenja u Booking Manageru.');
+ if(await Notification.requestPermission()!=='granted')throw new Error('Dozvola za obaveštenja nije odobrena.');
+ const registration=await serviceWorkerReady,publicKey=await getPushPublicKey(connection);
+ const subscription=await registration.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:vapidBytes(publicKey)});
+ await subscribePush(connection,subscription.toJSON());p.pushEnabledAt=isoNow();await persist();refresh();toast('Push obaveštenja su uključena na ovom uređaju.');
+}
 async function importSecureRequest(raw){
  const {profile:p,payload}=await openEncryptedLink(raw,state.profiles);
  if(state.bookings.some(b=>b.sourceRequestId===payload.requestId)){
@@ -327,6 +338,7 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='import-secure')return await promptSecureImport();
     if(a==='queue-connect')return await connectShortCode();
     if(a==='queue-sync')return await syncQueuedRequests();
+    if(a==='push-enable')return await enablePush();
     if(a==='create-pairing')return await createProfilePairing();
     if(a==='copy-pairing')return await copyPairing();
     if(a==='choose-proposal')return chooseProposal(btn.dataset.date,btn.dataset.time);
@@ -346,7 +358,7 @@ async function init(){state=(await readState())||demoState();
   byId('request-form').addEventListener('submit',createNew);
   for(const id of ['new-service','new-date','new-time','new-units'])byId(id).addEventListener('change',()=>{if(id==='new-service')byId('new-units').value=serviceOf(byId('new-service').value)?.units||1;checkNew();});
   byId('backup-file').addEventListener('change',async e=>{try{await importState(e.target.files[0]);}catch(err){toast('Uvoz nije uspeo: '+err.message);}finally{e.target.value='';}});
-  if(import.meta.env.PROD && 'serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{});
+  if(import.meta.env.PROD && 'serviceWorker' in navigator)serviceWorkerReady=navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>null);
   refresh();
   await handleDirectLink();
   pollTimer=setInterval(()=>syncQueuedRequests({silent:true}).catch(()=>{}),30000);

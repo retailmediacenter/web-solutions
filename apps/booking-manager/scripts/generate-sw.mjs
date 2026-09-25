@@ -33,6 +33,8 @@ self.addEventListener('fetch',e=>{
  if(!KNOWN.has(url.pathname))return;
  e.respondWith(caches.match(request,{ignoreSearch:true}).then(hit=>hit||fetch(request)));
 });
+self.addEventListener('push',e=>{e.waitUntil((async()=>{let data={};try{data=e.data?.json()||{};}catch{};const type=String(data.type||'INQUIRY'),requestId=String(data.requestId||'');await self.registration.showNotification(String(data.title||'Novo obaveštenje'),{body:String(data.body||'Otvorite Booking Manager.'),tag:'rmc-'+type+'-'+requestId,renotify:false,data:{type,requestId,url:'./'}});})());});
+self.addEventListener('notificationclick',e=>{e.notification.close();e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(list=>{const client=list.find(x=>x.url.startsWith(self.registration.scope));return client?client.focus():clients.openWindow(e.notification.data?.url||'./');}));});
 `;
 await writeFile(join(rootPath,'sw.js'),script,'utf8');
 console.log('PWA cache:',cache,'fajlova:',resources.length);

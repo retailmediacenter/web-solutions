@@ -109,5 +109,5 @@ export function createBookingQueue(redis){
    await redis('ZREM',key('index',siteId),requestId);
    return {ok:true};
  }
- return {issue,claim,authenticate,submit,pending,acknowledge};
+ return {issue,claim,authenticate,submit,pending,acknowledge,redis};
 }

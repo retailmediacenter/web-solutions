@@ -53,6 +53,14 @@ export async function claimPairing(apiOrigin,pairingCode,{fetcher}={}){
  if(result.profile!=null&&!profile)throw new Error('Server nije vratio ispravan Booking profil sajta.');
  return {siteId:result.siteId,accessToken:result.accessToken,profile};
 }
+export async function getPushPublicKey(connection,{fetcher}={}){
+ const result=await request(connection.apiOrigin,`/push/public-key/${connection.siteId}`,{token:connection.accessToken,fetcher});
+ const key=text(result?.publicKey,160);if(!key)throw new Error('Server nije vratio VAPID javni ključ.');
+ return key;
+}
+export async function subscribePush(connection,subscription,{fetcher}={}){
+ return request(connection.apiOrigin,`/push/subscriptions/${connection.siteId}`,{method:'POST',token:connection.accessToken,body:{subscription},fetcher});
+}
 export async function pullInbox({connection,profile,bookings,save,normalize,fetcher}){
  const {apiOrigin,siteId,accessToken}=connection;
  if(!/^[A-Za-z0-9_-]{24}$/.test(siteId||'')||!/^[A-Za-z0-9_-]{43}$/.test(accessToken||''))throw new Error('Neispravno lokalno povezivanje.');

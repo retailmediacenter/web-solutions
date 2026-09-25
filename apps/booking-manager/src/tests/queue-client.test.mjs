@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {applySiteProfile,claimPairing,pullInbox,validApiOrigin,validPairingCode} from '../queue-client.mjs';
+import {applySiteProfile,claimPairing,getPushPublicKey,pullInbox,subscribePush,validApiOrigin,validPairingCode} from '../queue-client.mjs';
 const conn={apiOrigin:'https://api.example.test',siteId:'A'.repeat(24),accessToken:'a'.repeat(43)};
 const req={requestId:'e4d7c38d-52ba-409a-944d-3881e679ebf1',clientName:'Test Primer',phone:'+381600000000',serviceName:'Usluga',date:'2026-09-28',time:'10:00',duration:30,note:'Proba'};
 const response=(body,ok=true)=>({ok,status:ok?200:400,json:async()=>body});
@@ -17,6 +17,11 @@ test('uparivanje bez prosleđivanja poverljivih podataka sajtu',async()=>{
  assert.equal(out.siteId,conn.siteId);
  assert.equal(called[0],'https://api.example.test/api/booking/pairings/claim');
  assert.equal(JSON.parse(called[1].body).pairingCode,'ABCD-2345-EF');
+});
+test('Push API calls stay authenticated and Manager never receives a private VAPID key',async()=>{
+ const calls=[],fetcher=async(url,options)=>{calls.push([url,options]);return response(url.includes('public-key')?{publicKey:'A'.repeat(87)}:{ok:true});};
+ assert.equal(await getPushPublicKey(conn,{fetcher}),'A'.repeat(87));await subscribePush(conn,{endpoint:'https://push.example.test/x',keys:{p256dh:'x',auth:'y'}},{fetcher});
+ assert.match(calls[0][0],/push\/public-key/);assert.equal(calls[0][1].headers.Authorization,`Bearer ${conn.accessToken}`);assert.match(calls[1][0],/push\/subscriptions/);assert.equal(JSON.parse(calls[1][1].body).subscription.endpoint,'https://push.example.test/x');
 });
 test('profil sa sajta inicijalizuje usluge bez menjanja lokalnih pravila ili dupliranja',()=>{
  const profile={id:'local',name:'Stari naziv',capacity:3,slotStep:15,buffer:10,hours:[{enabled:true,start:'08:00',end:'16:00'}],breaks:{enabled:true,start:'12:00',end:'12:30'},closedDates:['2026-12-31'],services:[{id:'local-cut',name:'Šišanje',duration:30,units:1}]};

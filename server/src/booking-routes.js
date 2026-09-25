@@ -1,6 +1,7 @@
 import {Router} from 'express';
 import {createBookingQueue} from './booking-queue.js';
-export function bookingRouter(queue=createBookingQueue()){
+import {createPushNotifications,NOTIFICATION_TYPES} from './push-notifications.js';
+export function bookingRouter(queue=createBookingQueue(),push=createPushNotifications(queue.redis)){
  const router=Router();
  const hits=new Map();
  const rate=(req,res,next)=>{
@@ -14,8 +15,14 @@ export function bookingRouter(queue=createBookingQueue()){
  const auth=req=>(req.get('authorization')||'').replace(/^Bearer\s+/i,'');
  router.post('/pairings',rate,handle(async(req,res)=>res.status(201).json(await queue.issue())));
  router.post('/pairings/claim',rate,handle(async(req,res)=>res.json(await queue.claim(req.body?.pairingCode))));
- router.post('/requests',rate,handle(async(req,res)=>res.status(202).json(await queue.submit(req.body?.siteId,req.body?.booking))));
+ router.post('/requests',rate,handle(async(req,res)=>{
+  const result=await queue.submit(req.body?.siteId,req.body?.booking);res.status(202).json(result);
+  // Never block or fail the reservation when a push provider is unavailable.
+  if(!result.duplicate)void push.notify(req.body?.siteId,{type:NOTIFICATION_TYPES.BOOKING,requestId:result.requestId,title:'Nova rezervacija',body:'Otvorite Booking Manager da pregledate zahtev.'}).catch(()=>{});
+ }));
  router.get('/requests/:siteId',handle(async(req,res)=>res.json({requests:await queue.pending(req.params.siteId,auth(req))})));
  router.post('/requests/:siteId/:requestId/ack',handle(async(req,res)=>res.json(await queue.acknowledge(req.params.siteId,auth(req),req.params.requestId))));
+ router.get('/push/public-key/:siteId',handle(async(req,res)=>res.json(await push.publicKey(req.params.siteId,auth(req),queue.authenticate))));
+ router.post('/push/subscriptions/:siteId',handle(async(req,res)=>res.status(201).json(await push.subscribe(req.params.siteId,auth(req),req.body?.subscription,queue.authenticate))));
  return router;
 }
