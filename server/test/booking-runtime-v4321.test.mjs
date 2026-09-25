@@ -5,6 +5,7 @@ import {runInNewContext} from 'node:vm';
 import {exportSiteZip} from '../src/exporter.js';
 import {buildSitePayload} from '../src/site.js';
 import {renderHtml} from '../src/render-site.js';
+import {SERVICE_BUSINESSES,serviceProfile,getServiceSpecial} from '../src/service-engine.js';
 const read=n=>readFileSync(new URL('../../client/public/'+n,import.meta.url),'utf8');
 test('public sender uses site ID only, never manager access token',async()=>{
  const window={};let called=null;
@@ -86,4 +87,34 @@ test('wine tastings share a complete Booking profile, stable services and compac
  p.siteConfig.bookingTransport={siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'};
  const html=renderHtml(p);
  assert.match(html,/wineReservationCode/);assert.match(html,/Zahtev je uspešno poslat!/);assert.doesNotMatch(html,/Kopiraj zahtev/);
+});
+
+test('all enabled Booking scenarios export the same Redis contract and D5 confirmation',()=>{
+
+ for(const businessId of SERVICE_BUSINESSES){
+  const answerId=getServiceSpecial(businessId).id;
+  const payload=buildSitePayload({businessId,businessName:`Test ${businessId}`,style:'modern',goal:'purchase',answers:{[answerId]:true}});
+  const booking=payload.siteConfig.capabilities.booking;
+  assert.equal(booking.enabled,true,`${businessId}: Booking disabled`);
+  assert.ok(payload.siteConfig.bookingProfile?.business?.name,`${businessId}: missing booking profile`);
+  assert.deepEqual(payload.siteConfig.bookingProfile.services,booking.services,`${businessId}: profile services diverge`);
+  assert.equal(new Set(booking.services.map(service=>service.id)).size,booking.services.length,`${businessId}: unstable service IDs`);
+  payload.siteConfig.bookingTransport={siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'};
+  const html=renderHtml(payload);
+  assert.match(html,/bookingTransport/,`${businessId}: missing public transport`);
+  assert.match(html,/Zahtev je uspešno poslat!/,`${businessId}: missing D5 confirmation`);
+  assert.match(html,/bookingReservationCode/,`${businessId}: missing reservation code`);
+  assert.doesNotMatch(html,/Kopiraj zahtev/,`${businessId}: legacy message action leaked`);
+  const isDayPart=serviceProfile(businessId).mode==='request-slot';
+  assert.equal(html.includes('name="daypart"'),isDayPart,`${businessId}: wrong timing form`);
+  const zip=exportSiteZip(payload);
+  assert.ok(zip.includes(Buffer.from('booking-submit.js')),`${businessId}: ZIP missing sender`);
+  assert.ok(zip.includes(Buffer.from('booking-runtime.js')),`${businessId}: ZIP missing booking runtime`);
+ }
+ const wine=buildSitePayload({businessId:'wine-shop',businessName:'Test vinoteka',style:'modern',goal:'purchase',answers:{wineTastings:true}});
+ assert.ok(wine.siteConfig.bookingProfile?.services.length,'wine-shop: missing tasting profile');
+ wine.siteConfig.bookingTransport={siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'};
+ const wineHtml=renderHtml(wine);
+ assert.match(wineHtml,/wineReservationCode/);
+ assert.doesNotMatch(wineHtml,/Kopiraj zahtev/);
 });
