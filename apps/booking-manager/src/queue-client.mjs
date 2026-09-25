@@ -75,7 +75,7 @@ export async function pullInbox({connection,profile,bookings,save,normalize,fetc
    const service=(r.serviceId&&profile.services.find(s=>s.siteServiceId===r.serviceId))||profile.services.find(s=>sameName(s.name,r.serviceName));
    if(!service)throw new Error(`Usluga „${String(r.serviceName||'').slice(0,50)}” nije podešena u firmi „${profile.name}”. Zahtev ostaje na serveru.`);
    // Never acknowledge a malformed request. The business can adjust its service list.
-   const candidate=normalize({serviceId:service.id,clientName:r.clientName,phone:r.phone,date:r.date,time:r.time,
+   const candidate=normalize({serviceId:service.id,clientName:r.clientName,phone:r.phone,date:r.date,time:r.time,timingMode:r.timingMode,dayPart:r.dayPart,
       notes:r.note||'',units:service.units,source:'site-queue'},profile);
    candidate.sourceSiteId=siteId;candidate.sourceRequestId=r.requestId;if(r.reservationCode)candidate.reservationCode=r.reservationCode;
    bookings.push(candidate);

@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {exportSiteZip} from '../src/exporter.js';
 import {buildSitePayload} from '../src/site.js';
+import {renderHtml} from '../src/render-site.js';
 const read=n=>readFileSync(new URL('../../client/public/'+n,import.meta.url),'utf8');
 test('public sender uses site ID only, never manager access token',async()=>{
  const window={};let called=null;
@@ -58,4 +59,31 @@ test('public booking CORS does not unlock private inbox',async()=>{
   const priv=await fetch(`http://127.0.0.1:${port}/api/booking/requests/AbCdEfGhIjKlMnOpQrStUvWx`,{method:'OPTIONS',headers:{Origin:origin,'Access-Control-Request-Method':'GET','Access-Control-Request-Headers':'authorization'}});
   assert.equal(priv.status,403);
  } finally {await new Promise((resolve,reject)=>server.close(e=>e?reject(e):resolve()));}
+});
+
+test('API/Redis booking dialog renders only the compact reservation confirmation',()=>{
+ const p=buildSitePayload({businessId:'hair-salon',businessName:'Frizer Nesa',answers:{acceptsTimeRequests:true}});
+ p.siteConfig.bookingTransport={siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'};
+ const html=renderHtml(p);
+ assert.match(html,/Zahtev je uspešno poslat!/);
+ assert.match(html,/bookingReservationCode/);
+ assert.match(html,/data-booking-retry/);
+ assert.doesNotMatch(html,/Poruka je spremna/);
+ assert.doesNotMatch(html,/Kopiraj zahtev/);
+ assert.doesNotMatch(html,/viberRequest/);
+ assert.doesNotMatch(html,/waRequest/);
+ assert.doesNotMatch(html,/requestId/);
+});
+test('legacy non-API booking dialog remains separate from the API/Redis confirmation',()=>{
+ const p=buildSitePayload({businessId:'hair-salon',businessName:'Frizer Nesa',answers:{acceptsTimeRequests:true}});
+ const html=renderHtml(p);
+ assert.match(html,/Poruka je spremna/);
+ assert.match(html,/Kopiraj zahtev/);
+});
+test('wine tastings share a complete Booking profile, stable services and compact D5 dialog',()=>{
+ const p=buildSitePayload({businessId:'wine-shop',businessName:'Winobaza',style:'modern',goal:'purchase',answers:{wineTastings:true}});
+ assert.deepEqual(p.siteConfig.bookingProfile.services.map(x=>x.id),['wine-tasting-guided','wine-tasting-themed','wine-tasting-private']);
+ p.siteConfig.bookingTransport={siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'};
+ const html=renderHtml(p);
+ assert.match(html,/wineReservationCode/);assert.match(html,/Zahtev je uspešno poslat!/);assert.doesNotMatch(html,/Kopiraj zahtev/);
 });

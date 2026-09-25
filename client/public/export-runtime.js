@@ -173,6 +173,7 @@
     if(e.target.closest('#copyMessage')){copyText(prepared,'copyStatus');return;}
     if(e.target.closest('#viberMessage')){tryCopyBeforeViber(prepared,'copyStatus');return;}
     if(e.target.closest('#copyBooking')){copyText(bookingPrepared);$('copyBooking').textContent='Kopirano ✓';return;}
+    if(e.target.closest('#wineBookingRetry')){$('tastingForm')?.requestSubmit();return;}
     if(e.target.closest('#viberBooking')){tryCopyBeforeViber(bookingPrepared);return;}
     const filter=e.target.closest('[data-filter]');if(filter){document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('is-active',x===filter);x.setAttribute('aria-pressed',x===filter?'true':'false');});applyFilter();}
   });
@@ -203,18 +204,19 @@
         `Vrsta: ${info.experience}`,`Datum: ${info.date}`,`Željeno vreme: ${info.time}`,`Broj osoba: ${info.partySize}`,
         `Ime: ${info.name}`,`Telefon: ${info.phone}`,info.note?`Napomena: ${info.note}`:'',
         'Molim vas da potvrdite da li je termin dostupan.'].filter(Boolean).join('\n');
-      if(site.bookingTransport){
-        $('bookingMessage').textContent=bookingPrepared;
-        $('viberBooking').hidden=true;$('waBooking').hidden=true;
+      if(site.bookingTransport&&site.booking?.enabled){
+        const dialog=$('bookingDialog'),sending=$('wineBookingSending'),success=$('wineBookingSuccess'),failed=$('wineBookingError');
+        const state=name=>{sending.hidden=name!=='sending';success.hidden=name!=='success';failed.hidden=name!=='error';show(dialog);};
+        const services=Array.isArray(site.booking.services)?site.booking.services:[];
+        const serviceId=services.find(item=>item.name===info.experience)?.id||'';
+        const fingerprint=JSON.stringify({serviceId,date:info.date,time:info.time,name:info.name,phone:info.phone,partySize:info.partySize,note:info.note});
+        const retry=window.__rmcWineBookingRetry&&window.__rmcWineBookingRetry.fingerprint===fingerprint?window.__rmcWineBookingRetry:{fingerprint,requestId:crypto.randomUUID()};window.__rmcWineBookingRetry=retry;
+        state('sending');
         try{
           if(!window.RMCBookingSubmit)throw new Error('Nedostaje modul za slanje rezervacija.');
-          const result=await window.RMCBookingSubmit.send(site.bookingTransport,{clientName:info.name,phone:info.phone,serviceName:info.experience,date:info.date,time:info.time,note:('Broj osoba: '+String(info.partySize||'1')+'; '+String(info.note||''))});
-          $('bookingMessage').textContent='Zahtev za degustaciju je poslat.\nReferenca: '+result.requestId+'\nTermin još nije potvrđen.';
-          $('copyBooking').textContent='Kopiraj potvrdu';show($('bookingDialog'));return;
-        }catch(err){
-          $('bookingMessage').textContent='Zahtev NIJE potvrđeno poslat. '+err.message+'\nProverite telefonom sa firmom.';
-          $('copyBooking').textContent='Kopiraj poruku';show($('bookingDialog'));return;
-        }
+          const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retry.requestId,clientName:info.name,phone:info.phone,serviceId,serviceName:info.experience,date:info.date,time:info.time,note:('Broj osoba: '+String(info.partySize||'1')+'; '+String(info.note||''))});
+          $('wineReservationCode').textContent=result.reservationCode;state('success');return;
+        }catch(err){$('wineBookingErrorText').textContent='Zahtev nije poslat. '+err.message;state('error');return;}
       }
       $('viberBooking').hidden=false;$('waBooking').hidden=false;
       if(site.bookingManager?.token){

@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {STATUS,makeProfile,normalizeRequest,slotCheck,alternatives,addDays,weekStart,isDate,weekdayIndex,toMin,fromMin,validateImport,icsFor,dateKey,clone} from '../booking-core.mjs';
+import {STATUS,makeProfile,normalizeRequest,slotCheck,alternatives,addDays,weekStart,isDate,weekdayIndex,toMin,fromMin,validateImport,icsFor,dateKey,clone,dayPartLabel} from '../booking-core.mjs';
 function fixture(){const p=makeProfile('Test');p.services=[{id:'hair',name:'Šišanje',duration:30,units:1},{id:'color',name:'Farbanje',duration:90,units:1}];p.hours=Array.from({length:7},()=>({enabled:true,start:'09:00',end:'17:00'}));return p;}
 function book(p,values={}){return {...normalizeRequest({serviceId:'hair',date:'2026-09-28',time:'10:00',clientName:'Test klijent',...values},p),status:STATUS.CONFIRMED};}
 test('date strict validation and local date movement',()=>{assert.equal(isDate('2026-02-29'),false);assert.equal(isDate('2024-02-29'),true);assert.equal(addDays('2026-12-31',1),'2027-01-01');assert.equal(weekStart('2026-09-30'),'2026-09-28');assert.equal(weekdayIndex('2026-09-28'),0);assert.equal(fromMin(toMin('14:45')),'14:45');});
@@ -20,3 +20,11 @@ test('alternatives empty when requested service requires more capacity',()=>{con
 test('backup rejects malformed data',()=>{assert.throws(()=>validateImport({schema:99,profiles:[],bookings:[]}));const p=fixture();const valid={schema:1,activeProfileId:p.id,profiles:[p],bookings:[book(p)]};assert.equal(validateImport(valid).bookings.length,1);const bad=clone(valid);bad.bookings[0].date='2026-02-30';assert.throws(()=>validateImport(bad));});
 test('ics export includes correct event and rejects unconfirmed',()=>{const p=fixture(),b=book(p);const ics=icsFor(p,b);assert.match(ics,/BEGIN:VEVENT/);assert.match(ics,/DTSTART:20260928T100000/);assert.match(ics,/DTEND:20260928T103000/);b.status=STATUS.PENDING;assert.throws(()=>icsFor(p,b));});
 test('overlapping proposed slots never block unless confirmed',()=>{const p=fixture(),b=book(p);b.status=STATUS.PROPOSED;b.proposal={date:b.date,time:b.time};assert.equal(slotCheck(p,[b],{date:b.date,time:b.time,duration:30}).ok,true);});
+
+test('DAY_PART request remains unscheduled until a concrete proposal is confirmed',()=>{
+ const p=fixture();const b=normalizeRequest({serviceId:'hair',date:'2026-09-28',timingMode:'DAY_PART',dayPart:'MORNING',clientName:'Test klijent'},p);
+ assert.equal(b.time,'');assert.equal(b.dayPart,'MORNING');assert.equal(b.status,STATUS.PENDING);assert.equal(dayPartLabel(b.dayPart),'Pre podne');
+ assert.equal(slotCheck(p,[],{date:b.date,time:b.time,duration:b.duration}).ok,false);
+ b.proposal={date:b.date,time:'10:00'};b.time=b.proposal.time;b.timingMode='EXACT_TIME';b.dayPart='';b.status=STATUS.CONFIRMED;
+ assert.equal(slotCheck(p,[b],{date:b.date,time:'10:00',duration:b.duration}).ok,false);
+});

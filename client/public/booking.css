@@ -33,3 +33,14 @@
  .service-dialog .dialog-pad{padding:24px 15px}
 }
 @media(max-width:490px){.service-grid{grid-template-columns:1fr}.service-request-form{grid-template-columns:1fr}.service-request-form label.wide,.service-request-form button.wide{grid-column:auto}.service-request-form>.primary{justify-self:stretch}}
+
+/* V43.3 D5: API/Redis booking confirmation is compact and independent of legacy message channels. */
+.booking-submit-dialog{overflow:hidden}
+.booking-submit-state{min-height:250px;display:grid;align-content:center;gap:14px;text-align:center}
+.booking-submit-state section{display:grid;justify-items:center;gap:11px}
+.booking-submit-state h2{font-size:clamp(1.45rem,5vw,2rem)}
+.booking-submit-state p{margin:0;max-width:430px;line-height:1.55}
+.booking-code-label{font-size:13px;font-weight:800;color:var(--muted)}
+.booking-confirmation-code{display:inline-block;letter-spacing:.16em;font:800 clamp(1.6rem,8vw,2.4rem)/1 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:13px 16px}
+.booking-submit-state .dialog-actions{justify-content:center}
+@media(max-width:490px){.booking-submit-dialog{width:min(94vw,420px);max-height:78dvh}.booking-submit-state{min-height:0;padding:20px 4px}.booking-confirmation-code{font-size:1.55rem;padding:12px}.booking-submit-state .primary,.booking-submit-state .secondary{width:100%;justify-content:center;min-height:48px}}

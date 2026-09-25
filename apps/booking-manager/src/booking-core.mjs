@@ -1,4 +1,6 @@
 // V43.1 — pure scheduling functions shared by browser and Node tests.
+export const DAY_PARTS = Object.freeze({MORNING:'MORNING',AFTERNOON:'AFTERNOON',ANY:'ANY'});
+export const dayPartLabel=value=>({MORNING:'Pre podne',AFTERNOON:'Posle podne',ANY:'Svejedno'})[value]||'Nije navedeno';
 export const STATUS = Object.freeze({ PENDING:'pending', CONFIRMED:'confirmed', PROPOSED:'proposed', DECLINED:'declined', CANCELLED:'cancelled' });
 export const DAYS = ['Pon','Uto','Sre','Čet','Pet','Sub','Ned'];
 export const DEFAULT_HOURS = [
@@ -36,8 +38,8 @@ export const demoState = () => { const p=makeProfile(); return {schema:1,activeP
 export function normalizeRequest(input,profile) {
   const service = profile.services.find(s=>s.id===input.serviceId);
   if (!service) throw new Error('Izaberite uslugu.');
-  const date = String(input.date || ''); const time=String(input.time || '');
-  if (!isDate(date)||!isTime(time)) throw new Error('Unesite ispravan datum i vreme.');
+  const date = String(input.date || ''); const timingMode=input.timingMode==='DAY_PART'?'DAY_PART':'EXACT_TIME'; const time=timingMode==='EXACT_TIME'?String(input.time||''):''; const dayPart=timingMode==='DAY_PART'?String(input.dayPart||''):'';
+  if (!isDate(date)||(timingMode==='EXACT_TIME'&&!isTime(time))||(timingMode==='DAY_PART'&&!Object.values(DAY_PARTS).includes(dayPart))) throw new Error('Unesite ispravan datum i vreme ili deo dana.');
   const name=String(input.clientName||'').trim();
   if (name.length<2||name.length>100) throw new Error('Ime klijenta mora imati 2–100 znakova.');
   const phone=String(input.phone||'').trim();
@@ -46,7 +48,7 @@ export function normalizeRequest(input,profile) {
   const units=Number(input.units||service.units||1);
   if (!Number.isInteger(units)||units<1||units>profile.capacity) throw new Error('Broj mesta/resursa prevazilazi podešeni kapacitet.');
   return {id: input.id || makeId(),profileId:profile.id,serviceId:service.id,serviceName:service.name,
-    duration:service.duration, units, date,time,clientName:name,phone,notes,status:STATUS.PENDING,
+    duration:service.duration, units, date,time,timingMode,dayPart,clientName:name,phone,notes,status:STATUS.PENDING,
     createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),proposal:null,source:input.source||'manual'};
 }
 function hoursFor(profile,date) { return profile.hours[weekdayIndex(date)]; }
@@ -107,7 +109,7 @@ export function validateImport(json){
     ids.add(p.id);
   }
   for(const b of json.bookings){
-    if(!b||typeof b.id!=='string'||!ids.has(b.profileId)||!isDate(b.date)||!isTime(b.time)||!Object.values(STATUS).includes(b.status)) throw new Error('Oštećen unos rezervacije.');
+    if(!b||typeof b.id!=='string'||!ids.has(b.profileId)||!isDate(b.date)||((b.timingMode==='DAY_PART')?!Object.values(DAY_PARTS).includes(b.dayPart):!isTime(b.time))||!Object.values(STATUS).includes(b.status)) throw new Error('Oštećen unos rezervacije.');
     if(!Number.isInteger(b.duration)||b.duration<5||b.duration>1440||!Number.isInteger(b.units)||b.units<1||b.units>99) throw new Error('Neispravno trajanje ili kapacitet rezervacije.');
   }
   return clone(json);

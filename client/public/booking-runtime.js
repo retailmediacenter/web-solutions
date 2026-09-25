@@ -27,9 +27,19 @@ if(servicePicker && options.length){
 const serviceDefinitions=Array.isArray(site.booking?.services)?site.booking.services.filter(item=>item&&typeof item.id==='string'&&typeof item.name==='string'):[];
 const serviceIdFor=name=>serviceDefinitions.find(item=>item.name===name)?.id||'';
 const date=form.elements.namedItem('date');if(date)date.min=todayLocal();
+const apiBooking=Boolean(site.bookingTransport&&site.booking?.enabled);
 let retryRequest=null;
 const clearRetry=()=>{retryRequest=null;};
 form.addEventListener('input',clearRetry);form.addEventListener('change',clearRetry);
+const showDialog=()=>{if(!dialog.open)dialog.showModal();};
+function setApiState(state,{reservationCode='',error=''}={}){
+ const sending=$('bookingSubmitSending'),success=$('bookingSubmitSuccess'),failed=$('bookingSubmitError');
+ if(!sending||!success||!failed)return;
+ sending.hidden=state!=='sending';success.hidden=state!=='success';failed.hidden=state!=='error';
+ if(state==='success')$('bookingReservationCode').textContent=reservationCode;
+ if(state==='error')$('bookingSubmitErrorText').textContent=error;
+}
+function setSubmitting(value){const submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=value;submit.setAttribute('aria-busy',String(value));}}
 function jump(target){if(!target)return;const sticky=document.querySelector('.site-header')?.offsetHeight||0;
  const top=window.scrollY+target.getBoundingClientRect().top-sticky-12;
  window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
@@ -50,6 +60,7 @@ document.addEventListener('click',e=>{
  jump(dest);return;
  }}
  if(e.target.closest('[data-close]'))dialog.close();
+ if(e.target.closest('[data-booking-retry]'))form.requestSubmit();
  if(e.target.closest('#copyRequest'))void copyRequest();
  if(e.target.closest('#viberRequest'))void copyRequest();
 });
@@ -73,21 +84,20 @@ form.addEventListener('submit',async e=>{
  message=['Pozdrav, želim da pošaljem '+title+' firmi '+site.business.name+':',
    ...keys.filter(k=>String(entry[k]||'').trim()).map(k=>names[k]+': '+String(entry[k]).trim()),
    site.booking?.enabled?'Molim vas da potvrdite da li je željeni termin dostupan.':'Molim vas da mi odgovorite kada budete u mogućnosti.'].join('\n');
- if(site.bookingTransport&&site.booking?.enabled&&entry.date&&entry.time){
-  const status=$('copyRequestStatus');
-  $('requestMessage').textContent=message;
-  $('viberRequest').hidden=true;$('waRequest').hidden=true;
-  if(!entry.date||!entry.time){status.textContent='Za slanje rezervacije izaberite datum i vreme.';dialog.showModal();return;}
+ if(apiBooking){
+  const timingMode=site.booking?.mode==='request-slot'?'DAY_PART':'EXACT_TIME';
+  if(!entry.date||(timingMode==='EXACT_TIME'&&!entry.time)||(timingMode==='DAY_PART'&&!entry.daypart)){setApiState('error',{error:timingMode==='DAY_PART'?'Izaberite datum i željeno doba dana.':'Za slanje rezervacije izaberite datum i vreme.'});showDialog();return;}
+  const extra=keys.filter(k=>!['service','date','time','name','phone'].includes(k)&&String(entry[k]||'').trim()).map(k=>names[k]+': '+entry[k]).join('; ');
+  const serviceName=entry.service||entry.eventType||'',serviceId=serviceIdFor(serviceName);
+  const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,name:entry.name,phone:entry.phone,note:extra});
+  if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
+  setSubmitting(true);setApiState('sending');showDialog();
   try{
    if(!window.RMCBookingSubmit)throw new Error('Nedostaje modul za slanje rezervacija.');
-   const extra=keys.filter(k=>!['service','date','time','name','phone'].includes(k)&&String(entry[k]||'').trim()).map(k=>names[k]+': '+entry[k]).join('; ');
-   const serviceName=entry.service||entry.eventType||'',serviceId=serviceIdFor(serviceName);
-   const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,name:entry.name,phone:entry.phone,note:extra});
-   if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
-   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:entry.time,note:extra});
-   status.textContent='Zahtev je poslat firmi. Rezervacioni kod: '+result.reservationCode+'. Termin još nije potvrđen.';
-   dialog.showModal();return;
-  }catch(err){status.textContent='Zahtev NIJE potvrđeno poslat: '+err.message+' Kontaktirajte firmu telefonom ako je hitno.';dialog.showModal();return;}
+   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:timingMode==='EXACT_TIME'?entry.time:'',timingMode,dayPart:timingMode==='DAY_PART'?entry.daypart:'',note:extra});
+   setApiState('success',{reservationCode:result.reservationCode});
+  }catch(err){setApiState('error',{error:'Zahtev nije poslat. '+err.message});}
+  finally{setSubmitting(false);}return;
  }
  $('viberRequest').hidden=false;$('waRequest').hidden=false;
  if(site.bookingManager?.token&&site.booking?.enabled&&entry.date&&entry.time){
@@ -101,7 +111,7 @@ form.addEventListener('submit',async e=>{
  }
  $('requestMessage').textContent=message;
  $('viberRequest').href=viberUrl(message);$('waRequest').href=waUrl(message);
- $('copyRequestStatus').textContent=message.includes('#rmb=')?'Link sadrži šifrovane podatke. Na Viberu proveri da li se prenela CELA poruka; ako nije, upotrebi WhatsApp ili Kopiraj zahtev. Termin još nije potvrđen.':'';dialog.showModal();
+ $('copyRequestStatus').textContent=message.includes('#rmb=')?'Link sadrži šifrovane podatke. Na Viberu proveri da li se prenela CELA poruka; ako nije, upotrebi WhatsApp ili Kopiraj zahtev. Termin još nije potvrđen.':'';showDialog();
 });
 if(date)date.addEventListener('change',()=>date.setCustomValidity(''));
 })();

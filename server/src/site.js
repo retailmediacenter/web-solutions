@@ -17,9 +17,18 @@ function baseSitePayload(input){
   return resolveHybrid(input,{siteConfig,catalog});
 }
 
+const WINE_TASTING_SERVICES=Object.freeze([
+ {id:'wine-tasting-guided',name:'Vođena degustacija'},
+ {id:'wine-tasting-themed',name:'Tematska degustacija'},
+ {id:'wine-tasting-private',name:'Privatna degustacija'}
+]);
+function ensureWineBookingContract(siteConfig){
+ if(siteConfig?.business?.id!=='wine-shop'||!siteConfig.capabilities?.wineTastings)return;
+ siteConfig.capabilities.booking={enabled:true,mode:'reservation',timingMode:'EXACT_TIME',fields:{service:true,date:true,time:true,partySize:true,note:true},offerings:WINE_TASTING_SERVICES.map(x=>x.name),services:WINE_TASTING_SERVICES.map(x=>({...x})),confirmation:'request'};
+}
 function bookingProfile(siteConfig){
  const booking=siteConfig?.capabilities?.booking;
- if(!siteConfig?.capabilities?.serviceProfile||!booking?.enabled)return null;
+ if(!booking?.enabled)return null;
  const data=siteConfig.businessData||{},location=(data.locations||[])[0]||{};
  return {version:1,business:{name:siteConfig.business.name,phone:data.phone||'',email:data.email||'',
    city:location.city||data.city||'',address:location.address||data.address||'',hours:location.hours||data.hours||''},
@@ -32,6 +41,7 @@ export function buildSitePayload(input){
  // Public API callers cannot remove DEMO status; production is a separate trusted publishing workflow (V44).
  if(input?.siteMode==='production')throw new Error('Produkcioni izvoz zahteva odobren tok objavljivanja.');
  payload.siteConfig.businessData=resolveBusinessData(input,payload.siteConfig);
+ ensureWineBookingContract(payload.siteConfig);
  payload.siteConfig.bookingPairing=resolveBookingPairing(input?.bookingPairing); // optional public key; never a private key
  payload.siteConfig.contact={...(payload.siteConfig.contact||{}),phone:payload.siteConfig.businessData.phone}; // backward compatibility
  payload.siteConfig.siteMode='demo';

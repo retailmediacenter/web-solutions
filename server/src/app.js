@@ -52,7 +52,7 @@ app.post('/api/site/export',async(req,res)=>{
     // Bookings only: issue an independent, expiring pairing for this exact ZIP.
     // The public site ID is embedded; the secret stays only with Booking Manager.
     const book=payload.siteConfig.capabilities?.booking;
-    const needsPairing=(payload.siteConfig.capabilities?.serviceProfile&&book?.enabled)||!!payload.siteConfig.capabilities?.wineTastings;
+    const needsPairing=!!(book?.enabled&&payload.siteConfig.bookingProfile);
     let issued=null;
     if(needsPairing){
       if(payload.siteConfig.bookingPairing)throw Object.assign(new Error('Stari kod za šifrovane linkove nije kompatibilan sa novim izvozom. Uklonite ga i ponovite izvoz.'),{status:400});

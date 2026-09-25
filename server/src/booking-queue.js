@@ -29,6 +29,8 @@ const ensureSecret=x=>{if(typeof x!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(x))th
 const ensureCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{2}$/.test(x))throw err(400,'Kod mora imati format XXXX-XXXX-XX.');return x;};
 const ensureRequestId=x=>{if(typeof x!=='string'||!/^[0-9a-f-]{36}$/i.test(x))throw err(400,'Neispravan ID zahteva.');return x.toLowerCase();};
 const ensureReservationCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{8}$/.test(x))throw err(500,'Neispravan rezervacioni kod.');return x;};
+const TIMING_MODES=new Set(['EXACT_TIME','DAY_PART']);
+const DAY_PARTS=new Set(['MORNING','AFTERNOON','ANY']);
 const profileText=(value,max=180)=>String(value??'').trim().slice(0,max);
 function parseBookingProfile(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Nedostaje Booking profil sajta.');
@@ -46,36 +48,49 @@ function parseBookingProfile(raw){
 }
 function parseBooking(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Neispravna rezervacija.');
- const allowed=['clientName','phone','serviceId','serviceName','date','time','duration','note','requestId'];
+ const allowed=['clientName','phone','serviceId','serviceName','date','time','timingMode','dayPart','duration','note','requestId'];
  if(Object.keys(raw).some(x=>!allowed.includes(x)))throw err(400,'Nepoznata polja rezervacije.');
  const clientName=String(raw.clientName||'').trim(),phone=String(raw.phone||'').trim(),serviceName=String(raw.serviceName||'').trim(),note=String(raw.note||'').trim();
  if(!clientName||clientName.length>100||phone.length>35||!serviceName||serviceName.length>100||note.length>350)throw err(400,'Proveri ime, telefon, uslugu i napomenu.');
- if(!/^\d{4}-\d{2}-\d{2}$/.test(raw.date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(raw.time)||!Number.isInteger(raw.duration)||raw.duration<5||raw.duration>1440)throw err(400,'Proveri datum, vreme i trajanje.');
+ const timingMode=raw.timingMode==null?'EXACT_TIME':String(raw.timingMode);
+ const dayPart=raw.dayPart==null?'':String(raw.dayPart);
+ const hasExactTime=/^([01]\d|2[0-3]):[0-5]\d$/.test(raw.time);
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(raw.date)||!TIMING_MODES.has(timingMode)||!Number.isInteger(raw.duration)||raw.duration<5||raw.duration>1440)throw err(400,'Proveri datum i trajanje.');
+ if(timingMode==='EXACT_TIME'&&!hasExactTime)throw err(400,'Proveri vreme termina.');
+ if(timingMode==='DAY_PART'&&!DAY_PARTS.has(dayPart))throw err(400,'Proveri željeni deo dana.');
+ if(timingMode==='DAY_PART'&&raw.time!=null&&String(raw.time)!=='')throw err(400,'DAY_PART zahtev ne sme sadržati konkretno vreme.');
  const date=new Date(`${raw.date}T00:00:00Z`);if(Number.isNaN(date.getTime())||date.toISOString().slice(0,10)!==raw.date)throw err(400,'Datum nije ispravan.');
  const serviceId=raw.serviceId==null?'':String(raw.serviceId).trim();
  if(serviceId&&!/^[A-Za-z0-9:_-]{2,120}$/.test(serviceId))throw err(400,'Neispravan identifikator usluge.');
- return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:raw.time,duration:raw.duration,note};
+ return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:timingMode==='EXACT_TIME'?String(raw.time):'',timingMode,dayPart:timingMode==='DAY_PART'?dayPart:'',duration:raw.duration,note};
 }
 // Small injectable command adapter allows offline, deterministic tests without secrets.
 export function createBookingQueue(redis,{makeReservationCode=reservationCode}={}){
  redis=redis||((...args)=>redisFromEnvironment()(...args));
- async function issue(profile=null){
+ async function issue(profile){
+   // A pairing without a bootstrap profile can never be completed safely.
+   const validProfile=parseBookingProfile(profile);
    const siteId=id();const pairingCode=code();
-   // A pending site has no access secret. Site identifier is public.
-   const pairing=profile?{siteId,profile:parseBookingProfile(profile)}:{siteId};
+   const pairing={siteId,profile:validProfile};
    await redis('SET',key('pair',sha(pairingCode)),JSON.stringify(pairing),'EX',CODE_TTL,'NX');
    return {siteId,pairingCode,expiresIn:CODE_TTL};
  }
  async function claim(pairingCode){
    ensureCode(pairingCode);
    // Atomic consumption prevents a second device from claiming the same code.
-   const stored=await redis('GETDEL',key('pair',sha(pairingCode)));
+   const pairKey=key('pair',sha(pairingCode));
+   // Validate before the one-way GETDEL. Invalid legacy data is left to expire.
+   const preview=await redis('GET',pairKey);
+   if(!preview)throw err(404,'Kod je iskorišćen ili je istekao. Generiši novi sajt i kod.');
+   let checked;try{checked=JSON.parse(preview);parseBookingProfile(checked?.profile);ensureSite(checked?.siteId);}catch{throw err(400,'Kod nema ispravan Booking profil. Generiši novi sajt i kod.');}
+   const stored=await redis('GETDEL',pairKey);
    if(!stored)throw err(404,'Kod je iskorišćen ili je istekao. Generiši novi sajt i kod.');
-   let pairing;try{pairing=JSON.parse(stored);}catch{pairing={siteId:stored};}
+   let pairing;try{pairing=JSON.parse(stored);}catch{throw err(400,'Kod nema ispravan Booking profil.');}
    const siteId=ensureSite(pairing?.siteId);
+   const profile=parseBookingProfile(pairing?.profile);
    const accessToken=randomBytes(32).toString('base64url');
    await redis('SET',key('owner',siteId),sha(accessToken));
-   return {siteId,accessToken,...(pairing.profile?{profile:parseBookingProfile(pairing.profile)}:{})};
+   return {siteId,accessToken,profile};
  }
  async function authenticate(siteId,accessToken){
    ensureSite(siteId);ensureSecret(accessToken);
