@@ -14,9 +14,9 @@ const input=(id,enabled)=>({businessId:id,businessName:'Demo '+id,description:'I
 
 test('V41.5 adds exactly 24 service modes without touching 72 fact-only registry entries',()=>{
   assert.equal(getRegistryCount(),72);
-  assert.equal(SERVICE_BUSINESSES.length,24);
-  assert.equal(PILOT_BUSINESSES.length,37);
-  assert.equal(listBusinesses().filter(x=>x.pilot).length,37);
+  assert.equal(SERVICE_BUSINESSES.length,36);
+  assert.equal(PILOT_BUSINESSES.length,72);
+  assert.equal(listBusinesses().filter(x=>x.pilot).length,72);
   assert.deepEqual(new Set(SERVICE_BUSINESSES.map(id=>serviceProfile(id).mode)),new Set(BOOKING_MODES));
   for(const id of SERVICE_BUSINESSES){const fact=getBusinessFacts(id);assert.ok(fact,id);assert.equal(fact.bookingMode,undefined);assert.equal(fact.cta,undefined);}
 });
@@ -128,4 +128,62 @@ test('V41.5 requested wording for auto parts while V41.4 cart and contact stays'
   assert.ok(html.includes('Zatraži potvrdu dostupnosti'));
   const wine=buildSitePayload({businessId:'wine-shop',businessName:'Test',style:'modern',goal:'purchase',answers:{wineTastings:true}});
   assert.ok(renderHtml(wine).includes('id="tastingForm"'));
+});
+
+// V41.5.1 regression: the screenshots revealed an uninterpreted
+// `${esc(s.title)}` option in multiple industries. Test actual HTML values,
+// not just the presence of `<select name="service">`.
+test('V41.5.1: all 24 service dropdowns contain real offerings, never JS template expressions',()=>{
+  for(const id of SERVICE_BUSINESSES){
+    const enabled=buildSitePayload(input(id,true));
+    const html=renderHtml(enabled);
+    const select=html.match(/<select name="service" required>([\s\S]*?)<\/select>/)?.[1];
+    assert.ok(select,`${id}: service dropdown missing`);
+    assert.ok(!select.includes('${'),`${id}: uninterpreted template in dropdown`);
+    assert.ok(!select.includes('undefined'),`${id}: undefined value`);
+    const offerings=enabled.siteConfig.capabilities.booking.offerings;
+    for(const offer of offerings){
+      const escaped=offer.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      assert.ok(select.includes(`<option value="${escaped}"`),`${id}: missing selectable offering ${offer}`);
+    }
+    assert.ok(html.includes('"offerings"'),`${id}: runtime hydration config missing`);
+    assert.ok(html.includes('booking-runtime.js'),`${id}: standalone runtime missing`);
+  }
+});
+
+test('V41.5.1: opting out of eye exams removes exam from contact dropdown too',()=>{
+  const payload=buildSitePayload(input('optician',false));
+  const html=renderHtml(payload);
+  const select=html.match(/<select name="service" required>([\s\S]*?)<\/select>/)?.[1];
+  assert.ok(select);
+  assert.ok(!select.toLowerCase().includes('pregled'), 'Do not market a declined eye exam');
+  assert.ok(select.includes('Opšti upit'));
+  assert.equal(payload.siteConfig.capabilities.booking.enabled,false);
+});
+
+test('V41.5.1: browser script reconstructs dropdown from server data',()=>{
+  const runtime=readFileSync(path.join(publicRoot,'booking-runtime.js'),'utf8');
+  assert.ok(runtime.includes('servicePicker.replaceChildren'));
+  assert.ok(runtime.includes('site.booking?.offerings'));
+});
+
+// V41.5.2: the V41.5.1 regression only inspected initial dropdown HTML.
+// Card link metadata still used a single-quoted uninterpreted template literal,
+// which the click handler inserted as a new option after choosing a service card.
+test('V41.5.2: service-card clicks carry the real title for all 24 service businesses',()=>{
+  const escapeAttr=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  for(const id of SERVICE_BUSINESSES){
+    const payload=buildSitePayload(input(id,true));
+    const html=renderHtml(payload);
+    assert.ok(!html.includes('data-service="${'),`${id}: unresolved card metadata`);
+    if(payload.siteConfig.capabilities.booking.mode==='reservation')continue;
+    for(const service of payload.catalog.services){
+      assert.ok(html.includes(`data-service="${escapeAttr(service.title)}"`),`${id}: broken click metadata for ${service.title}`);
+    }
+  }
+});
+test('V41.5.2: runtime guards against legacy broken card attributes',()=>{
+  const source=readFileSync(path.join(publicRoot,'booking-runtime.js'),'utf8');
+  assert.ok(source.includes("rawService.includes('${')"));
+  assert.ok(source.includes("closest('.service-card')"));
 });

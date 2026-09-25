@@ -111,7 +111,7 @@
     });
     if(orderIntent==='inquiry'){
       return ['Pozdrav, želeo/la bih da proverim dostupnost:',...rows,
-        `Informativna demo vrednost: ${money(total(lines))}`,
+        `Informativna vrednost: ${money(total(lines))}`,
         `Ime: ${info.name}`,`Telefon: ${info.phone}`,
         info.note?`Napomena: ${info.note}`:'',
         'Molim vas da potvrdite dostupnost, stvarne cene i mogućnost preuzimanja.'].filter(Boolean).join('\n');
@@ -131,8 +131,7 @@
   // Viber officially limits the URL-share payload to 200 characters. Never
   // silently treat that abbreviated text as the complete customer request:
   // the full request is always available via the separate Copy action.
-  const viberUrl=text=>'viber://forward?text='+encodeURIComponent(text.length<=190?text:
-    text.slice(0,135).replace(/\s+\S*$/,'')+'… (nalepite ceo kopirani zahtev)');
+  const viberUrl=text=>'viber://forward?text='+encodeURIComponent(text.includes('#rmb=')?text:(text.length<=190?text:text.slice(0,120)+'… (kopiraj ceo zahtev)'));
   function tryCopyBeforeViber(text,statusId){
     // Best effort; browser/iframe may restrict custom URL schemes or clipboard.
     // The normal "Kopiraj" button remains the guaranteed fallback.
@@ -195,7 +194,7 @@
   if(tastingForm){
     const today=new Date(),local=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
     tastingForm.elements.date.min=local;
-    tastingForm.addEventListener('submit',e=>{
+    tastingForm.addEventListener('submit',async e=>{
       e.preventDefault();if(!tastingForm.reportValidity())return;
       const info=Object.fromEntries(new FormData(tastingForm).entries());
       if(info.date<local){tastingForm.elements.date.setCustomValidity('Izaberite današnji ili budući datum.');tastingForm.reportValidity();return;}
@@ -204,6 +203,27 @@
         `Vrsta: ${info.experience}`,`Datum: ${info.date}`,`Željeno vreme: ${info.time}`,`Broj osoba: ${info.partySize}`,
         `Ime: ${info.name}`,`Telefon: ${info.phone}`,info.note?`Napomena: ${info.note}`:'',
         'Molim vas da potvrdite da li je termin dostupan.'].filter(Boolean).join('\n');
+      if(site.bookingTransport){
+        $('bookingMessage').textContent=bookingPrepared;
+        $('viberBooking').hidden=true;$('waBooking').hidden=true;
+        try{
+          if(!window.RMCBookingSubmit)throw new Error('Nedostaje modul za slanje rezervacija.');
+          const result=await window.RMCBookingSubmit.send(site.bookingTransport,{clientName:info.name,phone:info.phone,serviceName:info.experience,date:info.date,time:info.time,note:('Broj osoba: '+String(info.partySize||'1')+'; '+String(info.note||''))});
+          $('bookingMessage').textContent='Zahtev za degustaciju je poslat.\nReferenca: '+result.requestId+'\nTermin još nije potvrđen.';
+          $('copyBooking').textContent='Kopiraj potvrdu';show($('bookingDialog'));return;
+        }catch(err){
+          $('bookingMessage').textContent='Zahtev NIJE potvrđeno poslat. '+err.message+'\nProverite telefonom sa firmom.';
+          $('copyBooking').textContent='Kopiraj poruku';show($('bookingDialog'));return;
+        }
+      }
+      $('viberBooking').hidden=false;$('waBooking').hidden=false;
+      if(site.bookingManager?.token){
+        try{
+          if(!window.RMCBookingLink)throw new Error('Modul za šifrovanje nije učitan.');
+          const link=await window.RMCBookingLink.create({v:1,requestId:crypto.randomUUID(),clientName:info.name,phone:info.phone,serviceName:info.experience,date:info.date,time:info.time,units:1,notes:('Broj osoba: '+String(info.partySize||'1')+'; '+String(info.note||'')).slice(0,650)},site.bookingManager.token,site.bookingManager.url);
+          bookingPrepared+='\n\nOTVORI REZERVACIJU U BOOKING MANAGERU:\n'+link;
+        }catch(err){window.alert('Booking link nije pripremljen: '+err.message+'. Proverite HTTPS.');return;}
+      }
       $('bookingMessage').textContent=bookingPrepared;$('waBooking').href=whatsappUrl(bookingPrepared);$('viberBooking').href=viberUrl(bookingPrepared);
       $('copyBooking').textContent='Kopiraj zahtev';show($('bookingDialog'));
     });
