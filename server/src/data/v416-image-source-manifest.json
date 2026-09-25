@@ -1,0 +1,242 @@
+{
+  "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_01.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_01.jpg",
+    "sha256": "f9f3259b7d8d2ea4aac7f745ff28cf4e0830f3c1e62fdc0fe742fc6c1b2c3459"
+  },
+  "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_01.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_01.jpg",
+    "sha256": "fc6cf087b2ab42463c15aa1aaf85feee0936396e9286d3bde41cd8d79fe63ff2"
+  },
+  "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_03.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_03.jpg",
+    "sha256": "cbcebc8490cee2235c38ef425ac7edfe5998b9cf647722ac3b8568c3cccde095"
+  },
+  "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_05.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_05.jpg",
+    "sha256": "399d72f0e52658c75b08507506a018dad5487b45977a690c7c73150e8dae5e6e"
+  },
+  "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_04.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_04.jpg",
+    "sha256": "cac6470fb0fe13cacd3ddea2285973448b96f0cc4832bab3ce8515ec9fea6920"
+  },
+  "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_02.jpg": {
+    "v39.5": "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_02.jpg",
+    "sha256": "bb5b678d1b6cc3b4be4c28b4775358db14f0244959e667b2daf7bac324f30c7f"
+  },
+  "assets/images/curated/food/fast-food/hero/fast_food_hero_counter_01.jpg": {
+    "v39.5": "assets/images/curated/food/fast food/hero/fast_food_hero_counter_01.jpg",
+    "sha256": "0407b7ae59177bbbf1102b38998953d7919c95451b1be0baad2f29cf18fcef02"
+  },
+  "assets/images/curated/food/fast-food/services/fast_food_product_beef_burger_01.jpg": {
+    "v39.5": "assets/images/curated/food/fast food/services/fast_food_product_beef_burger_01.jpg",
+    "sha256": "9d32bca79a9f3aed9fb90a92a5edfd5d3916f1c252b335e66d3dc727034b79c5"
+  },
+  "assets/images/curated/food/fast-food/services/fast_food_product_pljeskavica_01.jpg": {
+    "v39.5": "assets/images/curated/food/fast food/services/fast_food_product_pljeskavica_01.jpg",
+    "sha256": "cbc9012571e99e9a688c7fdbdb07f9fbfcc42381ae4920a5f732f81e2ed66de3"
+  },
+  "assets/images/curated/food/fast-food/services/fast_food_product_grilled_chicken_01.jpg": {
+    "v39.5": "assets/images/curated/food/fast food/services/fast_food_product_grilled_chicken_01.jpg",
+    "sha256": "b04610f2c56228456cf70ac573820380919e2bc325633dfa8d2e86d4771df6c4"
+  },
+  "assets/images/curated/food/fast-food/services/fast_food_product_fries_01.jpg": {
+    "v39.5": "assets/images/curated/food/fast food/services/fast_food_product_fries_01.jpg",
+    "sha256": "ba0ed5066a608e6183622ddd55823acdf85e69c0d5951bb280ec7ca9dfd1b740"
+  },
+  "assets/images/curated/retail/flowers-gifts/hero/flowers_gifts_hero_work_01.jpg": {
+    "v39.5": "assets/images/curated/retail/flowers-gifts/hero/flowers_gifts_hero_work_01.jpg",
+    "sha256": "ae4a0e879aa748dc75ecbd3f890a37bab429edccba2a02fcfcb817eb090b6550"
+  },
+  "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_flower_bouquet_01.jpg": {
+    "v39.5": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_flower_bouquet_01.jpg",
+    "sha256": "57c9e1fac1c0e4434d1501f55e7b336ec79a7c243b08c4c9cf57dcd9211d6ddf"
+  },
+  "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_potted_plant_01.jpg": {
+    "v39.5": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_potted_plant_01.jpg",
+    "sha256": "b6feec83ccf66effbcbf6909a5244826096942df1000b864aa6d779b7843b2a9"
+  },
+  "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_gift_box_01.jpg": {
+    "v39.5": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_gift_box_01.jpg",
+    "sha256": "1eb0a96acc34dd44285ac28a58d1e39437f29b772d62a68658be9a8eacb45b28"
+  },
+  "assets/images/curated/food/catering/services/catering_service_savory_bites_01.jpg": {
+    "v39.5": "assets/images/curated/food/catering/services/catering_service_savory_bites_01.jpg",
+    "sha256": "88d231a42d130c63bf7979318123f644d2bad168994f8bf81506c31676c5e0a8"
+  },
+  "assets/images/curated/food/catering/services/catering_service_buffet_setup_01.jpg": {
+    "v39.5": "assets/images/curated/food/catering/services/catering_service_buffet_setup_01.jpg",
+    "sha256": "e37d4469ce8a519469373dbb94523741b7b3c38c4695798bbd62129505034a17"
+  },
+  "assets/images/curated/food/catering/services/catering_service_event_service_01.jpg": {
+    "v39.5": "assets/images/curated/food/catering/services/catering_service_event_service_01.jpg",
+    "sha256": "f1a258142857f12096e2161ce8d26b9e30667862495937978fae5ea60c26411f"
+  },
+  "assets/images/curated/food/catering/hero/catering_hero_work_01.jpg": {
+    "v39.5": "assets/images/curated/food/catering/hero/catering_hero_work_01.jpg",
+    "sha256": "85e5f48d48fc97e60acfac997b4244523d99119f8d89a2350b88999cb6323e2c"
+  },
+  "assets/images/curated/services/car-wash/services/car_wash_service_hand_wash_01.jpg": {
+    "v39.5": "assets/images/curated/services/car-wash/services/car_wash_service_hand_wash_01.jpg",
+    "sha256": "2ad676f7cb4cb596a7ca1e7d1c61696389a99ede1c04fb8d78cac1efe257453b"
+  },
+  "assets/images/curated/services/car-wash/services/car_wash_service_interior_cleaning_01.jpg": {
+    "v39.5": "assets/images/curated/services/car-wash/services/car_wash_service_interior_cleaning_01.jpg",
+    "sha256": "2162c036e1660f57aebb1414312bcdf63feb02771f4b259b05628e52934ec5d4"
+  },
+  "assets/images/curated/services/car-wash/services/car_wash_service_polishing_01.jpg": {
+    "v39.5": "assets/images/curated/services/car-wash/services/car_wash_service_polishing_01.jpg",
+    "sha256": "5f2753acb918bda92b623036ff531772efefaf10572c459ba70ec15de976a8f3"
+  },
+  "assets/images/curated/services/car-wash/hero/car_wash_hero_work_01.jpg": {
+    "v39.5": "assets/images/curated/services/car-wash/hero/car_wash_hero_work_01.jpg",
+    "sha256": "ed55e4785ea354602481adcba552d4fc3b6a8688b40b3907f04e3441eff54cd8"
+  },
+  "assets/images/curated/services/cleaning-service/services/cleaning_service_service_01_window_cleaning.jpg": {
+    "v39.5": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_01_window_cleaning.jpg",
+    "sha256": "2a30e64d028aff00a64d19c7dc6bdd6bd517f1b58b5e0bcf7012ec4c3d6119e8"
+  },
+  "assets/images/curated/services/cleaning-service/services/cleaning_service_service_02_floor_vacuuming.jpg": {
+    "v39.5": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_02_floor_vacuuming.jpg",
+    "sha256": "005537926e785254683c12df8c4378d0f48583b48246cf0623589daa7527fed3"
+  },
+  "assets/images/curated/services/cleaning-service/services/cleaning_service_service_03_bathroom_cleaning.jpg": {
+    "v39.5": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_03_bathroom_cleaning.jpg",
+    "sha256": "f8f4b7d6d1efdbfa4e6a7b92dd48b81c370eddaa991131765028e498433510d4"
+  },
+  "assets/images/curated/services/cleaning-service/hero/cleaning_service_hero_01.jpg": {
+    "v39.5": "assets/images/curated/services/cleaning-service/hero/cleaning_service_hero_01.jpg",
+    "sha256": "a004594938059777e8514354fbabfb6a7d3da6d2989165d576f29a64cd684302"
+  },
+  "assets/images/curated/services/metalwork/services/metalwork_service_welding_01.jpg": {
+    "v39.5": "assets/images/curated/services/metalwork/services/metalwork_service_welding_01.jpg",
+    "sha256": "de5712ed84acda4b71a1f941b06e4d0df8d50475befa14e35a0806a1dabdd33c"
+  },
+  "assets/images/curated/services/metalwork/services/metalwork_service_metal_fence_01.jpg": {
+    "v39.5": "assets/images/curated/services/metalwork/services/metalwork_service_metal_fence_01.jpg",
+    "sha256": "835a33055224ed25437de9249ae5a2f77d419813e5b811ff3b9947fd4141edd3"
+  },
+  "assets/images/curated/services/metalwork/services/metalwork_service_steel_structure_01.jpg": {
+    "v39.5": "assets/images/curated/services/metalwork/services/metalwork_service_steel_structure_01.jpg",
+    "sha256": "c5b45d9f842b3adc54b86bb3c9d2f56e93e1a1d1c68593a95a4e1edfae9b9a41"
+  },
+  "assets/images/curated/services/metalwork/hero/metalwork_hero_work_01.jpg": {
+    "v39.5": "assets/images/curated/services/metalwork/hero/metalwork_hero_work_01.jpg",
+    "sha256": "bba0809afbdd4888493192509e2bb6476c2d67072672c20a6093a3aa6b1f2225"
+  },
+  "assets/images/curated/services/moving-service/services/moving_service_service_01_packing_boxes.jpg": {
+    "v39.5": "assets/images/curated/services/moving-service/services/moving_service_service_01_packing_boxes.jpg",
+    "sha256": "88fb277061c6e64590c1767cd95b8e643be6ea9f475fc8b6650b73e0559f417a"
+  },
+  "assets/images/curated/services/moving-service/services/moving_service_service_02_furniture_moving.jpg": {
+    "v39.5": "assets/images/curated/services/moving-service/services/moving_service_service_02_furniture_moving.jpg",
+    "sha256": "7ccd88216bab8ffa0f24587669bed3b18a344076034e8c7843c663695d6eaff1"
+  },
+  "assets/images/curated/services/moving-service/services/moving_service_service_03_truck_loading.jpg": {
+    "v39.5": "assets/images/curated/services/moving-service/services/moving_service_service_03_truck_loading.jpg",
+    "sha256": "529b6d8141954b17a4a30b41f40d877029d169ca2fe8138239c982c2cd5db8d2"
+  },
+  "assets/images/curated/services/moving-service/hero/moving_service_hero_01.jpg": {
+    "v39.5": "assets/images/curated/services/moving-service/hero/moving_service_hero_01.jpg",
+    "sha256": "3b1ad0291015f19df10bc8fab91bda6684364a4655644e7a18c311073c673591"
+  },
+  "assets/images/curated/professional-office/property-management/services/property_management_service_01.jpg": {
+    "v39.5": "assets/images/curated/professional-office/property-management/services/property_management_service_01.jpg",
+    "sha256": "94fa410a7125e15592422d3b404d2f26a4c872b38d8b141290093f1112201fa5"
+  },
+  "assets/images/curated/professional-office/property-management/services/property_management_service_02.jpg": {
+    "v39.5": "assets/images/curated/professional-office/property-management/services/property_management_service_02.jpg",
+    "sha256": "072ed98b3ddd16887dcdc3c596f9870da2e4eb1b466e6ef192ff9e453edab08c"
+  },
+  "assets/images/curated/professional-office/property-management/services/property_management_service_03.jpg": {
+    "v39.5": "assets/images/curated/professional-office/property-management/services/property_management_service_03.jpg",
+    "sha256": "d334b3856d77c0016cb03355701c9f4a0fc3664fdd6a689d6a20f09846f8e93a"
+  },
+  "assets/images/curated/professional-office/property-management/hero/property_management_hero_01.jpg": {
+    "v39.5": "assets/images/curated/professional-office/property-management/hero/property_management_hero_01.jpg",
+    "sha256": "c78dc774fb315641a948fbfe021048d157307e9425bc403f0a13fb177d200d03"
+  },
+  "assets/images/curated/tech/software-agency/services/software_agency_service_01_ux_wireframing.jpg": {
+    "v39.5": "assets/images/curated/tech/software-agency/services/software_agency_service_01_ux_wireframing.jpg",
+    "sha256": "36b9712cf421c265cc4e13ee5b579cefc794a4581bde3cd903035c8a6fbfce73"
+  },
+  "assets/images/curated/tech/software-agency/services/software_agency_service_02_web_app_development.jpg": {
+    "v39.5": "assets/images/curated/tech/software-agency/services/software_agency_service_02_web_app_development.jpg",
+    "sha256": "39b18990803cb359f6919f639e1cc30ff9ec3f36d52500e181a81d7523283fa3"
+  },
+  "assets/images/curated/tech/software-agency/services/software_agency_service_03_mobile_app_design.jpg": {
+    "v39.5": "assets/images/curated/tech/software-agency/services/software_agency_service_03_mobile_app_design.jpg",
+    "sha256": "cafd1ab70eac127385cc1325d466727833674a8d10fc87f97df632284da794b7"
+  },
+  "assets/images/curated/tech/software-agency/hero/software_agency_hero_01.jpg": {
+    "v39.5": "assets/images/curated/tech/software-agency/hero/software_agency_hero_01.jpg",
+    "sha256": "3f0d4c9e06e6a8d33baa14fd1956067cedb86065f2f125f442507b6acb632d4b"
+  },
+  "assets/images/curated/tech/it-services/services/it_services_service_01_helpdesk_support.jpg": {
+    "v39.5": "assets/images/curated/tech/it-services/services/it_services_service_01_helpdesk_support.jpg",
+    "sha256": "fad59afcee5fd6d90da321ac13b55e2902c7988efd797832169afb3b9ee4c2e7"
+  },
+  "assets/images/curated/tech/it-services/services/it_services_service_02_cloud_infrastructure.jpg": {
+    "v39.5": "assets/images/curated/tech/it-services/services/it_services_service_02_cloud_infrastructure.jpg",
+    "sha256": "eccd27f0d87d0187b1fc61021909ac3b68d79b01caf479c111462ae5a8b8a80f"
+  },
+  "assets/images/curated/tech/it-services/services/it_services_service_04_network_setup.jpg": {
+    "v39.5": "assets/images/curated/tech/it-services/services/it_services_service_04_network_setup.jpg",
+    "sha256": "fd25623e1d5d6fc3a6e09cdd0ff1ed46378343eae41ff76ad68ebb28b66de94e"
+  },
+  "assets/images/curated/tech/it-services/hero/it_services_hero_01.jpg": {
+    "v39.5": "assets/images/curated/tech/it-services/hero/it_services_hero_01.jpg",
+    "sha256": "9db1a43a5e4cf942e72f21cd16b9b1c1d11248d9e5a246e874b3ee85014274fd"
+  },
+  "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_01_cctv_camera_cluster.jpg": {
+    "v39.5": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_01_cctv_camera_cluster.jpg",
+    "sha256": "561394cc6beb20b89bbc2f3268ac06128fb17dadca83d215c55cf3c92e01e231"
+  },
+  "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_02_alarm_keypad_panel.jpg": {
+    "v39.5": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_02_alarm_keypad_panel.jpg",
+    "sha256": "d7ed55882ba99b5b2d40a0f2449b7802cc020981a658a17bbf84855a3357432c"
+  },
+  "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_03_security_system_installation.jpg": {
+    "v39.5": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_03_security_system_installation.jpg",
+    "sha256": "d3df049aa896c729aaf1d08c0d7384ea2c799571d148572013a8fbd4a973de1a"
+  },
+  "assets/images/curated/security/alarm-video-surveillance/hero/alarm_video_surveillance_hero_01.jpg": {
+    "v39.5": "assets/images/curated/security/alarm-video-surveillance/hero/alarm_video_surveillance_hero_01.jpg",
+    "sha256": "5c545053620d36045d24d2352b2fcecaab2370ab2ed0318a2d5dfbae84c6c2af"
+  },
+  "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_01_strength_training_dumbbell.jpg": {
+    "v39.5": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_01_strength_training_dumbbell.jpg",
+    "sha256": "2f2f19509c59561455a7851d526cd918e6d65d198f155e092847e16e64d8ddef"
+  },
+  "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_02_cardio_treadmill.jpg": {
+    "v39.5": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_02_cardio_treadmill.jpg",
+    "sha256": "023edd62c0a3b4fa4a41ea42564fde5a7c0133752814ed35137bc3291c9c5adf"
+  },
+  "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_03_personal_training_kettlebell.jpg": {
+    "v39.5": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_03_personal_training_kettlebell.jpg",
+    "sha256": "840e02fe74c9c464bcb7e3aa84b84e8438ddb01ba096dc9a5947db2072bf4ce4"
+  },
+  "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_01.jpg": {
+    "v39.5": "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_01.jpg",
+    "sha256": "8fed98a4f17071322e55c85e46383de1488da67c899f9df6ecf580893f33bad3"
+  },
+  "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_02.jpg": {
+    "v39.5": "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_02.jpg",
+    "sha256": "89a1689516146a22d2668f4ccea85f5fcf77d43a793d553fae62b2db74f49f41"
+  },
+  "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_01_yoga_flow_class.jpg": {
+    "v39.5": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_01_yoga_flow_class.jpg",
+    "sha256": "13e26009c8bb5a419aae9ff1f03ed62fd8faf4a522982bd2842ca349634759c4"
+  },
+  "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_02_reformer_pilates.jpg": {
+    "v39.5": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_02_reformer_pilates.jpg",
+    "sha256": "d12d6b46a0d3eaa841b226b49d03d2af9647ba9fd4c0c8c7828aeace6b7405be"
+  },
+  "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_03_stretching_class.jpg": {
+    "v39.5": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_03_stretching_class.jpg",
+    "sha256": "1552b1fb88bdc86052e427b1358d1087d8364cd07c2d986fba04bf2b7fedb265"
+  },
+  "assets/images/curated/sport/yoga-pilates/hero/yoga_pilates_hero_01.jpg": {
+    "v39.5": "assets/images/curated/sport/yoga-pilates/hero/yoga_pilates_hero_01.jpg",
+    "sha256": "3502bc7d627cd9bdbef8c224645bb9f6d49933da579ec20771d1300993639578"
+  }
+}

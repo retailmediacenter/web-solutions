@@ -1,0 +1,22 @@
+{
+  "assets/images/curated/beauty/hair-salon/products/hair_salon_product_hairspray_01.jpg": {
+    "sha256": "4e2c0238a7fced17fe4e71f237b8f8183741f03f05690f3ad5740a1e0e2b9160",
+    "origin": "V39.5 curated beauty/hair-salon/products",
+    "bytes": 220601
+  },
+  "assets/images/curated/beauty/hair-salon/products/hair_salon_product_hair_oil_serum_01.jpg": {
+    "sha256": "727929aec9307417fe0ed3ee99dc5637bef0066f3e4482517b9c7bca9913bcc2",
+    "origin": "V39.5 curated beauty/hair-salon/products",
+    "bytes": 271599
+  },
+  "assets/images/curated/beauty/hair-salon/products/hair_salon_product_styling_cream_01.jpg": {
+    "sha256": "db69a9e4f1b6818269c01e5f9c8caf7fbdb48642472d27fbaec347dfe8b6a29f",
+    "origin": "V39.5 curated beauty/hair-salon/products",
+    "bytes": 242013
+  },
+  "assets/images/curated/beauty/hair-salon/products/hair_salon_product_professional_shampoo_01.jpg": {
+    "sha256": "ea4f33dd2dd80fb2265c41d3f6c242407c5aa5c9cd35e06f379b0cff2b48a394",
+    "origin": "V39.5 curated beauty/hair-salon/products",
+    "bytes": 214695
+  }
+}

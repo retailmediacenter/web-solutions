@@ -1,0 +1,161 @@
+{
+  "id": "vehicle-sales",
+  "source": "V39.5 UNIVERSAL_SHOP_PROFILES.vehicle",
+  "demoOnly": true,
+  "disclaimer": "DEMO PRIMERI: sva vozila, specifikacije i cene su ilustrativni i nisu stvarna ponuda. Pre objave unesite stvarne podatke.",
+  "title": "Vozila u ponudi",
+  "intro": "Pogledajte primer ponude vozila, otvorite detalje i pošaljite upit za pregled ili rezervaciju.",
+  "featuredTitle": "Izdvajamo iz ponude",
+  "products": [
+    {
+      "id": "vehicle-1",
+      "title": "Urban Hatch 1.0",
+      "category": "Hatchback",
+      "priceLabel": "12.900 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_hatchback_01.jpg",
+      "description": "Kompaktan polovan automobil za gradsku vožnju, spreman za pregled.",
+      "fields": {
+        "year": "2021",
+        "mileage": "52.000 km",
+        "fuel": "Benzin",
+        "gearbox": "Manuelni",
+        "power": "81 kW"
+      }
+    },
+    {
+      "id": "vehicle-2",
+      "title": "Business Sedan 1.5",
+      "category": "Sedan",
+      "priceLabel": "16.900 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_sedan_01.jpg",
+      "description": "Uredan sedan sa preglednim tehničkim podacima i mogućnošću zakazivanja pregleda.",
+      "fields": {
+        "year": "2020",
+        "mileage": "68.000 km",
+        "fuel": "Benzin",
+        "gearbox": "Automatski",
+        "power": "110 kW"
+      }
+    },
+    {
+      "id": "vehicle-3",
+      "title": "Family SUV 1.6",
+      "category": "SUV",
+      "priceLabel": "21.500 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_suv_01.jpg",
+      "description": "Prostran SUV za porodičnu upotrebu; dostupnost se potvrđuje kroz upit.",
+      "fields": {
+        "year": "2022",
+        "mileage": "44.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Automatski",
+        "power": "120 kW"
+      }
+    },
+    {
+      "id": "vehicle-4",
+      "title": "Touring Wagon 2.0",
+      "category": "Karavan",
+      "priceLabel": "18.400 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_wagon_01.jpg",
+      "description": "Praktičan karavan za duža putovanja i svakodnevnu upotrebu.",
+      "fields": {
+        "year": "2021",
+        "mileage": "61.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Automatski",
+        "power": "110 kW"
+      }
+    },
+    {
+      "id": "vehicle-5",
+      "title": "City Compact 1.0",
+      "category": "Gradski automobil",
+      "priceLabel": "10.900 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_city_car_01.jpg",
+      "description": "Mali gradski automobil sa jednostavnom i ekonomičnom svakodnevnom upotrebom.",
+      "fields": {
+        "year": "2020",
+        "mileage": "47.000 km",
+        "fuel": "Benzin",
+        "gearbox": "Manuelni",
+        "power": "70 kW"
+      }
+    },
+    {
+      "id": "vehicle-6",
+      "title": "Family Van 1.5",
+      "category": "Porodični van",
+      "priceLabel": "19.600 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_family_van_01.jpg",
+      "description": "Više prostora za putnike i prtljag, uz mogućnost pregleda pre kupovine.",
+      "fields": {
+        "year": "2021",
+        "mileage": "58.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Manuelni",
+        "power": "96 kW"
+      }
+    },
+    {
+      "id": "vehicle-7",
+      "title": "Compact Crossover",
+      "category": "Crossover",
+      "priceLabel": "17.800 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_compact_crossover_01.jpg",
+      "description": "Kompaktan crossover za grad i otvoreni put.",
+      "fields": {
+        "year": "2022",
+        "mileage": "39.000 km",
+        "fuel": "Benzin",
+        "gearbox": "Automatski",
+        "power": "103 kW"
+      }
+    },
+    {
+      "id": "vehicle-8",
+      "title": "Executive Sedan 2.0",
+      "category": "Premium sedan",
+      "priceLabel": "27.900 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_premium_sedan_01.jpg",
+      "description": "Premium polovan sedan sa detaljnim prikazom opreme i stanja.",
+      "fields": {
+        "year": "2021",
+        "mileage": "72.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Automatski",
+        "power": "140 kW"
+      }
+    },
+    {
+      "id": "vehicle-9",
+      "title": "Utility Pickup 2.0",
+      "category": "Pickup",
+      "priceLabel": "24.500 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_pickup_01.jpg",
+      "description": "Praktično vozilo za posao i terensku upotrebu.",
+      "fields": {
+        "year": "2020",
+        "mileage": "83.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Manuelni",
+        "power": "125 kW"
+      }
+    },
+    {
+      "id": "vehicle-10",
+      "title": "Cargo Van 2.0",
+      "category": "Dostavno vozilo",
+      "priceLabel": "20.900 €",
+      "image": "assets/images/curated/services/auto-service/products/auto_service_product_used_delivery_van_01.jpg",
+      "description": "Dostavno vozilo za poslovnu upotrebu sa prostorom za robu i opremu.",
+      "fields": {
+        "year": "2021",
+        "mileage": "76.000 km",
+        "fuel": "Dizel",
+        "gearbox": "Manuelni",
+        "power": "105 kW"
+      }
+    }
+  ]
+}

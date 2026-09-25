@@ -1,0 +1,1699 @@
+[
+  {
+    "id": "shoe-shop",
+    "group": "Retail",
+    "label": "Prodavnica obuće",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/shoe-shop",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "categories",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "fashion-shop",
+    "group": "Retail",
+    "label": "Fashion butik",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/fashion-boutique",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "collections",
+      "gallery",
+      "map",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "hair-salon",
+    "group": "Beauty",
+    "label": "Frizerski salon",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/beauty/hair-salon",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "gallery",
+      "people",
+      "reviews",
+      "map",
+      "pricing",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "barber-shop",
+    "group": "Beauty",
+    "label": "Barber shop",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/beauty/barber-shop",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "gallery",
+      "people",
+      "reviews",
+      "map",
+      "pricing",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "beauty-salon",
+    "group": "Beauty",
+    "label": "Beauty salon",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/beauty/beauty-salon",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "pricing",
+      "booking",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "nail-salon",
+    "group": "Beauty",
+    "label": "Nail salon",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/beauty/nail-salon",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "gallery",
+      "reviews",
+      "map",
+      "pricing",
+      "booking",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "massage",
+    "group": "Beauty",
+    "label": "Masaža / Spa / Wellness",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/beauty/spa-wellness",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "pricing",
+      "booking",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "restaurant",
+    "group": "Food",
+    "label": "Restoran",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/restaurant",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "menu",
+      "gallery",
+      "reviews",
+      "map",
+      "reservation",
+      "chef/people",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "cafe",
+    "group": "Food",
+    "label": "Kafić",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/cafe",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "menu-or-offer",
+      "gallery",
+      "reviews",
+      "map",
+      "opening-hours",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "bakery",
+    "group": "Food",
+    "label": "Pekara",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/bakery-pastry",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "daily-offer",
+      "reviews",
+      "map",
+      "opening-hours",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "pastry",
+    "group": "Food",
+    "label": "Poslastičarnica",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/bakery-pastry",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "gallery",
+      "reviews",
+      "map",
+      "order-inquiry",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "fast-food",
+    "group": "Food",
+    "label": "Fast food",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/fast food",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "menu",
+      "products",
+      "reviews",
+      "order-action",
+      "opening-hours",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "catering",
+    "group": "Food",
+    "label": "Catering",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/food/catering",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "event-types",
+      "offer",
+      "gallery",
+      "reviews",
+      "quote-form",
+      "people",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "wine-shop",
+    "group": "Other",
+    "label": "wine-shop",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/wine-shop",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "liquor-store",
+    "group": "Other",
+    "label": "liquor-store",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/liquor-store",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "butcher-shop",
+    "group": "Other",
+    "label": "butcher-shop",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/butcher-shop",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "grocery-store",
+    "group": "Other",
+    "label": "grocery-store",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/grocery-store",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "furniture-store",
+    "group": "Other",
+    "label": "furniture-store",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/furniture-store",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "home-decor",
+    "group": "Retail",
+    "label": "Home decor",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/home-decor",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "collections",
+      "inspiration",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "gift-shop",
+    "group": "Retail",
+    "label": "Cveće i pokloni",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/flowers-gifts",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "occasions",
+      "people",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "sports-shop",
+    "group": "Retail",
+    "label": "Sportska prodavnica",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/sports-shop",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "categories",
+      "brands",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof",
+      "Real SKU images, prices and stock are not available in the V39.5 sports asset pack; currently category inquiry, not fictitious checkout"
+    ]
+  },
+  {
+    "id": "auto-service",
+    "group": "Services",
+    "label": "Auto servis",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/auto-service",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "counters",
+      "appointment-inquiry",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "auto-parts",
+    "group": "Other",
+    "label": "auto-parts",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/auto-parts",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "tire-shop",
+    "group": "Services",
+    "label": "Vulkanizer / gume",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/auto-service",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "products",
+      "reviews",
+      "map",
+      "counters",
+      "appointment-inquiry",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "car-wash",
+    "group": "Services",
+    "label": "Auto perionica",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/car-wash",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "pricing",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "appliance-repair",
+    "group": "Services",
+    "label": "Servis kućnih aparata",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/appliance-repair",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quick-contact",
+      "quote-form"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "hvac",
+    "group": "Services",
+    "label": "Klima servis",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/hvac-service",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "plumber",
+    "group": "Services",
+    "label": "Vodoinstalater",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/plumbing",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quick-contact",
+      "quote-form"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "plumbing-supplies",
+    "group": "Other",
+    "label": "plumbing-supplies",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/plumbing-supplies",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "electrician",
+    "group": "Services",
+    "label": "Električar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/electrical-services",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quick-contact",
+      "quote-form"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "electrical-supplies",
+    "group": "Other",
+    "label": "electrical-supplies",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/electrical-supplies",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "electronics-store",
+    "group": "Other",
+    "label": "electronics-store",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/electronics-store",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "phone-store",
+    "group": "Other",
+    "label": "phone-store",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/retail/phone-store",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.1–V41.6 retail / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": []
+  },
+  {
+    "id": "repair-phone",
+    "group": "Tech",
+    "label": "Servis telefona",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tech/phone-repair",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services / V41.7 hybrid",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "optician",
+    "group": "Healthcare",
+    "label": "Optika",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/optician",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "products",
+      "people",
+      "reviews",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "dentist",
+    "group": "Healthcare",
+    "label": "Stomatološka ordinacija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/dental-clinic",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "doctors",
+      "reviews",
+      "map",
+      "appointment",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "pharmacy",
+    "group": "Healthcare",
+    "label": "Apoteka",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/pharmacy",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "products",
+      "services",
+      "opening-hours",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "lab",
+    "group": "Healthcare",
+    "label": "Medicinska laboratorija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/medical-laboratory",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "preparation-info",
+      "opening-hours",
+      "map",
+      "reviews",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "physio",
+    "group": "Healthcare",
+    "label": "Fizioterapija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/physiotherapy",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "appointment",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "clinic",
+    "group": "Healthcare",
+    "label": "Privatna klinika",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/private-clinic",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "specialties",
+      "doctors",
+      "reviews",
+      "map",
+      "appointment",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "vet",
+    "group": "Healthcare",
+    "label": "Veterinarska ambulanta",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/healthcare/veterinary-clinic",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "map",
+      "emergency-contact",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "accounting",
+    "group": "Professional",
+    "label": "Knjigovodstvo",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/professional-office/accounting",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "references",
+      "reviews",
+      "counters",
+      "contact",
+      "map"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "consultant",
+    "group": "Professional",
+    "label": "Poslovni konsultant",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/professional-office/business-consulting",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "people",
+      "expertise",
+      "case-studies",
+      "references",
+      "counters",
+      "lead-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "law-office",
+    "group": "Professional",
+    "label": "Advokatska kancelarija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/professional-office/law-firm",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "people",
+      "practice-areas",
+      "trust",
+      "counters",
+      "contact",
+      "map"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "property-manager",
+    "group": "Professional",
+    "label": "Profesionalni upravnik",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/professional-office/property-management",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "references",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "marketing-agency",
+    "group": "Professional",
+    "label": "Marketing agencija",
+    "source": "V39.5",
+    "assetRoot": null,
+    "assetExists": false,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "Owner must provide imagery: original V39.5 has no curated asset namespace"
+    ]
+  },
+  {
+    "id": "software-company",
+    "group": "Tech",
+    "label": "Software agencija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tech/software-agency",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "portfolio",
+      "people",
+      "case-studies",
+      "process",
+      "counters",
+      "lead-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "it-support",
+    "group": "Tech",
+    "label": "IT podrška",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tech/it-services",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "references",
+      "counters",
+      "lead-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "security-systems",
+    "group": "Security",
+    "label": "Alarm / video nadzor",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/security/alarm-video-surveillance",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "systems",
+      "references",
+      "people",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "print-shop",
+    "group": "Professional",
+    "label": "Štamparija",
+    "source": "V39.5",
+    "assetRoot": null,
+    "assetExists": false,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "Owner must provide imagery: original V39.5 has no curated asset namespace"
+    ]
+  },
+  {
+    "id": "real-estate",
+    "group": "Property",
+    "label": "Agencija za nekretnine",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/property/real-estate-agency",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "listings",
+      "agents",
+      "reviews",
+      "inquiry",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "construction",
+    "group": "Property",
+    "label": "Investitor / gradnja",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/property/property-development",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "projects",
+      "people",
+      "progress",
+      "references",
+      "counters",
+      "lead-form",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "interior-design",
+    "group": "Property",
+    "label": "Dizajn enterijera",
+    "source": "V39.5",
+    "assetRoot": null,
+    "assetExists": false,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "Owner must provide imagery: original V39.5 has no curated asset namespace"
+    ]
+  },
+  {
+    "id": "language-school",
+    "group": "Education",
+    "label": "Škola jezika",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/education/language-school",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "courses",
+      "teachers",
+      "reviews",
+      "lead-form",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "training-center",
+    "group": "Education",
+    "label": "Training centar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/education/training-center",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "courses",
+      "curriculum",
+      "people",
+      "reviews",
+      "enrollment-form",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "kindergarten",
+    "group": "Education",
+    "label": "Vrtić",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/education/kindergarten",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "programs",
+      "people",
+      "gallery",
+      "reviews",
+      "map",
+      "visit-form",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "kids-playroom",
+    "group": "Events",
+    "label": "Dečija igraonica",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/events/kids-playroom",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "packages",
+      "gallery",
+      "activities",
+      "reviews",
+      "map",
+      "booking-or-inquiry",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "event-venue",
+    "group": "Events",
+    "label": "Prostor za događaje",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/events/event-venue",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "gallery",
+      "capacity",
+      "event-types",
+      "reviews",
+      "availability-inquiry",
+      "map",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "apartments",
+    "group": "Tourism",
+    "label": "Apartmani",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "units",
+      "gallery",
+      "amenities",
+      "reviews",
+      "map",
+      "reservation-or-inquiry",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "hotel",
+    "group": "Tourism",
+    "label": "Hotel",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "rooms",
+      "gallery",
+      "amenities",
+      "reviews",
+      "map",
+      "reservation",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "rent-a-car",
+    "group": "Tourism",
+    "label": "Rent-a-car",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tourism/rent-a-car",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "vehicles",
+      "classes",
+      "terms",
+      "reviews",
+      "reservation-or-inquiry",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "travel-agency",
+    "group": "Tourism",
+    "label": "Turistička agencija",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/tourism/travel-agency",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "destinations",
+      "packages",
+      "reviews",
+      "counters",
+      "inquiry-form",
+      "contact"
+    ],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "fitness-center",
+    "group": "Sport",
+    "label": "Fitness centar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/sport/gym-fitness",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "programs",
+      "people",
+      "reviews",
+      "map",
+      "counters",
+      "lead-or-booking",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "fitness-trainer",
+    "group": "Sport",
+    "label": "Personalni trener",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/sport/gym-fitness",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "people",
+      "programs",
+      "results",
+      "reviews",
+      "counters",
+      "lead-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "yoga-pilates",
+    "group": "Sport",
+    "label": "Yoga / Pilates studio",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/sport/yoga-pilates",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "classes",
+      "schedule",
+      "people",
+      "reviews",
+      "map",
+      "booking",
+      "counters",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V42: actual business location, map, hours and telephone paths",
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "photo-video",
+    "group": "Professional",
+    "label": "Foto i video studio",
+    "source": "V39.5",
+    "assetRoot": null,
+    "assetExists": false,
+    "requiredLegacyCapabilities": [],
+    "codePath": "V41.8",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "pending 41.9",
+    "deferred": [
+      "Owner must provide imagery: original V39.5 has no curated asset namespace"
+    ]
+  },
+  {
+    "id": "cleaning",
+    "group": "Services",
+    "label": "Servis za čišćenje",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/cleaning-service",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "carpenter",
+    "group": "Services",
+    "label": "Stolar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/carpenter",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "portfolio",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "locksmith",
+    "group": "Services",
+    "label": "Metalac / bravarski radovi",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/metalwork",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "portfolio",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "moving",
+    "group": "Services",
+    "label": "Selidbe",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/moving-service",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "painter",
+    "group": "Services",
+    "label": "Moler / farbar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/painter",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "portfolio",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  },
+  {
+    "id": "tiler",
+    "group": "Services",
+    "label": "Keramičar",
+    "source": "V39.5",
+    "assetRoot": "assets/images/curated/services/tiler",
+    "assetExists": true,
+    "requiredLegacyCapabilities": [
+      "services",
+      "people",
+      "portfolio",
+      "reviews",
+      "service-area",
+      "counters",
+      "quote-form",
+      "contact"
+    ],
+    "codePath": "V41.5–V41.6 services",
+    "scenarioMigrated": true,
+    "automatedCoverage": "V41.8 72-scenario smoke test",
+    "manualVisualQA": "sampled by user; full 72-case manual QA pending 41.9",
+    "deferred": [
+      "V43: real contact delivery/lead/quote adapters; current messages are prepared, not automatically sent",
+      "V41.9: full visual/content parity of people, reviews, trust, project galleries and nonfabricated proof"
+    ]
+  }
+]

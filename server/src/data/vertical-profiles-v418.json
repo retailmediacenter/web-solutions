@@ -1,0 +1,858 @@
+{
+  "sports-shop": {
+    "id": "sports-shop",
+    "label": "Sportska prodavnica",
+    "group": "Retail",
+    "kind": "catalog",
+    "headline": "Sportska oprema za svaki trening",
+    "subtitle": "Pregledajte kategorije i pošaljite upit za konkretnu opremu.",
+    "hero": "assets/images/curated/retail/sports-shop/hero/sports_store_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Trčanje i trening",
+        "description": "Potražite opremu i potrebnu veličinu.",
+        "image": null
+      },
+      {
+        "title": "Timski sportovi",
+        "description": "Lopte i oprema — upit za konkretnu ponudu.",
+        "image": null
+      },
+      {
+        "title": "Odeća i dodaci",
+        "description": "Navedite veličinu, boju i željeni proizvod.",
+        "image": null
+      }
+    ],
+    "question": "Da li kupci mogu da pošalju upit za sportsku opremu preko sajta?",
+    "fields": [
+      {
+        "name": "size",
+        "label": "Veličina / broj",
+        "kind": "text"
+      },
+      {
+        "name": "quantity",
+        "label": "Količina",
+        "kind": "number"
+      }
+    ],
+    "assetRoot": "assets/images/curated/retail/sports-shop",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "marketing-agency": {
+    "id": "marketing-agency",
+    "label": "Marketing agencija",
+    "group": "Professional",
+    "kind": "quote",
+    "headline": "Marketing sa jasnim poslovnim ciljem",
+    "subtitle": "Kampanje, strategija i kreativna podrška. Pošaljite projektni zahtev.",
+    "hero": null,
+    "cards": [
+      {
+        "title": "Digitalne kampanje",
+        "description": "Planiranje kampanja i kanala.",
+        "image": null
+      },
+      {
+        "title": "Strategija brenda",
+        "description": "Pozicioniranje i komunikaciona strategija.",
+        "image": null
+      },
+      {
+        "title": "Kreativna produkcija",
+        "description": "Izrada sadržaja i marketinških materijala.",
+        "image": null
+      }
+    ],
+    "question": "Da li primate zahteve za ponudu kroz sajt?",
+    "fields": [
+      {
+        "name": "scope",
+        "label": "Kratak opis projekta",
+        "kind": "textarea"
+      },
+      {
+        "name": "budget",
+        "label": "Okvirni budžet (opciono)",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": null,
+    "assetExists": false,
+    "reference": "V39.5"
+  },
+  "print-shop": {
+    "id": "print-shop",
+    "label": "Štamparija",
+    "group": "Professional",
+    "kind": "quote",
+    "headline": "Štampa po meri vaše ideje",
+    "subtitle": "Od vizitkarti do promotivnih materijala — pošaljite specifikaciju.",
+    "hero": null,
+    "cards": [
+      {
+        "title": "Poslovna štampa",
+        "description": "Vizitkarte, memorandumi i promotivna štampa.",
+        "image": null
+      },
+      {
+        "title": "Reklamni materijal",
+        "description": "Brošure, katalozi i materijali za događaje.",
+        "image": null
+      },
+      {
+        "title": "Veliki formati",
+        "description": "Baneri, posteri i izložbena grafika.",
+        "image": null
+      }
+    ],
+    "question": "Da li primate zahteve za štampu i ponude preko sajta?",
+    "fields": [
+      {
+        "name": "quantity",
+        "label": "Tiraž / količina",
+        "kind": "number"
+      },
+      {
+        "name": "size",
+        "label": "Format / dimenzije",
+        "kind": "text"
+      },
+      {
+        "name": "deadline",
+        "label": "Željeni rok",
+        "kind": "date"
+      }
+    ],
+    "assetRoot": null,
+    "assetExists": false,
+    "reference": "V39.5"
+  },
+  "real-estate": {
+    "id": "real-estate",
+    "label": "Agencija za nekretnine",
+    "group": "Property",
+    "kind": "property",
+    "headline": "Pronađite pravi prostor",
+    "subtitle": "Pregledajte primere vrsta nekretnina i pošaljite upit agentu.",
+    "hero": "assets/images/curated/property/real-estate-agency/hero/real_estate_agency_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Stanovi",
+        "description": "Ilustrativan prikaz tipa stana — nije stvarna ponuda.",
+        "image": "assets/images/curated/property/real-estate-agency/services/real_estate_agency_two_bedroom_apartment_01.jpg"
+      },
+      {
+        "title": "Kuće",
+        "description": "Ilustrativna fotografija porodične kuće.",
+        "image": "assets/images/curated/property/real-estate-agency/services/real_estate_agency_family_house_01.jpg"
+      },
+      {
+        "title": "Poslovni prostor",
+        "description": "Primer vrste prostora, dostupnost na upit.",
+        "image": "assets/images/curated/property/real-estate-agency/services/real_estate_agency_commercial_space_01.jpg"
+      }
+    ],
+    "question": "Da li preko sajta primate zahteve za razgledanje nekretnina?",
+    "fields": [
+      {
+        "name": "area",
+        "label": "Željena lokacija / deo grada",
+        "kind": "text"
+      },
+      {
+        "name": "budget",
+        "label": "Okvirni budžet (opciono)",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": "assets/images/curated/property/real-estate-agency",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "construction": {
+    "id": "construction",
+    "label": "Investitor / gradnja",
+    "group": "Property",
+    "kind": "construction",
+    "headline": "Projekti koji dobijaju oblik",
+    "subtitle": "Predstavite tip gradnje i omogućite upit za konkretan projekat.",
+    "hero": "assets/images/curated/property/property-development/hero/property_development_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Stambena gradnja",
+        "description": "Projektni primer; stvarni projekti se unose pre objave.",
+        "image": "assets/images/curated/property/property-development/services/property_development_service_01.jpg"
+      },
+      {
+        "title": "Poslovni objekti",
+        "description": "Primer oblasti rada; ne predstavlja realizovan projekat.",
+        "image": "assets/images/curated/property/property-development/services/property_development_service_02.jpg"
+      },
+      {
+        "title": "Razvoj projekata",
+        "description": "Informacije o planiranim projektima na upit.",
+        "image": "assets/images/curated/property/property-development/services/property_development_service_03.jpg"
+      }
+    ],
+    "question": "Da li prihvatate zahteve za prezentaciju projekta ili stana?",
+    "fields": [
+      {
+        "name": "area",
+        "label": "Željena kvadratura",
+        "kind": "text"
+      },
+      {
+        "name": "unitType",
+        "label": "Tip prostora",
+        "kind": "select:Stan|Lokal|Poslovni prostor|Ostalo"
+      },
+      {
+        "name": "budget",
+        "label": "Planirani budžet (opciono)",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": "assets/images/curated/property/property-development",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "interior-design": {
+    "id": "interior-design",
+    "label": "Dizajn enterijera",
+    "group": "Property",
+    "kind": "quote",
+    "headline": "Prostor osmišljen za vaš život",
+    "subtitle": "Pošaljite ideju i zatražite razgovor o projektu enterijera.",
+    "hero": null,
+    "cards": [
+      {
+        "title": "Projektovanje enterijera",
+        "description": "Idejno i izvedbeno projektovanje.",
+        "image": null
+      },
+      {
+        "title": "Adaptacija prostora",
+        "description": "Funkcionalno preuređenje stambenog ili poslovnog prostora.",
+        "image": null
+      },
+      {
+        "title": "3D prikaz",
+        "description": "Vizualizacija koncepta po dogovoru.",
+        "image": null
+      }
+    ],
+    "question": "Da li primate upite za konsultaciju i projektovanje?",
+    "fields": [
+      {
+        "name": "area",
+        "label": "Vrsta i kvadratura prostora",
+        "kind": "text"
+      },
+      {
+        "name": "scope",
+        "label": "Šta želite da uradite?",
+        "kind": "textarea"
+      },
+      {
+        "name": "budget",
+        "label": "Okvirni budžet (opciono)",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": null,
+    "assetExists": false,
+    "reference": "V39.5"
+  },
+  "language-school": {
+    "id": "language-school",
+    "label": "Škola jezika",
+    "group": "Education",
+    "kind": "enrollment",
+    "headline": "Jezik otvara nove mogućnosti",
+    "subtitle": "Istražite programe i pošaljite zahtev za upis ili probni čas.",
+    "hero": "assets/images/curated/education/language-school/hero/language_school_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Engleski jezik",
+        "description": "Programi za različite nivoe.",
+        "image": "assets/images/curated/education/language-school/services/language_school_service_01.jpg"
+      },
+      {
+        "title": "Individualna nastava",
+        "description": "Tempo i ciljevi po dogovoru.",
+        "image": "assets/images/curated/education/language-school/services/language_school_individual_lesson_01.jpg"
+      },
+      {
+        "title": "Jezici za decu",
+        "description": "Programi primereni uzrastu.",
+        "image": "assets/images/curated/education/language-school/services/language_school_kids_class_01.jpg"
+      }
+    ],
+    "question": "Da li primate prijave ili zahteve za probni čas preko sajta?",
+    "fields": [
+      {
+        "name": "level",
+        "label": "Nivo znanja",
+        "kind": "select:Početni|Srednji|Napredni|Nisam siguran/na"
+      },
+      {
+        "name": "format",
+        "label": "Format nastave",
+        "kind": "select:Grupno|Individualno|Online|Po dogovoru"
+      }
+    ],
+    "assetRoot": "assets/images/curated/education/language-school",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "training-center": {
+    "id": "training-center",
+    "label": "Centar za obuke",
+    "group": "Education",
+    "kind": "enrollment",
+    "headline": "Znanje koje se primenjuje",
+    "subtitle": "Odaberite program i pošaljite zahtev za informacije o upisu.",
+    "hero": "assets/images/curated/education/training-center/hero/training_center_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Stručni kursevi",
+        "description": "Program prema oblasti interesovanja.",
+        "image": "assets/images/curated/education/training-center/services/training_center_service_01.jpg"
+      },
+      {
+        "title": "Praktične radionice",
+        "description": "Obuka zasnovana na vežbama.",
+        "image": "assets/images/curated/education/training-center/services/training_center_practical_workshop_01.jpg"
+      },
+      {
+        "title": "Individualne obuke",
+        "description": "Program po dogovoru.",
+        "image": "assets/images/curated/education/training-center/services/training_center_service_02.jpg"
+      }
+    ],
+    "question": "Da li primate prijave za kurseve preko sajta?",
+    "fields": [
+      {
+        "name": "format",
+        "label": "Format",
+        "kind": "select:U grupi|Individualno|Online|Po dogovoru"
+      },
+      {
+        "name": "start",
+        "label": "Željeni početak (opciono)",
+        "kind": "month"
+      }
+    ],
+    "assetRoot": "assets/images/curated/education/training-center",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "kindergarten": {
+    "id": "kindergarten",
+    "label": "Vrtić",
+    "group": "Education",
+    "kind": "kindergarten",
+    "headline": "Bezbedno mesto za prve korake",
+    "subtitle": "Program i prostor prikazani ilustrativno. Pošaljite zahtev za razgovor ili posetu.",
+    "hero": "assets/images/curated/education/kindergarten/hero/kindergarten_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Jaslene grupe",
+        "description": "Upit o raspoloživosti i programu.",
+        "image": "assets/images/curated/education/kindergarten/services/kindergarten_service_01.jpg"
+      },
+      {
+        "title": "Predškolski program",
+        "description": "Program i organizacija po dogovoru.",
+        "image": "assets/images/curated/education/kindergarten/services/kindergarten_service_02.jpg"
+      },
+      {
+        "title": "Aktivnosti i igra",
+        "description": "Informacije o dnevnim aktivnostima.",
+        "image": "assets/images/curated/education/kindergarten/services/kindergarten_service_03.jpg"
+      }
+    ],
+    "question": "Da li roditelji mogu da pošalju zahtev za obilazak vrtića?",
+    "fields": [
+      {
+        "name": "age",
+        "label": "Uzrast deteta (grupa)",
+        "kind": "select:1–2 godine|2–3 godine|3–4 godine|4–5 godina|5–7 godina"
+      },
+      {
+        "name": "date",
+        "label": "Željeni datum posete",
+        "kind": "date"
+      }
+    ],
+    "assetRoot": "assets/images/curated/education/kindergarten",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "apartments": {
+    "id": "apartments",
+    "label": "Apartmani",
+    "group": "Tourism",
+    "kind": "stay",
+    "headline": "Vaš naredni boravak počinje ovde",
+    "subtitle": "Pregledajte vrste smeštaja i pošaljite upit za željeni termin.",
+    "hero": "assets/images/curated/tourism/hotel-apart-hotel/hero/hotel_apart_hotel_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Gradski apartman",
+        "description": "Ilustrativni tip jedinice; rezervacija se potvrđuje naknadno.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_city_apartment_01.jpg"
+      },
+      {
+        "title": "Apartman / studio",
+        "description": "Primer rasporeda i opreme.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_01_apartment_suite_interior.jpg"
+      },
+      {
+        "title": "Boravak u prirodi",
+        "description": "Primer vrste smeštaja.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_mountain_cabin_01.jpg"
+      }
+    ],
+    "question": "Da li primate direktne upite o dostupnosti apartmana?",
+    "fields": [
+      {
+        "name": "arrival",
+        "label": "Datum dolaska",
+        "kind": "date"
+      },
+      {
+        "name": "departure",
+        "label": "Datum odlaska",
+        "kind": "date"
+      },
+      {
+        "name": "guests",
+        "label": "Broj gostiju",
+        "kind": "number"
+      }
+    ],
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "hotel": {
+    "id": "hotel",
+    "label": "Hotel",
+    "group": "Tourism",
+    "kind": "stay",
+    "headline": "Boravak koji želite da ponovite",
+    "subtitle": "Informacije o sobama, uslugama i upiti za određeni period.",
+    "hero": "assets/images/curated/tourism/hotel-apart-hotel/hero/hotel_apart_hotel_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Sobe i apartmani",
+        "description": "Ilustrativni primer smeštajne jedinice.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_01_apartment_suite_interior.jpg"
+      },
+      {
+        "title": "Doručak",
+        "description": "Informacije o usluzi doručka.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_02_breakfast_service.jpg",
+        "requestable": false
+      },
+      {
+        "title": "Dodatni sadržaji",
+        "description": "Sadržaji zavise od stvarne ponude hotela.",
+        "image": "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_04_pool_terrace.jpg",
+        "requestable": false
+      }
+    ],
+    "question": "Da li primate direktne zahteve za dostupnost soba preko sajta?",
+    "fields": [
+      {
+        "name": "roomType",
+        "label": "Željeni tip sobe (opciono)",
+        "kind": "select:Standardna soba|Dvokrevetna soba|Apartman|Po dogovoru"
+      },
+      {
+        "name": "arrival",
+        "label": "Datum dolaska",
+        "kind": "date"
+      },
+      {
+        "name": "departure",
+        "label": "Datum odlaska",
+        "kind": "date"
+      },
+      {
+        "name": "guests",
+        "label": "Broj gostiju",
+        "kind": "number"
+      }
+    ],
+    "assetRoot": "assets/images/curated/tourism/hotel-apart-hotel",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "rent-a-car": {
+    "id": "rent-a-car",
+    "label": "Rent-a-car",
+    "group": "Tourism",
+    "kind": "rental",
+    "headline": "Sloboda na svakom kilometru",
+    "subtitle": "Pregledajte klase vozila i pošaljite zahtev za period najma.",
+    "hero": "assets/images/curated/tourism/rent-a-car/hero/rent_a_car_hero_work_01.jpg",
+    "cards": [
+      {
+        "title": "Gradski automobil",
+        "description": "Kategorija vozila; dostupnost i cena na upit.",
+        "image": "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_city_car_01.jpg"
+      },
+      {
+        "title": "Porodično vozilo",
+        "description": "Primer klase za veća putovanja.",
+        "image": "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_family_car_01.jpg"
+      },
+      {
+        "title": "Preuzimanje vozila",
+        "description": "Dogovor o preuzimanju i vraćanju.",
+        "image": "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_vehicle_handover_01.jpg",
+        "requestable": false
+      }
+    ],
+    "question": "Da li primate upite za najam vozila preko sajta?",
+    "fields": [
+      {
+        "name": "arrival",
+        "label": "Preuzimanje: datum",
+        "kind": "date"
+      },
+      {
+        "name": "pickupTime",
+        "label": "Preuzimanje: vreme",
+        "kind": "time"
+      },
+      {
+        "name": "departure",
+        "label": "Vraćanje: datum",
+        "kind": "date"
+      },
+      {
+        "name": "returnTime",
+        "label": "Vraćanje: vreme",
+        "kind": "time"
+      },
+      {
+        "name": "pickup",
+        "label": "Mesto preuzimanja",
+        "kind": "text"
+      },
+      {
+        "name": "returnLocation",
+        "label": "Mesto vraćanja",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": "assets/images/curated/tourism/rent-a-car",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "travel-agency": {
+    "id": "travel-agency",
+    "label": "Turistička agencija",
+    "group": "Tourism",
+    "kind": "travel",
+    "headline": "Otkrijte sledeću destinaciju",
+    "subtitle": "Inspiracija za putovanje i personalizovan upit za aranžman.",
+    "hero": "assets/images/curated/tourism/travel-agency/hero/travel_agency_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Odmor na moru",
+        "description": "Primer kategorije putovanja.",
+        "image": "assets/images/curated/tourism/travel-agency/services/travel_agency_service_03_destination_beach_escape.jpg"
+      },
+      {
+        "title": "Planinski odmor",
+        "description": "Pronađite tip putovanja koji vam odgovara.",
+        "image": "assets/images/curated/tourism/travel-agency/services/travel_agency_mountain_holiday_01.jpg"
+      },
+      {
+        "title": "Gradski odmor",
+        "description": "Kraća putovanja i city break.",
+        "image": "assets/images/curated/tourism/travel-agency/services/travel_agency_city_break_01.jpg"
+      }
+    ],
+    "question": "Da li klijenti mogu da šalju upite za aranžmane preko sajta?",
+    "fields": [
+      {
+        "name": "destination",
+        "label": "Željena destinacija (opciono)",
+        "kind": "text"
+      },
+      {
+        "name": "travelMonth",
+        "label": "Period putovanja (opciono)",
+        "kind": "month"
+      },
+      {
+        "name": "guests",
+        "label": "Broj putnika",
+        "kind": "number"
+      },
+      {
+        "name": "budget",
+        "label": "Budžet (opciono)",
+        "kind": "text"
+      }
+    ],
+    "assetRoot": "assets/images/curated/tourism/travel-agency",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "photo-video": {
+    "id": "photo-video",
+    "label": "Foto i video studio",
+    "group": "Professional",
+    "kind": "quote",
+    "headline": "Priče koje zaslužuju dobar kadar",
+    "subtitle": "Fotografisanje, snimanje i montaža prema vašem projektu.",
+    "hero": null,
+    "cards": [
+      {
+        "title": "Fotografisanje",
+        "description": "Događaji, portreti i poslovne fotografije.",
+        "image": null
+      },
+      {
+        "title": "Video produkcija",
+        "description": "Snimanje i obrada videa.",
+        "image": null
+      },
+      {
+        "title": "Montaža i postprodukcija",
+        "description": "Obrada materijala po dogovoru.",
+        "image": null
+      }
+    ],
+    "question": "Da li primate upite za snimanja i termine preko sajta?",
+    "fields": [
+      {
+        "name": "date",
+        "label": "Željeni datum (opciono)",
+        "kind": "date"
+      },
+      {
+        "name": "location",
+        "label": "Lokacija snimanja (opciono)",
+        "kind": "text"
+      },
+      {
+        "name": "scope",
+        "label": "Opis događaja/projekta",
+        "kind": "textarea"
+      }
+    ],
+    "assetRoot": null,
+    "assetExists": false,
+    "reference": "V39.5"
+  },
+  "dentist": {
+    "id": "dentist",
+    "label": "Stomatološka ordinacija",
+    "group": "Healthcare",
+    "kind": "clinical",
+    "headline": "Osmeh počinje dobrim razgovorom",
+    "subtitle": "Informacije o uslugama i zahtevi za pregled bez unošenja medicinskih podataka.",
+    "hero": "assets/images/curated/healthcare/dental-clinic/hero/dental_clinic_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Pregledi",
+        "description": "Informacije o dostupnim pregledima.",
+        "image": "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_service_01.jpg"
+      },
+      {
+        "title": "Dentalna higijena",
+        "description": "Informativna usluga.",
+        "image": "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_dental_cleaning_01.jpg"
+      },
+      {
+        "title": "Dijagnostika",
+        "description": "Informacije o postupcima po dogovoru.",
+        "image": "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_dental_scan_01.jpg"
+      }
+    ],
+    "question": "Da li pacijenti mogu da pošalju zahtev za termin pregleda?",
+    "fields": [
+      {
+        "name": "date",
+        "label": "Željeni datum pregleda",
+        "kind": "date"
+      },
+      {
+        "name": "time",
+        "label": "Poželjno vreme",
+        "kind": "time"
+      }
+    ],
+    "assetRoot": "assets/images/curated/healthcare/dental-clinic",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "pharmacy": {
+    "id": "pharmacy",
+    "label": "Apoteka",
+    "group": "Healthcare",
+    "kind": "pharmacy",
+    "headline": "Savet i proizvodi na jednom mestu",
+    "subtitle": "Pitajte za kategorije bezreceptnih proizvoda i informacije o apoteci.",
+    "hero": "assets/images/curated/healthcare/pharmacy/hero/pharmacy_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Vitamini i dodaci",
+        "description": "Primer kategorije — bez potvrde stanja na lageru.",
+        "image": "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_vitamin_c_effervescent_01.jpg"
+      },
+      {
+        "title": "Biljni proizvodi",
+        "description": "Primer kategorije bez medicinskih preporuka.",
+        "image": "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_herbal_cough_syrup_01.jpg"
+      },
+      {
+        "title": "Nega i higijena",
+        "description": "Kategorija ponude; stvarni asortiman se unosi pre objave.",
+        "image": "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_face_cream_01.jpg"
+      }
+    ],
+    "question": "Da li prihvatate upite o dostupnosti bezreceptnih proizvoda?",
+    "fields": [
+      {
+        "name": "quantity",
+        "label": "Željena količina (opciono)",
+        "kind": "number"
+      }
+    ],
+    "assetRoot": "assets/images/curated/healthcare/pharmacy",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "lab": {
+    "id": "lab",
+    "label": "Medicinska laboratorija",
+    "group": "Healthcare",
+    "kind": "lab",
+    "headline": "Pouzdane informacije o analizama",
+    "subtitle": "Pregled informativnih usluga i kontakt za uputstva pre dolaska.",
+    "hero": "assets/images/curated/healthcare/medical-laboratory/hero/medical_laboratory_hero_space_02.jpg",
+    "cards": [
+      {
+        "title": "Uzimanje uzoraka",
+        "description": "Uputstva o pripremi dobijaju se direktno od laboratorije.",
+        "image": "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_blood_sampling_01.jpg"
+      },
+      {
+        "title": "Laboratorijske analize",
+        "description": "Informacije o vrstama analiza bez medicinskih rezultata.",
+        "image": "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_sample_analyzer_01.jpg"
+      },
+      {
+        "title": "Priprema uzorka",
+        "description": "Prikaz radnog procesa i standarda.",
+        "image": "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_sample_preparation_01.jpg"
+      }
+    ],
+    "question": "Da li laboratorija prima zahteve za termine uzorkovanja?",
+    "fields": [
+      {
+        "name": "date",
+        "label": "Željeni datum uzorkovanja",
+        "kind": "date"
+      }
+    ],
+    "assetRoot": "assets/images/curated/healthcare/medical-laboratory",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "clinic": {
+    "id": "clinic",
+    "label": "Privatna klinika",
+    "group": "Healthcare",
+    "kind": "clinical",
+    "headline": "Briga o zdravlju počinje kontaktom",
+    "subtitle": "Pregled specijalnosti i slanje zahteva za termin, bez opisa dijagnoze.",
+    "hero": "assets/images/curated/healthcare/private-clinic/hero/private_clinic_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Specijalistički pregledi",
+        "description": "Usluge zavise od konkretne klinike.",
+        "image": "assets/images/curated/healthcare/private-clinic/services/private_clinic_service_01.jpg"
+      },
+      {
+        "title": "Konsultacije",
+        "description": "Informativni zahtev za termin.",
+        "image": "assets/images/curated/healthcare/private-clinic/services/private_clinic_service_02.jpg"
+      },
+      {
+        "title": "Dijagnostika",
+        "description": "Primer oblasti, bez obećavanja konkretne usluge.",
+        "image": "assets/images/curated/healthcare/private-clinic/services/private_clinic_ecg_01.jpg"
+      }
+    ],
+    "question": "Da li pacijenti mogu da zatraže termin pregleda preko sajta?",
+    "fields": [
+      {
+        "name": "date",
+        "label": "Željeni datum pregleda",
+        "kind": "date"
+      },
+      {
+        "name": "time",
+        "label": "Poželjno vreme",
+        "kind": "time"
+      }
+    ],
+    "assetRoot": "assets/images/curated/healthcare/private-clinic",
+    "assetExists": true,
+    "reference": "V39.5"
+  },
+  "vet": {
+    "id": "vet",
+    "label": "Veterinarska ambulanta",
+    "group": "Healthcare",
+    "kind": "vet",
+    "headline": "Briga o vašim ljubimcima",
+    "subtitle": "Informacije o veterinarskim uslugama i upit za termin pregleda.",
+    "hero": "assets/images/curated/healthcare/veterinary-clinic/hero/veterinary_clinic_hero_01.jpg",
+    "cards": [
+      {
+        "title": "Preventivni pregled",
+        "description": "Upit za rutinski pregled.",
+        "image": "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_dog_exam_01.jpg"
+      },
+      {
+        "title": "Vakcinacija",
+        "description": "Dostupnost vrste usluge potvrđuje ambulanta.",
+        "image": "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_service_02.jpg"
+      },
+      {
+        "title": "Konsultacije",
+        "description": "Informacije za vlasnike ljubimaca.",
+        "image": "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_service_01.jpg"
+      }
+    ],
+    "question": "Da li vlasnici ljubimaca mogu da pošalju zahtev za pregled?",
+    "fields": [
+      {
+        "name": "pet",
+        "label": "Vrsta ljubimca",
+        "kind": "select:Pas|Mačka|Drugo"
+      },
+      {
+        "name": "date",
+        "label": "Željeni datum pregleda",
+        "kind": "date"
+      }
+    ],
+    "assetRoot": "assets/images/curated/healthcare/veterinary-clinic",
+    "assetExists": true,
+    "reference": "V39.5"
+  }
+}

@@ -1,11 +1,32 @@
+import {resolveBookingPairing} from './booking-pairing.js';
+import {resolvePharmacySiteConfig} from './pharmacy-engine.js';
+import {resolveBusinessData,demoBrandFromEnvironment} from './site-system.js';
 import {SERVICE_BUSINESSES,resolveServiceSiteConfig} from './service-engine.js';
+import {VERTICAL_IDS,resolveVerticalSiteConfig} from './vertical-engine.js';
 import {STYLES} from './advisor.js';
 import {resolvePilotSiteConfig} from './advisor.js';
 import {getCatalog} from './catalog.js';
-export function buildSitePayload(input){
-  if(SERVICE_BUSINESSES.includes(input?.businessId))return resolveServiceSiteConfig(input,STYLES);
+import {resolveHybrid} from './hybrid-engine.js';
+function baseSitePayload(input){
+  if(input?.businessId==='pharmacy')return resolvePharmacySiteConfig(input);
+  if(SERVICE_BUSINESSES.includes(input?.businessId))return resolveHybrid(input,resolveServiceSiteConfig(input,STYLES));
+  if(VERTICAL_IDS.includes(input?.businessId))return resolveVerticalSiteConfig(input,STYLES);
   const siteConfig=resolvePilotSiteConfig(input);
   const catalog=getCatalog(siteConfig.business.id);
   // All preview/export content derives from this same payload.
-  return {siteConfig,catalog};
+  return resolveHybrid(input,{siteConfig,catalog});
+}
+
+// Advisor-owned presentation preference; never write renderer details into fact-only Registry.
+export function buildSitePayload(input){
+ const payload=baseSitePayload(input);
+ // Public API callers cannot remove DEMO status; production is a separate trusted publishing workflow (V44).
+ if(input?.siteMode==='production')throw new Error('Produkcioni izvoz zahteva odobren tok objavljivanja.');
+ payload.siteConfig.businessData=resolveBusinessData(input,payload.siteConfig);
+ payload.siteConfig.bookingPairing=resolveBookingPairing(input?.bookingPairing); // optional public key; never a private key
+ payload.siteConfig.contact={...(payload.siteConfig.contact||{}),phone:payload.siteConfig.businessData.phone}; // backward compatibility
+ payload.siteConfig.siteMode='demo';
+ payload.siteConfig.demoBrand=demoBrandFromEnvironment();
+ payload.siteConfig.presentation={...(payload.siteConfig.presentation||{}),showWelcome:input?.answers?.showWelcome===true};
+ return payload;
 }

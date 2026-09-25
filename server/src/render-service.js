@@ -3,7 +3,13 @@
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const safeJson=v=>JSON.stringify(v).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026').replace(/\u2028/g,'\\u2028');
 const field=(name,label,content,{wide=false}={})=>`<label class="${wide?'wide':''}">${esc(label)}${content}</label>`;
-function select(name,choices){return `<select name="${esc(name)}" required>${choices.map((c,i)=>`<option value="${esc(c)}"${i===0?' selected':''}>${esc(c)}</option>`).join('')}</select>`;}
+function select(name,choices){
+  // Explicit offerings are rendered as safe strings. Multi-choice booking always
+  // requires a deliberate selection; a single choice is preselected.
+  const options=choices.map(x=>String(x??'').trim()).filter(Boolean);
+  const placeholder=options.length>1?'<option value="" disabled selected>Izaberite uslugu</option>':'';
+  return `<select name="${esc(name)}" required>${placeholder}${options.map((c,i)=>`<option value="${esc(c)}"${options.length===1&&i===0?' selected':''}>${esc(c)}</option>`).join('')}</select>`;
+}
 const input=(name,type='text',props='')=>`<input name="${esc(name)}" type="${type}" ${props}>`;
 function serviceForm(booking){
   const {enabled,mode,fields,offerings}=booking;
@@ -15,7 +21,8 @@ function serviceForm(booking){
     if(fields.locationMode)f.push(field('locationMode','Način razgovora',select('locationMode',['U kancelariji','Telefonom','Onlajn'])));
     if(fields.vehicle)f.push(field('vehicle','Vozilo (marka, model, godište)',input('vehicle','text','required maxlength="100" placeholder="Npr. Škoda Octavia 2018"'),{wide:true}));
     if(fields.issue)f.push(field('issue','Kratak opis posla ili problema',input('issue','text','required maxlength="180" placeholder="Šta treba da uradimo?"'),{wide:true}));
-    if(fields.location)f.push(field('location','Lokacija intervencije / obilaska',input('location','text','required maxlength="140" placeholder="Mesto / deo grada"'),{wide:true}));
+    if(fields.location)f.push(field('location',mode==='reservation'?'Lokacija događaja':'Lokacija intervencije / obilaska',input('location','text','required maxlength="140" placeholder="Mesto / deo grada"'),{wide:true}));
+    if(fields.destination)f.push(field('destination','Odredište selidbe',input('destination','text','required maxlength="140" placeholder="Ulica i mesto istovara"'),{wide:true}));
     if(fields.date)f.push(field('date','Željeni datum',input('date','date','required')));
     if(fields.time)f.push(field('time','Željeno vreme',input('time','time','required')));
     if(fields.daypart)f.push(field('daypart','Poželjno doba dana',select('daypart',['Prepodne','Popodne','Bilo kada'])));
@@ -35,8 +42,8 @@ export function renderServiceHtml({siteConfig:site,catalog}){
   const actionLabel=book.enabled?book.mode==='appointment'?'Zatraži termin':book.mode==='reservation'?'Pošalji rezervaciju':book.mode==='consultation'?'Zatraži konsultaciju':'Zatraži termin':'Kontaktirajte nas';
   // Only public-facing presentation data crosses the server/browser boundary.
   const publicData={business:{name:business.name,id:business.id},contact:{phone:contact.phone||''},
-    booking:{enabled:book.enabled,mode:book.mode}};
-  const cards=catalog.services.map(s=>`<article class="service-card"><img src="${esc(s.image)}" loading="lazy" alt="${esc(s.title)}"><div class="service-card-body"><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p><a href="#${actionTarget}" class="secondary" ${book.mode==='reservation'?'':'data-service="${esc(s.title)}"'}>${book.enabled?book.mode==='reservation'?'Pošalji rezervaciju':'Zatraži termin':'Pošalji upit'} →</a></div></article>`).join('');
+    booking:{enabled:book.enabled,mode:book.mode,offerings:book.offerings},bookingManager:site.bookingPairing||null,bookingTransport:site.bookingTransport||null};
+  const cards=catalog.services.map(s=>`<article class="service-card"><img src="${esc(s.image)}" loading="lazy" alt="${esc(s.title)}"><div class="service-card-body"><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p><a href="#${actionTarget}" class="secondary" ${book.mode==='reservation'?'':`data-service="${esc(s.title)}"`}>${book.enabled?book.mode==='reservation'?'Pošalji rezervaciju':'Zatraži termin':'Pošalji upit'} →</a></div></article>`).join('');
   const form=serviceForm(book);
   const booking=book.enabled?`<section class="site-section booking-service" id="zakazivanje"><div class="section-heading"><div class="kicker">${book.mode==='reservation'?'REZERVACIJE':book.mode==='consultation'?'KONSULTACIJE':'ZAKAZIVANJE'}</div><h2>${actionLabel}</h2><p>Izaberite željeni termin. Zahtev je spreman za slanje, a termin nije potvrđen dok vam ${esc(business.name)} ne odgovori.</p></div>${form}</section>`:'';
   const contactForm=book.enabled?'':`<div class="service-contact-form"><h3>Pošaljite kontakt upit</h3><p>Ova firma trenutno ne nudi zakazivanje putem sajta.</p>${form}</div>`;
@@ -46,8 +53,8 @@ export function renderServiceHtml({siteConfig:site,catalog}){
 <section class="site-section services-section" id="usluge"><div class="section-heading"><div><div class="kicker">PONUDA</div><h2>${esc(catalog.offerTitle||'Naše usluge')}</h2><p>Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.</p></div></div><div class="service-grid">${cards}</div></section>
 ${booking}
 <section class="site-section contact service-contact" id="kontakt"><div class="kicker">KONTAKT</div><h2>Čujemo se!</h2><p>Kontaktirajte nas za dodatne informacije.</p>${contact.phone?`<a class="primary" href="tel:${esc(contact.phone.replace(/[^+\d]/g,''))}">Pozovi ${esc(contact.phone)}</a>`:'<p class="hint">Telefon se dodaje pre objavljivanja sajta.</p>'}${contactForm}</section></main>
-<footer class="site-footer"><strong>${esc(business.name)}</strong><span>DEMO · RMC Web Solutions</span></footer>
+<footer class="site-footer"><strong>${esc(business.name)}</strong></footer>
 <a class="service-mobile-cta" href="#${actionTarget}">${actionLabel} ↑</a>
 <dialog id="requestDialog" class="site-dialog service-dialog" aria-label="Pripremljen zahtev"><button class="dialog-close" type="button" data-close aria-label="Zatvori">×</button><div class="dialog-pad"><div class="kicker">${book.enabled?'ZAHTEV ZA TERMIN':'KONTAKT UPIT'}</div><h2>Poruka je spremna</h2><p>Zahtev još nije poslat. Izaberite kanal komunikacije.</p><pre id="requestMessage"></pre><div class="dialog-actions"><button id="copyRequest" class="primary" type="button">Kopiraj zahtev</button><a id="viberRequest" class="secondary" rel="noopener noreferrer" target="_blank">Viber</a><a id="waRequest" class="secondary" rel="noopener noreferrer" target="_blank">WhatsApp</a></div><p class="hint">Viber može skratiti dugu poruku. Potpun zahtev je dostupan preko dugmeta Kopiraj. Termin nije automatski potvrđen.</p><p id="copyRequestStatus" role="status"></p></div></dialog>
-<script id="bookingData" type="application/json">${safeJson(publicData)}</script><script src="booking-runtime.js" defer></script></body></html>`;
+<script id="bookingData" type="application/json">${safeJson(publicData)}</script><script src="booking-link.js" defer></script><script src="booking-runtime.js" defer></script></body></html>`;
 }

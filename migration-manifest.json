@@ -732,5 +732,31 @@
     "Booking is always explicit DA/NE; no business receives booking merely because the industry could support it.",
     "All booking flows generate requests only; no live availability or automatic confirmation is claimed.",
     "Preview and standalone ZIP share the same HTML/runtime."
-  ]
+  ],
+  "currentVersion": "V41.6",
+  "functionalScenarios": 53,
+  "remainingScenarios": 19,
+  "v416Additions": {
+    "retail": [
+      "bakery",
+      "pastry",
+      "fast-food",
+      "gift-shop"
+    ],
+    "services": [
+      "catering",
+      "car-wash",
+      "cleaning",
+      "locksmith",
+      "moving",
+      "property-manager",
+      "software-company",
+      "it-support",
+      "security-systems",
+      "fitness-center",
+      "fitness-trainer",
+      "yoga-pilates"
+    ],
+    "sourceImageManifest": "server/src/data/v416-image-source-manifest.json"
+  }
 }

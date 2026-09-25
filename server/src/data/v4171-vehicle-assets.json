@@ -1,0 +1,52 @@
+{
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_hatchback_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 311077,
+    "sha256": "c5076e3288b6a3025bc1876206e93e9d4dc913209c4dd274375a1368abc8084f"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_sedan_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 290373,
+    "sha256": "ec55712726187ae8018c3108f288cce4d042beb89c9588ae1ba82b0cc0dedcdc"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_suv_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 313287,
+    "sha256": "993500cc8cdc514c983e29bdcff354c306767d7fa50afc1cd6bedad3af9ad59b"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_wagon_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 300104,
+    "sha256": "85258b4e54269c262e604e7a8f58904895979c8c8beca71dae788cc8dc42fae5"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_city_car_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 316140,
+    "sha256": "814e34351199ed5d62ec8e6e1e84ccc8a1d825d163624b9afa09e4614c1d9a83"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_family_van_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 287666,
+    "sha256": "4fb2284a8deb3a403b852e7b81991f2b7fad934200312493e67baf0824a6f5f2"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_compact_crossover_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 318921,
+    "sha256": "cbabad2ff4ea00e79e5d56a95ff62ca88e56d50cbaef8df94e13b694e0c7b904"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_premium_sedan_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 320632,
+    "sha256": "7b612c0cdc49536b431ef0578847e10d08dc0021d612bf0ab8aa2f5413edc4fb"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_pickup_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 323272,
+    "sha256": "165f338e5fb5f21373a55d63eb16bec34fc8175ab9bb1f897bee21fa40fa5b1c"
+  },
+  "assets/images/curated/services/auto-service/products/auto_service_product_used_delivery_van_01.jpg": {
+    "origin": "V39.5 UNIV SHOP vehicle",
+    "bytes": 281348,
+    "sha256": "d1a7554cf726f317400965518558c3c264df13c89a37dc57e2bdd8c340b1c4e4"
+  }
+}

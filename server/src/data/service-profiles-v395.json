@@ -923,5 +923,461 @@
         "description": "Dogovorite detalje i raspoloživost direktno sa nama."
       }
     ]
+  },
+  "catering": {
+    "label": "Ketering",
+    "mode": "reservation",
+    "question": "Da li primate zahteve za ketering događaje preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Koktel ketering",
+      "Poslovni ketering",
+      "Ketering za proslave"
+    ],
+    "hero": "assets/images/curated/food/catering/hero/catering_hero_work_01.jpg",
+    "headline": "Vaš događaj, naša priprema.",
+    "subtitle": "Poslovni događaji, proslave i posluženje uz dogovor o datumu i broju gostiju.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "catering-1",
+        "title": "Kanapei i slani zalogaji",
+        "image": "assets/images/curated/food/catering/services/catering_service_savory_bites_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "catering-2",
+        "title": "Bife i posluženje",
+        "image": "assets/images/curated/food/catering/services/catering_service_buffet_setup_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "catering-3",
+        "title": "Ketering na događaju",
+        "image": "assets/images/curated/food/catering/services/catering_service_event_service_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "car-wash": {
+    "label": "Auto perionica",
+    "mode": "appointment",
+    "question": "Da li primate zahteve za termine pranja preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Ručno pranje",
+      "Čišćenje enterijera",
+      "Poliranje"
+    ],
+    "hero": "assets/images/curated/services/car-wash/hero/car_wash_hero_work_01.jpg",
+    "headline": "Čist automobil, jednostavan dogovor.",
+    "subtitle": "Odaberite uslugu i zatražite termin pranja.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "car-wash-1",
+        "title": "Ručno pranje",
+        "image": "assets/images/curated/services/car-wash/services/car_wash_service_hand_wash_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "car-wash-2",
+        "title": "Čišćenje enterijera",
+        "image": "assets/images/curated/services/car-wash/services/car_wash_service_interior_cleaning_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "car-wash-3",
+        "title": "Poliranje",
+        "image": "assets/images/curated/services/car-wash/services/car_wash_service_polishing_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "cleaning": {
+    "label": "Servis za čišćenje",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže termin čišćenja preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Čišćenje stana",
+      "Čišćenje poslovnog prostora",
+      "Pranje prozora"
+    ],
+    "hero": "assets/images/curated/services/cleaning-service/hero/cleaning_service_hero_01.jpg",
+    "headline": "Čist prostor, lak dogovor.",
+    "subtitle": "Pošaljite lokaciju i željeni datum, a mi potvrđujemo uslugu i raspoloživost.",
+    "offerTitle": "Šta čistimo",
+    "services": [
+      {
+        "id": "cleaning-1",
+        "title": "Pranje prozora",
+        "image": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_01_window_cleaning.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "cleaning-2",
+        "title": "Podovi i usisavanje",
+        "image": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_02_floor_vacuuming.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "cleaning-3",
+        "title": "Čišćenje kupatila",
+        "image": "assets/images/curated/services/cleaning-service/services/cleaning_service_service_03_bathroom_cleaning.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "locksmith": {
+    "label": "Bravarski i metalni radovi",
+    "mode": "request-slot",
+    "question": "Da li primate zahteve za procenu i termin rada preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Zavarivanje",
+      "Metalne ograde",
+      "Čelične konstrukcije"
+    ],
+    "hero": "assets/images/curated/services/metalwork/hero/metalwork_hero_work_01.jpg",
+    "headline": "Metalni radovi po meri.",
+    "subtitle": "Opišite posao i pošaljite željeni datum za dogovor o proceni.",
+    "offerTitle": "Šta radimo",
+    "services": [
+      {
+        "id": "locksmith-1",
+        "title": "Zavarivanje",
+        "image": "assets/images/curated/services/metalwork/services/metalwork_service_welding_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "locksmith-2",
+        "title": "Metalne ograde",
+        "image": "assets/images/curated/services/metalwork/services/metalwork_service_metal_fence_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "locksmith-3",
+        "title": "Čelične konstrukcije",
+        "image": "assets/images/curated/services/metalwork/services/metalwork_service_steel_structure_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "moving": {
+    "label": "Selidbe",
+    "mode": "request-slot",
+    "question": "Da li primate zahteve za termin selidbe preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Pakovanje i selidbe",
+      "Prevoz nameštaja",
+      "Selidbe kancelarija"
+    ],
+    "hero": "assets/images/curated/services/moving-service/hero/moving_service_hero_01.jpg",
+    "headline": "Selidbe bez nepotrebne komplikacije.",
+    "subtitle": "Pošaljite lokaciju preuzimanja i odredište, uz željeni datum.",
+    "offerTitle": "Usluge selidbe",
+    "services": [
+      {
+        "id": "moving-1",
+        "title": "Pakovanje",
+        "image": "assets/images/curated/services/moving-service/services/moving_service_service_01_packing_boxes.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "moving-2",
+        "title": "Prenos nameštaja",
+        "image": "assets/images/curated/services/moving-service/services/moving_service_service_02_furniture_moving.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "moving-3",
+        "title": "Utovar i transport",
+        "image": "assets/images/curated/services/moving-service/services/moving_service_service_03_truck_loading.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "property-manager": {
+    "label": "Profesionalni upravnik",
+    "mode": "consultation",
+    "question": "Da li prihvatate zahteve za konsultaciju preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Upravljanje zgradom",
+      "Sastanak sa stanarima",
+      "Obilazak objekta"
+    ],
+    "hero": "assets/images/curated/professional-office/property-management/hero/property_management_hero_01.jpg",
+    "headline": "Briga o vašoj zgradi.",
+    "subtitle": "Informacije o upravljanju objektima i dogovor o razgovoru.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "property-manager-1",
+        "title": "Obilazak objekta",
+        "image": "assets/images/curated/professional-office/property-management/services/property_management_service_01.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "property-manager-2",
+        "title": "Razgovor sa stanarima",
+        "image": "assets/images/curated/professional-office/property-management/services/property_management_service_02.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "property-manager-3",
+        "title": "Administracija zgrade",
+        "image": "assets/images/curated/professional-office/property-management/services/property_management_service_03.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "software-company": {
+    "label": "Softverska agencija",
+    "mode": "consultation",
+    "question": "Da li klijenti mogu da zakažu konsultaciju o projektu?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Web aplikacije",
+      "Mobilne aplikacije",
+      "Razvoj po meri"
+    ],
+    "hero": "assets/images/curated/tech/software-agency/hero/software_agency_hero_01.jpg",
+    "headline": "Digitalna rešenja za vaš biznis.",
+    "subtitle": "Predstavite ideju i dogovorite konsultaciju o budućem projektu.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "software-company-1",
+        "title": "UX projektovanje",
+        "image": "assets/images/curated/tech/software-agency/services/software_agency_service_01_ux_wireframing.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "software-company-2",
+        "title": "Web aplikacije",
+        "image": "assets/images/curated/tech/software-agency/services/software_agency_service_02_web_app_development.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "software-company-3",
+        "title": "Mobilne aplikacije",
+        "image": "assets/images/curated/tech/software-agency/services/software_agency_service_03_mobile_app_design.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "it-support": {
+    "label": "IT podrška",
+    "mode": "request-slot",
+    "question": "Da li prihvatate zahteve za podršku i termin intervencije?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Helpdesk",
+      "Podešavanje mreže",
+      "Podrška na lokaciji"
+    ],
+    "hero": "assets/images/curated/tech/it-services/hero/it_services_hero_01.jpg",
+    "headline": "IT koji radi za vaš posao.",
+    "subtitle": "Pošaljite opis problema i željeni termin; odgovorom potvrđujemo mogućnosti.",
+    "offerTitle": "Naše usluge",
+    "services": [
+      {
+        "id": "it-support-1",
+        "title": "Helpdesk podrška",
+        "image": "assets/images/curated/tech/it-services/services/it_services_service_01_helpdesk_support.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "it-support-2",
+        "title": "Cloud infrastruktura",
+        "image": "assets/images/curated/tech/it-services/services/it_services_service_02_cloud_infrastructure.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "it-support-3",
+        "title": "Mreže",
+        "image": "assets/images/curated/tech/it-services/services/it_services_service_04_network_setup.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "security-systems": {
+    "label": "Alarm i video nadzor",
+    "mode": "request-slot",
+    "question": "Da li klijenti mogu da zatraže obilazak ili termin postavljanja?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Video nadzor",
+      "Alarmni sistemi",
+      "Kontrola pristupa"
+    ],
+    "hero": "assets/images/curated/security/alarm-video-surveillance/hero/alarm_video_surveillance_hero_01.jpg",
+    "headline": "Bezbednost koja se planira.",
+    "subtitle": "Zatražite obilazak i ponudu za sigurnosni sistem.",
+    "offerTitle": "Sistemi koje nudimo",
+    "services": [
+      {
+        "id": "security-systems-1",
+        "title": "Video nadzor",
+        "image": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_01_cctv_camera_cluster.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "security-systems-2",
+        "title": "Alarmni sistemi",
+        "image": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_02_alarm_keypad_panel.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "security-systems-3",
+        "title": "Montaža i podešavanje",
+        "image": "assets/images/curated/security/alarm-video-surveillance/services/alarm_video_surveillance_service_03_security_system_installation.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "fitness-center": {
+    "label": "Fitness centar",
+    "mode": "appointment",
+    "question": "Da li primate zahteve za probni trening ili razgovor?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Probni trening",
+      "Personalni trening",
+      "Konsultacija o članstvu"
+    ],
+    "hero": "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_01.jpg",
+    "headline": "Trening koji vama odgovara.",
+    "subtitle": "Otkrijte programe i zatražite termin probnog treninga.",
+    "offerTitle": "Programi",
+    "services": [
+      {
+        "id": "fitness-center-1",
+        "title": "Trening snage",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_01_strength_training_dumbbell.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "fitness-center-2",
+        "title": "Kardio",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_02_cardio_treadmill.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "fitness-center-3",
+        "title": "Personalni trening",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_03_personal_training_kettlebell.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "fitness-trainer": {
+    "label": "Personalni trener",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zatraže termin treninga preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Uvodni trening",
+      "Personalni trening",
+      "Plan treninga"
+    ],
+    "hero": "assets/images/curated/sport/gym-fitness/hero/gym_fitness_hero_02.jpg",
+    "headline": "Vežbajte uz individualnu podršku.",
+    "subtitle": "Dogovorite uvodni razgovor ili individualni trening.",
+    "offerTitle": "Kako radimo",
+    "services": [
+      {
+        "id": "fitness-trainer-1",
+        "title": "Personalni trening",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_03_personal_training_kettlebell.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "fitness-trainer-2",
+        "title": "Trening snage",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_01_strength_training_dumbbell.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "fitness-trainer-3",
+        "title": "Kondicija",
+        "image": "assets/images/curated/sport/gym-fitness/services/gym_fitness_service_02_cardio_treadmill.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
+  },
+  "yoga-pilates": {
+    "label": "Joga i pilates studio",
+    "mode": "appointment",
+    "question": "Da li klijenti mogu da zatraže probni čas preko sajta?",
+    "options": [
+      "Da — primamo zahteve preko sajta",
+      "Ne — samo prikaz usluga i kontakt"
+    ],
+    "offerings": [
+      "Probni čas joge",
+      "Probni čas pilatesa",
+      "Individualni trening"
+    ],
+    "hero": "assets/images/curated/sport/yoga-pilates/hero/yoga_pilates_hero_01.jpg",
+    "headline": "Vreme za pokret i ravnotežu.",
+    "subtitle": "Istražite programe i zatražite probni termin.",
+    "offerTitle": "Naši programi",
+    "services": [
+      {
+        "id": "yoga-pilates-1",
+        "title": "Joga",
+        "image": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_01_yoga_flow_class.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "yoga-pilates-2",
+        "title": "Pilates",
+        "image": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_02_reformer_pilates.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      },
+      {
+        "id": "yoga-pilates-3",
+        "title": "Istezanje",
+        "image": "assets/images/curated/sport/yoga-pilates/services/yoga_pilates_service_03_stretching_class.jpg",
+        "description": "Dogovorite detalje i termin direktno sa nama."
+      }
+    ]
   }
 }

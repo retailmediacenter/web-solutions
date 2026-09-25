@@ -1,0 +1,27 @@
+{
+  "hair-cosmetics": {
+    "label": "Kozmetika za kosu",
+    "products": [
+      {
+        "title": "Lak za kosu",
+        "category": "Profesionalna nega",
+        "image": "assets/images/curated/beauty/hair-salon/products/hair_salon_product_hairspray_01.jpg"
+      },
+      {
+        "title": "Serum za negu kose",
+        "category": "Profesionalna nega",
+        "image": "assets/images/curated/beauty/hair-salon/products/hair_salon_product_hair_oil_serum_01.jpg"
+      },
+      {
+        "title": "Krema za oblikovanje",
+        "category": "Profesionalna nega",
+        "image": "assets/images/curated/beauty/hair-salon/products/hair_salon_product_styling_cream_01.jpg"
+      },
+      {
+        "title": "Profesionalni šampon",
+        "category": "Profesionalna nega",
+        "image": "assets/images/curated/beauty/hair-salon/products/hair_salon_product_professional_shampoo_01.jpg"
+      }
+    ]
+  }
+}

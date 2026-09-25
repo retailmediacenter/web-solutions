@@ -8,7 +8,7 @@ export const serviceProfile=id=>services[id]||null;
 export function bookingQuestionId(id){
   if(id==='optician')return 'eyeExamAppointments';
   if(id==='restaurant'||id==='cafe')return 'tableReservations';
-  if(id==='kids-playroom'||id==='event-venue')return 'eventReservations';
+  if(id==='kids-playroom'||id==='event-venue'||id==='catering')return 'eventReservations';
   return 'acceptsTimeRequests';
 }
 export function getServiceSpecial(id){
@@ -17,13 +17,17 @@ export function getServiceSpecial(id){
     options:[{id:'yes',label:profile.options[0]},{id:'no',label:profile.options[1]}]};
 }
 const useVehicle=new Set(['auto-service','tire-shop']);
-const useLocation=new Set(['appliance-repair','hvac','plumber','electrician','carpenter','painter','tiler']);
-const useIssue=new Set(['auto-service','tire-shop','appliance-repair','hvac','plumber','electrician','repair-phone','carpenter','painter','tiler']);
-const useEventType=new Set(['kids-playroom','event-venue']);
+const useLocation=new Set(['appliance-repair','hvac','plumber','electrician','carpenter','painter','tiler',
+  'catering','cleaning','locksmith','moving','it-support','security-systems']);
+const useIssue=new Set(['auto-service','tire-shop','appliance-repair','hvac','plumber','electrician','repair-phone','carpenter','painter','tiler',
+  'cleaning','locksmith','moving','it-support','security-systems']);
+const useEventType=new Set(['kids-playroom','event-venue','catering']);
 export function bookingFields(id,mode){
-  const fields={service:true,date:true,time:true,partySize:false,locationMode:false,vehicle:false,location:false,issue:false,eventType:false,note:true};
+  const fields={service:true,date:true,time:true,partySize:false,locationMode:false,vehicle:false,location:false,destination:false,issue:false,eventType:false,note:true};
   if(mode==='reservation')fields.partySize=true;
   if(mode==='reservation'&&useEventType.has(id))fields.eventType=true;
+  if(id==='catering')fields.location=true;
+  if(id==='moving')fields.destination=true;
   if(mode==='consultation')fields.locationMode=true;
   if(mode==='request-slot'){
     fields.time=false; // A preferred daypart is honest when availability is unknown.
@@ -49,6 +53,8 @@ export function resolveServiceSiteConfig(input,STYLES){
     profile.headline='Okviri i izbor koji vam odgovaraju.';
     profile.subtitle='Istražite naš izbor okvira i kontaktirajte optiku za dodatne informacije.';
     profile.services=profile.services.filter(s=>!s.title.toLowerCase().includes('pregled'));
+    // No exam was offered. Contact form must not advertise an exam either.
+    profile.offerings=[...new Set(profile.services.map(s=>s.title)),'Opšti upit'];
   }
   if(businessId==='restaurant'&&/picerij|pizza|pizz/i.test(description)){
     profile.headline='Picerija za pravi trenutak.';
@@ -59,14 +65,14 @@ export function resolveServiceSiteConfig(input,STYLES){
   const mode=enabled?source.mode:'contact';
   return {
     siteConfig:{
-      schemaVersion:'41.5-universal-booking',reference:'V39.5',siteStatus:'preview-and-export',
+      schemaVersion:'41.6-service-and-hybrid-migration',reference:'V39.5',siteStatus:'preview-and-export',
       business:{id:businessId,name,label:source.label},
       input:{description:String(description).slice(0,800),goal,
         mode:source.mode,emphasis:typeof answers.emphasis==='string'?answers.emphasis:''},
       style,modules,contact:{phone:cleanPhone},
       capabilities:{serviceProfile:true,bookingEnabled:enabled,bookingMode:mode,
         booking:{enabled,mode,fields:enabled?bookingFields(businessId,source.mode):{service:true,note:true},
-          offerings:source.offerings,confirmation:'request'}},
+          offerings:profile.offerings,confirmation:'request'}},
       assets:{assetRoot:facts.assetRoot,assetRoles:[...(facts.assetRoles||[])]}
     },
     catalog:{type:'services',id:businessId,hero:profile.hero,headline:profile.headline,

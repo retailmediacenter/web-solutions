@@ -1,0 +1,8 @@
+/* V41.8.1 — pharmacy-specific, optional general product consultation. */
+.pharmacy-consult{border-top:1px solid var(--line);scroll-margin-top:85px}
+.pharmacy-consult>p{max-width:780px}
+.pharmacy-consult-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;max-width:810px;margin:22px 0}
+.pharmacy-consult-form label{font-size:13px;font-weight:800;display:grid;gap:7px;min-width:0}
+.pharmacy-consult-form .pharmacy-wide{grid-column:1/-1;justify-self:start}
+.pharmacy-consult-dialog{width:min(590px,calc(100% - 24px))}
+@media(max-width:580px){.pharmacy-consult-form{grid-template-columns:1fr}.pharmacy-consult-form .pharmacy-wide{grid-column:auto;justify-self:stretch}}

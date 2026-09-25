@@ -1,0 +1,65 @@
+/* V41.9: approved five-style visual layer. Loaded AFTER existing modules for preview/ZIP parity.
+   Style tokens affect website sections only. Modal uses independent --modal-* tokens. */
+:root{--display-font:Inter,'Segoe UI',Arial,sans-serif;--body-font:Inter,'Segoe UI',Arial,sans-serif;--button-radius:16px;--on-accent:#fff;--section-bg:#fff;--hero-tint:linear-gradient(90deg,rgba(17,31,49,.76),rgba(18,30,45,.22));--header-bg:#19293f;--header-text:#f7faff;--design-gap:22px;--motion-distance:22px;--motion-speed:540ms}
+html[data-style="traditional"]{--ink:#1b2529;--muted:#5e696d;--accent:#315a68;--surface:#fff;--surface2:#f1f3f2;--section-bg:#f4f5f4;--line:#cbd3d3;--radius:5px;--button-radius:5px;--display-font:Georgia,'Times New Roman',serif;--body-font:Arial,'Segoe UI',sans-serif;--header-bg:#22363a;--hero-tint:linear-gradient(90deg,rgba(19,35,40,.86),rgba(19,35,40,.3));--motion-distance:0px;--motion-speed:0ms}
+html[data-style="modern"]{--ink:#17212b;--muted:#637283;--accent:#155eef;--surface:#fff;--surface2:#f3f6fa;--section-bg:#f3f6fa;--line:#dbe3ec;--radius:18px;--button-radius:16px;--display-font:Inter,'Segoe UI',Arial,sans-serif;--body-font:Inter,'Segoe UI',Arial,sans-serif;--header-bg:#18283e}
+html[data-style="warm"]{--ink:#3b3029;--muted:#77685c;--accent:#bd6b4c;--surface:#fffaf5;--surface2:#fbf5ee;--section-bg:#fbf5ee;--line:#e8d8ca;--radius:26px;--button-radius:22px;--display-font:'Trebuchet MS','Segoe UI',Arial,sans-serif;--body-font:'Trebuchet MS','Segoe UI',Arial,sans-serif;--header-bg:#493b33;--hero-tint:linear-gradient(90deg,rgba(52,34,27,.72),rgba(73,44,30,.20))}
+html[data-style="tech"]{--ink:#eef6ff;--muted:#b6cce0;--accent:#64e9ff;--on-accent:#071724;--surface:#0d1828;--surface2:#12243a;--section-bg:#07101d;--line:#30475f;--radius:14px;--button-radius:12px;--display-font:Inter,'Segoe UI',Arial,sans-serif;--body-font:Inter,'Segoe UI',Arial,sans-serif;--header-bg:#09131f;--header-text:#eef6ff;--hero-tint:linear-gradient(90deg,rgba(3,11,23,.90),rgba(5,24,37,.26))}
+html[data-style="premium"]{--ink:#f4eee6;--muted:#ccbbaa;--accent:#c8a779;--on-accent:#18110d;--surface:#1f1915;--surface2:#2a211b;--section-bg:#16120f;--line:#56483a;--radius:5px;--button-radius:5px;--display-font:Georgia,'Times New Roman',serif;--body-font:'Segoe UI',Arial,sans-serif;--header-bg:#19130f;--header-text:#f4eee6;--hero-tint:linear-gradient(90deg,rgba(12,8,6,.91),rgba(31,21,15,.30))}
+html,body{overflow-x:clip}html{font-family:var(--body-font);scroll-padding-top:82px}body{font-family:var(--body-font);color:var(--ink);background:var(--surface)}
+:where(.site-section,.tasting-copy,.service-card-body,.vertical-card-copy,.hybrid-card>div) {min-width:0}
+:where(.site-section,.service-card,.vertical-card,.hybrid-card,.shop-card) h2,
+:where(.site-section,.service-card,.vertical-card,.hybrid-card,.shop-card) h3{overflow-wrap:break-word;word-break:normal;hyphens:auto}
+.site-section h2,.hero h1,.vertical-inquiry h2,.booking-service h2{font-family:var(--display-font);letter-spacing:-.025em;max-width:100%;overflow-wrap:break-word;text-wrap:balance;line-height:1.13}
+.site-section h2{font-size:clamp(26px,3.35vw,43px)}.site-section p,.hero p{overflow-wrap:break-word}
+/* Original V41.8 vertical header placed kicker/title/description into one flex row. Reflow it as a real heading block. */
+.vertical-inquiry .section-heading{display:block;max-width:840px}.vertical-inquiry .section-heading>*{min-width:0;max-width:100%}.vertical-inquiry .section-heading h2{max-width:820px;margin:10px 0 14px}.vertical-inquiry .section-heading p{max-width:810px;line-height:1.65}
+.section-heading{min-width:0}.section-heading>div{min-width:0}.section-heading .kicker{letter-spacing:.13em}
+.site-header{background:var(--header-bg);color:var(--header-text);min-width:0;gap:clamp(8px,1.5vw,20px)}.site-header nav a{color:var(--header-text)}.site-header .brandmark{min-width:0}.site-header .header-cta{background:var(--accent);color:var(--on-accent);border-color:var(--accent);border-radius:var(--button-radius);overflow-wrap:break-word}
+.site-header .monogram{border-color:color-mix(in srgb,var(--header-text) 45%,transparent);border-radius:var(--button-radius)}
+.hero{aspect-ratio:16/9;min-height:430px;max-height:830px;background-image:var(--hero-tint),var(--hero-image);background-position:center center;background-size:cover}
+.hero h1{font-size:clamp(35px,5.4vw,65px);max-width:785px}.hero p{max-width:600px}
+.hero-actions .primary,.site-section .primary,.site-section .secondary,.shop-card-body button,.site-header .header-cta{border-radius:var(--button-radius)}
+.site-section{max-width:1160px}.site-section:not(.tasting):not(.vertical-inquiry):not(.booking-service):not(.hybrid-request){overflow-wrap:break-word}
+.site-section .kicker{color:var(--accent)}
+.featured{background:var(--surface)}.tasting,.booking-service,.vertical-inquiry{background:var(--section-bg)}
+.shop-card,.service-card,.vertical-card,.hybrid-card{border-radius:var(--radius);background:var(--surface);border-color:var(--line);transition:transform .23s ease,box-shadow .23s ease}
+.shop-card:focus-within,.service-card:focus-within,.vertical-card:focus-within{box-shadow:0 18px 40px #061d2c23}
+html:not([data-style="traditional"]) .shop-card:hover,html:not([data-style="traditional"]) .service-card:hover{transform:translateY(-3px)}
+.card-grid,.service-grid,.vertical-grid,.hybrid-grid{align-items:stretch}.card-grid>*{min-width:0}
+.primary{color:var(--on-accent)}.secondary{color:var(--ink);background:var(--surface)}
+:where(.booking-form,.service-request-form,.vertical-form,.hybrid-form) label{min-width:0;overflow-wrap:break-word}
+:where(.booking-form,.service-request-form,.vertical-form,.hybrid-form) input,
+:where(.booking-form,.service-request-form,.vertical-form,.hybrid-form) select,
+:where(.booking-form,.service-request-form,.vertical-form,.hybrid-form) textarea{min-width:0;max-width:100%;box-sizing:border-box}
+:where(.booking-form,.service-request-form,.vertical-form,.hybrid-form) select{overflow:hidden;text-overflow:ellipsis}
+.site-footer{background:var(--header-bg);color:var(--header-text)}.site-footer span{color:var(--header-text);opacity:.75}
+/* Compatible with content-only services and mixed templates. */
+.vertical-hero.no-photo{background-image:var(--hero-tint),linear-gradient(130deg,#142339,#3a5b76)!important}
+html[data-style="tech"] .hero,html[data-style="premium"] .hero{border-bottom:1px solid var(--line)}
+html[data-style="premium"] .shop-card,html[data-style="premium"] .vertical-card{box-shadow:none}
+html[data-style="traditional"] .shop-card,html[data-style="traditional"] .service-card{box-shadow:none}
+/* Reduced-motion-safe entry animation; opt in through shared lightweight runtime. */
+html.js-motion .site-section[data-reveal]:not(.is-visible){opacity:0;transform:translateY(var(--motion-distance))}
+html.js-motion .site-section[data-reveal]{transition:opacity var(--motion-speed) ease,transform var(--motion-speed) ease}
+html.js-motion .site-section[data-reveal].is-visible{opacity:1;transform:translateY(0)}
+html[data-style="traditional"] .site-section[data-reveal]{opacity:1!important;transform:none!important;transition:none!important}
+/* Prevent layout breaks seen in property / language school / rental requests. */
+.vertical-tools{flex-wrap:wrap}.vertical-tools input{width:100%}
+@media(max-width:760px){
+ .site-header{min-height:65px;gap:10px;padding:10px 13px}.site-header nav{display:none}
+ .site-section{padding:45px 17px}.site-section h2,.vertical-inquiry .section-heading h2,.booking-service h2{font-size:clamp(26px,7vw,36px);line-height:1.2}
+ .hero{aspect-ratio:auto;min-height:440px;max-height:none;background-image:linear-gradient(0deg,rgba(9,18,29,.85),rgba(10,21,34,.26)),var(--hero-image)}
+ .hero-content{width:calc(100% - 34px);margin-bottom:38px}.hero h1{font-size:clamp(31px,9vw,46px);line-height:1.12}
+ .featured-experience{flex-wrap:wrap}.tasting-copy{padding:35px 17px}.site-header .header-cta{white-space:normal;min-height:44px}
+ .vertical-form,.service-request-form,.booking-form,.hybrid-form{max-width:100%}
+ .section-heading{align-items:flex-start;gap:11px}.section-heading h2{margin:8px 0 12px}
+}
+@media(max-width:490px){
+ .vertical-form,.service-request-form,.booking-form,.hybrid-form{grid-template-columns:minmax(0,1fr)}
+ .vertical-field.wide,.vertical-form>.wide,.service-request-form .wide,.booking-form .wide,.hybrid-wide{grid-column:1/-1}
+ .site-section h2{font-size:clamp(26px,8vw,33px)}
+ .shop-card h3,.vertical-card-copy h3{font-size:clamp(14px,4.4vw,19px)}
+ .site-header .brandmark{max-width:calc(100% - 140px)}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}

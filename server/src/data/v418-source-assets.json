@@ -1,0 +1,282 @@
+{
+  "assets/images/curated/retail/sports-shop/hero/sports_store_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "2f656373645f8da564988a77674e0beccbfdc7a9964a99cd9743f38bcd697c43",
+    "businessId": "sports-shop"
+  },
+  "assets/images/curated/property/real-estate-agency/hero/real_estate_agency_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "c896aa977fb5311cc584639e464252c2001b7a566280f19e7e92a12061f67831",
+    "businessId": "real-estate"
+  },
+  "assets/images/curated/property/real-estate-agency/services/real_estate_agency_two_bedroom_apartment_01.jpg": {
+    "source": "V39.5",
+    "sha256": "15b95eeb2ae2c79e335f23b0c44d218ad420b52d58dcbc945d27a6c2f0d23895",
+    "businessId": "real-estate"
+  },
+  "assets/images/curated/property/real-estate-agency/services/real_estate_agency_family_house_01.jpg": {
+    "source": "V39.5",
+    "sha256": "d3ca093adee1981a85f16c8cbbd25099e3e799d888f92718a58f6213f96e799e",
+    "businessId": "real-estate"
+  },
+  "assets/images/curated/property/real-estate-agency/services/real_estate_agency_commercial_space_01.jpg": {
+    "source": "V39.5",
+    "sha256": "7bfbbbc6e7aba2225034454c7851b3ba2307543c1bbbfb1906c2ecbf948d33ef",
+    "businessId": "real-estate"
+  },
+  "assets/images/curated/property/property-development/hero/property_development_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "6a18a2162e2efb8467fdc2196bdf27ae63aa812baa9bb42b643ef97948bb6f6f",
+    "businessId": "construction"
+  },
+  "assets/images/curated/property/property-development/services/property_development_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "e9e6f82c992dd38100e767bb7662f571793ad4af3635d41873bd4e970f73bae2",
+    "businessId": "construction"
+  },
+  "assets/images/curated/property/property-development/services/property_development_service_02.jpg": {
+    "source": "V39.5",
+    "sha256": "73fd6ee0f84fe1f823e2dc6a46e267e95858dfecd64e12fbd769792d0b1caa85",
+    "businessId": "construction"
+  },
+  "assets/images/curated/property/property-development/services/property_development_service_03.jpg": {
+    "source": "V39.5",
+    "sha256": "af1c95f73b824314b1e378c86372c64ed3719c1fc9988fb8df760dd4e8f4b7ec",
+    "businessId": "construction"
+  },
+  "assets/images/curated/education/language-school/hero/language_school_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "27f2b6a4a385cdf83350dbc5c119de97ebc249f6e2fb17c4dd5e53581d8840d9",
+    "businessId": "language-school"
+  },
+  "assets/images/curated/education/language-school/services/language_school_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "b513c7c44281630d0193cc803e9653238b1b34fe03cf819762f98b711693a0ff",
+    "businessId": "language-school"
+  },
+  "assets/images/curated/education/language-school/services/language_school_individual_lesson_01.jpg": {
+    "source": "V39.5",
+    "sha256": "2a5f82242587997068c7e3d02047e276657ffafd4514403a80f88985bb3848a7",
+    "businessId": "language-school"
+  },
+  "assets/images/curated/education/language-school/services/language_school_kids_class_01.jpg": {
+    "source": "V39.5",
+    "sha256": "c787faff0c349764a42a6c3e8de6b42827bed9b81e24eacf2943d664a46b5e69",
+    "businessId": "language-school"
+  },
+  "assets/images/curated/education/training-center/hero/training_center_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "2cb80d34403ba4fb675957a7068f32f75f3f7da902c143733eb00ef33d2f6db6",
+    "businessId": "training-center"
+  },
+  "assets/images/curated/education/training-center/services/training_center_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "578f77d9d9b85d0d8af0668de6897a40e6059afdd599e17d5ac6bd9a37d425d9",
+    "businessId": "training-center"
+  },
+  "assets/images/curated/education/training-center/services/training_center_practical_workshop_01.jpg": {
+    "source": "V39.5",
+    "sha256": "438efe3eff3f8ef927ffcca029d634f5155229431f78d77d83942444ced33747",
+    "businessId": "training-center"
+  },
+  "assets/images/curated/education/training-center/services/training_center_service_02.jpg": {
+    "source": "V39.5",
+    "sha256": "b513c7c44281630d0193cc803e9653238b1b34fe03cf819762f98b711693a0ff",
+    "businessId": "training-center"
+  },
+  "assets/images/curated/education/kindergarten/hero/kindergarten_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "7bcf926ba1cc7933ed1e191854d24af72ad8ce98f4f8e7c347091c4ce47383f0",
+    "businessId": "kindergarten"
+  },
+  "assets/images/curated/education/kindergarten/services/kindergarten_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "9089322d7aeab9852eae9013758d2cb883be0634fddbbe3f138ad7f344bffc50",
+    "businessId": "kindergarten"
+  },
+  "assets/images/curated/education/kindergarten/services/kindergarten_service_02.jpg": {
+    "source": "V39.5",
+    "sha256": "e7bcb18156555c419f94c449b76131f6d328892c286159d4fc4b59f7fce4f60f",
+    "businessId": "kindergarten"
+  },
+  "assets/images/curated/education/kindergarten/services/kindergarten_service_03.jpg": {
+    "source": "V39.5",
+    "sha256": "e6d6d2af5613e0a22faaa2ec484d7f150aa7db0e7b897db028777f433b05d6fe",
+    "businessId": "kindergarten"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/hero/hotel_apart_hotel_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "4e2326768cf18365b0444221508353999d0d94618905701179b5ebec8ba9b4b9",
+    "businessId": "hotel"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_city_apartment_01.jpg": {
+    "source": "V39.5",
+    "sha256": "c3d7f0652b49d77867f492e6abc06d3ab24117da613f7c9c02afc7740e16b096",
+    "businessId": "apartments"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_01_apartment_suite_interior.jpg": {
+    "source": "V39.5",
+    "sha256": "ed3d7ab01329b2cc75811c891cff22ac77f41ab7aa0d5a8230398390bdab9ead",
+    "businessId": "hotel"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_mountain_cabin_01.jpg": {
+    "source": "V39.5",
+    "sha256": "a6c14a449c1694928c8fe1e3433a905cb7500ae60c8ad7fee2668c98e85f2a85",
+    "businessId": "apartments"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_02_breakfast_service.jpg": {
+    "source": "V39.5",
+    "sha256": "aea36c99c4dc1f8b3be05d374e49aaa400292c7dd3ff47aea35fea5a8837fc73",
+    "businessId": "hotel"
+  },
+  "assets/images/curated/tourism/hotel-apart-hotel/services/hotel_apart_hotel_service_04_pool_terrace.jpg": {
+    "source": "V39.5",
+    "sha256": "016dbdc53a30d227a1de27a7d8bf8408eb19ad866d51f44fed22d175568715c1",
+    "businessId": "hotel"
+  },
+  "assets/images/curated/tourism/rent-a-car/hero/rent_a_car_hero_work_01.jpg": {
+    "source": "V39.5",
+    "sha256": "4cef25e46022b02706b580c5ae46b59cb24b1a1796790bc481f6f5efbfcae1fb",
+    "businessId": "rent-a-car"
+  },
+  "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_city_car_01.jpg": {
+    "source": "V39.5",
+    "sha256": "a4e4c70b53c35c74198b7898a3b215e3df4d17289b547774ff4049ee6a79b2c8",
+    "businessId": "rent-a-car"
+  },
+  "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_family_car_01.jpg": {
+    "source": "V39.5",
+    "sha256": "2be0a36e07b76f0c451bf7979437589bdfd5b0e11c55c61b7bf90bb3a021c355",
+    "businessId": "rent-a-car"
+  },
+  "assets/images/curated/tourism/rent-a-car/services/rent_a_car_service_vehicle_handover_01.jpg": {
+    "source": "V39.5",
+    "sha256": "780f9f684654380c044a8024b5726e8e1ae0c8651f724ee3eaa243f2e989c2b5",
+    "businessId": "rent-a-car"
+  },
+  "assets/images/curated/tourism/travel-agency/hero/travel_agency_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "6aaf8c31350141b004d92408b4acbe0a920400da66893c4457aab1518cc375c9",
+    "businessId": "travel-agency"
+  },
+  "assets/images/curated/tourism/travel-agency/services/travel_agency_service_03_destination_beach_escape.jpg": {
+    "source": "V39.5",
+    "sha256": "279f704e70bf7a2fc028bd4b2059e4b5a1085778c5647435c3696e2ccb45d508",
+    "businessId": "travel-agency"
+  },
+  "assets/images/curated/tourism/travel-agency/services/travel_agency_mountain_holiday_01.jpg": {
+    "source": "V39.5",
+    "sha256": "5a36995b873b55daae9f4731c41b1e5e1fd4624bd10f0fb7cdec08dde0d2bc56",
+    "businessId": "travel-agency"
+  },
+  "assets/images/curated/tourism/travel-agency/services/travel_agency_city_break_01.jpg": {
+    "source": "V39.5",
+    "sha256": "57c1262f8b82190ab04ca24542edb8b625c0cf87540a1aa7ad9741f3affb9fb3",
+    "businessId": "travel-agency"
+  },
+  "assets/images/curated/healthcare/dental-clinic/hero/dental_clinic_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "cdd586b68b19f6ca663570b8b92761365f7393084eb1320e5cf816814e1bc496",
+    "businessId": "dentist"
+  },
+  "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "2f69824b67ed06dc7c264219280fc04ba9e14aea1e03ad975dc09ac681673654",
+    "businessId": "dentist"
+  },
+  "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_dental_cleaning_01.jpg": {
+    "source": "V39.5",
+    "sha256": "65b781704ea6224c764d64172df2bc683f6ffa9a064e088b63fb3fb3760dcefe",
+    "businessId": "dentist"
+  },
+  "assets/images/curated/healthcare/dental-clinic/services/dental_clinic_dental_scan_01.jpg": {
+    "source": "V39.5",
+    "sha256": "cc4c55be790631102485e94a863da24392f6e16a4af07accc1a8862139a6ffa6",
+    "businessId": "dentist"
+  },
+  "assets/images/curated/healthcare/pharmacy/hero/pharmacy_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "a113634b5d2ed15a07cc7637f71866c76cc1915a39096d052efcad470ead6504",
+    "businessId": "pharmacy"
+  },
+  "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_vitamin_c_effervescent_01.jpg": {
+    "source": "V39.5",
+    "sha256": "9ed7b7aa8dabc8dd2d7a2828fcc2f3ac2f3fdccd12b68b3380b351d7a4f64c1f",
+    "businessId": "pharmacy"
+  },
+  "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_herbal_cough_syrup_01.jpg": {
+    "source": "V39.5",
+    "sha256": "d02974761b475d17d12dd2540825054e275f0c365255e23d7934ca2214576657",
+    "businessId": "pharmacy"
+  },
+  "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_daily_multivitamin_01.jpg": {
+    "source": "V39.5",
+    "sha256": "b66b81ab5dac0ba2835a1e2bdd7505102b6e1b23d075cc369bfccf24d205ba60",
+    "businessId": "pharmacy"
+  },
+  "assets/images/curated/healthcare/medical-laboratory/hero/medical_laboratory_hero_space_02.jpg": {
+    "source": "V39.5",
+    "sha256": "c76eb21240e25a9c215772056b2d4b9fed764ba30b34029a61ee4852ba348f99",
+    "businessId": "lab"
+  },
+  "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_blood_sampling_01.jpg": {
+    "source": "V39.5",
+    "sha256": "0e095a8ec91b05128e2c241c4e4726ea1f0e308badbf8f425b8c35b9c3d27e0b",
+    "businessId": "lab"
+  },
+  "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_sample_analyzer_01.jpg": {
+    "source": "V39.5",
+    "sha256": "87c6a024279b6d41b27ae85cef0aca0999d47dd8a7c34d53e479535e4e87e771",
+    "businessId": "lab"
+  },
+  "assets/images/curated/healthcare/medical-laboratory/services/medical_laboratory_service_sample_preparation_01.jpg": {
+    "source": "V39.5",
+    "sha256": "b092e90d4b0711ad2f2ce73b28df059a0bb1fc7a9ce81afa26f21bb9030f1146",
+    "businessId": "lab"
+  },
+  "assets/images/curated/healthcare/private-clinic/hero/private_clinic_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "e586e36a9a70831051fcb0cba3900743c41f90aaa5b41343e5d075179217aef3",
+    "businessId": "clinic"
+  },
+  "assets/images/curated/healthcare/private-clinic/services/private_clinic_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "22375b8b4e85cc06b2c24faea35c24922e1c8b69ab10c6a300055b3492762bc7",
+    "businessId": "clinic"
+  },
+  "assets/images/curated/healthcare/private-clinic/services/private_clinic_service_02.jpg": {
+    "source": "V39.5",
+    "sha256": "9c26b9b73b1673dc6a413b078b014b99fc64efef024ecad6c904dad91ca7fcf3",
+    "businessId": "clinic"
+  },
+  "assets/images/curated/healthcare/private-clinic/services/private_clinic_ecg_01.jpg": {
+    "source": "V39.5",
+    "sha256": "b7baf8066819277ddb6d7e5f1df7f864749d32c3b58d53fb908af42353c8c7b7",
+    "businessId": "clinic"
+  },
+  "assets/images/curated/healthcare/veterinary-clinic/hero/veterinary_clinic_hero_01.jpg": {
+    "source": "V39.5",
+    "sha256": "ecfbb5f071ebcda41f00bb45e073c7cce194f447fc72deb95be3be6f21547889",
+    "businessId": "vet"
+  },
+  "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_dog_exam_01.jpg": {
+    "source": "V39.5",
+    "sha256": "f2e05998e13b63a9d2c5793d0e5f31f4aa3e73e6aed090112825743b63faf4a8",
+    "businessId": "vet"
+  },
+  "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_service_02.jpg": {
+    "source": "V39.5",
+    "sha256": "842d78adc605b03ff19627218dee1c7b353822caf1cbdcb92c67708bd7b05366",
+    "businessId": "vet"
+  },
+  "assets/images/curated/healthcare/veterinary-clinic/services/veterinary_clinic_service_01.jpg": {
+    "source": "V39.5",
+    "sha256": "948ea68e9a1ac17508c8dd4b3c39be52ada0a4d2a1c850c39c2fb28334719e6c",
+    "businessId": "vet"
+  },
+  "assets/images/curated/healthcare/pharmacy/products/pharmacy_product_face_cream_01.jpg": {
+    "source": "V39.5",
+    "sha256": "e8c11300df19ecfd8610f80114f8d9c2d05ac891a13c261bd6abb3d038b228c2",
+    "businessId": "pharmacy"
+  }
+}

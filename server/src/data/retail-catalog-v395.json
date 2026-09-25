@@ -668,7 +668,7 @@
     "hero": "assets/images/curated/retail/furniture-store/hero/furniture_store_hero_living_room_01.jpg",
     "headline": "Pronađite nameštaj za svoj prostor.",
     "subtitle": "Pregledajte kolekcije i pošaljite upit za željeni model i dimenzije.",
-    "offerTitle": "Kolekcija nameštaja",
+    "offerTitle": "Izbor nameštaja",
     "products": [
       {
         "id": "furniture-store-1",
@@ -1131,6 +1131,163 @@
         "unit": "kom",
         "step": 1,
         "image": "assets/images/curated/retail/electrical-supplies/products/electrical_supplies_product_wall_switch_01.jpg"
+      }
+    ]
+  },
+  "bakery": {
+    "label": "Pekara",
+    "category": "food",
+    "hero": "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_01.jpg",
+    "headline": "Sveže iz naše pekare.",
+    "subtitle": "Hleb i peciva za svaki dan, sa mogućnošću poručivanja kada pekara to ponudi.",
+    "offerTitle": "Sveže iz pekare",
+    "products": [
+      {
+        "id": "bakery-1",
+        "title": "Domaći hleb",
+        "category": "Hleb",
+        "price": 290,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_01.jpg"
+      },
+      {
+        "id": "bakery-2",
+        "title": "Lisnata peciva",
+        "category": "Peciva",
+        "price": 220,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_03.jpg"
+      },
+      {
+        "id": "bakery-3",
+        "title": "Paket peciva",
+        "category": "Paketi",
+        "price": 790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_05.jpg"
+      }
+    ]
+  },
+  "pastry": {
+    "label": "Poslastičarnica",
+    "category": "food",
+    "hero": "assets/images/curated/food/bakery-pastry/hero/bakery_pastry_hero_02.jpg",
+    "headline": "Mali trenuci, veliki ukusi.",
+    "subtitle": "Kolači i slatke poslastice; pošaljite porudžbinu samo ako je to omogućeno.",
+    "offerTitle": "Naše poslastice",
+    "products": [
+      {
+        "id": "pastry-1",
+        "title": "Torta sa voćem",
+        "category": "Torte",
+        "price": 2790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_04.jpg"
+      },
+      {
+        "id": "pastry-2",
+        "title": "Slatko lisnato pecivo",
+        "category": "Peciva",
+        "price": 340,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_03.jpg"
+      },
+      {
+        "id": "pastry-3",
+        "title": "Slatki paket",
+        "category": "Paketi",
+        "price": 1390,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/bakery-pastry/services/bakery_pastry_service_05.jpg"
+      }
+    ]
+  },
+  "fast-food": {
+    "label": "Brza hrana",
+    "category": "food",
+    "hero": "assets/images/curated/food/fast-food/hero/fast_food_hero_counter_01.jpg",
+    "headline": "Brza hrana, pravi izbor.",
+    "subtitle": "Pogledajte jelovnik i pošaljite porudžbinu ako lokal prima naručivanje.",
+    "offerTitle": "Jelovnik",
+    "products": [
+      {
+        "id": "fast-food-1",
+        "title": "Burger",
+        "category": "Glavna jela",
+        "price": 690,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/fast-food/services/fast_food_product_beef_burger_01.jpg"
+      },
+      {
+        "id": "fast-food-2",
+        "title": "Pljeskavica",
+        "category": "Glavna jela",
+        "price": 570,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/fast-food/services/fast_food_product_pljeskavica_01.jpg"
+      },
+      {
+        "id": "fast-food-3",
+        "title": "Grilovana piletina",
+        "category": "Glavna jela",
+        "price": 790,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/fast-food/services/fast_food_product_grilled_chicken_01.jpg"
+      },
+      {
+        "id": "fast-food-4",
+        "title": "Pomfrit",
+        "category": "Prilozi",
+        "price": 260,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/food/fast-food/services/fast_food_product_fries_01.jpg"
+      }
+    ]
+  },
+  "gift-shop": {
+    "label": "Cveće i pokloni",
+    "category": "retail",
+    "hero": "assets/images/curated/retail/flowers-gifts/hero/flowers_gifts_hero_work_01.jpg",
+    "headline": "Pokloni koji govore umesto vas.",
+    "subtitle": "Cveće, biljke i poklon paketi za posebne trenutke.",
+    "offerTitle": "Odabrani pokloni",
+    "products": [
+      {
+        "id": "gift-shop-1",
+        "title": "Cvetni buket",
+        "category": "Cveće",
+        "price": 2990,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_flower_bouquet_01.jpg"
+      },
+      {
+        "id": "gift-shop-2",
+        "title": "Sobna biljka",
+        "category": "Biljke",
+        "price": 1890,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_potted_plant_01.jpg"
+      },
+      {
+        "id": "gift-shop-3",
+        "title": "Poklon paket",
+        "category": "Pokloni",
+        "price": 3590,
+        "unit": "kom",
+        "step": 1,
+        "image": "assets/images/curated/retail/flowers-gifts/services/flowers_gifts_service_gift_box_01.jpg"
       }
     ]
   }

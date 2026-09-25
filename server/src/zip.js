@@ -12,7 +12,7 @@ export function zipFiles(files){
     if(typeof name!=='string'||!name||name.startsWith('/')||name.includes('..')||name.includes('\\')||/[\u0000-\u001f]/.test(name))throw new Error('Neispravna putanja u ZIP-u.');
     const data=Buffer.isBuffer(file.data)?file.data:Buffer.from(file.data);
     total+=data.length;
-    if(total>60*1024*1024)throw new Error('Demo eksport je prevelik.');
+    if(total>60*1024*1024)throw new Error('ZIP za besplatan sajt je prevelik.');
     const fileName=Buffer.from(name,'utf8'),compressed= /\.(jpg|jpeg|png|webp)$/i.test(name)?data:deflateRawSync(data);
     const useDeflate=compressed!==data&&compressed.length<data.length;
     const payload=useDeflate?compressed:data;
