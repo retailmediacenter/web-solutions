@@ -1,0 +1,19 @@
+{
+  "name": "@rmc/booking-manager",
+  "private": true,
+  "version": "43.2.0",
+  "type": "module",
+  "description": "Samostalni Vite build za RMC Booking Manager PWA, bez backend-a.",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "test": "node --test",
+    "build": "vite build && node ./scripts/generate-sw.mjs",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}
