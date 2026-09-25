@@ -135,6 +135,7 @@ function openChannel(b,channelName){
   const p=profile();
   if(!p){
     stateUI.view='home';
+    document.querySelector('.workspace').hidden=true;
     byId('business-name').textContent='Povežite firmu';
     byId('pending-count').hidden=true;
     document.querySelector('.new-request').hidden=true;
@@ -144,6 +145,7 @@ function openChannel(b,channelName){
     byId('main-view').innerHTML=renderOnboarding();return;
   }
   state.activeProfileId=p.id;
+  document.querySelector('.workspace').hidden=false;
   byId('business-name').textContent=p.siteProfile?.business?.name||p.name;
   document.querySelector('.side-backup').hidden=false;
   const modules=portalModules(p);
