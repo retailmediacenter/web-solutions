@@ -1,5 +1,18 @@
 # Web Solutions — V43 razvojni checkpoint
 
+## V43.3 — potvrđena Booking integracija i Web Push (25.09.2026.)
+
+Faza B i Faza C su završene na razvojnoj grani `development/v43-3`:
+
+- `19b7ca2` — automatski Booking profil iz postojećeg `siteConfig` i stabilni `serviceId` identifikatori. Kratko uparivanje prenosi izvorne poslovne podatke i usluge u Manager bez dupliranja lokalnih pravila, usluga ili rezervacija.
+- `8c872a6` — standardni Web Push sa VAPID-om. Trenutno se šalje samo tip `BOOKING`; `ORDER` i `INQUIRY` su rezervisani za kasniji zajednički Business Portal transport.
+- Potvrđen tok: generisani sajt → Node API → Redis → Booking Manager → Push. Testiran je na Windowsu i instaliranoj iPhone PWA aplikaciji.
+- Redis sanduče i lokalni IndexedDB kalendar ostaju osnova sistema. `requestId` je idempotency ključ: ponovni submit ne duplira Redis zahtev, lokalnu rezervaciju ni Push obaveštenje. Greška Push dostave ne menja prihvatanje zahteva niti njegov Redis red.
+- Service Worker verzionira samo Cache Storage pod prefiksom `rmc-booking-`; ne pristupa IndexedDB profilima ili lokalnim rezervacijama.
+- Privatni Manager token i VAPID privatni ključ nisu deo generisanog sajta, ZIP-a ili Git-a. VAPID ključevi postoje samo kao staging/production environment vrednosti; prilikom rotacije oba ključa se menjaju zajedno i redeployuje se samo odgovarajući API.
+
+**Operativna granica:** trenutni model ima jedan glavni uređaj. Drugi uređaj može preuzeti lokalnu kopiju profila, ali lokalni kalendari nisu međusobno sinhronizovani; za pravi rad sa više uređaja potreban je kasniji model više uređajskih tokena i centralizovana sinhronizacija. Faza D treba da uvede RMC Business Portal sa modulima Rezervacije, Porudžbine i Podešavanja/obaveštenja, ali se ne započinje pre poslovne matrice svih 72 scenarija.
+
 **V42.1 funkcionalno potvrđena od korisnika.** Ovaj V43.0 paket je mali, bezbedan početni korak V43, **nije ceo Contact Engine niti Booking Manager**.
 
 **U ovom patch-u:** sekcija Kontakt i lokacije prikazuje poslovni telefon, email, sajt, radno vreme, adresu, mapu na zahtev i navigaciju. Direktni Viber/WhatsApp linkovi uklonjeni su **samo iz lokacijskog prikaza**. Brojevi ostaju u `businessData` za buduće kontekstualno rutiranje odgovarajućih formulara.
