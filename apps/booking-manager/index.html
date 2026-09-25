@@ -1,17 +1,16 @@
 <!doctype html><html lang="sr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#12344d"><meta name="description" content="RMC Booking Manager — rezervacije koje rade lokalno.">
+<meta name="theme-color" content="#12344d"><meta name="description" content="RMC Business Portal — lokalni poslovni pregled i zahtevi.">
 <link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon-192.png">
-<title>RMC Booking Manager · V43.2</title><link rel="stylesheet" href="./src/style.css">
+<title>RMC Business Portal · V43.3</title><link rel="stylesheet" href="./src/style.css">
 </head><body>
 <div id="app" class="shell">
   <aside class="sidebar">
-    <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>BOOKING <span>MANAGER</span></strong><small>RMC WEB SOLUTIONS / V43.2</small></div></div>
+    <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>RMC <span>BUSINESS PORTAL</span></strong><small>RMC WEB SOLUTIONS / V43.3</small></div></div>
     <div class="workspace"><label class="small-label" for="business-switch">AKTIVNA FIRMA</label><select id="business-switch" aria-label="Izbor firme"></select></div>
     <nav class="nav" aria-label="Glavna navigacija">
-      <button type="button" data-view="day" class="nav-item active"><span class="nav-icon">▦</span><span>Dan</span></button>
-      <button type="button" data-view="week" class="nav-item"><span class="nav-icon">▤</span><span>Nedelja</span></button>
-      <button type="button" data-view="requests" class="nav-item"><span class="nav-icon">☷</span><span>Zahtevi</span><span id="pending-count" class="nav-badge" hidden>0</span></button>
+      <button type="button" data-view="home" class="nav-item active"><span class="nav-icon">⌂</span><span>Početna</span></button>
+      <button type="button" data-view="reservations" class="nav-item"><span class="nav-icon">▦</span><span>Rezervacije</span><span id="pending-count" class="nav-badge" hidden>0</span></button>
       <button type="button" data-view="settings" class="nav-item"><span class="nav-icon">⚙</span><span>Podešavanja</span></button>
     </nav>
     <div class="side-spacer"></div>
@@ -19,12 +18,12 @@
     <button type="button" class="side-backup" data-action="export">↧ &nbsp;Sačuvaj rezervnu kopiju</button>
   </aside>
   <main class="main">
-    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BOOKING</p><h1 id="page-title">Kalendar</h1><p class="page-subtitle" id="page-subtitle">Lokalni pregled i potvrđivanje rezervacija.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button><button type="button" class="btn btn-light" data-action="import-secure">Uvezi Booking link</button></header>
-    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>V43.2 — povezivanje sa sajtom.</strong> Podešavanja → kopiraj JAVNI kod u Advisor. Zahtevi sa sajta stižu šifrovanim linkom. Ne testiraj stvarnim podacima.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
+    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BUSINESS PORTAL</p><h1 id="page-title">Poslovni pregled</h1><p class="page-subtitle" id="page-subtitle">Pregled zahteva i aktivnosti na jednom mestu.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button><button type="button" class="btn btn-light" data-action="import-secure">Uvezi Booking link</button></header>
+    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>Business Portal je lokalni radni prostor firme.</strong> Povezivanje sajta, rezervacije i obaveštenja ostaju vezani za ovaj uređaj.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
     <div id="notice" aria-live="polite"></div><div id="main-view"></div>
   </main>
 </div>
-<dialog id="request-dialog" class="dialog"><form method="dialog" id="request-form" class="dialog-form"><div class="dialog-head"><div><div class="eyebrow">RMC BOOKING MANAGER</div><h2>Novi zahtev</h2></div><button type="button" class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
+<dialog id="request-dialog" class="dialog"><form method="dialog" id="request-form" class="dialog-form"><div class="dialog-head"><div><div class="eyebrow">RMC BUSINESS PORTAL</div><h2>Novi zahtev</h2></div><button type="button" class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
  <div class="dialog-body"><p class="form-intro">Unesi zahtev kao da je stigao sa sajta. Sam unos još ne zauzima termin.</p>
  <label>Usluga <select id="new-service" name="serviceId" required></select></label>
  <div class="form-row"><label>Datum <input id="new-date" type="date" name="date" required></label><label>Traženo vreme <input id="new-time" type="time" name="time" value="10:00" step="900" required></label></div>

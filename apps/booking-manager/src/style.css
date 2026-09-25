@@ -16,3 +16,8 @@
 #public-pairing-code{display:block;width:100%;min-height:105px;max-width:100%;overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:11px;resize:vertical}
 .topbar{flex-wrap:wrap;gap:12px}.topbar>button{margin-left:0}
 #notice .helper-box{overflow-wrap:anywhere}
+
+/* V43.3 D1: portal overview and grouped reservation navigation. */
+.reservation-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:25px 0 -7px}
+.portal-overview{padding-top:25px}.portal-intro{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:24px 26px;background:linear-gradient(135deg,#eaf7f6,#f7fbfc);border:1px solid #dbecee;border-radius:16px}.portal-intro h2,.portal-welcome h2{margin:6px 0;font-size:1.55rem}.portal-intro p{margin:0;color:#647f8e;font-size:13px}.stat-action{border:1px solid #e4eaf0;text-align:left;cursor:pointer}.stat-action:hover{border-color:#7bc9c4;transform:translateY(-1px)}.portal-status{display:flex;align-items:center;gap:8px;margin-top:19px;padding:13px 15px;border-radius:10px;background:#f2f8f9;color:#547785;font-size:12px;line-height:1.5}.portal-status .status-dot{flex:none;margin:0}.portal-welcome{margin-top:25px}.portal-welcome .panel-body{padding:30px}.portal-welcome .hint{max-width:560px;margin:11px 0 18px}.portal-welcome .btn{margin-top:17px}
+@media(max-width:480px){.portal-overview{padding-top:18px}.portal-intro{padding:19px 17px;align-items:flex-start;flex-direction:column}.portal-intro .btn{width:100%}.reservation-tabs{margin-top:18px}.portal-status{font-size:11px}.portal-welcome .panel-body{padding:23px 17px}}
