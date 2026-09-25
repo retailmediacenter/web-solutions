@@ -1,14 +1,15 @@
-import {STATUS,DAYS,clone,makeId,makeProfile,demoState,normalizeRequest,slotCheck,alternatives,addDays,dateKey,dateOf,formatDate,weekStart,formatRequest,validateImport,icsFor,isDate,isTime,toMin,fromMin} from './booking-core.mjs';
-import {whatsappUrl,viberUrl,hasWhatsAppRecipient} from './messaging.mjs';
+import {STATUS,DAYS,clone,makeId,makeProfile,normalizeRequest,slotCheck,alternatives,addDays,dateKey,dateOf,formatDate,weekStart,formatRequest,validateImport,icsFor,isDate,isTime,toMin,fromMin} from './booking-core.mjs';
+import {whatsappUrl,viberUrl,hasWhatsAppRecipient,communicationType,reservationMessage} from './messaging.mjs';
 import {createPairing,decodePairing,openEncryptedLink} from './secure-link.mjs';
 import {applySiteProfile,claimPairing,getPushPublicKey,pullInbox,subscribePush,validApiOrigin,validPairingCode} from './queue-client.mjs';
+import {activatePortalProfile,activePortalProfileId,portalModules} from './portal-modules.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => dateKey(new Date());
 const isoNow = () => new Date().toISOString();
 const statName = {[STATUS.PENDING]:'Čeka odgovor',[STATUS.CONFIRMED]:'Potvrđeno',[STATUS.PROPOSED]:'Predlog pripremljen',[STATUS.DECLINED]:'Odbijeno',[STATUS.CANCELLED]:'Otkazano'};
-const stateUI = {view:'home',reservationTab:'requests',date:today(),filter:'all',selectedId:null,proposal:null};
+const stateUI = {view:'home',reservationTab:'requests',settingsEditor:'',date:today(),filter:'all',selectedId:null,proposal:null};
 const CHANNEL='rmc-booking-local'; let channel; let state,writing=Promise.resolve(),toastTimer;
 let polling=false,pollTimer=null;
 let serviceWorkerReady=null;
@@ -46,15 +47,21 @@ async function persistStrict(){
  }));
  await writing;if(channel)channel.postMessage({kind:'changed'});
 }
-function profile(){return state.profiles.find(p=>p.id===state.activeProfileId)||state.profiles[0];}
+function profile(){return state.profiles.find(p=>p.id===state.activeProfileId)||null;}
+const emptyPortalState=()=>({schema:1,activeProfileId:null,profiles:[],bookings:[],savedAt:null});
 const apiDefault=(import.meta.env.VITE_BOOKING_API_URL||'').trim();
 async function connectShortCode(){
- const p=profile(),code=byId('queue-code')?.value.toUpperCase().trim();
+ let p=profile();const code=byId('queue-code')?.value.toUpperCase().trim();
  const origin=validApiOrigin(byId('queue-api')?.value.trim()||apiDefault);
  if(!validPairingCode(code))throw new Error('Kod mora imati format XXXX-XXXX-XX.');
  if(!db)throw new Error('Lokalna baza nije dostupna. Ne povezuj uređaj.');
- if(p.queueConnection&&!window.confirm('Ova firma je već povezana. Zameniti pristup na ovom uređaju? Staro sanduče više neće biti dostupno kroz ovaj profil.'))return;
+ if(p?.queueConnection&&!window.confirm('Ova firma je već povezana. Zameniti pristup na ovom uređaju? Staro sanduče više neće biti dostupno kroz ovaj profil.'))return;
  const connected=await claimPairing(origin,code);
+  if(!p){
+  if(!connected.profile)throw new Error('Server nije vratio poslovni profil. Povezivanje nije sačuvano.');
+  p=makeProfile(connected.profile.business.name);p.services=[];
+  state=activatePortalProfile(state,p);
+ }
  if(connected.profile)applySiteProfile(p,connected.profile);
  p.queueConnection={siteId:connected.siteId,accessToken:connected.accessToken,apiOrigin:origin,connectedAt:isoNow()};
  try{await persistStrict();}
@@ -69,7 +76,7 @@ async function connectShortCode(){
 }
 async function syncQueuedRequests({silent=false}={}){
  if(polling||!db||!navigator.onLine)return;
- const profiles=state.profiles.filter(p=>p.queueConnection);
+ const active=profile(),profiles=active?.queueConnection?[active]:[];
  if(!profiles.length)return;
  polling=true;
  try{
@@ -97,55 +104,59 @@ async function copyText(value){
   catch(e){const d=document.createElement('textarea');d.value=value;d.style.position='fixed';d.style.top='-1000px';document.body.append(d);d.select();try{if(!document.execCommand('copy'))throw new Error('No copy');toast('Poruka kopirana.');}catch(e){window.prompt('Kopiraj poruku:',value);}d.remove();}
 }
 const summaryLine = b=>`${formatDate(b.date)} u ${b.time} · ${b.duration} min`;
-function messageFor(b,type){const p=profile();const head=type==='proposed'?'PREDLOG NOVOG TERMINA':type==='declined'?'ODGOVOR NA REZERVACIJU':'POTVRDA REZERVACIJE';
+function messageFor(b,type){
   const date=type==='proposed'&&b.proposal?b.proposal.date:b.date;
   const time=type==='proposed'&&b.proposal?b.proposal.time:b.time;
-  const tail=type==='proposed'?'Molimo odgovorite da li Vam termin odgovara. Termin još NIJE potvrđen.':type==='declined'?'Nažalost, nismo u mogućnosti da potvrdimo traženi termin.':'Vaš termin je potvrđen.';
-  return `${head}\n${p.name}\n\n${b.clientName}\n${b.serviceName}\n${formatDate(date)} u ${time}\nTrajanje: ${b.duration} min\n\n${tail}`;
+  return reservationMessage({type,businessName:profile().name,serviceName:b.serviceName,dateLabel:formatDate(date),time,reservationCode:b.reservationCode||b.sourceRequestId||b.id});
 }
+function communicationPhone(b){return byId('booking-dialog')?.querySelector('[data-contact-phone]')?.value.trim()||b.phone||'';}
 function shareActions(b){
-  if(![STATUS.CONFIRMED,STATUS.PROPOSED].includes(b.status))return '';
-  const type=b.status===STATUS.PROPOSED?'predloga':'potvrde';
-  const note=hasWhatsAppRecipient(b.phone)
-    ? 'WhatsApp: poruka za uneti broj. Viber može tražiti da izabereš primaoca.'
-    : 'Broj nije unet u međunarodnom formatu: izaberi primaoca u WhatsAppu ili Viberu.';
-  return `<div class="share-bar"><strong>Pošalji ${type} klijentu</strong>
-    <div class="share-actions">
-      <button type="button" class="btn share-whatsapp" data-action="share-whatsapp">WhatsApp ↗</button>
-      <button type="button" class="btn share-viber" data-action="share-viber">Viber ↗</button>
-
-    </div><p>${safe(note)} Poruka nije automatski poslata — proveri je i pošalji.</p></div>`;
+  const type=communicationType(b.status);if(!type)return '';
+  const phone=b.phone||'',valid=hasWhatsAppRecipient(phone);
+  const label=type==='proposed'?'predlog':type==='declined'?'obaveštenje o nedostupnosti':'potvrdu rezervacije';
+  const correction=valid?'':`<label class="contact-correction">Broj za poruku<input type="tel" data-contact-phone value="${safe(phone)}" autocomplete="tel" placeholder="npr. +381 64 123 4567"></label><p class="warning">Broj iz zahteva nije validan za direktan WhatsApp razgovor. Ispravi ga samo za ovu poruku; original u rezervaciji ostaje nepromenjen.</p>`;
+  return `<div class="share-bar"><strong>Poruka za klijenta: ${label}</strong>${correction}
+    <textarea class="message-preview" readonly aria-label="Pripremljena poruka">${safe(messageFor(b,type))}</textarea>
+    <div class="share-actions"><button type="button" class="btn share-whatsapp" data-action="share-whatsapp">WhatsApp ↗</button><button type="button" class="btn share-viber" data-action="share-viber">Viber ↗</button><button type="button" class="btn btn-light" data-action="share-copy">Kopiraj poruku</button></div>
+    <p>Otvaranje aplikacije nije potvrda slanja. Pregledaj poruku i pošalji je ručno. Viber može tražiti izbor primaoca.</p></div>`;
 }
 function openChannel(b,channelName){
-  if(!b||![STATUS.CONFIRMED,STATUS.PROPOSED].includes(b.status))throw new Error('Prvo pripremi predlog ili potvrdi rezervaciju.');
-  const msg=messageFor(b,b.status===STATUS.PROPOSED?'proposed':'confirmed');
+  const type=communicationType(b?.status);if(!b||!type)throw new Error('Prvo pripremi poslovnu odluku za ovaj zahtev.');
+  const msg=messageFor(b,type),phone=communicationPhone(b);
   if(channelName==='whatsapp'){
-    const u=whatsappUrl(b.phone,msg);
-    window.open(u,'_blank','noopener,noreferrer');
-    toast('WhatsApp otvoren. Proveri primaoca i pošalji poruku.');
+    if(!hasWhatsAppRecipient(phone))throw new Error('Unesi validan broj sa pozivnim brojem za WhatsApp.');
+    window.open(whatsappUrl(phone,msg),'_blank','noopener,noreferrer');
+    toast('WhatsApp je otvoren sa pripremljenom porukom. Ručno proveri i pošalji.');
   }else{
-    // Viber's share deep link opens the installed app when supported, but cannot
-    // reliably target the recipient or prove delivery across desktop/mobile.
     window.location.href=viberUrl(msg);
-    toast('Pokušaj otvaranja Vibera. Ako ne radi, koristi WhatsApp.');
+    toast('Pokušavamo da otvorimo Viber sa pripremljenom porukom. Primaoca biraš u Viberu.');
   }
-}
-function bookingEnabled(p=profile()){return Array.isArray(p?.services)&&p.services.length>0;}
-function portalModules(p=profile()){return {booking:bookingEnabled(p),orders:false};}
-function refresh(){
-  const p=profile();state.activeProfileId=p.id;
+}function refresh(){
+  const p=profile();
+  if(!p){
+    stateUI.view='home';
+    byId('business-name').textContent='Povežite firmu';
+    byId('pending-count').hidden=true;
+    document.querySelector('.new-request').hidden=true;
+    document.querySelectorAll('.nav-item').forEach(item=>item.hidden=true);
+    document.querySelector('.side-backup').hidden=true;
+    byId('page-title').textContent='Povežite firmu';byId('page-subtitle').textContent='Unesite kratki kod koji ste dobili uz generisani sajt.';
+    byId('main-view').innerHTML=renderOnboarding();return;
+  }
+  state.activeProfileId=p.id;
+  byId('business-name').textContent=p.siteProfile?.business?.name||p.name;
+  document.querySelector('.side-backup').hidden=false;
   const modules=portalModules(p);
   if(stateUI.view==='reservations'&&!modules.booking)stateUI.view='home';
-  byId('business-switch').innerHTML=state.profiles.map(x=>`<option value="${safe(x.id)}" ${x.id===p.id?'selected':''}>${safe(x.name)}</option>`).join('');
   const pending=modules.booking?bookings().filter(x=>x.status===STATUS.PENDING).length:0;
   byId('pending-count').hidden=!pending;byId('pending-count').textContent=pending;
-  document.querySelector('.new-request').hidden=!modules.booking;
-  document.querySelector('[data-action="import-secure"]').hidden=!modules.booking;
+  document.querySelector('.new-request').hidden=!modules.booking||stateUI.view!=='reservations';
   document.querySelectorAll('.nav-item').forEach(x=>{const allowed=x.dataset.view!=='reservations'||modules.booking;x.hidden=!allowed;x.classList.toggle('active',x.dataset.view===stateUI.view);});
   const pages={home:['Poslovni pregled','Novi zahtevi i aktivnosti firme na jednom mestu.'],reservations:['Rezervacije','Zahtevi, dnevni raspored i nedeljni pregled.'],settings:['Podešavanja','Radno vreme, usluge i lokalni podaci.']};
   byId('page-title').textContent=pages[stateUI.view][0];byId('page-subtitle').textContent=pages[stateUI.view][1];
   byId('main-view').innerHTML=({home:renderHome,reservations:renderReservations,settings:renderSettings})[stateUI.view]();
 }
+function renderOnboarding(){return `<section class="portal-welcome panel"><div class="panel-body"><span class="tiny-label">DOBRO DOŠLI</span><h2>Povežite svoju firmu</h2><p class="hint">U datoteci BOOKING_UPARIVANJE.txt uz sajt nalazi se jednokratni kod. Unesite ga da Portal preuzme poslovni profil i usluge.</p>${apiDefault?`<label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label><div class="settings-actions"><button class="btn btn-primary" data-action="queue-connect">Poveži firmu</button></div>`:`<p class="warning">Automatska adresa Booking API-ja nije dostupna. Povezivanje trenutno nije moguće u ovoj instalaciji.</p>`}</div></section>`;}
 function appointmentCard(b){
   return `<div class="booking-item"><span class="time-pill">${safe(b.time)}</span><div class="booking-main"><strong>${safe(b.serviceName)}</strong><small>${safe(b.clientName)} · ${safe(b.duration)} min · ${safe(b.units)} mesto/a</small></div><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><button data-action="detail" data-id="${safe(b.id)}" aria-label="Detalji rezervacije">Detalji</button></div>`;
 }
@@ -183,26 +194,23 @@ function renderDay(){const bs=bookings().filter(b=>b.date===stateUI.date),st=run
 function renderWeek(){const start=weekStart(stateUI.date),p=profile();return `${toolbar(true)}<div class="panel"><div class="panel-head"><h2>Nedelja</h2><span class="tiny-label">KLIK ZA DAN</span></div><div class="panel-body"><div class="week-grid">${Array.from({length:7},(_,i)=>{const d=addDays(start,i),arr=bookings().filter(b=>b.date===d),confirmed=arr.filter(b=>b.status===STATUS.CONFIRMED).length,pending=arr.filter(b=>b.status===STATUS.PENDING).length,day=p.hours[(dateOf(d).getDay()+6)%7];return `<button class="day-card ${d===stateUI.date?'selected':''}" data-action="choose-day" data-date="${d}"><div class="day-name">${DAYS[i]}</div><div class="day-num">${Number(d.slice(-2))}</div>${!day?.enabled||p.closedDates?.includes(d)?'<span class="closed">Neradni dan</span>':`<span class="week-pill">${confirmed} potvrđeno</span>${pending?`<span class="week-pill secondary">${pending} čeka</span>`:''}`}</button>`;}).join('')}</div></div></div><div class="helper-box">Nedelja prikazuje potvrđene rezervacije i zahteve. Detalje proveravaš u dnevnom prikazu.</div>`;}
 function renderRequests(){let bs=bookings().sort((a,b)=>{const rank={pending:0,proposed:1,confirmed:2,declined:3,cancelled:4};return rank[a.status]-rank[b.status]||b.createdAt.localeCompare(a.createdAt);});
   if(stateUI.filter!=='all')bs=bs.filter(b=>b.status===stateUI.filter);
-  return `<div class="toolbar"><strong>${bs.length} zahteva</strong><div style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn btn-primary" data-action="import-secure">↥ Uvezi Booking link</button><button class="btn btn-light" data-action="import-test">Test JSON</button></div></div><div class="filter-bar">${[['all','Svi'],['pending','Čekaju'],['confirmed','Potvrđeni'],['proposed','Predlozi'],['cancelled','Otkazani'],['declined','Odbijeni']].map(([id,label])=>`<button class="filter ${stateUI.filter===id?'active':''}" data-action="filter" data-filter="${id}">${label}</button>`).join('')}</div><div class="request-grid">${bs.map(b=>`<article class="request-card"><div class="request-card-head"><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><span class="tiny-label">${safe(b.source==='manual'?'RUČNI UNOS':b.source==='test-json'?'TEST JSON':'ZAHTEV')}</span></div><h3>${safe(b.clientName)}</h3><p>${safe(b.serviceName)}<br>${safe(summaryLine(b))}</p>${b.proposal?`<p style="color:#2d8e86">Predlog: ${safe(formatDate(b.proposal.date))} u ${safe(b.proposal.time)}</p>`:''}<div class="request-card-bottom"><small>${safe(b.phone||'Bez telefona')}</small><button class="tiny" data-action="detail" data-id="${safe(b.id)}">Otvori →</button></div></article>`).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
-function renderSettings(){const p=profile();return `<div class="toolbar"><strong>Poslovni profil</strong><button class="btn btn-light" data-action="add-profile">＋ Nova firma</button></div>
-<div class="panel"><div class="setting-group"><h3>Osnovna podešavanja</h3><div class="form-grid"><label>Naziv firme<input id="set-name" value="${safe(p.name)}" maxlength="100"></label><label>Istovremeni kapacitet<input type="number" id="set-capacity" min="1" max="99" value="${p.capacity}"></label><label>Korak termina<select id="set-slot">${[15,30,60].map(n=>`<option value="${n}" ${p.slotStep===n?'selected':''}>${n} minuta</option>`).join('')}</select></label><label>Pauza između potvrđenih rezervacija<select id="set-buffer">${[0,5,10,15,30,60].map(n=>`<option value="${n}" ${p.buffer===n?'selected':''}>${n} minuta</option>`).join('')}</select></label></div><p class="hint" style="margin:12px 0 0">Kapacitet 1 = jedan frizer / jedno radno mesto. Restorani i višestruki resursi zahtevaju pažljivo podešavanje; V43.1 ne upravlja različitim osobljem ili stolovima.</p></div>
-<div class="setting-group"><h3>Radno vreme</h3><div class="hours-grid">${DAYS.map((label,i)=>{const x=p.hours[i];return `<div class="hours-row" data-day="${i}"><label>${label}</label><label class="checkbox-inline"><input type="checkbox" data-field="enabled" ${x.enabled?'checked':''}> Radi</label><input class="field" type="time" data-field="start" value="${safe(x.start)}" aria-label="${label} od"><input class="field" type="time" data-field="end" value="${safe(x.end)}" aria-label="${label} do"></div>`;}).join('')}</div></div>
-<div class="setting-group"><h3>Pauza i neradni dani</h3><div class="form-grid"><label class="checkbox-inline"><input id="set-break-enabled" type="checkbox" ${p.breaks?.enabled?'checked':''}> Uključi dnevnu pauzu</label><span></span><label>Pauza od<input id="set-break-start" type="time" value="${safe(p.breaks?.start||'12:00')}"></label><label>Pauza do<input id="set-break-end" type="time" value="${safe(p.breaks?.end||'12:30')}"></label></div><label style="margin-top:15px">Posebni neradni datumi (YYYY-MM-DD, odvojeni zarezom)<input id="set-closed" value="${safe((p.closedDates||[]).join(', '))}" placeholder="2026-12-31, 2027-01-01"></label></div>
-<div class="setting-group"><div class="section-title"><h3>Usluge i trajanje</h3><button class="text-btn" data-action="add-service">＋ Dodaj uslugu</button></div><div class="hours-grid" id="service-list">${p.services.map(s=>serviceRow(s)).join('')}</div><p class="hint" style="margin:13px 0 0">Trajanje se snima uz svaki zahtev. Naknadna izmena usluge ne menja već primljene rezervacije.</p></div>
-<div class="setting-group"><h3>Povezivanje kratkim kodom (V43.2.1)</h3>
-  <p class="hint">Preuzmi sajt i otvori datoteku BOOKING_UPARIVANJE.txt iz ZIP-a. Ovde unesi jednokratni kod od najviše 12 znakova. Kod nije trajna lozinka.</p>
-  ${p.queueConnection?`<div class="helper-box"><strong>Povezano sanduče</strong><br>ID sajta: ${safe(p.queueConnection.siteId)}<br>Server: ${safe(p.queueConnection.apiOrigin)}</div><button type="button" class="btn btn-light" data-action="queue-sync">Proveri nove rezervacije</button> <button type="button" class="btn btn-light" data-action="push-enable">${p.pushEnabledAt?'Push obaveštenja uključena':'Uključi Push obaveštenja'}</button>`:
-    `<label>Adresa Booking API servera<input id="queue-api" inputmode="url" type="url" placeholder="https://vas-api.onrender.com" value="${safe(apiDefault)}"></label>
-     <label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label>
-     <button type="button" class="btn btn-primary" data-action="queue-connect">Poveži firmu</button>`}
-  <p id="queue-status" class="hint">Novi zahtevi proveravaju se dok je Booking Manager aktivan i povezan na internet. Offline zahtevi ostaju na serveru najviše 72 sata.</p>
-  <p class="hint">Pristupni token ostaje u lokalnoj bazi ove instalacije. Privatni ključ i token iz rezervne kopije ne deli sa drugima.</p></div>
-<div class="setting-group"><h3>Prethodni način povezivanja (V43.2)</h3><p class="hint">Svaka firma dobija jedinstven JAVNI kod za povezivanje. Njega nalepi u Web Solutions Advisor pri generisanju sajta. Privatni ključ OSTAjE na ovom uređaju. Samo ovaj kalendar može otvoriti šifrovane zahteve.</p>
-    ${p.pairing?.publicToken?`<label>Javni kod za povezivanje<textarea id="public-pairing-code" readonly rows="4" aria-label="Javni kod za povezivanje">${safe(p.pairing.publicToken)}</textarea></label><button class="btn btn-light" data-action="copy-pairing">Kopiraj JAVNI kod</button> <button class="btn btn-soft" data-action="create-pairing">Promeni ključ (stari sajtovi prestaju da rade)</button>`:`<button class="btn btn-primary" data-action="create-pairing">Poveži ovu firmu sa sajtom</button>`}
-    <p class="hint">Testna faza: rezervna kopija trenutno sadrži i privatni ključ kao običan JSON. Nikome je ne šalji. Pre rada sa stvarnim klijentima uvodimo zaštitu rezervnih kopija.</p></div>
-<div class="settings-actions"><button class="btn btn-primary" data-action="save-settings">Sačuvaj podešavanja</button><button class="btn btn-light" data-action="export">↧ Izvezi rezervnu kopiju</button><button class="btn btn-light" data-action="import">↥ Vrati kopiju</button></div></div>
-<div class="helper-box">Podaci su u lokalnoj bazi ovog browsera/instalirane aplikacije. Nisu automatski dostupni u Viber browseru, na drugom telefonu ili posle brisanja podataka browsera. Redovno izvozi kopiju.</div>`;}
-function serviceRow(s={id:makeId(),name:'',duration:30,units:1}){return `<div class="service-row" data-service-id="${safe(s.id)}"><input class="field" data-field="name" maxlength="90" placeholder="Naziv usluge" value="${safe(s.name)}" aria-label="Naziv usluge"><input class="field" data-field="duration" type="number" min="5" max="1440" step="5" value="${s.duration}" aria-label="Trajanje u minutima"><input class="field" data-field="units" type="number" min="1" max="99" value="${s.units||1}" aria-label="Potrebni resursi"><button class="service-remove" data-action="remove-service" title="Ukloni uslugu" aria-label="Ukloni uslugu">×</button></div>`;}
+  return `<div class="toolbar"><strong>${bs.length} zahteva</strong></div><div class="filter-bar">${[['all','Svi'],['pending','Čekaju'],['confirmed','Potvrđeni'],['proposed','Predlozi'],['cancelled','Otkazani'],['declined','Odbijeni']].map(([id,label])=>`<button class="filter ${stateUI.filter===id?'active':''}" data-action="filter" data-filter="${id}">${label}</button>`).join('')}</div><div class="request-grid">${bs.map(b=>`<article class="request-card"><div class="request-card-head"><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><span class="tiny-label">${safe(b.source==='manual'?'RUČNI UNOS':b.source==='test-json'?'TEST':'SAJT')}</span></div><h3>${safe(b.clientName)}</h3><p>${safe(b.serviceName)}<br>${safe(summaryLine(b))}</p>${b.proposal?`<p style="color:#2d8e86">Predlog: ${safe(formatDate(b.proposal.date))} u ${safe(b.proposal.time)}</p>`:''}<div class="request-card-bottom"><small>${safe(b.phone||'Bez telefona')}</small><button class="tiny" data-action="detail" data-id="${safe(b.id)}">Otvori →</button></div></article>`).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
+function detailRows(values){return values.filter(([,value])=>value).map(([label,value])=>`<div><small>${safe(label)}</small><strong>${safe(value)}</strong></div>`).join('');}
+function workHoursSummary(p){const groups=[];let start=0;for(let i=1;i<=7;i++){const a=p.hours[i-1],b=p.hours[i];if(i===7||!b||a.enabled!==b.enabled||a.start!==b.start||a.end!==b.end){const names=start===i-1?DAYS[start]:`${DAYS[start]}–${DAYS[i-1]}`;groups.push(`${names}: ${a.enabled?`${a.start}–${a.end}`:'Neradno'}`);start=i;}}return groups.join(' · ');}
+function operationalEditor(p){if(stateUI.settingsEditor==='hours')return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">RADNO VREME</span><h2>Izmeni radno vreme</h2></div><button class="text-btn" data-action="settings-close">Zatvori</button></div><div class="hours-grid">${DAYS.map((label,i)=>{const x=p.hours[i];return `<div class="hours-row" data-day="${i}"><label>${label}</label><label class="checkbox-inline"><input type="checkbox" data-field="enabled" ${x.enabled?'checked':''}> Radi</label><input class="field" type="time" data-field="start" value="${safe(x.start)}" aria-label="${label} od"><input class="field" type="time" data-field="end" value="${safe(x.end)}" aria-label="${label} do"></div>`;}).join('')}</div><div class="settings-actions"><button class="btn btn-primary" data-action="save-hours">Sačuvaj radno vreme</button></div></section>`;
+ if(stateUI.settingsEditor==='rules')return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">OPERATIVNA PRAVILA</span><h2>Termini i raspoloživost</h2></div><button class="text-btn" data-action="settings-close">Zatvori</button></div><div class="form-grid"><label>Istovremeni kapacitet<input type="number" id="set-capacity" min="1" max="99" value="${p.capacity}"></label><label>Korak termina<select id="set-slot">${[15,30,60].map(n=>`<option value="${n}" ${p.slotStep===n?'selected':''}>${n} minuta</option>`).join('')}</select></label><label>Pauza između potvrđenih rezervacija<select id="set-buffer">${[0,5,10,15,30,60].map(n=>`<option value="${n}" ${p.buffer===n?'selected':''}>${n} minuta</option>`).join('')}</select></label><label class="checkbox-inline"><input id="set-break-enabled" type="checkbox" ${p.breaks?.enabled?'checked':''}> Uključi dnevnu pauzu</label><label>Pauza od<input id="set-break-start" type="time" value="${safe(p.breaks?.start||'12:00')}"></label><label>Pauza do<input id="set-break-end" type="time" value="${safe(p.breaks?.end||'12:30')}"></label></div><label style="margin-top:15px">Neradni datumi (YYYY-MM-DD, odvojeni zarezom)<input id="set-closed" value="${safe((p.closedDates||[]).join(', '))}" placeholder="2026-12-31, 2027-01-01"></label><div class="settings-actions"><button class="btn btn-primary" data-action="save-rules">Sačuvaj operativna pravila</button></div></section>`;
+ return '';
+}
+function serviceSummaryCard(p){const connected=Boolean(p.siteProfile),active=connected?p.services.filter(s=>s.siteServiceId):p.services;return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">${connected?'USLUGE SA SAJTA':'USLUGE'}</span><h2>${connected?'Aktivne usluge':'Lokalne usluge'}</h2></div><button class="btn btn-light" data-action="settings-open" data-editor="services">${connected?'Pregledaj usluge':'Uredi usluge'}</button></div><p class="hint">${active.map(s=>safe(s.name)).join(' · ')||'Nema aktivnih usluga.'}</p></section>`;}function serviceEditor(p){const connected=Boolean(p.siteProfile),visibleServices=connected?p.services.filter(s=>s.siteServiceId):p.services;return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">${connected?'USLUGE SA SAJTA':'USLUGE'}</span><h2>${connected?'Aktivne usluge':'Uredi usluge'}</h2></div>${!connected?'<button class="text-btn" data-action="add-service">＋ Dodaj uslugu</button>':''}</div><div class="service-summary">${visibleServices.map(s=>connected?`<label class="service-readonly"><span><strong>${safe(s.name)}</strong><small>${safe(s.siteServiceId||'Lokalna usluga')}</small></span><span><input class="field service-duration" data-service-id="${safe(s.id)}" type="number" min="5" max="1440" step="5" value="${s.duration}" aria-label="Trajanje za ${safe(s.name)}"> min</span></label>`:serviceRow(s)).join('')}</div><p class="hint">${connected?'Nazivi i ID-jevi usluga preuzimaju se sa sajta. Lokalno možeš podesiti trajanje, bez menjanja postojećih rezervacija.':'Ovaj profil još nije povezan sa sajtom; ovde uređuješ lokalne usluge.'}</p><div class="settings-actions"><button class="btn btn-primary" data-action="save-services">Sačuvaj trajanja</button></div></section>`;}
+function renderSettings(){const p=profile(),connected=Boolean(p.queueConnection),site=p.siteProfile?.business||{},isAuto=Boolean(p.siteProfile),modules=portalModules(p);const contactRows=detailRows([['Telefon',site.phone],['E-pošta',site.email],['Adresa',[site.address,site.city].filter(Boolean).join(', ')],['Radno vreme sa sajta',site.hours]]);
+ return `<div class="settings-stack"><section class="settings-card"><div class="card-head"><div><span class="tiny-label">POSLOVNI PROFIL</span><h2>${safe(isAuto?site.name:p.name)}</h2></div>${isAuto?'<span class="profile-source">Preuzeto sa sajta</span>':'<button class="text-btn" data-action="settings-open" data-editor="profile">Izmeni naziv</button>'}</div>${contactRows?`<div class="profile-details">${contactRows}</div>`:isAuto?'<p class="hint">Osnovni poslovni profil i usluge preuzeti su sa povezanog sajta.</p>':'<p class="hint">Ovaj lokalni profil još nema podatke preuzete sa sajta. Povezivanje će sačuvati lokalne rezervacije i radna pravila.</p>'}${stateUI.settingsEditor==='profile'?`<label>Naziv firme<input id="set-name" value="${safe(p.name)}" maxlength="100"></label><div class="settings-actions"><button class="btn btn-primary" data-action="save-profile-name">Sačuvaj naziv</button><button class="btn btn-light" data-action="settings-close">Odustani</button></div>`:''}</section>
+ ${modules.booking?`<section class="settings-card"><div class="card-head"><div><span class="tiny-label">RADNO VREME I TERMINI</span><h2>${safe(workHoursSummary(p))}</h2></div><button class="btn btn-light" data-action="settings-open" data-editor="hours">Izmeni radno vreme</button></div><p class="hint">Kapacitet: ${p.capacity} · korak: ${p.slotStep} min · razmak: ${p.buffer} min${p.breaks?.enabled?` · pauza ${safe(p.breaks.start)}–${safe(p.breaks.end)}`:''}${p.closedDates?.length?` · ${p.closedDates.length} neradnih datuma`:''}</p><button class="text-btn" data-action="settings-open" data-editor="rules">Operativna pravila →</button></section>${operationalEditor(p)}${serviceSummaryCard(p)}${stateUI.settingsEditor==='services'?serviceEditor(p):''}`:''}
+ <section class="settings-card"><div class="card-head"><div><span class="tiny-label">POVEZIVANJE I OBAVEŠTENJA</span><h2>${connected?'Sajt je povezan':'Povežite svoj sajt'}</h2></div><span class="connection-status ${connected?'connected':''}">${connected?'Povezano':'Nije povezano'}</span></div>${connected?`<div class="profile-details"><div><small>Povezani sajt</small><strong>${safe(site.name||p.name)}</strong></div><div><small>Push obaveštenja</small><strong>${p.pushEnabledAt?'Uključena na ovom uređaju':'Nisu uključena'}</strong></div></div><div class="settings-actions"><button class="btn btn-primary" data-action="push-enable">${p.pushEnabledAt?'Push obaveštenja uključena':'Uključi Push obaveštenja'}</button><button class="btn btn-light" data-action="queue-sync">Proveri nove rezervacije</button></div>`:apiDefault?`<p class="hint">Unesi jednokratni kod iz datoteke BOOKING_UPARIVANJE.txt koju ste dobili uz sajt.</p><label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label><div class="settings-actions"><button class="btn btn-primary" data-action="queue-connect">Poveži firmu</button></div>`:`<p class="warning">Automatska adresa Booking API-ja nije dostupna. Povezivanje trenutno nije moguće u ovoj instalaciji.</p>`}<p id="queue-status" class="hint"></p></section>
+ <section class="settings-card"><div class="card-head"><div><span class="tiny-label">REZERVNA KOPIJA</span><h2>Sačuvajte lokalne podatke</h2></div></div><p class="hint">Rezervacije i podešavanja ostaju na ovom uređaju. Vraćanje kopije zamenjuje postojeće lokalne podatke nakon potvrde.</p><div class="settings-actions"><button class="btn btn-light" data-action="export">↧ Izvezi rezervnu kopiju</button><button class="btn btn-light" data-action="import">↥ Vrati kopiju</button></div></section></div>`;}
+function saveHours(){const p=profile();const hours=[...document.querySelectorAll('.hours-row')].map(row=>{const enabled=row.querySelector('[data-field="enabled"]').checked,start=row.querySelector('[data-field="start"]').value,end=row.querySelector('[data-field="end"]').value;if(enabled&&(!isTime(start)||!isTime(end)||toMin(start)>=toMin(end)))throw new Error(`Radno vreme: proveri dan ${DAYS[Number(row.dataset.day)]}.`);return {enabled,start,end};});p.hours=hours;persist();stateUI.settingsEditor='';refresh();toast('Radno vreme sačuvano.');}
+function saveRules(){const p=profile(),capacity=Number(byId('set-capacity').value);if(!Number.isInteger(capacity)||capacity<1||capacity>99)throw new Error('Kapacitet mora biti od 1 do 99.');const b={enabled:byId('set-break-enabled').checked,start:byId('set-break-start').value,end:byId('set-break-end').value};if(b.enabled&&(!isTime(b.start)||!isTime(b.end)||toMin(b.start)>=toMin(b.end)))throw new Error('Pauza mora imati ispravan početak i kraj.');const closed=byId('set-closed').value.split(',').map(x=>x.trim()).filter(Boolean);if(closed.some(d=>!isDate(d)))throw new Error('Neradni datumi moraju biti u formatu YYYY-MM-DD.');Object.assign(p,{capacity,slotStep:Number(byId('set-slot').value),buffer:Number(byId('set-buffer').value),breaks:b,closedDates:[...new Set(closed)]});persist();stateUI.settingsEditor='';refresh();toast('Operativna pravila sačuvana.');}
+function saveServices(){const p=profile(),connected=Boolean(p.siteProfile);const rows=connected?[...document.querySelectorAll('.service-duration')].map(input=>({id:input.dataset.serviceId,duration:Number(input.value)})):[...document.querySelectorAll('.service-row')].map(row=>({id:row.dataset.serviceId,name:row.querySelector('[data-field="name"]').value.trim(),duration:Number(row.querySelector('[data-field="duration"]').value),units:Number(row.querySelector('[data-field="units"]').value)}));if(!rows.length)throw new Error('Potrebna je bar jedna usluga.');for(const row of rows){if(!Number.isInteger(row.duration)||row.duration<5||row.duration>1440)throw new Error('Trajanje mora biti od 5 do 1440 minuta.');const service=p.services.find(x=>x.id===row.id);if(!service)throw new Error('Usluga nije pronađena.');if(!connected&&(!row.name||row.name.length>90||!Number.isInteger(row.units)||row.units<1||row.units>p.capacity))throw new Error('Proveri naziv usluge i potreban kapacitet.');Object.assign(service,row);}persist();refresh();toast('Usluge sačuvane.');}
+function saveProfileName(){const p=profile(),name=byId('set-name').value.trim();if(name.length<2||name.length>100)throw new Error('Unesi naziv firme (2–100 znakova).');p.name=name;persist();stateUI.settingsEditor='';refresh();toast('Naziv firme sačuvan.');}function serviceRow(s={id:makeId(),name:'',duration:30,units:1}){return `<div class="service-row" data-service-id="${safe(s.id)}"><input class="field" data-field="name" maxlength="90" placeholder="Naziv usluge" value="${safe(s.name)}" aria-label="Naziv usluge"><input class="field" data-field="duration" type="number" min="5" max="1440" step="5" value="${s.duration}" aria-label="Trajanje u minutima"><input class="field" data-field="units" type="number" min="1" max="99" value="${s.units||1}" aria-label="Potrebni resursi"><button class="service-remove" data-action="remove-service" title="Ukloni uslugu" aria-label="Ukloni uslugu">×</button></div>`;}
 function saveSettings(){const p=profile();const name=byId('set-name').value.trim(),capacity=Number(byId('set-capacity').value);if(name.length<2||name.length>100)throw new Error('Unesi naziv firme (2–100 znakova).');if(!Number.isInteger(capacity)||capacity<1||capacity>99)throw new Error('Kapacitet mora biti od 1 do 99.');
   const hours=[...document.querySelectorAll('.hours-row')].map(row=>{const enabled=row.querySelector('[data-field="enabled"]').checked,start=row.querySelector('[data-field="start"]').value,end=row.querySelector('[data-field="end"]').value;if(enabled&&(!isTime(start)||!isTime(end)||toMin(start)>=toMin(end)))throw new Error(`Radno vreme: proveri dan ${DAYS[Number(row.dataset.day)]}.`);return {enabled,start,end};});
   const services=[...document.querySelectorAll('.service-row')].map(row=>{const name=row.querySelector('[data-field="name"]').value.trim(),duration=Number(row.querySelector('[data-field="duration"]').value),units=Number(row.querySelector('[data-field="units"]').value);if(!name||name.length>90||!Number.isInteger(duration)||duration<5||duration>1440||!Number.isInteger(units)||units<1||units>capacity)throw new Error('Usluge: proveri naziv, trajanje (5–1440 min) i kapacitet.');return {id:row.dataset.serviceId,name,duration,units};});
@@ -221,7 +229,7 @@ function checkNew(){const p=profile(),s=serviceOf(byId('new-service').value),el=
   el.className=`feedback ${r.ok?'':'bad'}`;el.textContent=r.ok?'✓ Termin je trenutno slobodan. Potvrda je ipak potrebna.':`! ${r.reason} Zahtev možeš sačuvati, pa ponuditi alternativu.`;
 }
 function createNew(e){e.preventDefault();try{const p=profile();const fd=new FormData(e.currentTarget);const b=normalizeRequest(Object.fromEntries(fd),p);if(state.bookings.some(x=>x.id===b.id))throw new Error('Ovaj zahtev već postoji.');state.bookings.push(b);persist();byId('request-dialog').close();stateUI.view='reservations';stateUI.reservationTab='requests';refresh();openDetails(b.id);toast('Zahtev sačuvan. Termin još nije potvrđen.');}catch(e){toast(e.message);}}
-function detailGrid(b){return `<div class="detail-grid"><div class="detail-cell"><small>Klijent</small><strong>${safe(b.clientName)}</strong></div><div class="detail-cell"><small>Telefon</small><strong>${safe(b.phone||'Nije unet')}</strong></div><div class="detail-cell"><small>Usluga</small><strong>${safe(b.serviceName)}</strong></div><div class="detail-cell"><small>Traženi termin</small><strong>${safe(formatDate(b.date))}, ${safe(b.time)}</strong></div><div class="detail-cell"><small>Trajanje / resursi</small><strong>${safe(b.duration)} min / ${safe(b.units)}</strong></div><div class="detail-cell"><small>Status</small><strong>${safe(statName[b.status])}</strong></div></div>${b.notes?`<div class="detail-cell"><small>Napomena</small><strong style="white-space:pre-wrap;font-weight:500">${safe(b.notes)}</strong></div>`:''}`;}
+function detailGrid(b){const code=b.reservationCode||'Starija rezervacija';return `<div class="detail-grid"><div class="detail-cell"><small>Klijent</small><strong>${safe(b.clientName)}</strong></div><div class="detail-cell"><small>Telefon</small><strong>${safe(b.phone||'Nije unet')}</strong></div><div class="detail-cell"><small>Rezervacioni kod</small><strong>${safe(code)}</strong></div><div class="detail-cell"><small>Usluga</small><strong>${safe(b.serviceName)}</strong></div><div class="detail-cell"><small>Traženi termin</small><strong>${safe(formatDate(b.date))}, ${safe(b.time)}</strong></div><div class="detail-cell"><small>Trajanje / resursi</small><strong>${safe(b.duration)} min / ${safe(b.units)}</strong></div><div class="detail-cell"><small>Status</small><strong>${safe(statName[b.status])}</strong></div></div>${b.notes?`<div class="detail-cell"><small>Napomena</small><strong style="white-space:pre-wrap;font-weight:500">${safe(b.notes)}</strong></div>`:''}`;}
 function openDetails(id){const b=reservation(id);if(!b)return;stateUI.selectedId=id;stateUI.proposal=b.proposal?clone(b.proposal):null;
   const original=slotCheck(profile(),bookings(),{...b,excludeId:b.id});const options=alternatives(profile(),bookings(),b,4,14);
   byId('booking-details').innerHTML=`<div class="dialog-head"><div><div class="eyebrow">ZAHTEV / ${safe(b.source==='manual'?'RUČNI UNOS':'TEST')}</div><h2>${safe(b.clientName)}</h2></div><button class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
@@ -340,16 +348,18 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     }
     if(a==='choose-day'){stateUI.date=btn.dataset.date;stateUI.view='reservations';stateUI.reservationTab='day';refresh();return;}
     if(a==='filter'){stateUI.filter=btn.dataset.filter;refresh();return;}
+    if(a==='settings-open'){stateUI.settingsEditor=btn.dataset.editor;refresh();return;}
+    if(a==='settings-close'){stateUI.settingsEditor='';refresh();return;}
+    if(a==='save-hours')return saveHours();
+    if(a==='save-rules')return saveRules();
+    if(a==='save-services')return saveServices();
+    if(a==='save-profile-name')return saveProfileName();
     if(a==='view-requests'){stateUI.view='reservations';stateUI.reservationTab='requests';refresh();return;}
     if(a==='reservation-tab'){stateUI.reservationTab=btn.dataset.tab;refresh();return;}
     if(a==='home-reservations'){stateUI.view='reservations';stateUI.reservationTab=btn.dataset.tab||'requests';refresh();return;}
     if(a==='home-settings'){stateUI.view='settings';refresh();return;}
     if(a==='detail')return openDetails(btn.dataset.id);
     if(a==='close-dialog'){btn.closest('dialog').close();return;}
-    if(a==='add-profile'){
-      const name=window.prompt('Naziv nove firme / radnog kalendara:','Nova firma');if(!name)return;if(name.trim().length<2||name.trim().length>100)throw new Error('Naziv mora imati 2–100 znakova.');
-      const p=makeProfile(name.trim());p.services=[{id:makeId(),name:'Osnovna usluga',duration:30,units:1}];state.profiles.push(p);state.activeProfileId=p.id;await persist();refresh();toast('Novi nezavisni kalendar je napravljen.');return;
-    }
     if(a==='add-service'){byId('service-list').insertAdjacentHTML('beforeend',serviceRow());return;}
     if(a==='remove-service'){if(document.querySelectorAll('.service-row').length===1)throw new Error('Mora ostati najmanje jedna usluga.');btn.closest('.service-row').remove();return;}
     if(a==='save-settings')return saveSettings();
@@ -366,22 +376,25 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(['confirm-booking','save-proposal','confirm-proposal','cancel-booking','decline-booking'].includes(a))return mutateBooking(a);
     const b=reservation(stateUI.selectedId);
     if(a==='share-whatsapp'||a==='share-viber')return openChannel(b,a==='share-whatsapp'?'whatsapp':'viber');
-    if(a==='share-copy'&&[STATUS.CONFIRMED,STATUS.PROPOSED].includes(b?.status))return copyText(messageFor(b,b.status===STATUS.PROPOSED?'proposed':'confirmed'));
+    if(a==='share-copy'&&communicationType(b?.status))return copyText(messageFor(b,communicationType(b.status)));
     if(a==='ics'){download(`termin_${b.date}_${b.time.replace(':','-')}.ics`,'text/calendar;charset=utf-8',icsFor(profile(),b));toast('Kalendar događaj preuzet.');return;}
   }catch(err){toast(err.message||'Došlo je do greške.');}
 }
-async function init(){state=(await readState())||demoState();
-  try{validateImport(state);}catch(e){byId('notice').textContent='Lokalni podaci su neispravni: '+e.message+' Izvezi kopiju ako je moguće.';state=demoState();}
+async function init(){state=(await readState())||emptyPortalState();
+  if(state.profiles.length){
+    try{validateImport(state);}catch(e){byId('notice').textContent='Lokalni podaci su neispravni: '+e.message+' Izvezi kopiju ako je moguće.';return;}
+    const activeId=activePortalProfileId(state.profiles,state.activeProfileId);
+    if(state.activeProfileId!==activeId){state.activeProfileId=activeId;await persist();}
+  }
   if('BroadcastChannel' in window){channel=new BroadcastChannel(CHANNEL);channel.onmessage=()=>{byId('notice').textContent='Podaci su izmenjeni u drugoj kartici. Osveži stranicu pre sledeće izmene kako ne bi prepisao novije podatke.';};}
   document.addEventListener('click',onClick);
   document.querySelectorAll('button[data-view]').forEach(b=>b.addEventListener('click',()=>{stateUI.view=b.dataset.view;refresh();}));
-  byId('business-switch').addEventListener('change',e=>{state.activeProfileId=e.target.value;persist();refresh();});
   byId('request-form').addEventListener('submit',createNew);
   for(const id of ['new-service','new-date','new-time','new-units'])byId(id).addEventListener('change',()=>{if(id==='new-service')byId('new-units').value=serviceOf(byId('new-service').value)?.units||1;checkNew();});
   byId('backup-file').addEventListener('change',async e=>{try{await importState(e.target.files[0]);}catch(err){toast('Uvoz nije uspeo: '+err.message);}finally{e.target.value='';}});
   if(import.meta.env.PROD && 'serviceWorker' in navigator)serviceWorkerReady=navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>null);
   refresh();
-  await handleDirectLink();
+  if(profile())await handleDirectLink();
   pollTimer=setInterval(()=>syncQueuedRequests({silent:true}).catch(()=>{}),30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncQueuedRequests({silent:true}).catch(()=>{});});
   window.addEventListener('online',()=>syncQueuedRequests({silent:true}).catch(()=>{}));

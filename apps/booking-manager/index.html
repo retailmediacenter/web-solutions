@@ -7,7 +7,7 @@
 <div id="app" class="shell">
   <aside class="sidebar">
     <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>RMC <span>BUSINESS PORTAL</span></strong><small>RMC WEB SOLUTIONS / V43.3</small></div></div>
-    <div class="workspace"><label class="small-label" for="business-switch">AKTIVNA FIRMA</label><select id="business-switch" aria-label="Izbor firme"></select></div>
+    <div class="workspace"><span class="small-label">AKTIVNA FIRMA</span><strong id="business-name">Povežite firmu</strong></div>
     <nav class="nav" aria-label="Glavna navigacija">
       <button type="button" data-view="home" class="nav-item active"><span class="nav-icon">⌂</span><span>Početna</span></button>
       <button type="button" data-view="reservations" class="nav-item"><span class="nav-icon">▦</span><span>Rezervacije</span><span id="pending-count" class="nav-badge" hidden>0</span></button>
@@ -18,8 +18,7 @@
     <button type="button" class="side-backup" data-action="export">↧ &nbsp;Sačuvaj rezervnu kopiju</button>
   </aside>
   <main class="main">
-    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BUSINESS PORTAL</p><h1 id="page-title">Poslovni pregled</h1><p class="page-subtitle" id="page-subtitle">Pregled zahteva i aktivnosti na jednom mestu.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button><button type="button" class="btn btn-light" data-action="import-secure">Uvezi Booking link</button></header>
-    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>Business Portal je lokalni radni prostor firme.</strong> Povezivanje sajta, rezervacije i obaveštenja ostaju vezani za ovaj uređaj.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
+    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BUSINESS PORTAL</p><h1 id="page-title">Poslovni pregled</h1><p class="page-subtitle" id="page-subtitle">Pregled zahteva i aktivnosti na jednom mestu.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button></header>
     <div id="notice" aria-live="polite"></div><div id="main-view"></div>
   </main>
 </div>

@@ -22,3 +22,15 @@ export function whatsappUrl(phone,message){
 export function viberUrl(message){
   return `viber://forward?text=${encodeURIComponent(message)}`;
 }
+
+export function communicationType(status){
+  return status==='confirmed'?'confirmed':status==='proposed'?'proposed':status==='declined'?'declined':'';
+}
+export function reservationMessage({type,businessName,serviceName,dateLabel,time,reservationCode}){
+  const name=String(businessName||'').trim()||'Vaša firma';
+  const service=String(serviceName||'').trim()||'izabranu uslugu';
+  const code=String(reservationCode||'').trim()||'nije dodeljen';
+  if(type==='proposed')return `Poštovani, predlažemo novi termin za uslugu ${service}: ${dateLabel} u ${time}. Vaš rezervacioni kod je ${code}. Molimo odgovorite da li Vam termin odgovara. ${name}.`;
+  if(type==='declined')return `Poštovani, nažalost traženi termin za uslugu ${service}, ${dateLabel} u ${time}, nije dostupan. Vaš rezervacioni kod je ${code}. ${name}.`;
+  return `Poštovani, potvrđujemo rezervaciju za uslugu ${service}, ${dateLabel} u ${time}. Vaš rezervacioni kod je ${code}. ${name}.`;
+}

@@ -24,12 +24,13 @@ test('Push API calls stay authenticated and Manager never receives a private VAP
  assert.match(calls[0][0],/push\/public-key/);assert.equal(calls[0][1].headers.Authorization,`Bearer ${conn.accessToken}`);assert.match(calls[1][0],/push\/subscriptions/);assert.equal(JSON.parse(calls[1][1].body).subscription.endpoint,'https://push.example.test/x');
 });
 test('profil sa sajta inicijalizuje usluge bez menjanja lokalnih pravila ili dupliranja',()=>{
- const profile={id:'local',name:'Stari naziv',capacity:3,slotStep:15,buffer:10,hours:[{enabled:true,start:'08:00',end:'16:00'}],breaks:{enabled:true,start:'12:00',end:'12:30'},closedDates:['2026-12-31'],services:[{id:'local-cut',name:'Šišanje',duration:30,units:1}]};
+ const profile={id:'local',name:'Stari naziv',capacity:3,slotStep:15,buffer:10,hours:[{enabled:true,start:'08:00',end:'16:00'}],breaks:{enabled:true,start:'12:00',end:'12:30'},closedDates:['2026-12-31'],services:[{id:'local-cut',name:'Šišanje',duration:30,units:1},{id:'legacy',name:'Stara lokalna usluga',duration:45,units:1}]};
  const source={version:1,business:{name:'Coka frizerka',phone:'+381601234567',city:'Beograd'},services:[{id:'hairsalon-1',name:'Šišanje'},{id:'hairsalon-2',name:'Farbanje'}]};
  applySiteProfile(profile,source);applySiteProfile(profile,source);
  assert.equal(profile.name,'Coka frizerka');assert.equal(profile.capacity,3);assert.equal(profile.buffer,10);assert.equal(profile.hours[0].start,'08:00');
- assert.equal(profile.services.length,2);assert.equal(profile.services[0].id,'local-cut');assert.equal(profile.services[0].siteServiceId,'hairsalon-1');
- assert.equal(profile.services[1].siteServiceId,'hairsalon-2');
+ assert.equal(profile.services.length,3);assert.equal(profile.services[0].id,'local-cut');assert.equal(profile.services[0].siteServiceId,'hairsalon-1');assert.equal(profile.services[0].duration,30);
+ assert.equal(profile.services.find(service=>service.siteServiceId==='hairsalon-2')?.name,'Farbanje');
+ assert.equal(profile.services.find(service=>service.id==='legacy')?.duration,45);assert.equal(profile.siteProfile.business.phone,'+381601234567');
 });
 test('stable source service ID wins when a service label changes',async()=>{
  const stable={...req,serviceId:'hairsalon-1',serviceName:'Novo ime'};

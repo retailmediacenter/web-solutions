@@ -69,6 +69,7 @@ export async function pullInbox({connection,profile,bookings,save,normalize,fetc
  let added=0;
  for(const r of result.requests){
   if(!r||typeof r.requestId!=='string'||!/^[0-9a-f-]{36}$/i.test(r.requestId))throw new Error('Neispravan ID zahteva.');
+  if(r.reservationCode!=null&&(typeof r.reservationCode!=='string'||!/^[A-HJ-NP-Z2-9]{8}$/.test(r.reservationCode)))throw new Error('Neispravan rezervacioni kod.');
   const existing=bookings.find(b=>b.sourceSiteId===siteId&&b.sourceRequestId===r.requestId);
   if(!existing){
    const service=(r.serviceId&&profile.services.find(s=>s.siteServiceId===r.serviceId))||profile.services.find(s=>sameName(s.name,r.serviceName));
@@ -76,7 +77,7 @@ export async function pullInbox({connection,profile,bookings,save,normalize,fetc
    // Never acknowledge a malformed request. The business can adjust its service list.
    const candidate=normalize({serviceId:service.id,clientName:r.clientName,phone:r.phone,date:r.date,time:r.time,
       notes:r.note||'',units:service.units,source:'site-queue'},profile);
-   candidate.sourceSiteId=siteId;candidate.sourceRequestId=r.requestId;
+   candidate.sourceSiteId=siteId;candidate.sourceRequestId=r.requestId;if(r.reservationCode)candidate.reservationCode=r.reservationCode;
    bookings.push(candidate);
    try{await save();}catch(e){bookings.splice(bookings.indexOf(candidate),1);throw e;}
    added++;
