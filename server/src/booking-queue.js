@@ -10,6 +10,7 @@ const code=()=>{
   return `${raw.slice(0,4)}-${raw.slice(4,8)}-${raw.slice(8)}`;
 };
 const id=()=>randomBytes(18).toString('base64url');
+const reservationCode=()=>{const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const bytes=randomBytes(8);return [...bytes].map(n=>alphabet[n%alphabet.length]).join('');};
 const key=(...parts)=>PREFIX+parts.join(':');
 function redisFromEnvironment(env=process.env){
   const url=env.UPSTASH_REDIS_REST_URL,token=env.UPSTASH_REDIS_REST_TOKEN;
@@ -27,6 +28,7 @@ const ensureSite=x=>{if(typeof x!=='string'||!/^[A-Za-z0-9_-]{24}$/.test(x))thro
 const ensureSecret=x=>{if(typeof x!=='string'||!/^[A-Za-z0-9_-]{43}$/.test(x))throw err(401,'Neispravan pristup.');return x;};
 const ensureCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{2}$/.test(x))throw err(400,'Kod mora imati format XXXX-XXXX-XX.');return x;};
 const ensureRequestId=x=>{if(typeof x!=='string'||!/^[0-9a-f-]{36}$/i.test(x))throw err(400,'Neispravan ID zahteva.');return x.toLowerCase();};
+const ensureReservationCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{8}$/.test(x))throw err(500,'Neispravan rezervacioni kod.');return x;};
 const profileText=(value,max=180)=>String(value??'').trim().slice(0,max);
 function parseBookingProfile(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Nedostaje Booking profil sajta.');
@@ -55,7 +57,7 @@ function parseBooking(raw){
  return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:raw.time,duration:raw.duration,note};
 }
 // Small injectable command adapter allows offline, deterministic tests without secrets.
-export function createBookingQueue(redis){
+export function createBookingQueue(redis,{makeReservationCode=reservationCode}={}){
  redis=redis||((...args)=>redisFromEnvironment()(...args));
  async function issue(profile=null){
    const siteId=id();const pairingCode=code();
@@ -83,16 +85,32 @@ export function createBookingQueue(redis){
  }
  async function submit(siteId,raw){
    ensureSite(siteId);
-   // No unpaired site may accumulate requests in Redis.
    if(!await redis('EXISTS',key('owner',siteId)))throw err(404,'Sajt nije povezan sa Booking Managerom.');
-   const booking=parseBooking(raw),record=JSON.stringify({...booking,receivedAt:new Date().toISOString()});
-   // Lua transaction: duplicate request IDs cannot create duplicate inbox entries.
+   const booking=parseBooking(raw),requestCodeKey=key('request-code',siteId,booking.requestId);
+   const knownCode=await redis('GET',requestCodeKey);
+   if(knownCode)return {requestId:booking.requestId,reservationCode:ensureReservationCode(knownCode),duplicate:true};
+   let assignedCode='';
+   for(let attempt=0;attempt<8;attempt++){
+     const candidate=ensureReservationCode(makeReservationCode());
+     const locked=await redis('SET',key('reservation',siteId,candidate),booking.requestId,'EX',QUEUE_TTL,'NX');
+     if(locked){assignedCode=candidate;break;}
+   }
+   if(!assignedCode)throw err(503,'Nije moguće dodeliti rezervacioni kod. Pokušajte ponovo.');
+   const record=JSON.stringify({...booking,reservationCode:assignedCode,receivedAt:new Date().toISOString()});
    const lua=`local item=KEYS[1]; local idx=KEYS[2]; if redis.call('EXISTS',item)==1 then return 0 end; if redis.call('ZCARD',idx)>=250 then return -1 end; redis.call('SET',item,ARGV[1],'EX',ARGV[2]); redis.call('ZADD',idx,ARGV[3],ARGV[4]); redis.call('EXPIRE',idx,ARGV[2]); return 1`;
-   const result=await redis('EVAL',lua,2,key('msg',siteId,booking.requestId),key('index',siteId),record,QUEUE_TTL,Date.now(),booking.requestId);
-   if(result===-1)throw err(429,'Sanduče je trenutno puno.');
-   return {requestId:booking.requestId,duplicate:result===0};
- }
- async function pending(siteId,accessToken){
+   let result;try{result=await redis('EVAL',lua,2,key('msg',siteId,booking.requestId),key('index',siteId),record,QUEUE_TTL,Date.now(),booking.requestId);}catch(error){await redis('DEL',key('reservation',siteId,assignedCode));throw error;}
+   if(result===-1){await redis('DEL',key('reservation',siteId,assignedCode));throw err(429,'Sanduče je trenutno puno.');}
+   if(result===0){
+     await redis('DEL',key('reservation',siteId,assignedCode));
+     const stored=await redis('GET',key('msg',siteId,booking.requestId));
+     let previous;try{previous=JSON.parse(stored);}catch{throw err(503,'Postojeći zahtev nema čitljiv rezervacioni kod.');}
+     const previousCode=ensureReservationCode(previous?.reservationCode);
+     await redis('SET',requestCodeKey,previousCode,'EX',QUEUE_TTL);
+     return {requestId:booking.requestId,reservationCode:previousCode,duplicate:true};
+   }
+   await redis('SET',requestCodeKey,assignedCode,'EX',QUEUE_TTL);
+   return {requestId:booking.requestId,reservationCode:assignedCode,duplicate:false};
+ } async function pending(siteId,accessToken){
    await authenticate(siteId,accessToken);
    const ids=await redis('ZRANGE',key('index',siteId),0,249);
    if(!ids?.length)return [];

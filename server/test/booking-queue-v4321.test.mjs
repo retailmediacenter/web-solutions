@@ -40,12 +40,23 @@ test('pairing transports the source-owned business profile only to the Manager c
 test('booking arrives once, persists until acknowledged, and foreign manager cannot read it',async()=>{
  const q=createBookingQueue(mockRedis());const a=await q.issue();const b=await q.issue();
  const ca=await q.claim(a.pairingCode),cb=await q.claim(b.pairingCode);
- assert.deepEqual(await q.submit(a.siteId,booking),{requestId:booking.requestId,duplicate:false});
- assert.deepEqual(await q.submit(a.siteId,booking),{requestId:booking.requestId,duplicate:true});
+ const first=await q.submit(a.siteId,booking);assert.equal(first.requestId,booking.requestId);assert.match(first.reservationCode,/^[A-HJ-NP-Z2-9]{8}$/);assert.equal(first.duplicate,false);
+ const repeated=await q.submit(a.siteId,booking);assert.deepEqual(repeated,{requestId:booking.requestId,reservationCode:first.reservationCode,duplicate:true});
  await assert.rejects(()=>q.pending(a.siteId,cb.accessToken),/nije dozvoljen/);
  assert.equal((await q.pending(a.siteId,ca.accessToken)).length,1);
  await q.acknowledge(a.siteId,ca.accessToken,booking.requestId);
  assert.equal((await q.pending(a.siteId,ca.accessToken)).length,0);
  await assert.rejects(()=>q.submit('bad',booking),/identifikator/);
  await assert.rejects(()=>q.submit(b.siteId,{...booking,note:'x'.repeat(400)}),/napomenu/);
+});
+
+test('reservation code is unique per site and remains stable after ACK',async()=>{
+ const codes=['ABCDEFGH','ABCDEFGH','JKLMNPQ2'];const q=createBookingQueue(mockRedis(),{makeReservationCode:()=>codes.shift()});
+ const issued=await q.issue(),claimed=await q.claim(issued.pairingCode);
+ const first=await q.submit(issued.siteId,booking);
+ const second=await q.submit(issued.siteId,{...booking,requestId:'cb716e15-3a44-4d11-8077-a34d576ceff2'});
+ assert.equal(first.reservationCode,'ABCDEFGH');assert.equal(second.reservationCode,'JKLMNPQ2');
+ await q.acknowledge(issued.siteId,claimed.accessToken,booking.requestId);
+ assert.deepEqual(await q.submit(issued.siteId,booking),{requestId:booking.requestId,reservationCode:'ABCDEFGH',duplicate:true});
+ assert.equal((await q.pending(issued.siteId,claimed.accessToken)).length,1);
 });

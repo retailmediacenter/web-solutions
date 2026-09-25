@@ -85,7 +85,7 @@ form.addEventListener('submit',async e=>{
    const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,name:entry.name,phone:entry.phone,note:extra});
    if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
    const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:entry.time,note:extra});
-   status.textContent='Zahtev je poslat firmi. Referenca: '+result.requestId+'. Termin još nije potvrđen.';
+   status.textContent='Zahtev je poslat firmi. Rezervacioni kod: '+result.reservationCode+'. Termin još nije potvrđen.';
    dialog.showModal();return;
   }catch(err){status.textContent='Zahtev NIJE potvrđeno poslat: '+err.message+' Kontaktirajte firmu telefonom ako je hitno.';dialog.showModal();return;}
  }

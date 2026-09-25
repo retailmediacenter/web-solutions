@@ -19,7 +19,7 @@
    const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({siteId:transport.siteId,booking}),cache:'no-store',signal:AbortSignal.timeout(12000)});
    let result;try{result=await response.json();}catch{throw new Error('Server nije vratio potvrdu rezervacije. Proverite sa firmom pre ponovnog slanja.');}
    if(!response.ok)throw new Error(result?.error||'Server nije prihvatio rezervaciju.');
-   if(result.requestId!==booking.requestId)throw new Error('Neispravna potvrda servera. Proverite sa firmom pre ponovnog slanja.');
+   if(result.requestId!==booking.requestId||!/^[A-HJ-NP-Z2-9]{8}$/.test(result.reservationCode||''))throw new Error('Neispravna potvrda servera. Proverite sa firmom pre ponovnog slanja.');
    return result;
  }
  window.RMCBookingSubmit={send};

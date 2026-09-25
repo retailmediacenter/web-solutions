@@ -9,7 +9,7 @@ test('public sender uses site ID only, never manager access token',async()=>{
  const window={};let called=null;
  const fakeCrypto={randomUUID:()=> '12345678-1234-4234-8234-123456789012'};
  runInNewContext(read('booking-submit.js'),{window,URL,crypto:fakeCrypto,AbortSignal,
- fetch:async(url,options)=>{called={url,options};return {ok:true,json:async()=>({requestId:fakeCrypto.randomUUID()})};}});
+ fetch:async(url,options)=>{called={url,options};return {ok:true,json:async()=>({requestId:fakeCrypto.randomUUID(),reservationCode:'ABCDEFGH'})};}});
  await window.RMCBookingSubmit.send({siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'},
  {requestId:'12345678-1234-4234-8234-123456789012',clientName:'Test',phone:'060123',serviceId:'hairsalon-1',serviceName:'Šišanje',date:'2026-10-01',time:'12:30',note:''});
  assert.equal(called.url,'https://api.example.org/api/booking/requests');
@@ -21,7 +21,7 @@ test('public sender uses site ID only, never manager access token',async()=>{
 test('public sender preserves a supplied request ID across a retry',async()=>{
  const window={},sent=[],requestId='12345678-1234-4234-8234-123456789012';
  runInNewContext(read('booking-submit.js'),{window,URL,crypto:{randomUUID:()=> 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'},AbortSignal,
-  fetch:async(_url,options)=>{const booking=JSON.parse(options.body).booking;sent.push(booking.requestId);return {ok:true,json:async()=>({requestId:booking.requestId})};}});
+  fetch:async(_url,options)=>{const booking=JSON.parse(options.body).booking;sent.push(booking.requestId);return {ok:true,json:async()=>({requestId:booking.requestId,reservationCode:'ABCDEFGH'})};}});
  const input={requestId,clientName:'Test',phone:'060123',serviceId:'hairsalon-1',serviceName:'Šišanje',date:'2026-10-01',time:'12:30',note:''};
  await window.RMCBookingSubmit.send({siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'},input);
  await window.RMCBookingSubmit.send({siteId:'AbCdEfGhIjKlMnOpQrStUvWx',apiBaseUrl:'https://api.example.org'},input);
