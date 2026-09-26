@@ -78,7 +78,7 @@ export function resolveServiceSiteConfig(input,STYLES){
         mode:source.mode,emphasis:typeof answers.emphasis==='string'?answers.emphasis:''},
       style,modules,contact:{phone:cleanPhone},
       capabilities:{serviceProfile:true,bookingEnabled:enabled,bookingMode:mode,
-        booking:{enabled,mode,fields:enabled?bookingFields(businessId,source.mode):{service:true,note:true},
+        booking:{enabled,mode,timingMode:source.mode==='request-slot'?'DAY_PART':'EXACT_TIME',fields:enabled?bookingFields(businessId,source.mode):{service:true,note:true},
           offerings:profile.offerings,services:bookingServices,confirmation:'request'}},
       assets:{assetRoot:facts.assetRoot,assetRoles:[...(facts.assetRoles||[])]}
     },

@@ -69,17 +69,24 @@ test('API/Redis booking dialog renders only the compact reservation confirmation
  assert.match(html,/Zahtev je uspešno poslat!/);
  assert.match(html,/bookingReservationCode/);
  assert.match(html,/data-booking-retry/);
+ assert.doesNotMatch(html,/<dialog id="requestDialog"[^>]*booking-submit-dialog[^>]*><button[^>]*dialog-close/);
  assert.doesNotMatch(html,/Poruka je spremna/);
  assert.doesNotMatch(html,/Kopiraj zahtev/);
  assert.doesNotMatch(html,/viberRequest/);
  assert.doesNotMatch(html,/waRequest/);
  assert.doesNotMatch(html,/requestId/);
 });
-test('legacy non-API booking dialog remains separate from the API/Redis confirmation',()=>{
+test('inactive Booking modal states remain hidden while the success state is shown',()=>{
+ const css=read('booking.css');
+ assert.match(css,/\.booking-submit-state section\[hidden\]\{display:none\}/);
+});
+test('unpaired Advisor preview is an honest, non-sending Booking demonstration',()=>{
  const p=buildSitePayload({businessId:'hair-salon',businessName:'Frizer Nesa',answers:{acceptsTimeRequests:true}});
  const html=renderHtml(p);
- assert.match(html,/Poruka je spremna/);
- assert.match(html,/Kopiraj zahtev/);
+ assert.match(html,/bookingSubmitPreview/);
+ assert.match(html,/DEMONSTRACIONI PREGLED/);
+ assert.doesNotMatch(html,/Kopiraj zahtev/);
+ assert.doesNotMatch(html,/booking-link\.js/);
 });
 test('wine tastings share a complete Booking profile, stable services and compact D5 dialog',()=>{
  const p=buildSitePayload({businessId:'wine-shop',businessName:'Winobaza',style:'modern',goal:'purchase',answers:{wineTastings:true}});

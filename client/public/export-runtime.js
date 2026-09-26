@@ -200,13 +200,16 @@
       const info=Object.fromEntries(new FormData(tastingForm).entries());
       if(info.date<local){tastingForm.elements.date.setCustomValidity('Izaberite današnji ili budući datum.');tastingForm.reportValidity();return;}
       tastingForm.elements.date.setCustomValidity('');
+      // No transport in the React preview: demonstrate the form without sending data.
+      if(!site.bookingTransport&&!site.bookingManager?.token){$('wineBookingPreview').hidden=false;$('wineBookingSending').hidden=true;$('wineBookingSuccess').hidden=true;$('wineBookingError').hidden=true;show($('bookingDialog'));return;}
       bookingPrepared=['Pozdrav, želim da pošaljem zahtev za degustaciju vina:',
         `Vrsta: ${info.experience}`,`Datum: ${info.date}`,`Željeno vreme: ${info.time}`,`Broj osoba: ${info.partySize}`,
         `Ime: ${info.name}`,`Telefon: ${info.phone}`,info.note?`Napomena: ${info.note}`:'',
         'Molim vas da potvrdite da li je termin dostupan.'].filter(Boolean).join('\n');
       if(site.bookingTransport&&site.booking?.enabled){
-        const dialog=$('bookingDialog'),sending=$('wineBookingSending'),success=$('wineBookingSuccess'),failed=$('wineBookingError');
-        const state=name=>{sending.hidden=name!=='sending';success.hidden=name!=='success';failed.hidden=name!=='error';show(dialog);};
+        const dialog=$('bookingDialog'),preview=$('wineBookingPreview'),sending=$('wineBookingSending'),success=$('wineBookingSuccess'),failed=$('wineBookingError');
+        const state=name=>{preview.hidden=true;sending.hidden=name!=='sending';success.hidden=name!=='success';failed.hidden=name!=='error';show(dialog);};
+        if(('Broj osoba: '+String(info.partySize||'1')+'; '+String(info.note||'')).length>700){$('wineBookingErrorText').textContent='Napomena je predugačka. Skratite tekst.';state('error');return;}
         const services=Array.isArray(site.booking.services)?site.booking.services:[];
         const serviceId=services.find(item=>item.name===info.experience)?.id||'';
         const fingerprint=JSON.stringify({serviceId,date:info.date,time:info.time,name:info.name,phone:info.phone,partySize:info.partySize,note:info.note});

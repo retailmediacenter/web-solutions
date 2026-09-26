@@ -33,7 +33,6 @@ function App(){
   const [definition,setDefinition]=useState(null),[step,setStep]=useState(0),[goal,setGoal]=useState('purchase');
   const [answers,setAnswers]=useState({}),[style,setStyle]=useState('modern'),[showWelcome,setShowWelcome]=useState(false);
   const [businessName,setBusinessName]=useState(''),[contactPhone,setContactPhone]=useState(''),[externalBookingUrl,setExternalBookingUrl]=useState('');
-  const [bookingLinkCode,setBookingLinkCode]=useState('');
   const [email,setEmail]=useState(''),[city,setCity]=useState(''),[address,setAddress]=useState(''),[hours,setHours]=useState('');
   const [website,setWebsite]=useState(''),[whatsapp,setWhatsapp]=useState(''),[viber,setViber]=useState('');
   const [extraLocations,setExtraLocations]=useState([]);
@@ -95,10 +94,10 @@ function App(){
   const selectedInfo=supportedBusinesses.find(x=>x.id===selectedId);
   const count=steps.length+1;
   const progress=definition?Math.round(((step+1)/count)*100):7;
-  const input=useMemo(()=>({businessId:definition?.id||selectedId,businessName,description,goal,style,bookingPairing:bookingLinkCode.trim(),
+  const input=useMemo(()=>({businessId:definition?.id||selectedId,businessName,description,goal,style,
     answers:{...answers,showWelcome,contactPhone,externalBookingUrl},
     businessData:{locationMode,businessName,phone:contactPhone,email,city,address:locationMode==='physical'?address:'',hours,website,whatsapp,viber,locations:locationMode==='physical'?extraLocations:[]}}),
-    [definition,selectedId,businessName,description,goal,style,bookingLinkCode,answers,showWelcome,contactPhone,externalBookingUrl,email,city,address,hours,website,whatsapp,viber,extraLocations,locationMode]);
+    [definition,selectedId,businessName,description,goal,style,answers,showWelcome,contactPhone,externalBookingUrl,email,city,address,hours,website,whatsapp,viber,extraLocations,locationMode]);
   async function json(path,opts){
     const response=await fetch(apiUrl(path),opts);
     let data;try{data=await response.json()}catch{throw new Error('Server nije vratio ispravan odgovor.');}
@@ -115,7 +114,7 @@ function App(){
       if(!chosen){throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');}
       if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije migrirana. Izaberite neku od podržanih delatnosti.');
       const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
-      setSelectedId(chosen);setDefinition(def);setAnswers({});setGoal('purchase');setStyle('modern');setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setBookingLinkCode('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
+      setSelectedId(chosen);setDefinition(def);setAnswers({});setGoal('purchase');setStyle('modern');setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
   }
   function pick(key,value){
@@ -148,24 +147,6 @@ function App(){
       if(pairingCode)setExportPairing({code:pairingCode,minutes:Math.round(expires/60)});
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
-  // Sandbox-preserving preview crypto broker. Only our current srcDoc iframe
-  // may ask the trusted localhost parent to encrypt an already validated request.
-  useEffect(()=>{
-    const handle=async event=>{
-      if(!previewFrame.current||event.source!==previewFrame.current.contentWindow)return;
-      const d=event.data;
-      if(d?.type!=='RMC_PREVIEW_CRYPTO_REQUEST'||typeof d.nonce!=='string'||d.nonce.length>100)return;
-      if(JSON.stringify(d).length>6500)return;
-      const reply={type:'RMC_PREVIEW_CRYPTO_REPLY',nonce:d.nonce};
-      try{
-        if(!window.RMCBookingLink)throw new Error('Modul za zaštitu podataka nije učitan.');
-        reply.link=await window.RMCBookingLink.create(d.payload,d.token,d.managerUrl);
-      }catch(e){reply.error=String(e?.message||'Greška pri šifrovanju.');}
-      event.source?.postMessage(reply,'*');
-    };
-    window.addEventListener('message',handle);
-    return()=>window.removeEventListener('message',handle);
-  },[]);
   // One preview adapter for both the current Advisor result and live examples.
   // No old public iframe or browser-side business engine.
   const previewBase=window.location.origin+import.meta.env.BASE_URL;
@@ -176,8 +157,8 @@ function App(){
     ?.replace('src="global-modal.js"','src="'+previewBase+'global-modal.js"')
     ?.replace('src="export-runtime.js"','src="'+previewBase+'export-runtime.js"')
     ?.replace('href="booking.css"','href="'+previewBase+'booking.css"')
-    ?.replace('src="booking-runtime.js"','src="'+previewBase+'booking-runtime.js"')
     ?.replace('src="booking-link.js"','src="'+previewBase+'booking-link.js"')
+    ?.replace('src="booking-runtime.js"','src="'+previewBase+'booking-runtime.js"')
     ?.replace('href="hybrid.css"','href="'+previewBase+'hybrid.css"')
     ?.replace('src="hybrid-runtime.js"','src="'+previewBase+'hybrid-runtime.js"')
     ?.replace('href="pharmacy-consult.css"','href="'+previewBase+'pharmacy-consult.css"')
@@ -361,11 +342,7 @@ function App(){
             </details>
             {['hotel','apartments'].includes(definition?.id)&&/spoljni booking/i.test(answers.businessMode||'')&&
              <label className="field">HTTPS link ka spoljnom sistemu za rezervacije<input type="url" required pattern="https://.*" value={externalBookingUrl} onChange={e=>setExternalBookingUrl(e.target.value)} placeholder="https://booking-partner.example/..." /></label>}
-            <details className="v42-locations"><summary>Booking Manager — povezivanje sa sajtom (V43.2)</summary>
-              <p className="small-note">Ako sajt prima rezervacije: na telefonu otvori RMC Booking Manager → Podešavanja → „Poveži ovu firmu sa sajtom“. Ovde nalepi samo JAVNI kod. NIKADA privatni ključ ili rezervnu kopiju.</p>
-              <label className="field">Javni kod iz Booking Managera (opciono)<textarea rows="3" value={bookingLinkCode} maxLength={2000} onChange={e=>setBookingLinkCode(e.target.value)} placeholder="RMCB1...." style={{width:'100%',maxWidth:'100%',overflowWrap:'anywhere'}}/></label>
-              <p className="small-note">Prototip V43.2 šifrira booking zahteve. Prvi pilot: frizerski salon i servisne rezervacije; degustacija u vinoteci. Ostale vrste upita ostaju u postojećim formama.</p>
-            </details>
+            <p className="rmc-ai-booking-note">Ako ste uključili rezervacije ili zakazivanje, prilikom preuzimanja ZIP-a dobićete jednokratni kod za povezivanje sa RMC Business Portalom. Kod se nikada ne unosi u javni sajt.</p>
             <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Prikaži uvodni Welcome prozor</span><small>Opcionalno · isti izgled u svih pet stilova · prikazuje se jednom po poseti.</small></label>
             <button className="action" type="submit" disabled={loading||!businessName.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
           </>}

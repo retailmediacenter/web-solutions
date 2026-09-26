@@ -51,7 +51,7 @@ function parseBooking(raw){
  const allowed=['clientName','phone','serviceId','serviceName','date','time','timingMode','dayPart','duration','note','requestId'];
  if(Object.keys(raw).some(x=>!allowed.includes(x)))throw err(400,'Nepoznata polja rezervacije.');
  const clientName=String(raw.clientName||'').trim(),phone=String(raw.phone||'').trim(),serviceName=String(raw.serviceName||'').trim(),note=String(raw.note||'').trim();
- if(!clientName||clientName.length>100||phone.length>35||!serviceName||serviceName.length>100||note.length>350)throw err(400,'Proveri ime, telefon, uslugu i napomenu.');
+ if(!clientName||clientName.length>100||phone.length>35||!serviceName||serviceName.length>100||note.length>700)throw err(400,'Proveri ime, telefon, uslugu i napomenu.');
  const timingMode=raw.timingMode==null?'EXACT_TIME':String(raw.timingMode);
  const dayPart=raw.dayPart==null?'':String(raw.dayPart);
  const hasExactTime=/^([01]\d|2[0-3]):[0-5]\d$/.test(raw.time);

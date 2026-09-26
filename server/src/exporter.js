@@ -37,8 +37,9 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
     {name:'global-modal.js',data:staticFile('global-modal.js')},
     {name:'site-system.css',data:staticFile('site-system.css')},
     {name:'site-system.js',data:staticFile('site-system.js')},
-    ...((isService||payload.siteConfig.capabilities?.wineTastings)?[{name:'booking-link.js',data:staticFile('booking-link.js')}]:[]),
-    ...(isService?[{name:'booking.css',data:staticFile('booking.css')},{name:'booking-runtime.js',data:staticFile('booking-runtime.js')}]:[]),
+    ...(payload.siteConfig.bookingPairing?[{name:'booking-link.js',data:staticFile('booking-link.js')}]:[]),
+    ...((isService||payload.siteConfig.capabilities?.booking?.enabled&&payload.siteConfig.business.id==='wine-shop')?[{name:'booking.css',data:staticFile('booking.css')}]:[]),
+    ...(isService?[{name:'booking-runtime.js',data:staticFile('booking-runtime.js')}]:[]),
     ...(payload.siteConfig.capabilities?.pharmacyConsultations?[{name:'pharmacy-consult.css',data:staticFile('pharmacy-consult.css')},{name:'pharmacy-consult-runtime.js',data:staticFile('pharmacy-consult-runtime.js')}]:[]),
     ...(isVertical?[{name:'vertical.css',data:staticFile('vertical.css')},{name:'vertical-runtime.js',data:staticFile('vertical-runtime.js')}]:[]),
     ...(payload.secondary?[{name:'hybrid.css',data:staticFile('hybrid.css')},{name:'hybrid-runtime.js',data:staticFile('hybrid-runtime.js')}]:[])

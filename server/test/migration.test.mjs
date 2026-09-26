@@ -248,12 +248,17 @@ test('V41.4 auto parts: cart + optional inquiry, vehicle required in runtime',()
   assert.ok(html.includes('Marka / model / godište vozila'));
   assert.ok(html.includes('"requireVehicle":true'));
 });
-test('V41.4 correct order and booking actions: Copy, Viber, WhatsApp; no generic Share',()=>{
+test('V41.4 Commerce actions remain; B2 tasting Booking uses Portal and no legacy booking links',()=>{
   const html=renderHtml(buildSitePayload(wine(true)));
-  for(const id of ['copyMessage','viberMessage','waMessage','copyBooking','viberBooking','waBooking'])
-    assert.ok(html.includes(`id="${id}"`),id);
-  assert.ok(!html.includes('id="shareMessage"'));
-  assert.ok(!html.includes('id="shareBooking"'));
+  // B2 changes only the active Booking flow. Commerce can still use Copy/Viber/WhatsApp.
+  for(const id of ['copyMessage','viberMessage','waMessage'])
+    assert.ok(html.includes(`id="${id}"`),`${id}: Commerce messaging unexpectedly removed`);
+  // The tasting request is submitted over the central API, not as a copied booking link.
+  for(const id of ['wineBookingPreview','wineBookingSending','wineBookingSuccess','wineBookingError','wineReservationCode'])
+    assert.ok(html.includes(`id="${id}"`),`${id}: B2 booking state missing`);
+  for(const id of ['copyBooking','viberBooking','waBooking','shareBooking','shareMessage'])
+    assert.ok(!html.includes(`id="${id}"`),`${id}: legacy control should not be active`);
+  assert.ok(html.includes('Zahtev nije poslat.'),'Preview must distinguish demonstration from sending');
   const runtime=readFileSync(path.join(publicDir,'export-runtime.js'),'utf8');
   assert.ok(runtime.includes('viber://forward?text='));
   assert.ok(runtime.includes("$('viberMessage').href=viberUrl(prepared)"));

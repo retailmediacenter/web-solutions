@@ -47,7 +47,7 @@ test('booking arrives once, persists until acknowledged, and foreign manager can
  await q.acknowledge(a.siteId,ca.accessToken,booking.requestId);
  assert.equal((await q.pending(a.siteId,ca.accessToken)).length,0);
  await assert.rejects(()=>q.submit('bad',booking),/identifikator/);
- await assert.rejects(()=>q.submit(b.siteId,{...booking,note:'x'.repeat(400)}),/napomenu/);
+ await assert.rejects(()=>q.submit(b.siteId,{...booking,note:'x'.repeat(701)}),/napomenu/);
 });
 
 test('reservation code is unique per site and remains stable after ACK',async()=>{

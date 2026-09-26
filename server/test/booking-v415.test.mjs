@@ -53,7 +53,8 @@ test('Universal 4 booking modes emit correct fields and no live availability cla
     assert.ok(html.includes('id="zakazivanje"'));
     assert.ok(html.includes(field),`${id} missing ${field}`);
     assert.ok(html.includes('booking-runtime.js'));
-    assert.ok(html.includes('Termin nije automatski potvrđen'));
+    assert.ok(html.includes('Termin nije potvrđen dok vam firma ne odgovori.'),`${id}: zahtev se ne sme predstavljati kao potvrđen`);
+    assert.ok(html.includes('id="bookingSubmitPreview"'),`${id}: demonstracioni Preview mora biti jasno obeležen`);
   }
 });
 

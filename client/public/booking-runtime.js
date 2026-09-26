@@ -34,9 +34,9 @@ const clearRetry=()=>{retryRequest=null;};
 form.addEventListener('input',clearRetry);form.addEventListener('change',clearRetry);
 const showDialog=()=>{if(!dialog.open)dialog.showModal();};
 function setApiState(state,{reservationCode='',error=''}={}){
- const sending=$('bookingSubmitSending'),success=$('bookingSubmitSuccess'),failed=$('bookingSubmitError');
- if(!sending||!success||!failed)return;
- sending.hidden=state!=='sending';success.hidden=state!=='success';failed.hidden=state!=='error';
+ const preview=$('bookingSubmitPreview'),sending=$('bookingSubmitSending'),success=$('bookingSubmitSuccess'),failed=$('bookingSubmitError');
+ if(!sending||!success||!failed||!preview)return;
+ preview.hidden=state!=='preview';sending.hidden=state!=='sending';success.hidden=state!=='success';failed.hidden=state!=='error';
  if(state==='success')$('bookingReservationCode').textContent=reservationCode;
  if(state==='error')$('bookingSubmitErrorText').textContent=error;
 }
@@ -53,10 +53,13 @@ document.addEventListener('click',e=>{
    : anchor.closest('.service-card')?.querySelector('h3')?.textContent?.trim();
  if(service&&form.elements.namedItem('service')){
    const picker=form.elements.namedItem('service');
-   // Custom visual cards do not invent booking offerings: fall back to the
-   // preset when a card label is not a selectable service option.
-   if(![...picker.options].some(o=>o.value===service))picker.add(new Option(service,service));
-   picker.value=service;
+   // Only Advisor-approved offerings may be sent. Presentation cards may
+   // have different names from the booking catalog (e.g. restaurant dishes).
+   // Do NOT append unknown options: the Portal cannot resolve their IDs.
+   const selected=[...picker.options].find(o=>o.value===service);
+   if(selected)picker.value=selected.value;
+   else if(options.length===1)picker.value=options[0];
+   else picker.value=''; // visitor explicitly chooses the matching service
  }
  jump(dest);return;
  }}
@@ -85,12 +88,17 @@ form.addEventListener('submit',async e=>{
  message=['Pozdrav, želim da pošaljem '+title+' firmi '+site.business.name+':',
    ...keys.filter(k=>String(entry[k]||'').trim()).map(k=>names[k]+': '+String(entry[k]).trim()),
    site.booking?.enabled?'Molim vas da potvrdite da li je željeni termin dostupan.':'Molim vas da mi odgovorite kada budete u mogućnosti.'].join('\n');
- if(apiBooking){
-  const timingMode=site.booking?.mode==='request-slot'?'DAY_PART':'EXACT_TIME';
+ if(site.booking?.enabled){
+  // A preview has no siteId by design. Never create a pairing or claim a live send.
+  if(!apiBooking&&!site.bookingManager?.token){setApiState('preview');showDialog();return;}
+  if(!apiBooking){ /* explicitly selected historical V43.2 fallback below */ } else {
+  const timingMode=site.booking?.timingMode||(site.booking?.mode==='request-slot'?'DAY_PART':'EXACT_TIME');
   if(!entry.date||(timingMode==='EXACT_TIME'&&!entry.time)||(timingMode==='DAY_PART'&&!entry.daypart)){setApiState('error',{error:timingMode==='DAY_PART'?'Izaberite datum i željeno doba dana.':'Za slanje rezervacije izaberite datum i vreme.'});showDialog();return;}
-  const extra=keys.filter(k=>!['service','date','time','name','phone'].includes(k)&&String(entry[k]||'').trim()).map(k=>names[k]+': '+entry[k]).join('; ');
+  const extra=keys.filter(k=>!['service','date','time','daypart','name','phone'].includes(k)&&String(entry[k]||'').trim()).map(k=>names[k]+': '+entry[k]).join('; ');
+  if(extra.length>700){setApiState('error',{error:'Opis je predugačak. Skratite napomenu i dodatne podatke (do 700 znakova ukupno).'});showDialog();return;}
   const serviceName=entry.service||entry.eventType||'',serviceId=serviceIdFor(serviceName);
-  const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,name:entry.name,phone:entry.phone,note:extra});
+  if(!serviceId){setApiState('error',{error:'Izaberite jednu od ponuđenih usluga za rezervaciju.'});showDialog();return;}
+  const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,daypart:entry.daypart,name:entry.name,phone:entry.phone,note:extra});
   if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
   setSubmitting(true);setApiState('sending');showDialog();
   try{
@@ -99,6 +107,7 @@ form.addEventListener('submit',async e=>{
    setApiState('success',{reservationCode:result.reservationCode});
   }catch(err){setApiState('error',{error:'Zahtev nije poslat. '+err.message});}
   finally{setSubmitting(false);}return;
+  }
  }
  $('viberRequest').hidden=false;$('waRequest').hidden=false;
  if(site.bookingManager?.token&&site.booking?.enabled&&entry.date&&entry.time){
