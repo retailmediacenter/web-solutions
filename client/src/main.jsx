@@ -18,7 +18,14 @@ const pilots=[
   {id:'plumbing-supplies',label:'Vodovodni materijal',hint:'Specifikacija proizvoda, upit'},
   {id:'electrical-supplies',label:'Elektromaterijal',hint:'Specifikacija proizvoda, upit'}
 ];
-const goals=[
+const examples=[
+  {id:'salon',type:'Salon',name:'Studio Forma',image:'assets/images/curated/beauty/hair-salon/hero/hair_hero_01.jpg'},
+  {id:'pizzeria',type:'Picerija',name:'Pica & društvo',image:'assets/images/curated/food/restaurant/hero/restaurant_hero_01.jpg'},
+  {id:'auto-service',type:'Auto servis',name:'Auto Fokus',image:'assets/images/curated/services/auto-service/hero/auto_service_hero_01.jpg'},
+  {id:'vinoteka',type:'Vinoteka',name:'Vino & Terroir',image:'assets/images/curated/retail/wine-shop/hero/wine_shop_hero_signature_selection.jpg'},
+  {id:'namestaj',type:'Salon nameštaja',name:'Forma Living',image:'assets/images/curated/retail/furniture-store/hero/furniture_store_hero_showroom_01.jpg'},
+  {id:'optika',type:'Optika',name:'Optika Fokus',image:'assets/images/curated/healthcare/optician/hero/optician_hero_space_02.jpg'}
+];const goals=[
   {id:'purchase',label:'Prodaja i porudžbine',desc:'Kupac pronalazi proizvode i priprema porudžbinu.'},
   {id:'visit',label:'Više poseta prodavnici',desc:'Ponuda podstiče kupca da vas kontaktira ili poseti.'},
   {id:'catalog',label:'Predstavljanje ponude',desc:'Naglasak je na asortimanu i informacijama.'}
@@ -46,6 +53,8 @@ function App(){
   const [device,setDevice]=useState('desktop'),[exporting,setExporting]=useState(false);
   const [exportPairing,setExportPairing]=useState(null);
   const apiCurrent=health?.status==='ok'&&health.stage==='v42.1-location-free';
+  const showLanding=!definition&&!result;
+  const publicBase=import.meta.env.BASE_URL;
   const apiOutdated=health?.status==='ok'&&!apiCurrent;
   useEffect(()=>{
     fetch(apiUrl('/api/health')).then(r=>r.json()).then(setHealth).catch(()=>setHealth({status:'offline'}));
@@ -177,8 +186,18 @@ function App(){
    return goals; // retail: standard purchase/visit/catalog wording
   }
   return <>
-    <header className="app-header"><div className="brand">RMC <span>WEB SOLUTIONS</span></div><div className="header-status"><span className={'dot '+(health?.status==='ok'?'ok':'')}></span>{apiOutdated?'NODE API: STARA VERZIJA — RESTARTUJ SERVER':apiCurrent?'NODE API POVEZAN':'API NIJE POVEZAN'} <span className="version">V42.1 · LOCATION / MAP / PHONE · BESPLATAN SAJT</span></div></header>
-    <main className={'studio '+(result?'with-preview':'')}>
+    <header className="ws-header">
+      <a className="ws-brand" href="#vrh" aria-label="RMC Web Solutions"><b>RMC<span>↗</span></b><span>WEB SOLUTIONS</span></a>
+      <nav aria-label="Glavna navigacija"><a href="#primer-sajta">Primer sajta</a><a href="#kako-radi">Kako radi</a><a href="#pitanja">Pitanja</a><button className="ws-button ws-small" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Napravi moj sajt ↗</button></nav>
+    </header>
+    {showLanding&&<>
+      <section id="vrh" className="ws-hero ws-wrap"><div className="ws-hero-copy ws-reveal"><span className="ws-eyebrow"><i/> OD IDEJE DO VAŠEG SAJTA</span><h1>Napravite svoj sajt.<br/><em>Besplatno.</em></h1><p className="ws-intro">Recite nam čime se bavite. Pogledajte svoj novi sajt. Preuzmite ga i napravite sledeći korak.</p><p>Ako umete — postavite ga sami.<br/>Ako ne želite da se bavite time — RMC završava ostalo.</p><div className="ws-actions"><button className="ws-button" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Napravi moj sajt <span>↗</span></button><a className="ws-text-link" href="#kako-radi">Pogledaj kako radi ↓</a></div><div className="ws-proof"><span><b>3</b> kratka koraka</span><span><b>5</b> stilova sajta</span><span>✓ Bez registracije</span></div></div><div className="ws-hero-panel" aria-hidden="true"><span>RMC WEB SOLUTIONS</span><b>Od razgovora<br/>do sajta.</b><p>Jedan proces. Prikaz pre preuzimanja.</p></div></section>
+      <section id="kako-radi" className="ws-section ws-wrap ws-process"><span className="ws-eyebrow">JEDNOSTAVNO I JASNO</span><h2>Od ideje do sajta<br/><em>u tri koraka.</em></h2><div className="ws-process-grid"><article><b>01</b><h3>Opišite posao</h3><p>Advisor prepoznaje delatnost i postavlja samo pitanja koja su važna za taj posao.</p></article><article><b>02</b><h3>Pogledajte rezultat</h3><p>Dobijate stvarni interaktivni prikaz, na desktopu i telefonu.</p></article><article><b>03</b><h3>Preuzmite sajt</h3><p>ZIP sadrži samo vaš sajt i njegove potrebne resurse.</p></article></div></section>
+      <section id="primer-sajta" className="ws-section ws-wrap ws-example-gallery"><div className="ws-section-heading"><span className="ws-eyebrow">POGLEDAJTE GA U AKCIJI</span><h2>Šest poslova. Šest različitih logika.</h2><p>Ovo su postojeći V39.5 demo primeri. Otvorite svaki i istražite ceo sajt.</p></div><div className="ws-example-grid">{examples.map(sample=><a key={sample.id} className="ws-example-card" href={publicBase+'demo-previews/'+sample.id+'/index.html'} target="_blank" rel="noreferrer"><img src={publicBase+sample.image} alt={sample.type+' '+sample.name} loading="lazy"/><span className="ws-example-caption"><span><small>{sample.type}</small><strong>{sample.name}</strong></span><span className="ws-example-open">Otvori sajt ↗</span></span></a>)}</div></section>
+      <section className="ws-section ws-wrap ws-packages"><div><span className="ws-eyebrow">VI BIRATE SLEDEĆI KORAK</span><h2>Sajt je vaš.<br/><em>Način rada birate vi.</em></h2></div><div className="ws-package-copy"><p>Besplatno preuzimanje je početak. Kada želite domen, objavu, povezivanje rezervacija ili Commerce funkcionalnost, postojeći RMC proces ostaje dostupan.</p><button className="ws-button ws-outline" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Krenite od besplatnog sajta ↗</button></div></section>
+      <section id="pitanja" className="ws-section ws-wrap ws-faq"><div><span className="ws-eyebrow">DOBRO JE ZNATI</span><h2>Jasno od<br/>prvog koraka.</h2></div><div><details><summary>Da li je preuzimanje stvarno besplatno?</summary><p>Da. Dobijate funkcionalan sajt i ZIP sa fajlovima sajta.</p></details><details><summary>Da li moram da napravim nalog?</summary><p>Ne. Advisor, pregled i preuzimanje rade bez registracije.</p></details><details><summary>Da li svaki sajt prima rezervacije?</summary><p>Ne. Advisor uključuje samo funkcionalnosti koje odgovaraju izabranoj delatnosti i odgovorima.</p></details></div></section>
+    </>}
+    <main id="advisor" className={'studio advisor-studio '+(result?'with-preview':'')}>
       <aside className="wizard"><div className="wizard-top"><div className="eyebrow">WEB SOLUTIONS ADVISOR</div><h1>{result?'Sajt je spreman za test':'Napravite biznis sajt'}</h1><p>{result?'Preview i ZIP nastaju iz iste Node konfiguracije.':'Od opisa vašeg posla do funkcionalnog test sajta.'}</p>
         <div className="progress" aria-label="Napredak"><div style={{width:(result?100:progress)+'%'}}/></div><small className="step-count">{result?'GENERISANO':definition?`KORAK ${step+2} OD ${count}`:'KORAK 1 — OPIS POSLA'}</small></div>
         {result?<div className="wizard-content">

@@ -1,0 +1,2 @@
+:root{--bg:#f6efe9;--surface:#fff9f4;--text:#2d1e1b;--muted:#7c6862;--line:#e4d4cc;--accent:#b7655d;--accentText:#fff}.hero-media{border-radius:44% 56% 42% 58% / 46% 40% 60% 54%}.card{border-radius:30px}.card-media{border-radius:28px;margin:10px}.topbar{background:#fff9f4}.form-card{background:#fff9f4}
+@media(max-width:700px){.topbar .links a:not(.btn){display:none}}

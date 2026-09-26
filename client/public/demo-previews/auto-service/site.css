@@ -1,0 +1,2 @@
+:root{--bg:#081321;--surface:#101f32;--text:#edf6ff;--muted:#a9bed2;--line:#29445f;--accent:#37d0ff;--accentText:#07131e}.topbar{background:#0b1828;color:#fff}.hero{color:#fff}.hero p{color:#b9cee0}.card,.form-card{background:#101f32;color:#edf6ff}.card p,.form-card label,.form-note{color:#a9bed2}.form-card input,.form-card select,.form-card textarea{background:#0a1726;color:#edf6ff;border-color:#35536d}.card-media{background:#0a1726}.btn{box-shadow:0 0 0 1px #5bdeff40,0 10px 30px #23b8e725}
+@media(max-width:700px){.topbar .links a:not(.btn){display:none}}

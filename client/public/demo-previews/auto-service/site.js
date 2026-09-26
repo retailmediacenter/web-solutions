@@ -1,0 +1,1 @@
+(()=>{DemoUI.bindRequest(document.querySelector('#serviceForm'),d=>`Pozdrav, želeo/la bih termin u servisu. Vozilo: ${d.get('vehicle')}. Usluga: ${d.get('service')}. Datum: ${d.get('date')}. Telefon: ${d.get('phone')}. Napomena: ${d.get('problem')||'—'}.`);})();

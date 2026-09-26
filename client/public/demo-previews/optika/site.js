@@ -1,0 +1,1 @@
+(()=>{DemoUI.bindRequest(document.querySelector('#bookingForm'),d=>`Pozdrav, želeo/la bih da zakažem pregled vida. Datum: ${d.get('date')}. Vreme: ${d.get('time')}. Ime: ${d.get('name')}. Telefon: ${d.get('phone')}. Napomena: ${d.get('note')||'—'}.`);})();

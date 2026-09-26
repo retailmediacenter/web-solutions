@@ -1,0 +1,1 @@
+(()=>{DemoUI.bindRequest(document.querySelector('#tastingForm'),d=>`Pozdrav, želeo/la bih termin degustacije. Datum: ${d.get('date')}. Vreme: ${d.get('time')}. Broj osoba: ${d.get('guests')}. Telefon: ${d.get('phone')}. Email: ${d.get('email')}.`);})();
