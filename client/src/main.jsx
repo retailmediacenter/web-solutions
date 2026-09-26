@@ -48,7 +48,6 @@ function App(){
   const [currentDemo,setCurrentDemo]=useState('salon');
   const [leadPackage,setLeadPackage]=useState('');
   const [infoType,setInfoType]=useState('');
-  const sampleRequestSeq=useRef(0);
   // Modal is owned by React; never move the legacy business logic here.
   useEffect(()=>{
     if(!advisorOpen)return;
@@ -147,8 +146,8 @@ function App(){
       if(pairingCode)setExportPairing({code:pairingCode,minutes:Math.round(expires/60)});
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
-  // One preview adapter for both the current Advisor result and live examples.
-  // No old public iframe or browser-side business engine.
+  // HTML adapter exclusively for the generated Advisor result.
+  // Six frozen marketing examples load separately from /demo-previews/.
   const previewBase=window.location.origin+import.meta.env.BASE_URL;
   const hydratePreview=html=>html
     ?.replace('href="site.css"','href="'+previewBase+'site.css"')
@@ -176,40 +175,15 @@ function App(){
   function editSite(){
     setPreviewOpen(false);setError('');setStep(Math.max(0,steps.length-1));setAdvisorOpen(true);
   }
-  // Sample buttons request ACTUAL currently generated content from the Node API.
-  // They do not execute any code from the earlier browser-side generator.
-  async function openExample(exampleId){
+  // Marketing-only demos are six frozen, self-contained pages bundled under
+  // client/public/demo-previews/. They never call the Advisor or Node generator.
+  function openExample(exampleId){
     const entry=SHOWCASE.find(item=>item.id===exampleId);
     if(!entry)return;
-    const seq=++sampleRequestSeq.current;
-    setCurrentDemo(entry.id);setDevice('desktop');setSamplePreview({loading:true,name:entry.name});
+    setCurrentDemo(entry.id);
+    setDevice('desktop');
+    setSamplePreview({name:entry.name});
     setPreviewOpen(true);
-    try{
-      const def=await json('/api/advisor/questions/'+encodeURIComponent(entry.businessId));
-      const sampleAnswers={
-        businessMode:def.operation?.options?.[0]||'',
-        emphasis:def.emphasis?.options?.[0]||'',
-        ...(def.hybrid?.options?.length?{hybridChoice:def.hybrid.options[0].id}:{})
-      };
-      for(const special of (def.specials||(def.special?[def.special]:[]))){
-        if(!special?.id)continue;
-        const positive=special.options?.find(item=>item.id==='yes');
-        sampleAnswers[special.id]=positive?true:(special.options?.[0]?.id??true);
-      }
-      const payload={
-        businessId:entry.businessId,businessName:entry.name,
-        description:'Demonstracioni prikaz: '+entry.type,goal:'purchase',style:'modern',
-        answers:sampleAnswers,
-        businessData:{locationMode:'online',businessName:entry.name,phone:'',email:'',city:'',
-          address:'',hours:'',website:'',whatsapp:'',viber:'',locations:[]}
-      };
-      const sample=await json('/api/site/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      if(seq!==sampleRequestSeq.current)return;
-      if(!sample.previewHtml)throw new Error('Server nije vratio HTML za primer sajta.');
-      setSamplePreview({loading:false,name:entry.name,html:hydratePreview(sample.previewHtml)});
-    }catch(ex){
-      if(seq===sampleRequestSeq.current)setSamplePreview({loading:false,name:entry.name,error:ex.message});
-    }
   }
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
   const recognizedLabel=businesses.find(x=>x.id===(definition?.id||selectedId))?.label||definition?.label||defOfRecognized?.label||'vaše poslovanje';
@@ -248,7 +222,7 @@ function App(){
       siteName={samplePreview?.name||result?.siteConfig?.business?.name}
       html={samplePreview?samplePreview.html:previewHtml} loading={samplePreview?.loading}
       error={samplePreview?.error} selectedDemo={currentDemo} onSelectDemo={openExample}
-      onClose={()=>{++sampleRequestSeq.current;setPreviewOpen(false)}} onStart={startNewSite}
+      onClose={()=>setPreviewOpen(false)} onStart={startNewSite}
       onExport={exportZip} exporting={exporting} exportPairing={exportPairing}
       onEdit={editSite} device={device} onDevice={setDevice} frameRef={previewFrame}/>
     <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>

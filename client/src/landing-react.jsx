@@ -9,12 +9,12 @@ import landingCss from './landing-theme.css?inline';
 import './landing-dialogs.css';
 
 export const SHOWCASE = [
- {id:'salon',businessId:'hair-salon',name:'Studio Forma',type:'Frizerski salon'},
- {id:'restaurant',businessId:'restaurant',name:'Pica & društvo',type:'Picerija'},
- {id:'auto',businessId:'auto-service',name:'Auto Fokus',type:'Auto servis'},
- {id:'wine',businessId:'wine-shop',name:'Vino & Terroir',type:'Vinoteka'},
- {id:'furniture',businessId:'furniture-store',name:'Forma Living',type:'Salon nameštaja'},
- {id:'optician',businessId:'optician',name:'Optika Fokus',type:'Optika'}
+ {id:'salon',demoPath:'salon',businessId:'hair-salon',name:'Studio Forma',type:'Frizerski salon'},
+ {id:'restaurant',demoPath:'pizzeria',businessId:'restaurant',name:'Pica & društvo',type:'Picerija'},
+ {id:'auto',demoPath:'auto-service',businessId:'auto-service',name:'Auto Fokus',type:'Auto servis'},
+ {id:'wine',demoPath:'vinoteka',businessId:'wine-shop',name:'Vino & Terroir',type:'Vinoteka'},
+ {id:'furniture',demoPath:'namestaj',businessId:'furniture-store',name:'Forma Living',type:'Salon nameštaja'},
+ {id:'optician',demoPath:'optika',businessId:'optician',name:'Optika Fokus',type:'Optika'}
 ];
 
 /* The HTML is trusted, extracted at build time from the previously approved
@@ -117,6 +117,8 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
  },[open,onClose]);
  if(!open)return null;
  const isSample=mode==='sample';
+ const staticDemo=SHOWCASE.find(item=>item.id===selectedDemo);
+ const sampleBase=(import.meta.env.BASE_URL||'/')+'demo-previews/';
  return <div className="rmc-preview-cover" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
    <section className="rmc-preview-panel" role="dialog" aria-modal="true" aria-label={isSample?'Primer generisanog sajta':'Vaš generisani sajt'}>
      <header className="rmc-preview-head"><div><small>RMC WEB SOLUTIONS</small>
@@ -134,14 +136,18 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
        </div>
      </div>
      <div className={'rmc-preview-content '+(device==='mobile'?'is-mobile':'')}>
-       {loading?<div className="rmc-preview-message" role="status">Pripremam stvarni primer pomoću aktuelnog Advisora…</div>:
-        error?<div className="rmc-preview-message" role="alert">{error}<p>Primer nije prikazan jer trenutni server nije vratio sajt.</p></div>:
-        html?<iframe ref={frameRef} key={siteName+selectedDemo} title={siteName||'Pregled sajta'} srcDoc={html}
+       {isSample&&staticDemo
+        ? <iframe ref={frameRef} key={staticDemo.id} title={'Nezavisni DEMO — '+staticDemo.name}
+            src={sampleBase+staticDemo.demoPath+'/index.html'}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox" />
+        :loading?<div className="rmc-preview-message" role="status">Pripremam vaš sajt…</div>:
+        error?<div className="rmc-preview-message" role="alert">{error}</div>:
+        html?<iframe ref={frameRef} key={siteName} title={siteName||'Pregled sajta'} srcDoc={html}
               sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox" />:
         <div className="rmc-preview-message">Nema generisanog pregleda.</div>}
      </div>
      <footer className="rmc-preview-footer">
-       {isSample?<><span>Primer je generisan postojećim Node sistemom, sa ilustrativnim podacima.</span>
+       {isSample?<><span>Ovo je samostalan marketinški DEMO; ne koristi Advisor i ne šalje stvarne zahteve.</span>
          <button type="button" className="rmc-primary" onClick={onStart}>Napravi moj sajt ↗</button></>:
          <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
            {exporting?'Pripremam ZIP…':'Preuzmi besplatan sajt (ZIP) ↓'}</button>
