@@ -1,0 +1,175 @@
+/* RMC Web Solutions · Etapa B · isolated V39.5-style AI Advisor presentation.
+   The Advisor questions, API calls, answer state and ZIP/preview bridge are in main.jsx.
+   This sheet is deliberately loaded AFTER react-adapter.css. */
+#advisorOverlay.rmc-ai-overlay.advisor-overlay{
+  position:fixed;inset:0;z-index:99999;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 0,rgba(47,99,202,.18),transparent 40%),rgba(8,16,29,.68);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  padding:clamp(8px,2.5vh,24px) 16px;overflow:hidden;overscroll-behavior:contain;
+  color:#f9fbff;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+#advisorOverlay.rmc-ai-overlay *{box-sizing:border-box}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-card.advisor-card{
+  width:min(840px,100%);min-width:0;max-width:100%;
+  height:auto;max-height:calc(100dvh - clamp(16px,5vh,48px));
+  margin:0;padding:0;display:flex;flex-direction:column;overflow:hidden;isolation:isolate;
+  border:1px solid rgba(155,182,220,.28);border-radius:26px;
+  background:linear-gradient(147deg,#1a293f 0%,#182639 75%,#1b2b40 100%);
+  color:#f9fbff;box-shadow:0 28px 100px rgba(0,7,20,.5);
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-card::before{display:none}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-head.advisor-head{
+  position:relative;top:auto;margin:0;padding:20px clamp(20px,4.8vw,36px) 16px;
+  flex:0 0 auto;display:grid;grid-template-columns:auto minmax(50px,1fr) auto auto;
+  align-items:center;gap:16px;border-bottom:1px solid rgba(180,204,236,.12);
+  background:#1a293f;color:#f9fbff;backdrop-filter:none;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-back,#advisorOverlay.rmc-ai-overlay .rmc-ai-close{font:inherit;border:0;cursor:pointer}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-back{font-size:14px;font-weight:800;color:#f1f6fe;padding:9px 0;background:transparent;min-width:70px;text-align:left}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-back:disabled{opacity:0;pointer-events:none}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-progress{height:4px;background:#66778f66;overflow:hidden;border-radius:99px;min-width:0}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-progress span{display:block;height:100%;background:#5b8cff;transition:width .24s ease}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-step-count{font-size:12px;color:#b7c5da;white-space:nowrap;font-weight:600}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-close{
+  width:38px;height:38px;border-radius:50%;background:#314259;color:#fff;
+  font-size:24px;line-height:1;display:grid;place-items:center;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-close:hover{background:#47617f}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-scroll{
+  flex:1 1 auto;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:clamp(26px,4vw,48px) clamp(24px,4.8vw,56px) 36px;
+  scroll-padding-top:18px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-scroll::-webkit-scrollbar{width:8px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-scroll::-webkit-scrollbar-thumb{background:#6d819b;border-radius:99px;border:2px solid #19283d}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-question{width:100%;max-width:100%;margin:0;color:#f7f9ff}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-step-label{
+  display:block;font-size:12px;letter-spacing:.14em;font-weight:850;color:#86acff;
+  text-transform:uppercase;margin-bottom:24px
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-question h1,#advisorOverlay.rmc-ai-overlay .rmc-ai-question h2{
+  color:#fff;letter-spacing:-.045em;font-weight:800;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:clamp(32px,4vw,49px);line-height:1.12;margin:0 0 26px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-question>p{
+  color:#bfcbdd;font-size:16px;line-height:1.72;margin:0 0 26px;max-width:680px
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-intro .rmc-ai-form-label{
+  display:block;margin:25px 0 10px;font-size:13px;font-weight:800;color:#e2ebf8
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-intro textarea{
+  display:block;width:100%;resize:vertical;min-height:105px;max-height:180px;
+  padding:19px 20px;border:1px solid #ccd8e5;border-radius:16px;
+  font:500 17px/1.5 Inter,system-ui,sans-serif;color:#152336;background:#fff;
+  box-shadow:0 3px 13px rgba(9,23,45,.13)
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-intro textarea::placeholder{color:#8090a6}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-chips{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 26px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-chip{
+  border:1px solid #a7b9d2;background:#eaf0fb;color:#344e71;border-radius:99px;
+  padding:9px 15px;font-size:13px;font-weight:750;line-height:1.3;cursor:pointer;
+  transition:background .16s,transform .16s;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-chip:hover{background:#dce8ff;transform:translateY(-1px)}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-primary{
+  width:100%;min-height:54px;border:0;border-radius:13px;padding:15px 24px;
+  background:#245de5;color:#fff;font:850 16px/1.3 Inter,system-ui,sans-serif;
+  text-align:center;cursor:pointer;box-shadow:0 12px 25px rgba(12,45,115,.24);
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-primary:hover{background:#3473fb}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-primary:disabled{opacity:.6;cursor:wait}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:13px 0 #b9caff,26px 0 #788eec;animation:rmc-ai-pulse 1s infinite alternate;margin-right:36px}
+@keyframes rmc-ai-pulse{to{opacity:.4;transform:scale(.8)}}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-ack{
+  display:flex;gap:15px;align-items:flex-start;background:rgba(66,108,176,.20);
+  border:1px solid rgba(140,177,231,.28);border-radius:18px;padding:16px 18px;
+  margin:0 0 33px;color:#eaf2ff;animation:rmc-ai-enter .25s ease-out both;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-ack>span{font-size:24px;color:#7fafff;line-height:1.15}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-ack strong{display:block;font-size:17px;line-height:1.45;overflow-wrap:anywhere}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-ack p{font-size:13px;color:#b7cbe2;margin:5px 0 0;line-height:1.5}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:23px 0 2px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice{
+  position:relative;min-width:0;min-height:88px;text-align:left;
+  border:2px solid transparent;border-radius:17px;background:#fff;color:#1d3048;
+  padding:18px 38px 18px 17px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  cursor:pointer;font:inherit;transition:border-color .16s,background .16s,transform .16s;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice:hover,#advisorOverlay.rmc-ai-overlay .rmc-ai-choice:focus-visible{
+  border-color:#8fb2ff;background:#f1f6ff;transform:translateY(-1px);
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice.is-selected{border-color:#3576ff;background:#e8f0ff;color:#153c85}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice-title{font-size:15px;line-height:1.35;font-weight:800}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice small{margin-top:7px;font-size:12px;line-height:1.5;font-weight:500;color:#61728b}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice em{font-size:11px;color:#1d5dde;font-style:normal;margin-top:7px;font-weight:850}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-choice>b{
+  position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:19px;color:#6590ce;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-error{
+  padding:13px 15px;margin:18px 0 0;background:#fff0f0;color:#8a1d1d;
+  border:1px solid #ff9c9c;border-radius:12px;line-height:1.5;font-size:14px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-fallback{padding:14px 0;display:grid;gap:9px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-fallback label{color:#f2f5ff;font-size:13px;font-weight:700}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-fallback select{width:100%;border-radius:10px;min-height:44px;padding:9px;color:#1d3048;background:white}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-footnote{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto;
+  padding:12px clamp(24px,4.8vw,56px);border-top:1px solid rgba(180,204,236,.11);
+  font-size:10px;letter-spacing:.07em;color:#92a6c2;background:#1a293f;
+}
+/* Preserve every existing company field and form handler, but present them as a single AI step. */
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company form{display:grid;gap:15px;padding-bottom:12px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .field{display:grid;gap:6px;color:#eaf2ff;font-weight:750;font-size:13px;margin:0}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company input:not([type="radio"]):not([type="checkbox"]),
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company textarea{
+  width:100%;min-height:46px;background:#fff;color:#1d3048;border:1px solid #d1deea;
+  border-radius:12px;padding:11px 14px;font:500 16px/1.45 Inter,system-ui,sans-serif;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .v421-mode,#advisorOverlay.rmc-ai-overlay .rmc-ai-company .v42-contact,
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .v42-location,#advisorOverlay.rmc-ai-overlay .rmc-ai-company .v42-locations{
+  background:#223650;border:1px solid rgba(175,202,237,.28);color:#eaf2ff;border-radius:14px;
+  min-width:0;padding:16px;margin:2px 0;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company fieldset legend,#advisorOverlay.rmc-ai-overlay .rmc-ai-company summary{color:#eaf2ff;font-weight:800}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company fieldset label,#advisorOverlay.rmc-ai-overlay .rmc-ai-company details p{color:#e3ecfa}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .small-note{color:#b8c9df!important;font-size:12px!important}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company button.action{
+  position:sticky;bottom:0;z-index:2;margin:4px 0 0;min-height:53px;width:100%;
+  border:0;border-radius:12px;background:#245de5;color:#fff;font-weight:850;font-size:15px;
+  box-shadow:0 -12px 0 #19283d;cursor:pointer;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company button.quiet{color:#b6d1ff}
+#advisorOverlay.rmc-ai-overlay :is(button,input,textarea,select,summary):focus-visible{
+  outline:3px solid #89b3ff;outline-offset:3px
+}
+@media (max-width:650px){
+  #advisorOverlay.rmc-ai-overlay.advisor-overlay{padding:0;place-items:stretch}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-card.advisor-card{
+    width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-head.advisor-head{
+    padding:calc(11px + env(safe-area-inset-top,0px)) 17px 12px;
+    gap:10px;grid-template-columns:auto minmax(40px,1fr) auto auto;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-back{min-width:0;font-size:12px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-step-count{font-size:11px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-close{width:36px;height:36px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-scroll{padding:30px 22px calc(26px + env(safe-area-inset-bottom,0px))}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-question h1,#advisorOverlay.rmc-ai-overlay .rmc-ai-question h2{font-size:clamp(30px,8vw,40px)}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-question>p{font-size:15px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-choices{grid-template-columns:1fr;gap:10px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-choice{min-height:69px;padding:14px 37px 14px 15px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-choice-title{font-size:15px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-footnote{padding:9px 20px calc(9px + env(safe-area-inset-bottom,0px));font-size:9px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-chips{gap:8px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-chip{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-progress span,#advisorOverlay.rmc-ai-overlay .rmc-ai-choice,#advisorOverlay.rmc-ai-overlay .rmc-ai-chip{transition:none}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-pulse{animation:none}
+}
+
+@keyframes rmc-ai-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#advisorOverlay.rmc-ai-overlay .rmc-ai-ack{animation:none}}

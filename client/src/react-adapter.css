@@ -1,0 +1,10 @@
+html,body,#root{margin:0;width:100%;min-height:100%;background:#090f1b}
+.v395-runtime{position:fixed;inset:0;width:100%;height:100dvh;border:0;display:block;background:#090f1b}
+.advisor-overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:rgba(2,8,20,.72);backdrop-filter:blur(8px);overflow:auto}
+.advisor-card{width:min(1180px,100%);min-height:min(760px,calc(100dvh - 36px));background:#fff;border:1px solid rgba(131,158,207,.45);box-shadow:0 28px 90px rgba(0,0,0,.5);overflow:hidden;border-radius:20px}
+.advisor-head{height:70px;display:flex;align-items:center;gap:16px;padding:0 20px;border-bottom:1px solid #dbe4f1;background:#13223d;color:#eff5ff}.advisor-head button{border:0;background:transparent;color:inherit;font:inherit;font-weight:800;cursor:pointer}.advisor-head button:last-child{font-size:28px;line-height:1}.advisor-head>span{font-size:12px;letter-spacing:.08em;font-weight:800}.advisor-progress{height:4px;flex:1;background:rgba(255,255,255,.18);border-radius:9px;overflow:hidden}.advisor-progress span{display:block;height:100%;background:#4d80ff}
+.react-advisor-content{max-height:calc(100dvh - 106px);overflow:auto}.react-advisor-content .studio{min-height:680px}
+@media(max-width:720px){.advisor-overlay{padding:0;place-items:stretch}.advisor-card{width:100%;min-height:100dvh;border-radius:0;border:0}.advisor-head{height:60px;padding:0 14px;gap:10px}.advisor-head>span{display:none}.react-advisor-content{max-height:calc(100dvh - 60px)}.react-advisor-content .studio{min-height:calc(100dvh - 60px)}}
+
+.react-advisor-content .text-next{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin-top:18px;border:0;border-radius:12px;background:#155eef;color:#fff;font:inherit;font-weight:900;padding:0 22px;box-shadow:0 10px 24px rgba(21,94,239,.18);cursor:pointer}
+.react-advisor-content .text-next:disabled{opacity:.62;cursor:wait}

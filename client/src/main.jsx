@@ -2,6 +2,8 @@ import React,{useEffect,useMemo,useState,useRef} from 'react';
 import {createRoot} from 'react-dom/client';
 import {apiUrl} from './api.js';
 import './style.css';
+import './react-adapter.css';
+import './advisor-ai-v395.css';
 
 const pilots=[
   {id:'butcher-shop',label:'Mesara',hint:'Sirovo / grilovano, količina u kg, korpa'},
@@ -31,13 +33,23 @@ const examples=[
   {id:'catalog',label:'Predstavljanje ponude',desc:'Naglasak je na asortimanu i informacijama.'}
 ];
 function ChoiceStep({eyebrow,title,help,items,value,onPick}){
-  return <section className="question"><div className="eyebrow">{eyebrow}</div><h2>{title}</h2>{help&&<p>{help}</p>}
-    <div className="choices">{items.map(item=><button key={item.id} type="button" className={'choice '+(value===item.id?'selected':'')} aria-pressed={value===item.id}
-      onClick={()=>onPick(item.id)}><span>{item.label}</span>{item.desc&&<small>{item.desc}</small>}<b aria-hidden="true">{value===item.id?'✓':'→'}</b></button>)}</div>
+  return <section className="question rmc-ai-question">
+    <div className="rmc-ai-step-label">{eyebrow}</div><h2>{title}</h2>{help&&<p>{help}</p>}
+    <div className="rmc-ai-choices">{items.map(item=><button key={item.id} type="button"
+      className={'rmc-ai-choice'+(value===item.id?' is-selected':'')+(item.recommended?' is-recommended':'')}
+      aria-pressed={value===item.id} onClick={()=>onPick(item.id)}>
+      <span className="rmc-ai-choice-title">{item.label}</span>
+      {item.desc&&<small>{item.desc}</small>}
+      {item.recommended&&<em>Predlog Advisora</em>}
+      <b aria-hidden="true">{value===item.id?'✓':'→'}</b>
+    </button>)}</div>
   </section>;
 }
 function App(){
   const previewFrame=useRef(null);
+  const legacyFrame=useRef(null);
+  const advisorDialogRef=useRef(null);
+  const lastFocusRef=useRef(null);
   const [health,setHealth]=useState(null),[businesses,setBusinesses]=useState([]);
   const [description,setDescription]=useState(''),[selectedId,setSelectedId]=useState(''),[recognizedId,setRecognizedId]=useState('');
   const [definition,setDefinition]=useState(null),[step,setStep]=useState(0),[goal,setGoal]=useState('purchase');
@@ -52,10 +64,35 @@ function App(){
   const [result,setResult]=useState(null),[loading,setLoading]=useState(false),[error,setError]=useState('');
   const [device,setDevice]=useState('desktop'),[exporting,setExporting]=useState(false);
   const [exportPairing,setExportPairing]=useState(null);
+  const [advisorOpen,setAdvisorOpen]=useState(false);
+  const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
   const apiCurrent=health?.status==='ok'&&health.stage==='v42.1-location-free';
   const showLanding=!definition&&!result;
   const publicBase=import.meta.env.BASE_URL;
   const apiOutdated=health?.status==='ok'&&!apiCurrent;
+  // Modal is owned by React; never move the legacy business logic here.
+  useEffect(()=>{
+    if(!advisorOpen)return;
+    lastFocusRef.current=document.activeElement;
+    const previousOverflow=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    function onKeyDown(event){
+      if(event.key==='Escape'){event.preventDefault();setAdvisorOpen(false);return;}
+      if(event.key!=='Tab')return;
+      const controls=[...advisorDialogRef.current?.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),summary,[tabindex="0"]')||[]]
+        .filter(el=>el.getClientRects().length>0);
+      if(!controls.length)return;
+      const first=controls[0],last=controls[controls.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+    document.addEventListener('keydown',onKeyDown);
+    return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener('keydown',onKeyDown);
+      // Focus returns to the landing iframe that opened the Advisor.
+      if(lastFocusRef.current?.isConnected)lastFocusRef.current.focus?.({preventScroll:true});
+      else legacyFrame.current?.focus?.({preventScroll:true});
+    };
+  },[advisorOpen]);
   useEffect(()=>{
     fetch(apiUrl('/api/health')).then(r=>r.json()).then(setHealth).catch(()=>setHealth({status:'offline'}));
     fetch(apiUrl('/api/registry/basic')).then(r=>r.json()).then(d=>setBusinesses(d.businesses||[])).catch(()=>{});
@@ -64,6 +101,16 @@ function App(){
     ...(definition.specials|| (definition.special?[definition.special]:[])).map(q=>'special:'+q.id),
     'emphasis','style','company']:['intro'],[definition]);
   const current=definition?steps[step]:'intro';
+  useEffect(()=>{
+    if(!advisorOpen)return;
+    const task=requestAnimationFrame(()=>{
+      const card=advisorDialogRef.current;
+      card?.querySelector('.rmc-ai-scroll')?.scrollTo({top:0,behavior:'instant'});
+      const field=card?.querySelector(current==='intro'?'#rmc-ai-description':'.rmc-ai-question h2');
+      if(field){if(field.tagName==='H2')field.setAttribute('tabindex','-1');field.focus({preventScroll:true});}
+    });
+    return()=>cancelAnimationFrame(task);
+  },[advisorOpen,current]);
   const activeSpecial=current.startsWith('special:')
     ?(definition?.specials||[definition?.special]).find(q=>q?.id===current.slice(8)):null;
   const supportedBusinesses=businesses.filter(b=>b.pilot);
@@ -86,6 +133,7 @@ function App(){
       const understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800)));
       const chosen=selectedId||understood.businessId;
       setRecognizedId(understood.businessId||'');
+      setAdvisorAcknowledgement(chosen===understood.businessId&&typeof understood.acknowledgement==='string'?understood.acknowledgement.slice(0,250):'');
       if(!chosen){throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');}
       if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije migrirana. Izaberite neku od podržanih delatnosti.');
       const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
@@ -157,7 +205,27 @@ function App(){
     ?.replace('src="vertical-runtime.js"','src="'+previewBase+'vertical-runtime.js"')
     ?.replace('href="site-system.css"','href="'+previewBase+'site-system.css"')
     ?.replace('src="site-system.js"','src="'+previewBase+'site-system.js"');
+  useEffect(()=>{
+    if(!result||!legacyFrame.current?.contentWindow)return;
+    legacyFrame.current.contentWindow.postMessage({
+      type:'RMC_SHOW_REACT_SITE',
+      html:previewHtml,
+      name:result.siteConfig.business.name
+    },window.location.origin);
+    setAdvisorOpen(false);
+  },[result,previewHtml]);
+  useEffect(()=>{
+    const handle=event=>{
+      if(event.origin!==window.location.origin||event.source!==legacyFrame.current?.contentWindow)return;
+      if(event.data?.type==='RMC_REACT_ADVISOR_OPEN')setAdvisorOpen(true);
+      if(event.data?.type==='RMC_REACT_EXPORT')exportZip();
+    };
+    window.addEventListener('message',handle);
+    return()=>window.removeEventListener('message',handle);
+  },[input]);
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
+  const recognizedLabel=businesses.find(x=>x.id===(definition?.id||selectedId))?.label||definition?.label||defOfRecognized?.label||'vaše poslovanje';
+  const examplePrompts=['Frizerski salon','Auto servis','Prodajem vino i organizujem degustacije','Vodoinstalaterske usluge'];
   const serviceGoals=[{id:'purchase',label:'Više novih klijenata i upita',desc:'Olakšajte kontakt; termin se prikazuje samo ako ga zaista nudite.'},
    {id:'visit',label:'Više poziva i poseta',desc:'Naglasićemo direktan kontakt i lokaciju.'},
    {id:'catalog',label:'Predstavljanje usluga',desc:'Najpre prikazujemo usluge i stručnost.'}];
@@ -186,47 +254,66 @@ function App(){
    return goals; // retail: standard purchase/visit/catalog wording
   }
   return <>
-    <header className="ws-header">
-      <a className="ws-brand" href="#vrh" aria-label="RMC Web Solutions"><b>RMC<span>↗</span></b><span>WEB SOLUTIONS</span></a>
-      <nav aria-label="Glavna navigacija"><a href="#primer-sajta">Primer sajta</a><a href="#kako-radi">Kako radi</a><a href="#pitanja">Pitanja</a><button className="ws-button ws-small" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Napravi moj sajt ↗</button></nav>
-    </header>
-    {showLanding&&<>
-      <section id="vrh" className="ws-hero ws-wrap"><div className="ws-hero-copy ws-reveal"><span className="ws-eyebrow"><i/> OD IDEJE DO VAŠEG SAJTA</span><h1>Napravite svoj sajt.<br/><em>Besplatno.</em></h1><p className="ws-intro">Recite nam čime se bavite. Pogledajte svoj novi sajt. Preuzmite ga i napravite sledeći korak.</p><p>Ako umete — postavite ga sami.<br/>Ako ne želite da se bavite time — RMC završava ostalo.</p><div className="ws-actions"><button className="ws-button" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Napravi moj sajt <span>↗</span></button><a className="ws-text-link" href="#kako-radi">Pogledaj kako radi ↓</a></div><div className="ws-proof"><span><b>3</b> kratka koraka</span><span><b>5</b> stilova sajta</span><span>✓ Bez registracije</span></div></div><div className="ws-hero-panel" aria-hidden="true"><span>RMC WEB SOLUTIONS</span><b>Od razgovora<br/>do sajta.</b><p>Jedan proces. Prikaz pre preuzimanja.</p></div></section>
-      <section id="kako-radi" className="ws-section ws-wrap ws-process"><span className="ws-eyebrow">JEDNOSTAVNO I JASNO</span><h2>Od ideje do sajta<br/><em>u tri koraka.</em></h2><div className="ws-process-grid"><article><b>01</b><h3>Opišite posao</h3><p>Advisor prepoznaje delatnost i postavlja samo pitanja koja su važna za taj posao.</p></article><article><b>02</b><h3>Pogledajte rezultat</h3><p>Dobijate stvarni interaktivni prikaz, na desktopu i telefonu.</p></article><article><b>03</b><h3>Preuzmite sajt</h3><p>ZIP sadrži samo vaš sajt i njegove potrebne resurse.</p></article></div></section>
-      <section id="primer-sajta" className="ws-section ws-wrap ws-example-gallery"><div className="ws-section-heading"><span className="ws-eyebrow">POGLEDAJTE GA U AKCIJI</span><h2>Šest poslova. Šest različitih logika.</h2><p>Ovo su postojeći V39.5 demo primeri. Otvorite svaki i istražite ceo sajt.</p></div><div className="ws-example-grid">{examples.map(sample=><a key={sample.id} className="ws-example-card" href={publicBase+'demo-previews/'+sample.id+'/index.html'} target="_blank" rel="noreferrer"><img src={publicBase+sample.image} alt={sample.type+' '+sample.name} loading="lazy"/><span className="ws-example-caption"><span><small>{sample.type}</small><strong>{sample.name}</strong></span><span className="ws-example-open">Otvori sajt ↗</span></span></a>)}</div></section>
-      <section className="ws-section ws-wrap ws-packages"><div><span className="ws-eyebrow">VI BIRATE SLEDEĆI KORAK</span><h2>Sajt je vaš.<br/><em>Način rada birate vi.</em></h2></div><div className="ws-package-copy"><p>Besplatno preuzimanje je početak. Kada želite domen, objavu, povezivanje rezervacija ili Commerce funkcionalnost, postojeći RMC proces ostaje dostupan.</p><button className="ws-button ws-outline" type="button" onClick={()=>document.getElementById('advisor')?.scrollIntoView({behavior:'smooth',block:'start'})}>Krenite od besplatnog sajta ↗</button></div></section>
-      <section id="pitanja" className="ws-section ws-wrap ws-faq"><div><span className="ws-eyebrow">DOBRO JE ZNATI</span><h2>Jasno od<br/>prvog koraka.</h2></div><div><details><summary>Da li je preuzimanje stvarno besplatno?</summary><p>Da. Dobijate funkcionalan sajt i ZIP sa fajlovima sajta.</p></details><details><summary>Da li moram da napravim nalog?</summary><p>Ne. Advisor, pregled i preuzimanje rade bez registracije.</p></details><details><summary>Da li svaki sajt prima rezervacije?</summary><p>Ne. Advisor uključuje samo funkcionalnosti koje odgovaraju izabranoj delatnosti i odgovorima.</p></details></div></section>
-    </>}
-    <main id="advisor" className={'studio advisor-studio '+(result?'with-preview':'')}>
-      <aside className="wizard"><div className="wizard-top"><div className="eyebrow">WEB SOLUTIONS ADVISOR</div><h1>{result?'Sajt je spreman za test':'Napravite biznis sajt'}</h1><p>{result?'Preview i ZIP nastaju iz iste Node konfiguracije.':'Od opisa vašeg posla do funkcionalnog test sajta.'}</p>
-        <div className="progress" aria-label="Napredak"><div style={{width:(result?100:progress)+'%'}}/></div><small className="step-count">{result?'GENERISANO':definition?`KORAK ${step+2} OD ${count}`:'KORAK 1 — OPIS POSLA'}</small></div>
-        {result?<div className="wizard-content">
-          <div className="success-mark">✓</div><h2>{result.siteConfig.business.name}</h2><p>Advisor je završio proces. Preview i ZIP generisani su iz iste Node konfiguracije.</p>
-          <div className="summary-box"><div><span>Delatnost</span><strong>{result.siteConfig.business.label}</strong></div><div><span>Stil</span><strong>{definition?.styles.find(x=>x.id===style)?.label||style}</strong></div><div><span>Moduli</span><strong>{result.siteConfig.modules.join(' · ')}</strong></div></div>
-          <button className="action" type="button" onClick={exportZip} disabled={exporting}>{exporting?'Pripremam ZIP...':'Preuzmi besplatan sajt (ZIP) ↓'}</button>
-          {exportPairing&&<div role="status" style={{marginTop:'1rem',padding:'1rem',border:'2px solid currentColor',borderRadius:12}}>
-            <strong>Kod za Booking Manager:</strong> <code style={{fontSize:'1.45rem',fontWeight:800,letterSpacing:2}}>{exportPairing.code}</code>
-            <button type="button" onClick={()=>navigator.clipboard?.writeText(exportPairing.code)} style={{marginLeft:12}}>Kopiraj kod</button>
-            <p>Unesite kod u Booking Manager na telefonu, tabletu ili računaru u narednih {exportPairing.minutes} minuta. Kod je i u preuzetom ZIP-u. Sačuvajte kod. Direktno slanje rezervacija biće aktivirano nakon integracije Booking Managera.</p>
-          </div>}
-          <button className="quiet" type="button" onClick={()=>{setResult(null);setStep(steps.length-1);setError('');}}>Izmeni podatke / stil</button>
-          <button className="quiet" type="button" onClick={()=>{setDefinition(null);setResult(null);setStep(0);setError('');setSelectedId('');}}>Napravi drugi sajt</button>
-          <p className="small-note">Besplatan sajt: zahtevi za porudžbine i termine pripremaju poruke. Nema automatske naplate niti potvrde raspoloživosti.</p>
-        </div>:<div className="wizard-content">
-          {current==='intro'&&<section className="question"><div className="eyebrow">1 · OPIS</div><h2>Čime se bavite?</h2><p>Opišite posao. Advisor će predložiti delatnost i postaviti odgovarajuće poslovno pitanje.</p>
-            <form id="introForm" onSubmit={begin}><label className="field">Vaš opis<textarea rows={4} maxLength={800} minLength={3} required value={description} onChange={e=>setDescription(e.target.value)} placeholder="Imam mesaru i nudim pripremu mesa..."/></label>
-            <label className="field">Delatnost (opciono — za testiranje)<select value={selectedId} onChange={e=>setSelectedId(e.target.value)}><option value="">Advisor prepoznaje iz opisa</option>{[...new Set(supportedBusinesses.map(x=>x.group))].sort().map(group=><optgroup key={group} label={group}>{supportedBusinesses.filter(x=>x.group===group).map(x=><option key={x.id} value={x.id}>{x.label}</option>)}</optgroup>)}</select></label>
-            {defOfRecognized&&<p>Razumeo sam: {defOfRecognized.label}</p>}
-            <button className="action" type="submit" disabled={loading}>{loading?'Prepoznajem...':'Nastavi →'}</button></form>
-            <div className="pilot-list"><b>Brzi test scenariji</b>{['hair-salon','restaurant','optician','auto-service','plumber','consultant','kids-playroom','bakery','catering','gift-shop','car-wash','cleaning','fitness-center','plumbing-supplies','electrical-supplies','auto-parts','phone-store','repair-phone','furniture-store', 'butcher-shop','wine-shop','shoe-shop'].map(id=>supportedBusinesses.find(x=>x.id===id)).filter(Boolean).map(x=><button key={x.id} type="button" onClick={()=>{setSelectedId(x.id);setDescription('Imam '+x.label+' i želim novi sajt');}}><strong>{x.label}</strong><small>{x.group}</small></button>)}</div>
-          </section>}
-          {current==='goal'&&<ChoiceStep eyebrow="2 · CILJ" title="Šta je najvažnije za ovaj sajt?" items={availableGoals()} value={goal} onPick={v=>pick('goal',v)}/>}
-          {current==='hybrid'&&<ChoiceStep eyebrow="POVEZANE DELATNOSTI" title={definition.hybrid.question} help={definition.hybrid.help} items={definition.hybrid.options} value={answers.hybridChoice} onPick={v=>pick('hybrid',v)}/>}
-          {current==='operation'&&<ChoiceStep eyebrow="3 · POSLOVANJE" title={definition.operation.question} help="Ovo podešava način na koji biznis prima zahteve." items={definition.operation.options.map(x=>({id:x,label:x}))} value={answers.businessMode} onPick={v=>pick('operation',v)}/>}
-          {activeSpecial&&<ChoiceStep key={activeSpecial.id} eyebrow="POSLOVNE MOGUĆNOSTI" title={activeSpecial.question} help="Ovaj odgovor nezavisno uključuje ili isključuje odgovarajući modul — cilj sajta to ne menja." items={activeSpecial.options} value={typeof answers[activeSpecial.id]==='boolean'?(answers[activeSpecial.id]?'yes':'no'):(answers[activeSpecial.id]??'')} onPick={v=>pick('special:'+activeSpecial.id,v==='yes'?true:v==='no'?false:v)}/>}
-          {current==='emphasis'&&<ChoiceStep eyebrow="SADRŽAJ" title={definition.emphasis.question} items={definition.emphasis.options.map(x=>({id:x,label:x}))} value={answers.emphasis} onPick={v=>pick('emphasis',v)}/>}
-          {current==='style'&&<ChoiceStep eyebrow="STIL" title="Kako želite da sajt izgleda?" items={definition.styles.map(x=>({id:x.id,label:x.label}))} value={style} onPick={v=>pick('style',v)}/>}
-          {current==='company'&&<section className="question"><div className="eyebrow">ZAVRŠNI KORAK</div><h2>Kako se vaš biznis zove?</h2><p>Unesite stvarne podatke. Jedna poslovna adresa uključena je besplatno; za rad na terenu ili onlajn birate odgovarajuću opciju.</p>
+    {/* Unmodified V39.5 landing + six native sample modals. Its bridge opens only this React Advisor. */}
+    <iframe ref={legacyFrame} className="v395-runtime" title="RMC Web Solutions" src={publicBase+'v395/index.html'} />
+    {advisorOpen&&<div className="advisor-overlay rmc-ai-overlay" id="advisorOverlay" role="presentation">
+      <div ref={advisorDialogRef} className="advisor-card rmc-ai-card" role="dialog" aria-modal="true" aria-label="Web Solutions AI Advisor">
+        <header className="advisor-head rmc-ai-head">
+          <button type="button" className="rmc-ai-back" aria-label="Nazad" disabled={!definition&&step===0}
+            onClick={()=>{if(step===0){setDefinition(null);setStep(0);}else setStep(s=>s-1);setError('');}}>
+            ← <span>Nazad</span>
+          </button>
+          <div className="rmc-ai-progress" role="progressbar" aria-label="Napredak Advisora" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+            <span style={{width:progress+'%'}} />
+          </div>
+          <span className="rmc-ai-step-count">{definition?`${step+2} / ${count}`:'1 / …'}</span>
+          <button type="button" className="rmc-ai-close" aria-label="Zatvori Advisor" onClick={()=>setAdvisorOpen(false)}>×</button>
+        </header>
+        <div className="rmc-ai-scroll" id="advisorContent" key={definition?current:'intro'}>
+          {!definition?<section className="question rmc-ai-question rmc-ai-intro">
+            <div className="rmc-ai-step-label">✦ AI WEB ADVISOR</div>
+            <h1 id="rmc-ai-modal-title">Opišite čime se bavite.</h1>
+            <p>Pišite prirodno, kao da objašnjavate posao nekome ko vas prvi put upoznaje.</p>
+            <form id="introForm" onSubmit={begin}>
+              <label className="rmc-ai-form-label" htmlFor="rmc-ai-description">Vaš opis</label>
+              <textarea id="rmc-ai-description" rows={3} maxLength={800} minLength={3} required autoFocus
+                value={description} onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
+                placeholder="Na primer: Imam vinoteku, prodajem vino i organizujem degustacije…"/>
+              <div className="rmc-ai-chips" aria-label="Primeri opisa">
+                {examplePrompts.map(prompt=><button key={prompt} type="button" className="rmc-ai-chip"
+                  onClick={()=>{setDescription(prompt);setSelectedId('');setError('');document.getElementById('rmc-ai-description')?.focus();}}>{prompt}</button>)}
+              </div>
+              {error&&<div className="rmc-ai-fallback">
+                <label htmlFor="rmc-ai-business-select">Ako opis nije prepoznat, izaberite podržanu delatnost:</label>
+                <select id="rmc-ai-business-select" value={selectedId} onChange={e=>setSelectedId(e.target.value)}>
+                  <option value="">Izaberite delatnost</option>
+                  {supportedBusinesses.map(b=><option key={b.id} value={b.id}>{b.label}</option>)}
+                </select>
+              </div>}
+              <button className="rmc-ai-primary" type="submit" disabled={loading||description.trim().length<3}>
+                {loading?<><span className="rmc-ai-pulse"/> Razumem vaš opis…</>:'Nastavi →'}
+              </button>
+            </form>
+          </section>:<>
+            <div className="rmc-ai-ack" role="status">
+              <span aria-hidden="true">✦</span>
+              <div><strong>{step===0?(advisorAcknowledgement||`Razumem — ${recognizedLabel}.`):recognizedLabel}</strong>
+                <p>{step===0?'Hajde da prilagodimo sajt onome što vam je najvažnije.':'Vaši prethodni odgovori ostaju sačuvani.'}</p>
+              </div>
+            </div>
+            {current==='goal'&&<ChoiceStep eyebrow="POSLOVNI CILJ" title="Šta je najvažnije za ovaj sajt?" items={availableGoals()} value={goal} onPick={v=>pick('goal',v)}/>}
+            {current==='hybrid'&&<ChoiceStep eyebrow="POVEZANE DELATNOSTI" title={definition.hybrid.question} help={definition.hybrid.help} items={definition.hybrid.options} value={answers.hybridChoice} onPick={v=>pick('hybrid',v)}/>}
+            {current==='operation'&&<ChoiceStep eyebrow="NAČIN POSLOVANJA" title={definition.operation.question} help="Odgovor podešava način na koji sajt prima zahteve." items={definition.operation.options.map(x=>({id:x,label:x}))} value={answers.businessMode} onPick={v=>pick('operation',v)}/>}
+            {activeSpecial&&<ChoiceStep key={activeSpecial.id} eyebrow="POSLOVNE MOGUĆNOSTI" title={activeSpecial.question}
+              help="Ovaj izbor uključuje ili isključuje odgovarajuću funkcionalnost." items={activeSpecial.options}
+              value={typeof answers[activeSpecial.id]==='boolean'?(answers[activeSpecial.id]?'yes':'no'):(answers[activeSpecial.id]??'')}
+              onPick={v=>pick('special:'+activeSpecial.id,v==='yes'?true:v==='no'?false:v)}/>}
+            {current==='emphasis'&&<ChoiceStep eyebrow="IZDVAJAMO" title={definition.emphasis.question}
+              items={definition.emphasis.options.map(x=>({id:x,label:x}))} value={answers.emphasis} onPick={v=>pick('emphasis',v)}/>}
+            {current==='style'&&<ChoiceStep eyebrow="VIZUELNI PRAVAC" title="Kako želite da sajt izgleda?"
+              help="Stil menja vizuelni izraz, a ne odabrane poslovne funkcije."
+              items={definition.styles.map(x=>({id:x.id,label:x.label,desc:x.description}))} value={style} onPick={v=>pick('style',v)}/>}
+          {current==='company'&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Kako se vaš biznis zove?</h2><p>Unesite stvarne podatke. Jedna poslovna adresa uključena je besplatno; za rad na terenu ili onlajn birate odgovarajuću opciju.</p>
             <form id="companyForm" onSubmit={generate}><label className="field">Naziv firme<input autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
             <label className="field">Kontakt telefon (opciono)<input type="tel" autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
             <fieldset className="v421-mode"><legend>Gde poslujete?</legend>
@@ -265,18 +352,12 @@ function App(){
             </details>
             <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Prikaži uvodni Welcome prozor</span><small>Opcionalno · isti izgled u svih pet stilova · prikazuje se jednom po poseti.</small></label>
             <button className="action" type="submit" disabled={loading||!businessName.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
-          {definition&&<button className="quiet back" type="button" onClick={()=>{if(step===0){setDefinition(null);setStep(0)}else setStep(s=>s-1);setError('')}}>← Nazad</button>}
-        </div>}
-        {error&&<p role="alert" className="error">{error}</p>}
-        <div className="wizard-footer">V39.5 ostaje netaknut · {health?.registryEntries||72} delatnosti u registru · {supportedBusinesses.length} migriranih scenarija
-          {import.meta.env.DEV&&<a href="/legacy/" target="_blank" rel="noreferrer">Otvori stari V39.5 ↗</a>}</div>
-      </aside>
-      <section className="preview-area" aria-label="Pregled sajta">
-        <div className="preview-bar"><div className="bar-title"><strong>PREVIEW</strong><span>{result?result.siteConfig.business.name:'Interaktivni prikaz'}</span></div><div className="device-buttons"><button type="button" className={device==='desktop'?'active':''} onClick={()=>setDevice('desktop')}>Desktop</button><button type="button" className={device==='mobile'?'active':''} onClick={()=>setDevice('mobile')}>Mobile</button></div></div>
-        {result?<div className={'viewport '+device}><iframe ref={previewFrame} key={`${result.siteConfig.business.id}-${device}-${style}`} title={'Preview '+result.siteConfig.business.name} srcDoc={previewHtml} sandbox="allow-scripts allow-modals allow-forms allow-popups allow-popups-to-escape-sandbox"/></div>
-          :<div className="preview-empty"><div className="fake-browser"><div className="fake-top"><i/><i/><i/></div><div className="fake-hero"><span></span><b>Vaš sajt nastaje ovde.</b><p>Najpre odgovorite na pitanja Advisora.</p></div><div className="fake-cards"><i/><i/><i/></div></div><p>Pregled, korpa i degustacije pojaviće se čim završite poslednji korak.</p></div>}
-      </section>
-    </main>
+          </>}
+          {error&&<p role="alert" className="rmc-ai-error">{error}</p>}
+        </div>
+        <footer className="rmc-ai-footnote"><span>RMC WEB SOLUTIONS</span><span>Bez registracije · Besplatan pregled</span></footer>
+      </div>
+    </div>}
   </>;
 }
 createRoot(document.getElementById('root')).render(<App/>);
