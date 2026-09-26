@@ -1,0 +1,15 @@
+# Render reference only. Do not import this file as a Blueprint: staging is created manually.
+services:
+  - type: web
+    runtime: static
+    name: rmc-web-solutions-staging
+    branch: development/v43-3
+    buildCommand: npm ci && npm run build -w client
+    staticPublishPath: client/dist
+    envVars:
+      - key: NODE_VERSION
+        value: 22.15.0
+      - key: VITE_API_BASE_URL
+        value: https://rmc-web-solutions-api-staging.onrender.com
+      - key: VITE_BASE_PATH
+        value: /
