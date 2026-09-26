@@ -4,30 +4,9 @@ import {apiUrl} from './api.js';
 import './style.css';
 import './react-adapter.css';
 import './advisor-ai-v395.css';
+import {Landing,PreviewDialog,InfoDialog,LeadDialog,SHOWCASE} from './landing-react.jsx';
 
-const pilots=[
-  {id:'butcher-shop',label:'Mesara',hint:'Sirovo / grilovano, količina u kg, korpa'},
-  {id:'wine-shop',label:'Vinoteka',hint:'Vina, korpa i uslovne degustacije'},
-  {id:'shoe-shop',label:'Prodavnica obuće',hint:'Brojevi, cene i standardna korpa'},
-  {id:'fashion-shop',label:'Modni butik',hint:'Odeća, boje i veličine'},
-  {id:'grocery-store',label:'Mini market',hint:'Posebno pitanje o naručivanju, korpa ili katalog'},
-  {id:'liquor-store',label:'Prodavnica pića',hint:'Katalog pića i porudžbine'},
-  {id:'home-decor',label:'Kućni dekor',hint:'Katalog dekoracije i porudžbine'},
-  {id:'electronics-store',label:'Prodavnica elektronike',hint:'Uređaji, cene i korpa'},
-  {id:'phone-store',label:'Prodavnica telefona',hint:'Porudžbine po izboru, model/boja i provera dostupnosti'},
-  {id:'furniture-store',label:'Salon nameštaja',hint:'Model i dimenzije, upit umesto korpe'},
-  {id:'auto-parts',label:'Auto delovi',hint:'Opciono naručivanje uz obaveznu proveru kompatibilnosti'},
-  {id:'plumbing-supplies',label:'Vodovodni materijal',hint:'Specifikacija proizvoda, upit'},
-  {id:'electrical-supplies',label:'Elektromaterijal',hint:'Specifikacija proizvoda, upit'}
-];
-const examples=[
-  {id:'salon',type:'Salon',name:'Studio Forma',image:'assets/images/curated/beauty/hair-salon/hero/hair_hero_01.jpg'},
-  {id:'pizzeria',type:'Picerija',name:'Pica & društvo',image:'assets/images/curated/food/restaurant/hero/restaurant_hero_01.jpg'},
-  {id:'auto-service',type:'Auto servis',name:'Auto Fokus',image:'assets/images/curated/services/auto-service/hero/auto_service_hero_01.jpg'},
-  {id:'vinoteka',type:'Vinoteka',name:'Vino & Terroir',image:'assets/images/curated/retail/wine-shop/hero/wine_shop_hero_signature_selection.jpg'},
-  {id:'namestaj',type:'Salon nameštaja',name:'Forma Living',image:'assets/images/curated/retail/furniture-store/hero/furniture_store_hero_showroom_01.jpg'},
-  {id:'optika',type:'Optika',name:'Optika Fokus',image:'assets/images/curated/healthcare/optician/hero/optician_hero_space_02.jpg'}
-];const goals=[
+const goals=[
   {id:'purchase',label:'Prodaja i porudžbine',desc:'Kupac pronalazi proizvode i priprema porudžbinu.'},
   {id:'visit',label:'Više poseta prodavnici',desc:'Ponuda podstiče kupca da vas kontaktira ili poseti.'},
   {id:'catalog',label:'Predstavljanje ponude',desc:'Naglasak je na asortimanu i informacijama.'}
@@ -47,7 +26,6 @@ function ChoiceStep({eyebrow,title,help,items,value,onPick}){
 }
 function App(){
   const previewFrame=useRef(null);
-  const legacyFrame=useRef(null);
   const advisorDialogRef=useRef(null);
   const lastFocusRef=useRef(null);
   const [health,setHealth]=useState(null),[businesses,setBusinesses]=useState([]);
@@ -66,10 +44,12 @@ function App(){
   const [exportPairing,setExportPairing]=useState(null);
   const [advisorOpen,setAdvisorOpen]=useState(false);
   const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
-  const apiCurrent=health?.status==='ok'&&health.stage==='v42.1-location-free';
-  const showLanding=!definition&&!result;
-  const publicBase=import.meta.env.BASE_URL;
-  const apiOutdated=health?.status==='ok'&&!apiCurrent;
+  const [previewOpen,setPreviewOpen]=useState(false);
+  const [samplePreview,setSamplePreview]=useState(null);
+  const [currentDemo,setCurrentDemo]=useState('salon');
+  const [leadPackage,setLeadPackage]=useState('');
+  const [infoType,setInfoType]=useState('');
+  const sampleRequestSeq=useRef(0);
   // Modal is owned by React; never move the legacy business logic here.
   useEffect(()=>{
     if(!advisorOpen)return;
@@ -88,9 +68,7 @@ function App(){
     }
     document.addEventListener('keydown',onKeyDown);
     return()=>{document.body.style.overflow=previousOverflow;document.removeEventListener('keydown',onKeyDown);
-      // Focus returns to the landing iframe that opened the Advisor.
       if(lastFocusRef.current?.isConnected)lastFocusRef.current.focus?.({preventScroll:true});
-      else legacyFrame.current?.focus?.({preventScroll:true});
     };
   },[advisorOpen]);
   useEffect(()=>{
@@ -153,7 +131,8 @@ function App(){
     e.preventDefault();setError('');setLoading(true);
     try{
       const data=await json('/api/site/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)});
-      setResult(data);setDevice('desktop');setExportPairing(null);
+      setResult(data);setDevice('desktop');setExportPairing(null);setSamplePreview(null);
+      setAdvisorOpen(false);setPreviewOpen(true);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
   }
   async function exportZip(){
@@ -187,8 +166,10 @@ function App(){
     window.addEventListener('message',handle);
     return()=>window.removeEventListener('message',handle);
   },[]);
+  // One preview adapter for both the current Advisor result and live examples.
+  // No old public iframe or browser-side business engine.
   const previewBase=window.location.origin+import.meta.env.BASE_URL;
-  const previewHtml=result?.previewHtml
+  const hydratePreview=html=>html
     ?.replace('href="site.css"','href="'+previewBase+'site.css"')
     ?.replace('href="visual-system.css"','href="'+previewBase+'visual-system.css"')
     ?.replace('href="global-modal.css"','href="'+previewBase+'global-modal.css"')
@@ -205,24 +186,50 @@ function App(){
     ?.replace('src="vertical-runtime.js"','src="'+previewBase+'vertical-runtime.js"')
     ?.replace('href="site-system.css"','href="'+previewBase+'site-system.css"')
     ?.replace('src="site-system.js"','src="'+previewBase+'site-system.js"');
-  useEffect(()=>{
-    if(!result||!legacyFrame.current?.contentWindow)return;
-    legacyFrame.current.contentWindow.postMessage({
-      type:'RMC_SHOW_REACT_SITE',
-      html:previewHtml,
-      name:result.siteConfig.business.name
-    },window.location.origin);
-    setAdvisorOpen(false);
-  },[result,previewHtml]);
-  useEffect(()=>{
-    const handle=event=>{
-      if(event.origin!==window.location.origin||event.source!==legacyFrame.current?.contentWindow)return;
-      if(event.data?.type==='RMC_REACT_ADVISOR_OPEN')setAdvisorOpen(true);
-      if(event.data?.type==='RMC_REACT_EXPORT')exportZip();
-    };
-    window.addEventListener('message',handle);
-    return()=>window.removeEventListener('message',handle);
-  },[input]);
+  const previewHtml=hydratePreview(result?.previewHtml);
+  function startNewSite(){
+    setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
+    setSelectedId('');setRecognizedId('');setDescription('');setStep(0);setError('');
+    setAdvisorOpen(true);
+  }
+  function editSite(){
+    setPreviewOpen(false);setError('');setStep(Math.max(0,steps.length-1));setAdvisorOpen(true);
+  }
+  // Sample buttons request ACTUAL currently generated content from the Node API.
+  // They do not execute any code from the earlier browser-side generator.
+  async function openExample(exampleId){
+    const entry=SHOWCASE.find(item=>item.id===exampleId);
+    if(!entry)return;
+    const seq=++sampleRequestSeq.current;
+    setCurrentDemo(entry.id);setDevice('desktop');setSamplePreview({loading:true,name:entry.name});
+    setPreviewOpen(true);
+    try{
+      const def=await json('/api/advisor/questions/'+encodeURIComponent(entry.businessId));
+      const sampleAnswers={
+        businessMode:def.operation?.options?.[0]||'',
+        emphasis:def.emphasis?.options?.[0]||'',
+        ...(def.hybrid?.options?.length?{hybridChoice:def.hybrid.options[0].id}:{})
+      };
+      for(const special of (def.specials||(def.special?[def.special]:[]))){
+        if(!special?.id)continue;
+        const positive=special.options?.find(item=>item.id==='yes');
+        sampleAnswers[special.id]=positive?true:(special.options?.[0]?.id??true);
+      }
+      const payload={
+        businessId:entry.businessId,businessName:entry.name,
+        description:'Demonstracioni prikaz: '+entry.type,goal:'purchase',style:'modern',
+        answers:sampleAnswers,
+        businessData:{locationMode:'online',businessName:entry.name,phone:'',email:'',city:'',
+          address:'',hours:'',website:'',whatsapp:'',viber:'',locations:[]}
+      };
+      const sample=await json('/api/site/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(seq!==sampleRequestSeq.current)return;
+      if(!sample.previewHtml)throw new Error('Server nije vratio HTML za primer sajta.');
+      setSamplePreview({loading:false,name:entry.name,html:hydratePreview(sample.previewHtml)});
+    }catch(ex){
+      if(seq===sampleRequestSeq.current)setSamplePreview({loading:false,name:entry.name,error:ex.message});
+    }
+  }
   const defOfRecognized=businesses.find(x=>x.id===recognizedId);
   const recognizedLabel=businesses.find(x=>x.id===(definition?.id||selectedId))?.label||definition?.label||defOfRecognized?.label||'vaše poslovanje';
   const examplePrompts=['Frizerski salon','Auto servis','Prodajem vino i organizujem degustacije','Vodoinstalaterske usluge'];
@@ -254,8 +261,17 @@ function App(){
    return goals; // retail: standard purchase/visit/catalog wording
   }
   return <>
-    {/* Unmodified V39.5 landing + six native sample modals. Its bridge opens only this React Advisor. */}
-    <iframe ref={legacyFrame} className="v395-runtime" title="RMC Web Solutions" src={publicBase+'v395/index.html'} />
+    <Landing onStart={startNewSite} onOpenSite={()=>{setSamplePreview(null);setDevice('desktop');setPreviewOpen(true)}}
+      onExample={openExample} onLead={setLeadPackage} onInfo={setInfoType} hasResult={Boolean(result)}/>
+    <PreviewDialog open={previewOpen} mode={samplePreview?'sample':'site'}
+      siteName={samplePreview?.name||result?.siteConfig?.business?.name}
+      html={samplePreview?samplePreview.html:previewHtml} loading={samplePreview?.loading}
+      error={samplePreview?.error} selectedDemo={currentDemo} onSelectDemo={openExample}
+      onClose={()=>{++sampleRequestSeq.current;setPreviewOpen(false)}} onStart={startNewSite}
+      onExport={exportZip} exporting={exporting} exportPairing={exportPairing}
+      onEdit={editSite} device={device} onDevice={setDevice} frameRef={previewFrame}/>
+    <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>
+    <LeadDialog packageName={leadPackage} onClose={()=>setLeadPackage('')}/>
     {advisorOpen&&<div className="advisor-overlay rmc-ai-overlay" id="advisorOverlay" role="presentation">
       <div ref={advisorDialogRef} className="advisor-card rmc-ai-card" role="dialog" aria-modal="true" aria-label="Web Solutions AI Advisor">
         <header className="advisor-head rmc-ai-head">
