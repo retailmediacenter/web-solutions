@@ -1,7 +1,14 @@
 $ErrorActionPreference = 'Stop'
 Write-Host "RMC QA - samo STAGING, bez javnih kodova."
-Write-Host "Dostupni za test: frizer (ostali nakon prilagodjavanja poslovne matrice)."
-$slug='frizer'
+Write-Host "QA scenariji: 1 - Frizer (EXACT_TIME); 2 - Vodoinstalater (DAY_PART)"
+$answer=(Read-Host 'Izaberi 1 ili 2 [podrazumevano 2]').Trim()
+switch ($answer) {
+  '1' { $slug='frizer' }
+  '2' { $slug='vodoinstalater' }
+  ''  { $slug='vodoinstalater' }
+  default { Write-Host 'STOP: Nepoznat scenario. Nista nije poslato.'; exit 2 }
+}
+Write-Host "Izabran scenario: $slug. CODE i administratorski kljuc ostaju PRIVATNI."
 $keySecure=Read-Host -AsSecureString -Prompt 'RMC_QA_ADMIN_KEY sa Render STAGING Environment'
 $ptr=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($keySecure)
 try { $key=[Runtime.InteropServices.Marshal]::PtrToStringBSTR($ptr) } finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) }

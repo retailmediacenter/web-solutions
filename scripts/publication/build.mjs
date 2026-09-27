@@ -32,8 +32,11 @@ function assertPublicConfig(){
 const fileExists=r=>existsSync(path.join(client,'public',r));
 const assert=(ok,message)=>{if(!ok)throw Error(message)};
 assertPublicConfig();
-assert([...liveQa].every(slug=>slug==='frizer'),
- 'V44/B0: prvi stvarni test dopušten je SAMO za frizer, posle privatnog uparivanja.');
+// V44: frizer EXACT_TIME and plumber DAY_PART are the only currently approved
+// live public QA transports. Existing fixed site IDs must never be regenerated.
+const permittedLiveQa=new Set(['frizer','vodoinstalater']);
+assert([...liveQa].every(slug=>permittedLiveQa.has(slug)),
+ 'V44: stvarni QA transport trenutno je dozvoljen samo za frizer i vodoinstalater.');
 if(liveQa.size)assert(apiBase==='https://rmc-web-solutions-api-staging.onrender.com'||apiBase.startsWith('http://localhost:'),
  'QA Booking transport sme se usmeriti samo na staging ili lokalni API.');
 const status=s=>console.log('\n[RMC] '+s);
@@ -132,7 +135,7 @@ function previewIndex(manifest){
  }).join('');
  return `<!doctype html><html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>RMC — 9 razvojnih scenarija</title><style>
 :root{font-family:system-ui,Arial,sans-serif;color-scheme:dark;color:#f7f8fb;background:#101728}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#263b5d 0%,#101728 52%);line-height:1.45}main{width:min(1200px,92vw);margin:auto;padding:30px 0 64px}header{border-bottom:1px solid #ffffff21;padding:22px 4vw;display:flex;justify-content:space-between;gap:16px;align-items:center}header a{color:#d8e8ff;text-decoration:none}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;margin:12px 0}.intro{color:#cbd7e8;max-width:870px}.top{background:#ffffff12;border:1px solid #ffffff20;border-radius:20px;padding:28px;margin:22px 0 46px}.note{font-size:.95rem;color:#e5ddac}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:15px;flex-wrap:wrap}.section-head h2{margin-bottom:5px}.section-head p{color:#b8cce3;margin:0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:20px 0 52px}.card{min-width:0;color:inherit;text-decoration:none;border:1px solid #ffffff27;border-radius:18px;background:#ffffff0b;overflow:hidden;transition:transform .18s,background .18s}.card:hover,.card:focus-visible{transform:translateY(-3px);background:#ffffff19}.image{height:185px;background-color:#253755;background-position:center;background-size:cover}.content{padding:20px}.content span{font-size:.78rem;letter-spacing:.04em;color:#9ec9f0}.content h3{font-size:1.5rem;margin:8px 0}.content p{color:#ced8e6;min-height:48px}.content b{color:#bcdcff;font-size:.93rem}footer{color:#bcc8d9;border-top:1px solid #ffffff27;padding-top:24px;font-size:.86rem}
-</style></head><body><header><strong>RMC / WEB SOLUTIONS — QA</strong><a href="https://retailmediacenter.github.io/web-solutions-public/">Glavni Web Solutions ↗</a></header><main><div class="top"><p class="note">RAZVOJNO OKRUŽENJE • ${manifest.bookingLive?"FRIZER: STAGING, TEK NAKON PRIVATNOG UPARIVANJA":"BOOKING: DEMONSTRACIJA"}</p><h1>Devet sajtova. Jedan izvor funkcionalnosti.</h1><p class="intro">Svi primeri su automatski izvezeni istim Node sistemom kao korisnički ZIP. Promena modula podrazumeva ponovno generisanje svih devet sajtova. Svaki sajt ima stabilni QA SITE ID; samo eksplicitno omogućeni scenariji dobijaju staging transport, a kod se generiše privatno.</p><p class="intro"><small>Verzija izvora: ${htmlEscape(manifest.sourceCommit)} · Generisano: ${htmlEscape(manifest.generatedAt)}</small></p></div>${cards}<footer>Dev Preview nije skup šest nezavisnih marketinških DEMO sajtova sa glavnog Indexa. <a style="color:#bcdcff" href="manifest.json">Manifest generisanja ↗</a></footer></main></body></html>`;
+</style></head><body><header><strong>RMC / WEB SOLUTIONS — QA</strong><a href="https://retailmediacenter.github.io/web-solutions-public/">Glavni Web Solutions ↗</a></header><main><div class="top"><p class="note">RAZVOJNO OKRUŽENJE • ${manifest.bookingLive?"BOOKING: STAGING, SAMO ZA EKSPLICITNO AKTIVIRANE SCENARIJE":"BOOKING: DEMONSTRACIJA"}</p><h1>Devet sajtova. Jedan izvor funkcionalnosti.</h1><p class="intro">Svi primeri su automatski izvezeni istim Node sistemom kao korisnički ZIP. Promena modula podrazumeva ponovno generisanje svih devet sajtova. Svaki sajt ima stabilni QA SITE ID; samo eksplicitno omogućeni scenariji dobijaju staging transport, a kod se generiše privatno.</p><p class="intro"><small>Verzija izvora: ${htmlEscape(manifest.sourceCommit)} · Generisano: ${htmlEscape(manifest.generatedAt)}</small></p></div>${cards}<footer>Dev Preview nije skup šest nezavisnih marketinških DEMO sajtova sa glavnog Indexa. <a style="color:#bcdcff" href="manifest.json">Manifest generisanja ↗</a></footer></main></body></html>`;
 }
 function featureLabel(p){
  const c=p.siteConfig.capabilities,b=c.booking;
@@ -310,12 +313,12 @@ async function main(){
    'Kopirajte SADRZAJ prvog foldera u lokalni GitHub Desktop folder web-solutions-public.\n'+
    'Kopirajte SADRZAJ drugog foldera u lokalni GitHub Desktop folder web-solutions-preview.\n'+
    'Ne objavljujte ovaj RMC_PUBLICATION_OUT folder kao celinu.\n'+
-   (liveQa.size?'Frizer ima samo STAGING transport; stvarni E2E NIJE POTVRDJEN.\n':'Booking je DEMO, bez stvarnog slanja.\n')+
+   (liveQa.size?'Samo eksplicitno izabrani QA scenariji imaju STAGING transport; pojedinacni E2E proverava se rucno.\n':'Booking je DEMO, bez stvarnog slanja.\n')+
    'Vlasnicki pairing kod nikada nije deo ovog artefakta.\n');
   console.log('\n========= RMC PUBLICATION PASS =========');
   console.log('PUBLIC : '+pub+'\nPREVIEW: '+preview);
   console.log('GitHub Pages /web-solutions-public/ i /web-solutions-preview/');
-  console.log('Rezervacije: '+(liveQa.size?'FRIZER staging transport spreman; E2E NEPROVEREN.':'DEMO; E2E nije uključen.'));
+  console.log('Rezervacije: '+(liveQa.size?'Izabrani QA staging transport spreman; E2E proveriti posebno za svaki scenario.':'DEMO; E2E nije uključen.'));
  }catch(error){
   status('BUILD STOP: '+error.message);
   rmSync(staged,{recursive:true,force:true});throw error;
