@@ -121,3 +121,22 @@ html.has-site-modal,html.has-site-modal body{overflow:hidden!important;overscrol
     height:60px;
   }
 }
+
+/* V44 B1: compact, state-aware Booking status. Only Booking dialogs are affected. */
+html body dialog.site-dialog[data-modal-system="v419"][data-booking-status="true"]{
+  height:fit-content;max-height:min(88dvh,640px);
+}
+.site-dialog[data-modal-system="v419"][data-booking-status="true"] .modal-body{
+  flex:0 1 auto;
+}
+.site-dialog[data-modal-system="v419"][data-booking-status="true"] .booking-submit-state{
+  min-height:0;
+}
+/* The active state's title is mirrored in the header; never show it twice. */
+.site-dialog[data-modal-system="v419"][data-booking-status="true"] .booking-submit-state > section > :is(.kicker,h2){
+  display:none!important;
+}
+/* Error buttons stay INSIDE their own hidden state, not the shared footer. */
+.site-dialog[data-modal-system="v419"][data-booking-status="true"] .modal-body .booking-submit-state > section:not([hidden]) .dialog-actions{
+  display:flex;justify-content:center;
+}

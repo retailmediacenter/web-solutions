@@ -21,10 +21,31 @@
    let content=first(dialog,':scope > .dialog-pad, :scope > .hybrid-dialog-inner, :scope > .vehicle-detail-layout, :scope > .product-detail-grid');
    if(!content){content=document.createElement('div');for(const node of array(dialog))if(node!==close)content.append(node);}
    if(content.parentNode===dialog)body.append(content);
-   // Move a headline to the fixed top when available without replacing its original node.
-   const kicker=first(body,'.kicker:not(.detail-body .kicker)'),head=first(body,'h2:not(.detail-body h2)');
-   if(kicker)header.append(kicker);
-   if(head)header.append(head);
+   // D5 Booking states have different titles and actions. Never hoist a title
+   // from the hidden DEMO state or an error-only Retry into a permanent shell.
+   const bookingStatus=dialog.classList.contains('booking-submit-dialog');
+   if(bookingStatus){
+     const states=Array.from(body.querySelectorAll('.booking-submit-state > section'));
+     if(states.length){
+       dialog.dataset.bookingStatus='true';
+       const label=document.createElement('div'),title=document.createElement('h2');
+       label.className='kicker';header.append(label,title);
+       const refresh=()=>{
+         const active=states.find(section=>!section.hidden);
+         label.textContent=active?.querySelector('.kicker')?.textContent||'REZERVACIJA';
+         title.textContent=active?.querySelector('h2')?.textContent||'Status zahteva';
+       };
+       for(const state of states){
+         new MutationObserver(refresh).observe(state,{attributes:true,attributeFilter:['hidden']});
+       }
+       refresh();
+     }
+   }else{
+     // Other modals retain their existing fixed heading and actions.
+     const kicker=first(body,'.kicker:not(.detail-body .kicker)'),head=first(body,'h2:not(.detail-body h2)');
+     if(kicker)header.append(kicker);
+     if(head)header.append(head);
+   }
    // Product detail uses product name updated later: keep in body to avoid changing existing script assumptions.
    if(dialog.id==='productDialog'){header.insertBefore(Object.assign(document.createElement('div'),{className:'kicker',textContent:'PROIZVOD'}),header.firstChild);
      const acts=first(body,'.detail-actions');if(acts)footer.append(acts);
@@ -34,7 +55,7 @@
      const shareActions=first(body,'#sharePanel .dialog-actions');
      if(shareActions){const group=document.createElement('div');group.className='modal-footer-group modal-footer-share';group.append(shareActions);footer.append(group);}
      const share=first(body,'#sharePanel');if(share)new MutationObserver(()=>dialogOpen(dialog)).observe(share,{attributes:true,attributeFilter:['hidden']});
-   }else{
+   }else if(!bookingStatus){
      const selector=dialog.id==='vehicleDetailDialog'?'#vehicleRequest':'.dialog-actions, .hybrid-actions';
      const actions=first(body,selector);if(actions)footer.append(actions);
    }
