@@ -70,6 +70,7 @@ function LiveThread({messages,latestId,completed,onComplete,thinking}){
 function App(){
   const previewFrame=useRef(null);
   const advisorDialogRef=useRef(null);
+  const advisorScrollRef=useRef(null);
   const lastFocusRef=useRef(null);
   const [health,setHealth]=useState(null),[businesses,setBusinesses]=useState([]);
   const [description,setDescription]=useState(''),[selectedId,setSelectedId]=useState(''),[recognizedId,setRecognizedId]=useState('');
@@ -140,12 +141,22 @@ function App(){
     });
     return()=>cancelAnimationFrame(task);
   },[advisorOpen,current,replyComplete]);
+  useEffect(()=>{
+    if(!advisorOpen||!replyComplete)return;
+    const node=advisorScrollRef.current;
+    // Bring quick choices into view; the long final contact form starts at its first field.
+    const id=requestAnimationFrame(()=>{
+      if(!node)return;
+      const company=current==='company'?node.querySelector('.rmc-ai-company'):null;
+      if(company)node.scrollTop=Math.max(0,company.offsetTop-node.offsetTop);
+      else node.scrollTop=node.scrollHeight;
+    });
+    return()=>cancelAnimationFrame(id);
+  },[advisorOpen,replyComplete,current,clarification]);
   const activeSpecial=current.startsWith('special:')
     ?(definition?.specials||[definition?.special]).find(q=>q?.id===current.slice(8)):null;
   const supportedBusinesses=businesses.filter(b=>b.pilot);
   const selectedInfo=supportedBusinesses.find(x=>x.id===selectedId);
-  const count=definition?((definition.specials||[]).length+1):1;
-  const progress=definition?Math.max(8,Math.round(((count-steps.length)/count)*100)):5;
   const input=useMemo(()=>({businessId:definition?.id||selectedId,businessName,description,goal,style,
     answers:{...answers,showWelcome,contactPhone,externalBookingUrl},
     businessData:{locationMode,businessName,phone:contactPhone,email,city,address:locationMode==='physical'?address:'',hours,website,whatsapp,viber,locations:locationMode==='physical'?extraLocations:[]}}),
@@ -330,13 +341,10 @@ function App(){
               else{setClarification(null);addReply('Možete dati novi opis.');}setError('');}}>
             ← <span>Nazad</span>
           </button>
-          <div className="rmc-ai-progress" role="progressbar" aria-label="Napredak Advisora" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
-            <span style={{width:progress+'%'}} />
-          </div>
-          <span className="rmc-ai-step-count">{definition?'Još malo':'Početak'}</span>
+          <strong className="rmc-ai-header-title">AI Advisor</strong>
           <button type="button" className="rmc-ai-close" aria-label="Zatvori Advisor" onClick={()=>setAdvisorOpen(false)}>×</button>
         </header>
-        <div className="rmc-ai-scroll" id="advisorContent">
+        <div ref={advisorScrollRef} className="rmc-ai-scroll" id="advisorContent">
           <LiveThread messages={liveMessages} latestId={latestReplyId} completed={replyComplete}
             onComplete={()=>setReplyComplete(true)} thinking={loading&&!exporting}/>
           {!definition?<section className="rmc-live-compose-section">
@@ -346,19 +354,8 @@ function App(){
                   disabled={loading} onClick={e=>begin(e,item.id)}>{item.label}</button>)}
                 {clarification.question?.includes('prehrambenih')&&<button type="button" className="rmc-live-option" onClick={()=>{setClarifyText('Specijalizovana prodavnica: ');setTimeout(()=>document.getElementById('rmc-ai-description')?.focus(),0);}}>Specijalizovana prodavnica</button>}
               </div>}
-              <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}} className="rmc-live-composer">
-                <textarea id="rmc-ai-description" value={clarifyText} rows={2} maxLength={400}
-                  aria-label="Vaš odgovor" onChange={e=>setClarifyText(e.target.value)} placeholder="Nešto drugo — šta konkretno prodajete?"/>
-                <button type="submit" disabled={!replyComplete||loading||clarifyText.trim().length<3}>Pošalji →</button>
-              </form>
               <button className="rmc-live-link" type="button" onClick={()=>{setClarification(null);setClarifyText('');setError('');addReply('Možete mi dati novi opis svog posla.');}}>Promeni početni opis</button>
             </div>:<>
-              <form id="introForm" onSubmit={begin} className="rmc-live-composer">
-                <textarea id="rmc-ai-description" autoFocus value={description} rows={3} maxLength={800} minLength={3} required
-                  aria-label="Opišite svoj posao" onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
-                  placeholder="Na primer: Prodajem prehrambene proizvode…"/>
-                <button type="submit" disabled={!replyComplete||loading||description.trim().length<3}>Pošalji →</button>
-              </form>
               {!description&&<div className="rmc-live-suggestions">{examplePrompts.map(prompt=><button key={prompt} type="button" disabled={loading}
                 onClick={()=>{setDescription(prompt);setError('');}}>{prompt}</button>)}</div>}
             </>}
@@ -369,11 +366,6 @@ function App(){
               {current==='operation'&&<div className="rmc-live-options">{definition.operation.options.map(value=><button type="button" key={value} className="rmc-live-option" onClick={()=>pick('operation',value)}>{value}</button>)}</div>}
               {current==='hybrid'&&<div className="rmc-live-options">{definition.hybrid.options.map(item=><button type="button" key={item.id} className="rmc-live-option" onClick={()=>pick('hybrid',item.id)}>{item.label}</button>)}</div>}
             </>}
-            {<form className="rmc-live-composer" onSubmit={continueConversation}>
-              <textarea id="rmc-live-answer" value={liveInput} rows={2} maxLength={400} aria-label="Odgovorite Advisoru"
-                onChange={e=>setLiveInput(e.target.value)} placeholder={current==='company'?'Želite da promenite neki odgovor? Napišite ovde…':'Ili napišite odgovor svojim rečima…'}/>
-              <button type="submit" disabled={!replyComplete||loading||liveInput.trim().length<3}>Pošalji →</button>
-            </form>}
                     {current==='company'&&replyComplete&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Podaci za vaš sajt</h2><p>Za završetak su potrebni naziv, telefon i način poslovanja. Dodatne informacije su opcione.</p>
             <form id="companyForm" onSubmit={generate}>
             <details className="rmc-live-settings"><summary>Opcionalno: stil sajta</summary>
@@ -417,6 +409,25 @@ function App(){
             <button className="action" type="submit" disabled={loading||!businessName.trim()||!contactPhone.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
           </>}
           {error&&<p role="alert" className="rmc-ai-error">{error}</p>}
+        </div>
+        <div className="rmc-ai-compose-dock" aria-label="Odgovor Advisoru">
+          {!definition?(clarification?
+            <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}} className="rmc-live-composer">
+              <textarea id="rmc-ai-description" value={clarifyText} rows={2} maxLength={400}
+                aria-label="Vaš odgovor" onChange={e=>setClarifyText(e.target.value)} placeholder="Napišite odgovor svojim rečima…"/>
+              <button type="submit" disabled={!replyComplete||loading||clarifyText.trim().length<3}>Pošalji →</button>
+            </form>:
+            <form id="introForm" onSubmit={begin} className="rmc-live-composer">
+              <textarea id="rmc-ai-description" autoFocus value={description} rows={2} maxLength={800} minLength={3} required
+                aria-label="Opišite svoj posao" onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
+                placeholder="Opišite svoj posao svojim rečima…"/>
+              <button type="submit" disabled={!replyComplete||loading||description.trim().length<3}>Pošalji →</button>
+            </form>):
+            <form className="rmc-live-composer" onSubmit={continueConversation}>
+              <textarea id="rmc-live-answer" value={liveInput} rows={2} maxLength={400} aria-label="Odgovorite Advisoru"
+                onChange={e=>setLiveInput(e.target.value)} placeholder={current==='company'?'Želite da promenite odgovor? Napišite ovde…':'Napišite odgovor svojim rečima…'}/>
+              <button type="submit" disabled={!replyComplete||loading||liveInput.trim().length<3}>Pošalji →</button>
+            </form>}
         </div>
         <footer className="rmc-ai-footnote"><span>RMC WEB SOLUTIONS</span><span>Bez registracije · Besplatan pregled</span></footer>
       </div>

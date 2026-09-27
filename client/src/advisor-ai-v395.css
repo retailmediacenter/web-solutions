@@ -242,3 +242,85 @@
 }
 
 #advisorOverlay.rmc-ai-overlay .rmc-live-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* V45.3.1 — Live conversation UI only. Header and dock never scroll. */
+#advisorOverlay.rmc-ai-overlay .rmc-ai-head.advisor-head{
+  grid-template-columns:minmax(62px,1fr) auto minmax(62px,1fr);
+  gap:12px;padding:12px clamp(18px,3vw,28px);
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-header-title{font:800 15px/1.3 Inter,system-ui,sans-serif;color:#e6efff;text-align:center;white-space:nowrap}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-close{justify-self:end}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-scroll{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:17px clamp(18px,3vw,32px) 14px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-thread{gap:17px;padding:4px 0 18px}
+#advisorOverlay.rmc-ai-overlay .rmc-live-row{width:100%;max-width:100%;gap:4px}
+#advisorOverlay.rmc-ai-overlay .rmc-live-row.is-ai{align-items:stretch}
+#advisorOverlay.rmc-ai-overlay .rmc-live-row.is-you{align-items:flex-end}
+#advisorOverlay.rmc-ai-overlay .rmc-live-speaker{font-size:11px;letter-spacing:.02em;color:#b2c5e3}
+#advisorOverlay.rmc-ai-overlay .rmc-live-bubble{
+  border:none;background:none;border-radius:0;padding:2px 0 5px;
+  box-shadow:none;font-size:16px;line-height:1.53;color:#f0f5fe;
+}
+#advisorOverlay.rmc-ai-overlay .is-ai .rmc-live-bubble{max-width:100%}
+#advisorOverlay.rmc-ai-overlay .is-you .rmc-live-bubble{
+  width:fit-content;max-width:95%;border:0;border-left:2px solid #8bb8fc;
+  background:none;border-radius:0;padding:2px 0 3px 10px;
+  font-size:14px;color:#d4e2f5;text-align:right;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-thinking{min-height:30px;padding:4px 0}
+#advisorOverlay.rmc-ai-overlay .rmc-live-options,#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-width:650px;
+  padding:8px 0 13px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-option,#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button{
+  display:block;width:100%;min-height:46px;border-radius:10px;padding:12px 14px;
+  border:1px solid #bad0ef;background:#eef5ff;color:#1a365b;
+  font-size:14px;line-height:1.4;font-weight:750;white-space:normal;text-align:left;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock{
+  flex:0 0 auto;z-index:2;background:#1a293f;
+  border-top:1px solid rgba(180,204,236,.18);
+  padding:10px clamp(18px,3vw,32px) 10px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock .rmc-live-composer{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;gap:10px;margin:0;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock textarea{
+  width:100%;min-height:48px;max-height:110px;resize:vertical;
+  padding:11px 13px;border-radius:11px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock button{
+  min-height:48px;padding:10px 15px;border-radius:10px;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company{padding-bottom:8px}
+@media(max-width:650px){
+  #advisorOverlay.rmc-ai-overlay.advisor-overlay{padding:0}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-card.advisor-card{
+    width:100%;height:100dvh;max-height:100dvh;border:0;border-radius:0;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-head.advisor-head{
+    padding:calc(9px + env(safe-area-inset-top,0px)) 13px 9px;
+    gap:6px;grid-template-columns:minmax(55px,1fr) auto minmax(55px,1fr);
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-header-title{font-size:14px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-scroll{padding:15px 14px 12px}
+  #advisorOverlay.rmc-ai-overlay .rmc-live-row{max-width:100%}
+  #advisorOverlay.rmc-ai-overlay .rmc-live-bubble{font-size:15px;line-height:1.48;padding:2px 0 4px}
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock{
+    padding:9px 12px calc(10px + env(safe-area-inset-bottom,0px));
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock .rmc-live-composer{
+    grid-template-columns:minmax(0,1fr) auto;gap:8px;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock textarea{
+    min-height:48px;max-height:96px;padding:10px 11px;font-size:16px;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-compose-dock button{
+    min-height:48px;padding:10px 12px;font-size:13px;justify-self:stretch;
+  }
+  #advisorOverlay.rmc-ai-overlay .rmc-ai-footnote{display:none}
+  #advisorOverlay.rmc-ai-overlay .rmc-live-options,#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions{width:100%}
+}
