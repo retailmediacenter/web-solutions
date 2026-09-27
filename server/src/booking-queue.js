@@ -67,13 +67,13 @@ function parseBooking(raw){
 // Small injectable command adapter allows offline, deterministic tests without secrets.
 export function createBookingQueue(redis,{makeReservationCode=reservationCode}={}){
  redis=redis||((...args)=>redisFromEnvironment()(...args));
- async function issue(profile){
+ async function issue(profile,{siteId=null}={}){
    // A pairing without a bootstrap profile can never be completed safely.
    const validProfile=parseBookingProfile(profile);
-   const siteId=id();const pairingCode=code();
-   const pairing={siteId,profile:validProfile};
+   const assignedId=siteId==null?id():ensureSite(siteId);const pairingCode=code();
+   const pairing={siteId:assignedId,profile:validProfile};
    await redis('SET',key('pair',sha(pairingCode)),JSON.stringify(pairing),'EX',CODE_TTL,'NX');
-   return {siteId,pairingCode,expiresIn:CODE_TTL};
+   return {siteId:assignedId,pairingCode,expiresIn:CODE_TTL};
  }
  async function claim(pairingCode){
    ensureCode(pairingCode);
