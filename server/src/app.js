@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getRegistryCount } from './registry.js';
-import { listBusinesses,recognizeBusiness,getAdvisorDefinition } from './advisor.js';
+import { listBusinesses,recognizeBusiness,getAdvisorDefinition,understandAdvisorDescription } from './advisor.js';
 import { buildSitePayload } from './site.js';
 import { renderHtml } from './render-site.js';
 import { exportSiteZip } from './exporter.js';
@@ -31,7 +31,7 @@ app.use('/api/booking',bookingRouter());
 app.use('/api/qa',qaRouter()); // disabled unless explicit STAGING-only RMC_QA_MODE=1 + secret
 app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));
-app.get('/api/advisor/recognize',(req,res)=>res.json({businessId:recognizeBusiness(String(req.query.text||'').slice(0,800))}));
+app.get('/api/advisor/recognize',(req,res)=>res.set('Cache-Control','no-store').json(understandAdvisorDescription(String(req.query.text||'').slice(0,800),{businessId:listBusinesses().some(b=>b.id===req.query.businessId)?req.query.businessId:null})));
 app.get('/api/advisor/questions/:id',(req,res)=>{
   try{res.json(getAdvisorDefinition(req.params.id));}catch(e){res.status(404).json({error:e.message});}
 });

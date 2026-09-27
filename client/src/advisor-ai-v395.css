@@ -173,3 +173,17 @@
 
 @keyframes rmc-ai-enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){#advisorOverlay.rmc-ai-overlay .rmc-ai-ack{animation:none}}
+/* V45.1: optional correction panel, never a required extra step. */
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .rmc-ai-tuning{
+  border:1px solid rgba(154,192,239,.24);border-radius:13px;
+  padding:12px 15px;background:#213550;color:#eaf2ff;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .rmc-ai-tuning summary{
+  cursor:pointer;color:#bfd4f5;font-size:13px;font-weight:800;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .rmc-ai-tuning[open]{display:grid;gap:12px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-company .rmc-ai-tuning select{
+  display:block;width:100%;min-height:43px;border:1px solid #cbd9ed;
+  border-radius:11px;padding:8px 11px;font:500 15px/1.4 Inter,system-ui,sans-serif;
+  color:#1e3048;background:#fff;
+}

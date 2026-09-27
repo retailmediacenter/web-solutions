@@ -20,7 +20,7 @@ const legacyNames={
   'furniture-store':'Salon nameštaja','auto-parts':'Auto delovi',
   'repair-phone':'Servis telefona','rent-a-car':'Rent-a-car'
 };
-const clean=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('sr').trim();
+const clean=s=>String(s??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'dj').replace(/Đ/g,'Dj').toLocaleLowerCase('sr').trim();
 const readable=id=>id.split('-').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
 export function businessDisplayName(id){return pilotData[id]?.label||retailData[id]?.label||serviceProfile(id)?.label||verticalProfile(id)?.label||advisorData[id]?.label||legacyNames[id]||readable(id);}
 export function listBusinesses(){
@@ -49,7 +49,7 @@ export function recognizeBusiness(description){
     ['electronics-store', /\b(elektronik|laptop|racunar|kompjuter)/],
     ['phone-store', /\b(mobiln(?:e|i|og|im) telefon|prodaj.*telefon|phone store)/],
     ['furniture-store', /\b(namestaj|salon namestaja)/],
-    ['auto-parts', /\b(auto ?delov|delov.*automobil|rezervn.*delov)/],
+    ['auto-parts', /\b(auto[ -]?delov|delov.*automobil|rezervn.*delov)/],
     ['plumbing-supplies', /\b(vodovodn.*materijal|vodoinstalatersk.*materijal|sanitarij|vodooprem|vodomaterijal)/],
     ['electrical-supplies', /\b(elektromaterijal|elektro oprem|instalacion.*materijal)/],
     ['bakery', /\b(pekar|hleb|pekarsk)/],
@@ -67,7 +67,7 @@ export function recognizeBusiness(description){
     ['massage',/\b(masaz|spa |wellness)/],['physio',/\b(fizioterap|fizio)/],
     ['optician',/\b(optik|opticarsk|pregled vida)/],
     ['restaurant',/\b(restoran|picerij|pizzeria|pizza restoran)/],['cafe',/\b(kafic|kafe bar|coffee shop)/],
-    ['auto-service',/\b(auto ?servis|autoservis|mehanicarsk)/],['tire-shop',/\b(vulkanizer|zamena gum|pneumatik)/],
+    ['auto-service',/\b(auto[ -]?servis|autoservis|mehanicarsk)/],['tire-shop',/\b(vulkanizer|zamena gum|pneumatik)/],
     ['appliance-repair',/\b(bel[eai] tehnike|kucnih aparata|servis aparat)/],
     ['hvac',/\b(klima servis|servis klimatiz|klima uredjaj)/],
     ['plumber',/\b(vodoinstalater|vodoinstalacij)/],['electrician',/\b(elektricar|elektroinstalater)/],
@@ -242,4 +242,137 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
     assets:{assetRoot:facts.assetRoot,assetRoles:[...facts.assetRoles]},
     registryAssetRoot:facts.assetRoot // compatibility with first V41 checkpoint
   };
+}
+
+// V45.1: conservative, deterministic extraction of explicit facts from a free description.
+// This is NOT a paid LLM and never grants module permissions by guessing from industry.
+// Later AI providers may propose facts, but these server-owned validations remain authoritative.
+function v45Choice(yes,no,warnings,label){
+  if(yes&&no){warnings.push(`Opis različito govori o ${label}; potrebno je razjasniti.`);return undefined;}
+  return yes?true:no?false:undefined;
+}
+const v45Has=(text,patterns)=>patterns.some(re=>re.test(text));
+function v45Hybrid(description,def){
+  if(!def?.hybrid)return undefined;
+  const t=clean(description);
+  const patterns={
+    'plumber':/\b(vodoinstalater|vodoinstalatersk|montaz.*vodovod|ugradnj.*sanitarij)/,
+    'electrician':/\b(elektricar|elektroinstalac|elektricarsk)/,
+    'auto-service':/\b(auto[ -]?servis|servis.*vozil|popravk.*automobil|mehanicar)/,
+    'vehicle-sales':/\b(prodaj.*(vozil|automobil|polovn.*aut)|salon automobil)/,
+    'auto-parts':/\b(auto[ -]?delov|rezervn.*delov|prodaj.*delov)/,
+    'repair-phone':/\b(servis.*telefon|popravk.*telefon)/,
+    'phone-store':/\b(prodaj.*telefon|prodavnic.*telefon|mobiln.*telefon.*prodaj)/,
+    'carpenter':/\b(stolar|stolarsk|izrad.*namestaj|montaz)/,
+    'hair-cosmetics':/\b(prodaj.*kozmetik|prodaj.*preparat|kozmetick.*proizvod)/
+  };
+  const found=def.hybrid.options.filter(o=>o.id!=='none'&&patterns[o.id]?.test(t));
+  return found.length===1?found[0].id:undefined;
+}
+
+/** Return only explicit, recognizable facts. Unknown means ASK, never silently enable.
+ * This function does not replace the existing 72-profile Advisor or Registry. */
+export function understandAdvisorDescription(description,{businessId=null}={}){
+  const raw=String(description??'').slice(0,800),t=clean(raw);
+  const id=businessId||recognizeBusiness(raw),def=id?getAdvisorDefinition(id):null;
+  const signals={},warnings=[];
+  if(t.length<3)return {businessId:null,signals,warnings,acknowledgement:''};
+
+  const noOrders=v45Has(t,[
+    /\b(?:ne|necemo|necu|nisu|nismo)\s+(?:(?:zelim|zelimo|nudim|nudimo|primam|primamo|omogucavamo|radimo|imam|imamo|prodajem|prodajemo)\s+)?(?:(?:online|internet|putem sajta|preko sajta)\s+)?(?:naruc|poruc|porudzbin|prodaj.*online)/,
+    /\b(?:bez|nema|nikakv[eo])\s+(?:(?:online|internet)\s+)?(?:naruc|poruc|porudzbin|online prodaj)/,
+    /\b(?:samo|iskljucivo)\s+(?:katalog|prikaz|predstavljanje)(?:\s+proizvoda)?\b/,
+    /\bne\s+(?:prodajemo|prodajem)\s+(?:online|preko sajta|putem sajta)/
+  ]);
+  const yesOrders=!noOrders&&v45Has(t,[
+    /\b(?:online|internet|preko sajta|putem sajta|na sajtu|veb sajtu)\b.{0,45}\b(?:naruc|poruc|porudzbin|prodaj|kupov)/,
+    /\b(?:naruc|poruc|porudzbin|prodaj|kupov)\w*\b.{0,45}\b(?:online|internet|preko sajta|putem sajta|na sajtu)/,
+    /\b(?:kupci|kupac|korisnici|ljudi)\b.{0,35}\b(?:mogu|treba)\b.{0,18}\b(?:naruc|poruc)\w*/,
+    /\b(?:zelim|zelimo|treba mi|omoguci|prihvatam|primam|primamo)\b.{0,35}\b(?:online naruc|narucivan|porudzbin.*sajt|prodaj.*sajt)/
+  ]) && !/\b(?:ne|bez)\s+(?:zelim|zelimo|online)\s+(?:online\s+)?(?:naruc|prodaj|poruc)/.test(t);
+  const orders=v45Choice(yesOrders&&!noOrders,noOrders&&!yesOrders,warnings,'poručivanju preko sajta');
+  if(orders!==undefined)signals.ordersEnabled=orders;
+
+  const noBooking=v45Has(t,[
+    /\b(?:ne|necemo|necu)\s+(?:(?:zelim|zelimo|nudim|nudimo|primam|primamo|dozvoljavam|omogucavam)\s+)?(?:(?:online|preko sajta)\s+)?(?:zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)/,
+    /\b(?:bez|nema)\s+(?:(?:online|preko sajta)\s+)?(?:zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)/
+  ]);
+  const yesBooking=!noBooking&&/\b(?:zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)/.test(t)&&v45Has(t,[
+    /\b(?:zelim|zelimo|nudim|nudimo|primam|primamo|omogucim|omogucimo|treba mi|da mogu|da moze|mogu)\b.{0,52}\b(?:online|preko sajta|putem sajta|forma|zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)/,
+    /\b(?:online|preko sajta|na sajtu|putem sajta)\b.{0,38}\b(?:zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)/,
+    /\b(?:zakaz(?:iv|uj|em|emo|e|u)|rezervac|termin)\w*\b.{0,40}\b(?:online|preko sajta|na sajtu)/
+  ]);
+  const booking=v45Choice(yesBooking&&!noBooking,noBooking&&!yesBooking,warnings,'online terminima');
+  if(booking!==undefined)signals.bookingEnabled=booking;
+
+  const styles=[['traditional',/\btradicional(?:an|no|ni)?\b|\bklasic(?:an|no|ni)?\b/],
+    ['modern',/\bmoder(?:an|no|ni)\b|\bmodern(?:an|o|i)?\b|\bsavremen(?:o|i|an)?\b/],
+    ['warm',/\btopao\b|\btopli\b|\bprijatan\b/],
+    ['tech',/\btehnolosk(?:i|o)?\b|\bhigh.?tech\b/],
+    ['premium',/\bpremium\b|\bluksuzn(?:o|i|an)?\b|\belegant(?:an|no|ni)?\b/]];
+  const foundStyles=styles.filter(([,re])=>re.test(t)&&!/(?:ne|bez)\s+(?:zelim\s+|zelimo\s+)?(?:modern|premium|tradicional|klasic|topao|topli|tehnolos|elegant)/.test(t));
+  if(foundStyles.length===1)signals.style=foundStyles[0][0];
+  const noCatalog=/\b(?:samo|iskljucivo)\s+(?:katalog|predstavljanje|prikaz)(?:\s+ponude|\s+proizvoda)?\b/.test(t);
+  if(noCatalog)signals.goal='catalog';
+  else if(/\b(?:zelim|zelimo|cilj je|treba mi)\b.{0,36}\b(?:vise poseta|dolazak|poset[aeu]|svrate)\b/.test(t))signals.goal='visit';
+  else if(orders===true&&/\b(?:zelim|zelimo|cilj|povecam|vise)\b.{0,48}\b(?:prodaj|naruc|porudzbin)/.test(t))signals.goal='purchase';
+
+  if(def){
+    const h=v45Hybrid(raw,def);if(h)signals.hybridChoice=h;
+    const exactMode=def.operation.options.find(o=>clean(o).length>6&&t.includes(clean(o)));
+    if(exactMode)signals.businessMode=exactMode;
+    const external=def.operation.options.find(o=>/spoljni booking/i.test(o));
+    if(external&&/\b(?:spoljni|eksterni)\s+(?:booking|rezervacioni)|\bbooking\.com\b/.test(t))signals.businessMode=external;
+    const emphasis=def.emphasis.options.find(o=>clean(o).length>8&&t.includes(clean(o)));
+    if(emphasis)signals.emphasis=emphasis;
+    const questionIds=def.specials.map(s=>s.id);
+    const hasBookingSwitch=questionIds.some(q=>['acceptsTimeRequests','eyeExamAppointments','tableReservations','eventReservations','wineTastings'].includes(q));
+    if(signals.ordersEnabled!==undefined&&!questionIds.includes('ordersEnabled')){
+      if(signals.ordersEnabled)warnings.push('Pomenuli ste online poručivanje, ali ovaj profil još nema potvrđen modul za tu funkciju. Nismo ga automatski uključili.');
+      delete signals.ordersEnabled;
+    }
+    if(signals.bookingEnabled!==undefined&&!hasBookingSwitch){
+      if(signals.bookingEnabled)warnings.push('Pomenuli ste online zakazivanje, ali ono nije potvrđena mogućnost ovog poslovnog profila.');
+      delete signals.bookingEnabled;
+    }
+    if(questionIds.includes('ordersEnabled')&&orders!==undefined)signals.ordersEnabled=orders;
+    if(questionIds.includes('wineTastings')){
+      if(/\b(?:ne|bez)\s+(?:(?:nudimo|radimo|organizujemo|imamo)\s+)?degustacij/.test(t))signals.wineTastings=false;
+      else if(/degustacij/.test(t)&&booking===true)signals.wineTastings=true;
+      // Merely organizing tastings does not establish ONLINE reservations.
+    }
+    if(questionIds.includes('butcherGrillService')){
+      if(/\b(?:ne|bez)\s+(?:(?:nudimo|radimo|pripremamo)\s+)?(?:pecenj|rostilj|priprem.*mes)/.test(t))signals.butcherGrillService='raw';
+      else if(/\b(?:nudimo|radimo|pripremamo|imamo)\b.{0,24}\b(?:pecenj|rostilj|priprem.*mes)/.test(t))signals.butcherGrillService='grilled';
+    }
+    if(questionIds.some(q=>['acceptsTimeRequests','eyeExamAppointments','tableReservations','eventReservations'].includes(q))&&booking!==undefined){
+      // Per-business validators receive the exact question key, not an invented capability.
+      const bookingId=questionIds.find(q=>['acceptsTimeRequests','eyeExamAppointments','tableReservations','eventReservations'].includes(q));
+      signals[bookingId]=booking;
+    }
+    if(questionIds.includes('verticalEnabled')){
+      const noUpit=/\b(?:ne|bez)\s+(?:zelim\s+|zelimo\s+|primamo\s+|primam\s+)?(?:online\s+|preko sajta\s+)?(?:upit|zahtev|prijav)/.test(t);
+      const yesUpit=/\b(?:upit|zahtev|prijav)\w*\b.{0,40}\b(?:sajt|online|forma)/.test(t) ||
+        /\b(?:sajt|online|forma)\b.{0,40}\b(?:upit|zahtev|prijav)/.test(t);
+      const vertical=v45Choice(yesUpit&&!noUpit,noUpit&&!yesUpit,warnings,'prijemu zahteva');
+      if(vertical!==undefined)signals.verticalEnabled=vertical;
+    }
+    if(questionIds.includes('pharmacyConsultations')){
+      if(/\b(?:ne|bez)\s+(?:nudimo\s+)?(?:savetovanj|konsultacij)/.test(t))signals.pharmacyConsultations=false;
+      else if(/\b(?:online|preko sajta)\b.{0,35}\b(?:savetovanj|konsultacij)|\b(?:savetovanj|konsultacij)\w*\b.{0,35}\b(?:online|preko sajta)/.test(t))signals.pharmacyConsultations=true;
+    }
+  }
+  if(id==='hvac'&&/\bprodaj\w*\b.{0,55}\bklima/.test(t)&&/\b(?:montir|montaz|ugradnj)/.test(t)){
+    warnings.push('Prodaja klima i montaža: još nije podržan hibrid; katalog ne uključujemo automatski.');
+  }
+  const label=def?.label||'poslovanje';
+  const statements=[];
+  if(signals.ordersEnabled===true)statements.push('poručivanje preko sajta');
+  if(signals.ordersEnabled===false)statements.push('bez poručivanja preko sajta');
+  if(signals.bookingEnabled===true)statements.push('online zahteve za termin');
+  if(signals.bookingEnabled===false)statements.push('bez online rezervacija');
+  if(signals.hybridChoice){const opt=def.hybrid?.options.find(o=>o.id===signals.hybridChoice);if(opt)statements.push(opt.label.toLowerCase());}
+  if(signals.style){const styleLabels={modern:'modernom',traditional:'tradicionalnom',warm:'toplom',tech:'tehnološkom',premium:'premium'};statements.push('u '+styleLabels[signals.style]+' stilu');}
+  const acknowledgement=id?`Razumem — ${label}${statements.length?'; '+statements.join(', '):''}.`:'';
+  return {businessId:id,signals,warnings,acknowledgement,engine:'rules-v45.1'};
 }

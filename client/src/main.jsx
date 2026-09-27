@@ -5,6 +5,7 @@ import './style.css';
 import './react-adapter.css';
 import './advisor-ai-v395.css';
 import {Landing,PreviewDialog,InfoDialog,LeadDialog,SHOWCASE} from './landing-react.jsx';
+import {buildAdvisorDraft} from './advisor-flow.js';
 
 const goals=[
   {id:'purchase',label:'Prodaja i porudžbine',desc:'Kupac pronalazi proizvode i priprema porudžbinu.'},
@@ -43,6 +44,7 @@ function App(){
   const [exportPairing,setExportPairing]=useState(null);
   const [advisorOpen,setAdvisorOpen]=useState(false);
   const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
+  const [advisorSignals,setAdvisorSignals]=useState({}),[advisorWarnings,setAdvisorWarnings]=useState([]);
   const [previewOpen,setPreviewOpen]=useState(false);
   const [samplePreview,setSamplePreview]=useState(null);
   const [currentDemo,setCurrentDemo]=useState('salon');
@@ -73,9 +75,7 @@ function App(){
     fetch(apiUrl('/api/health')).then(r=>r.json()).then(setHealth).catch(()=>setHealth({status:'offline'}));
     fetch(apiUrl('/api/registry/basic')).then(r=>r.json()).then(d=>setBusinesses(d.businesses||[])).catch(()=>{});
   },[]);
-  const steps=useMemo(()=>definition?['goal',...(definition.hybrid?['hybrid']:[]),'operation',
-    ...(definition.specials|| (definition.special?[definition.special]:[])).map(q=>'special:'+q.id),
-    'emphasis','style','company']:['intro'],[definition]);
+  const steps=useMemo(()=>definition?buildAdvisorDraft(definition,advisorSignals).steps:['intro'],[definition,advisorSignals]);
   const current=definition?steps[step]:'intro';
   useEffect(()=>{
     if(!advisorOpen)return;
@@ -106,14 +106,21 @@ function App(){
   async function begin(e){
     e.preventDefault();setError('');setLoading(true);
     try{
-      const understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800)));
+      let understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800)));
       const chosen=selectedId||understood.businessId;
-      setRecognizedId(understood.businessId||'');
-      setAdvisorAcknowledgement(chosen===understood.businessId&&typeof understood.acknowledgement==='string'?understood.acknowledgement.slice(0,250):'');
-      if(!chosen){throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');}
+      if(!chosen)throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');
       if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije migrirana. Izaberite neku od podržanih delatnosti.');
+      // Manual fallback must NOT reuse conclusions intended for another business.
+      if(understood.businessId!==chosen){
+        understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800))+'&businessId='+encodeURIComponent(chosen));
+      }
       const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
-      setSelectedId(chosen);setDefinition(def);setAnswers({});setGoal('purchase');setStyle('modern');setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
+      const signals=understood.signals||{};
+      const draft=buildAdvisorDraft(def,signals);
+      setRecognizedId(chosen);setAdvisorAcknowledgement(understood.acknowledgement||`Razumem — ${def.label}.`);
+      setAdvisorSignals(signals);setAdvisorWarnings(understood.warnings||[]);
+      setSelectedId(chosen);setDefinition(def);setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);
+      setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
   }
   function pick(key,value){
@@ -169,7 +176,7 @@ function App(){
   const previewHtml=hydratePreview(result?.previewHtml);
   function startNewSite(){
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
-    setSelectedId('');setRecognizedId('');setDescription('');setStep(0);setError('');
+    setSelectedId('');setRecognizedId('');setDescription('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
     setAdvisorOpen(true);
   }
   function editSite(){
@@ -269,9 +276,10 @@ function App(){
             <div className="rmc-ai-ack" role="status">
               <span aria-hidden="true">✦</span>
               <div><strong>{step===0?(advisorAcknowledgement||`Razumem — ${recognizedLabel}.`):recognizedLabel}</strong>
-                <p>{step===0?'Hajde da prilagodimo sajt onome što vam je najvažnije.':'Vaši prethodni odgovori ostaju sačuvani.'}</p>
+                <p>{step===0?(current==='company'?'Pripremio sam predlog sajta. Dodajte podatke za svoj ZIP.':'Treba mi još samo informacija koja menja funkcionalnost sajta.'):'Prethodni odgovori su sačuvani.'}</p>
               </div>
             </div>
+            {advisorWarnings.length>0&&<div className="rmc-ai-fallback" role="status">{advisorWarnings.map((message,i)=><p key={i}>{message}</p>)}</div>}
             {current==='goal'&&<ChoiceStep eyebrow="POSLOVNI CILJ" title="Šta je najvažnije za ovaj sajt?" items={availableGoals()} value={goal} onPick={v=>pick('goal',v)}/>}
             {current==='hybrid'&&<ChoiceStep eyebrow="POVEZANE DELATNOSTI" title={definition.hybrid.question} help={definition.hybrid.help} items={definition.hybrid.options} value={answers.hybridChoice} onPick={v=>pick('hybrid',v)}/>}
             {current==='operation'&&<ChoiceStep eyebrow="NAČIN POSLOVANJA" title={definition.operation.question} help="Odgovor podešava način na koji sajt prima zahteve." items={definition.operation.options.map(x=>({id:x,label:x}))} value={answers.businessMode} onPick={v=>pick('operation',v)}/>}
@@ -285,7 +293,28 @@ function App(){
               help="Stil menja vizuelni izraz, a ne odabrane poslovne funkcije."
               items={definition.styles.map(x=>({id:x.id,label:x.label,desc:x.description}))} value={style} onPick={v=>pick('style',v)}/>}
           {current==='company'&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Kako se vaš biznis zove?</h2><p>Unesite stvarne podatke. Jedna poslovna adresa uključena je besplatno; za rad na terenu ili onlajn birate odgovarajuću opciju.</p>
-            <form id="companyForm" onSubmit={generate}><label className="field">Naziv firme<input autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
+            <form id="companyForm" onSubmit={generate}>
+            <details className="rmc-ai-tuning"><summary>Promeni izgled ili predlog Advisora</summary>
+              <label className="field">Stil sajta<select value={style} onChange={e=>setStyle(e.target.value)}>
+                {definition.styles.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
+              </select></label>
+              <label className="field">Šta je najvažnije?<select value={goal} onChange={e=>setGoal(e.target.value)}>
+                {availableGoals().map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
+              </select></label>
+              {definition.emphasis&&<label className="field">Šta ističemo?<select value={answers.emphasis||''} onChange={e=>setAnswers(a=>({...a,emphasis:e.target.value}))}>
+                {definition.emphasis.options.map(x=><option key={x} value={x}>{x}</option>)}
+              </select></label>}
+              {definition.hybrid&&<label className="field">Dodatna delatnost<select value={answers.hybridChoice||'none'} onChange={e=>setAnswers(a=>({...a,hybridChoice:e.target.value}))}>
+                {definition.hybrid.options.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
+              </select></label>}
+              {(definition.specials||(definition.special?[definition.special]:[])).map(q=>
+                <label className="field" key={q.id}>{q.question}<select value={typeof answers[q.id]==='boolean'?(answers[q.id]?'yes':'no'):(answers[q.id]??'')}
+                  onChange={e=>setAnswers(a=>({...a,[q.id]:e.target.value==='yes'?true:e.target.value==='no'?false:e.target.value}))}>
+                  <option value="" disabled>Izaberite odgovor</option>
+                  {q.options.map(o=><option key={o.id} value={o.id}>{o.label}</option>)}
+                </select></label>)}
+            </details>
+            <label className="field">Naziv firme<input autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
             <label className="field">Kontakt telefon (opciono)<input type="tel" autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
             <fieldset className="v421-mode"><legend>Gde poslujete?</legend>
               <label><input type="radio" name="locationMode" checked={locationMode==='physical'} onChange={()=>setLocationMode('physical')}/> Imam poslovnu adresu (1 lokacija besplatno)</label>

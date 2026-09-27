@@ -124,7 +124,8 @@ test('Hybrid Advisor choices: ten allowed primary/secondary paths preserve indep
 test('React Advisor consumes server-provided special QUESTION LIST and sets goal labels by business class',async()=>{
  const fs=await import('node:fs');const source=fs.readFileSync(new URL('../../client/src/main.jsx',import.meta.url),'utf8');
  assert.ok(source.includes("definition.specials||"),'must not silently omit second question');
- assert.ok(source.includes("'special:'+q.id"),'dynamic special steps');
+ const flow=fs.readFileSync(new URL('../../client/src/advisor-flow.js',import.meta.url),'utf8');
+ assert.ok(source.includes('buildAdvisorDraft')&&flow.includes("'special:'+q.id"),'V45 dynamic special steps');
  assert.ok(source.includes('activeSpecial.options')&&source.includes("pick('special:'+activeSpecial.id"));
  for(const className of ['projectGoals','travelGoals','educationGoals','healthGoals'])assert.ok(source.includes(className),className);
 });
