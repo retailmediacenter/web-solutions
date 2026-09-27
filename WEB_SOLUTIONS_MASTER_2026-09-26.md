@@ -741,3 +741,9 @@ Redosled bez rizika: **(a)** pokrenuti zaštićeni instalacioni ZIP na lokalnom 
 - **Bezbednost i rizik Portala:** ne prepisivati frizerov postojeÄ‡i IndexedDB kalendar pri testu vodoinstalatera. Novi profil pregledaÄa/izolovan staging PWA dok nemamo pouzdan multi-site switcher i recovery. Ne traÅ¾iti odjavljivanje/brisanjem starih rezervacija.
 - **Prag prihvatanja:** Windows PASS punih testova + QA audit => samo lokalna potvrda; privatni Git commit/push, regeneracija i javni Preview push => staging spreman; tek testni zahtev DAY_PART i provera originalnog MORNING/AFTERNOON bez preciznog sata + ACK u Portalu => stvarni E2E potvrÄ‘en. Frizer B1 je ranije proÅ¡ao korisniÄki E2E i modal proveru.
 - **Van opsega:** automatski C deploy, prilagoÄ‘avanje auto-servisa na EXACT_TIME/hybrid, Portal unpair/sync/recovery, Commerce ORDER inbox i ÄiÅ¡Ä‡enje zajedniÄkih vizuelnih sekcija. Nakon vodoinstalatera nastaviti planiranu matricu.
+
+## G.6. V44 B3 — DAY_PART modal i razvezivanje sajta (27.09.2026)
+- Pojednostavljen samo DAY_PART modal u Portalu: veliki naslov 'Predloži termin', klijent i trazeni period, dva polja, jedna akcija 'Sacuvaj predlog'; detalji sklopljeni, bez statusa i suvisnih poruka. Potvrdjivanje i rucno slanje poruke su odvojeni koraci. Frizer EXACT_TIME ostaje nepromenjen.
+- 'Prekini vezu sa sajtom' u Podesavanjima: server proverava trenutni pristupni token i atomski ga opoziva uz uklanjanje Push pretplata za taj sajt; tek posle uspesnog odgovora Portal uklanja lokalni token. Rezervacije, poslovni podaci i kalendar ostaju lokalno. Novi zahtevi ne stizu dok se isti SITE ID ponovo privatno ne upari.
+- API staging mora biti objavljen PRE Portal staging; novi endpoint DELETE /api/booking/connections/:siteId. Ne objavljivati u produkciju pre stvarnog E2E testa, ni ne brisati IndexedDB.
+- Zasebna opcija za odjavu pojedinacnog uredjaja i tekst 'Izaberite termin' u public Preview dropdownu nisu deo ovog paketa.

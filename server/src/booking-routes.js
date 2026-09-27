@@ -20,6 +20,7 @@ export function bookingRouter(queue=createBookingQueue(),push=createPushNotifica
   // Never block or fail the reservation when a push provider is unavailable.
   if(!result.duplicate)void push.notify(req.body?.siteId,{type:NOTIFICATION_TYPES.BOOKING,requestId:result.requestId,title:'Nova rezervacija',body:'Otvorite Booking Manager da pregledate zahtev.'}).catch(()=>{});
  }));
+ router.delete('/connections/:siteId',handle(async(req,res)=>res.json(await queue.disconnect(req.params.siteId,auth(req)))));
  router.get('/requests/:siteId',handle(async(req,res)=>res.json({requests:await queue.pending(req.params.siteId,auth(req))})));
  router.post('/requests/:siteId/:requestId/ack',handle(async(req,res)=>res.json(await queue.acknowledge(req.params.siteId,auth(req),req.params.requestId))));
  router.get('/push/public-key/:siteId',handle(async(req,res)=>res.json(await push.publicKey(req.params.siteId,auth(req),queue.authenticate))));

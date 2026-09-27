@@ -98,6 +98,20 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode}={
    const check=sha(accessToken);
    if(!stored||!timingSafeEqual(Buffer.from(stored),Buffer.from(check)))throw err(403,'Pristup sandučetu nije dozvoljen.');
  }
+ // Token-bound atomic revocation prevents a foreign/stale Portal from unpairing the site.
+ // Purge subscriptions in the same transaction so an old device gets no Push after re-pairing.
+ async function disconnect(siteId,accessToken){
+   ensureSite(siteId);ensureSecret(accessToken);
+   const lua=`if redis.call('GET',KEYS[1])~=ARGV[1] then return 0 end
+     for _,k in ipairs(redis.call('SMEMBERS',KEYS[2])) do
+       if string.sub(k,1,string.len(ARGV[2]))==ARGV[2] then redis.call('DEL',k) end
+     end
+     redis.call('DEL',KEYS[2],KEYS[1])
+     return 1`;
+   const result=await redis('EVAL',lua,2,key('owner',siteId),key('push-index',siteId),sha(accessToken),key('push',siteId,''));
+   if(result!==1)throw err(403,'Pristup sandučetu nije dozvoljen.');
+   return {ok:true};
+ }
  async function submit(siteId,raw){
    ensureSite(siteId);
    if(!await redis('EXISTS',key('owner',siteId)))throw err(404,'Sajt nije povezan sa Booking Managerom.');
@@ -142,5 +156,5 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode}={
    await redis('ZREM',key('index',siteId),requestId);
    return {ok:true};
  }
- return {issue,claim,authenticate,submit,pending,acknowledge,redis};
+ return {issue,claim,authenticate,disconnect,submit,pending,acknowledge,redis};
 }

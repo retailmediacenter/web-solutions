@@ -19,7 +19,7 @@ app.use((req,res,next)=>{
   const origin=req.get('origin');
   const publicSubmit=req.path==='/api/booking/requests' && (req.method==='POST'||req.method==='OPTIONS');
   if(origin&&(origins.includes(origin)||publicSubmit)){
-    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Expose-Headers':'X-RMC-Booking-Code, X-RMC-Booking-Expires','Access-Control-Allow-Methods':'GET,POST,OPTIONS'});
+    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Expose-Headers':'X-RMC-Booking-Code, X-RMC-Booking-Expires','Access-Control-Allow-Methods':'GET,POST,DELETE,OPTIONS'});
   }
   if(req.method==='OPTIONS')return (origins.includes(origin)||publicSubmit)?res.status(204).end():res.status(403).end();
   next();

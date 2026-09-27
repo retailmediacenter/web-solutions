@@ -29,3 +29,31 @@
 /* V43.3 D3: prepared client communication, without delivery tracking. */
 .share-bar{display:grid;gap:10px}.share-bar .warning{margin:0}.contact-correction{font-size:11px;color:#547482}.contact-correction input{min-height:40px}.message-preview{display:block;width:100%;min-height:112px;resize:vertical;border:1px solid #d8e5e9;border-radius:10px;background:#fff;color:#365868;padding:10px 11px;font:12px/1.5 ui-sans-serif,system-ui,sans-serif}.share-actions .btn{min-height:46px}.share-actions .share-whatsapp{background:#197c55}.share-actions .share-viber{background:#6654a4}
 @media(max-width:480px){.share-bar{padding:14px 17px}.share-actions{display:grid;grid-template-columns:1fr 1fr}.share-actions .btn{width:100%;min-width:0;min-height:48px}.message-preview{min-height:126px}}
+
+/* V44 B3: one action dominates DAY_PART; detail/status clutter stays off the first view. */
+.daypart-compact{width:min(600px,96vw)}
+.daypart-head h2{font-size:clamp(28px,5vw,34px);letter-spacing:-.045em;line-height:1.14}
+.daypart-body{gap:14px;padding-top:17px;padding-bottom:17px}
+.daypart-request{display:grid;gap:5px;color:#2b5162}
+.daypart-request strong{font-size:19px;line-height:1.25}
+.daypart-request span{font-size:13px;color:#688392}
+.daypart-proposal{border:2px solid #a9d6d1;border-radius:15px;background:#f6fbfa;padding:18px}
+.daypart-proposal-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.daypart-proposal-fields label{font-size:13px;color:#365d6a}
+.daypart-proposal-fields input{min-width:0;min-height:56px;font-size:17px;font-weight:700;border:1px solid #bdd6db}
+.daypart-save{min-height:52px;font-size:15px;margin-top:15px;padding:12px 24px;width:100%}
+.daypart-proposal .feedback{margin:12px 0 0}
+.daypart-saved{font-size:12px;font-weight:700;color:#387366;margin:12px 0 0}
+.daypart-extra{border:1px solid #e3ebef;border-radius:11px;padding:0 13px}
+.daypart-extra summary{cursor:pointer;padding:13px 0;font-size:13px;font-weight:750;color:#3a6574}
+.daypart-extra .detail-grid{padding-bottom:12px}
+.daypart-extra .detail-cell{min-width:0}
+.daypart-share{padding:13px 22px;gap:9px}
+.daypart-share .message-disclosure summary{cursor:pointer;color:#3d7180;font-size:12px;font-weight:700;margin-bottom:7px}
+.daypart-share .message-disclosure:not([open]){margin-bottom:0}
+.daypart-share .message-preview{min-height:80px;margin-top:8px}
+.daypart-actions:empty{display:none}
+.daypart-confirmed{display:grid;gap:7px;border-radius:12px;padding:16px;background:#e9f9f2;color:#206d5d}
+.daypart-confirmed strong{font-size:17px}.daypart-confirmed span{font-size:15px;font-weight:650}
+.unlink-row{padding-top:5px!important}.unlink-row .btn-danger{border:1px solid #efd2cb}
+@media(max-width:480px){.daypart-proposal{padding:14px}.daypart-proposal-fields{grid-template-columns:1fr}.daypart-share{padding:12px 17px}.daypart-compact{max-height:95dvh}.daypart-head h2{font-size:29px}}

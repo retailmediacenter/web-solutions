@@ -87,3 +87,9 @@ export async function pullInbox({connection,profile,bookings,save,normalize,fetc
  }
  return added;
 }
+
+// Server revocation is required before deleting the local token. Failure leaves access intact.
+export async function disconnectRemote(connection,{fetcher}={}){
+ if(!/^[A-Za-z0-9_-]{24}$/.test(connection?.siteId||'')||!/^[A-Za-z0-9_-]{43}$/.test(connection?.accessToken||''))throw new Error('Neispravno lokalno povezivanje.');
+ return request(connection.apiOrigin,`/connections/${connection.siteId}`,{method:'DELETE',token:connection.accessToken,fetcher});
+}

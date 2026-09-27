@@ -15,3 +15,10 @@ export function activePortalProfileId(profiles=[],activeProfileId=''){
 export function activatePortalProfile(state,profile){
   return {...state,activeProfileId:profile.id,profiles:[...state.profiles,profile]};
 }
+
+// Remote revocation must succeed BEFORE calling this; calendar, services and local identity remain.
+export function detachSiteConnection(profile){
+ delete profile.queueConnection;
+ delete profile.pushEnabledAt;
+ return profile;
+}
