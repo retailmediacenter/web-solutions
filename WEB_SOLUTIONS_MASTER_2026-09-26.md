@@ -747,3 +747,11 @@ Redosled bez rizika: **(a)** pokrenuti zaštićeni instalacioni ZIP na lokalnom 
 - 'Prekini vezu sa sajtom' u Podesavanjima: server proverava trenutni pristupni token i atomski ga opoziva uz uklanjanje Push pretplata za taj sajt; tek posle uspesnog odgovora Portal uklanja lokalni token. Rezervacije, poslovni podaci i kalendar ostaju lokalno. Novi zahtevi ne stizu dok se isti SITE ID ponovo privatno ne upari.
 - API staging mora biti objavljen PRE Portal staging; novi endpoint DELETE /api/booking/connections/:siteId. Ne objavljivati u produkciju pre stvarnog E2E testa, ni ne brisati IndexedDB.
 - Zasebna opcija za odjavu pojedinacnog uredjaja i tekst 'Izaberite termin' u public Preview dropdownu nisu deo ovog paketa.
+
+### H.7. V44 B4 — integrisano QA izdavanje koda (27.09.2026)
+
+- Postojeci Preview INDEX sa devet QA kartica: jednokratna QA prijava na istoj stranici, a samo za dva aktivna LIVE scenarija Generisi kod, Kopiraj i Otvori Portal. Preostalih sedam ostaju oznaceni kao jos neaktivirani za povezivanje. Site ID-ovi ne menjaju vrednost.
+- Nov POST /api/qa/session (staging-only) izdaje privremenu QA sesiju. RMC_QA_ADMIN_KEY unosi se u privatno kontrolisani QA Preview UI; kljuc se ne cuva u javnom kodu ni localStorage-u. Kratkotrajni QA token ostaje u sessionStorage-u taba. Browser origin je ogranicen, pogresni pokusaji se usporavaju, a redeploy moze ponistiti sesiju.
+- Postojeci POST /api/qa/pairing/:slug i SITE ID/Booking/Redis/Portal tok ne menjaju se. Origin-less privatna BAT ruta ostaje samo rezervna. RMC_QA_MODE i RMC_QA_ADMIN_KEY ostaju samo na staging-u, produkcija ih nema.
+- Instalacioni/test/build BAT fajlovi ostaju. BAT za rutinsko izdavanje kodova vise nije potreban nakon stvarne online objave i potvrde B4. Marketing Index, produkcija i Business Portal nisu menjani.
+- Status: lokalni PASS vazi tek kada instalacioni log potvrdi fokusirane testove, svu Node regresiju i audit 9/9. Staging API deploy, nova javna Preview objava i online end-to-end potvrda ostaju sledeci koraci. Project Registry/produkcijska provera vlasnistva su ZASEBNI nedovrseni poslovi.

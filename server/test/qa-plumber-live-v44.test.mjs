@@ -22,6 +22,10 @@ test('V44 public builder permits only frizer/plumber; no pairing secrets are wri
  const allowed=source.match(/const permittedLiveQa=new Set\(\[([^\]]+)\]\)/)?.[1];
  assert.match(allowed||'',/frizer/);
  assert.match(allowed||'',/vodoinstalater/);
- assert.ok(!/RMC_QA_ADMIN_KEY|pairingCode\s*[:=]/.test(source));
+ // A builder may name a secret in a BLOCKING safety check: that is not a leak.
+ // Check the public QA client instead, plus the builder's actual HTML guard.
+ const qaClient=readFileSync(new URL('../../scripts/publication/qa-console.js',import.meta.url),'utf8');
+ assert.ok(!qaClient.includes('RMC_QA_ADMIN_KEY'),'Public QA JS must not embed the administrator secret');
+ assert.ok(source.includes('STOP: QA tajna u javnom HTML-u'),'Build must reject secret values in generated public HTML');
  assert.ok(source.includes('BOOKING_UPARIVANJE.txt'));
 });
