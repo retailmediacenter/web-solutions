@@ -7,6 +7,7 @@ import {createPortal} from 'react-dom';
 import {LANDING_MARKUP} from './landing-layout.js';
 import landingCss from './landing-theme.css?inline';
 import './landing-dialogs.css';
+import './preview-shell-v4532.css';
 
 export const SHOWCASE = [
  {id:'salon',demoPath:'salon',businessId:'hair-salon',name:'Studio Forma',type:'Frizerski salon'},
@@ -120,22 +121,18 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
  const staticDemo=SHOWCASE.find(item=>item.id===selectedDemo);
  const sampleBase=(import.meta.env.BASE_URL||'/')+'demo-previews/';
  return <div className="rmc-preview-cover" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
-   <section className="rmc-preview-panel" role="dialog" aria-modal="true" aria-label={isSample?'Primer generisanog sajta':'Vaš generisani sajt'}>
+   <section className={"rmc-preview-panel rmc-preview-v4532 "+(isSample?"is-sample":"is-generated")} role="dialog" aria-modal="true" aria-label={isSample?'Primer generisanog sajta':'Vaš generisani sajt'}>
      <header className="rmc-preview-head"><div><small>RMC WEB SOLUTIONS</small>
-       <h2>{isSample?'Šest poslova. Šest različitih logika.':siteName||'Vaš sajt'}</h2></div>
+       <h2>{isSample?'Primeri sajtova':siteName||'Vaš sajt'}</h2></div>
        <button ref={close} className="rmc-dialog-close" type="button" aria-label="Zatvori pregled" onClick={onClose}>×</button>
      </header>
-     <div className="rmc-preview-tools">
-       {isSample?<div className="rmc-preview-tabs" role="group" aria-label="Primeri sajtova">
+     {isSample&&<div className="rmc-preview-tools">
+       <div className="rmc-preview-tabs" role="group" aria-label="Primeri sajtova">
          {SHOWCASE.map(item=><button key={item.id} type="button" aria-pressed={selectedDemo===item.id}
            className={selectedDemo===item.id?'active':''} onClick={()=>onSelectDemo(item.id)}>{item.type}</button>)}
-       </div>:<strong>{siteName}</strong>}
-       <div className="rmc-preview-device" role="group" aria-label="Prikaz uređaja">
-         <button type="button" className={device==='desktop'?'active':''} aria-pressed={device==='desktop'} onClick={()=>onDevice('desktop')}>Računar</button>
-         <button type="button" className={device==='mobile'?'active':''} aria-pressed={device==='mobile'} onClick={()=>onDevice('mobile')}>Telefon</button>
        </div>
-     </div>
-     <div className={'rmc-preview-content '+(device==='mobile'?'is-mobile':'')}>
+     </div>}
+     <div className="rmc-preview-content">
        {isSample&&staticDemo
         ? <iframe ref={frameRef} key={staticDemo.id} title={'Nezavisni DEMO — '+staticDemo.name}
             src={sampleBase+staticDemo.demoPath+'/index.html'}
