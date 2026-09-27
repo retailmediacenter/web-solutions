@@ -25,6 +25,48 @@ function ChoiceStep({eyebrow,title,help,items,value,onPick}){
     </button>)}</div>
   </section>;
 }
+function LiveReply({text,onComplete}){
+  const [visible,setVisible]=useState('');
+  const completion=useRef(onComplete);completion.current=onComplete;
+  useEffect(()=>{
+    let cancelled=false;
+    const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if(reduced){setVisible(text);completion.current?.();return;}
+    setVisible('');let pos=0;
+    const timer=window.setInterval(()=>{
+      if(cancelled)return;
+      pos=Math.min(text.length,pos+3);
+      setVisible(text.slice(0,pos));
+      if(pos>=text.length){clearInterval(timer);completion.current?.();}
+    },18);
+    return()=>{cancelled=true;clearInterval(timer);};
+  },[text]);
+  return <span>{visible}<span aria-hidden="true" className={visible.length<text.length?'rmc-live-cursor':'rmc-live-cursor is-done'}>▍</span></span>;
+}
+const firstPrompt='Opišite svoj posao svojim rečima. Razumeću šta je jasno, a pitaću samo ono što nedostaje.';
+function nextAdvisorQuestion(definition,signals={}){
+  if(!definition)return '';
+  const draft=buildAdvisorDraft(definition,signals),next=draft.steps[0];
+  if(next==='company')return 'Imam dovoljno podataka o funkcionalnosti sajta. Kako se zove vaš biznis i koji je kontakt telefon?';
+  if(next==='operation')return definition.operation?.question||'';
+  if(next==='hybrid')return definition.hybrid?.question||'';
+  if(next?.startsWith('special:'))return (definition.specials||[]).find(q=>q.id===next.slice(8))?.question||'';
+  return '';
+}
+function LiveThread({messages,latestId,completed,onComplete,thinking}){
+  const bottom=useRef(null);
+  useEffect(()=>{bottom.current?.scrollIntoView({block:'nearest',behavior:'smooth'});},[messages,thinking,completed,latestId]);
+  return <div className="rmc-live-thread" role="log" aria-label="Razgovor sa AI Advisorom" aria-live="off" aria-relevant="additions">
+    {messages.map(message=><div key={message.id} className={'rmc-live-row '+(message.from==='you'?'is-you':'is-ai')}>
+      <span className="rmc-live-speaker">{message.from==='you'?'Vi':'✦ Advisor'}</span>
+      <div className="rmc-live-bubble">{message.from==='ai'&&message.id===latestId&&!completed
+        ?<LiveReply text={message.text} onComplete={onComplete}/>:message.text}</div>
+    </div>)}
+    {thinking&&<div className="rmc-live-row is-ai"><span className="rmc-live-speaker">✦ Advisor</span><div className="rmc-live-bubble rmc-live-thinking" aria-label="Advisor obrađuje vaš odgovor"><i/><i/><i/></div></div>}
+    {completed&&latestId&&<div className="rmc-live-sr-only" role="status">{messages.find(m=>m.id===latestId)?.text}</div>}
+    <div ref={bottom}/>
+  </div>;
+}
 function App(){
   const previewFrame=useRef(null);
   const advisorDialogRef=useRef(null);
@@ -46,6 +88,16 @@ function App(){
   const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
   const [advisorSignals,setAdvisorSignals]=useState({}),[advisorWarnings,setAdvisorWarnings]=useState([]);
    const [clarification,setClarification]=useState(null),[clarifyText,setClarifyText]=useState('');
+  const messageCounter=useRef(0);
+  const [liveMessages,setLiveMessages]=useState([{id:0,from:'ai',text:firstPrompt}]);
+  const [latestReplyId,setLatestReplyId]=useState(0),[replyComplete,setReplyComplete]=useState(true);
+  const [liveInput,setLiveInput]=useState('');
+  const addUser=text=>setLiveMessages(old=>[...old,{id:++messageCounter.current,from:'you',text}]);
+  const addReply=text=>{
+    const id=++messageCounter.current;
+    setReplyComplete(false);setLatestReplyId(id);
+    setLiveMessages(old=>[...old,{id,from:'ai',text}]);
+  };
   const [previewOpen,setPreviewOpen]=useState(false);
   const [samplePreview,setSamplePreview]=useState(null);
   const [currentDemo,setCurrentDemo]=useState('salon');
@@ -82,18 +134,18 @@ function App(){
     if(!advisorOpen)return;
     const task=requestAnimationFrame(()=>{
       const card=advisorDialogRef.current;
-      card?.querySelector('.rmc-ai-scroll')?.scrollTo({top:0,behavior:'instant'});
-      const field=card?.querySelector(current==='intro'?'#rmc-ai-description':'.rmc-ai-question h2');
-      if(field){if(field.tagName==='H2')field.setAttribute('tabindex','-1');field.focus({preventScroll:true});}
+      // History stays visible; LiveThread follows the latest message.
+      const field=card?.querySelector(current==='intro'?'#rmc-ai-description':current==='company'?'#rmc-company-name':'#rmc-live-answer');
+      if(field && (replyComplete||current==='intro'))field.focus({preventScroll:true});
     });
     return()=>cancelAnimationFrame(task);
-  },[advisorOpen,current]);
+  },[advisorOpen,current,replyComplete]);
   const activeSpecial=current.startsWith('special:')
     ?(definition?.specials||[definition?.special]).find(q=>q?.id===current.slice(8)):null;
   const supportedBusinesses=businesses.filter(b=>b.pilot);
   const selectedInfo=supportedBusinesses.find(x=>x.id===selectedId);
-  const count=steps.length+1;
-  const progress=definition?Math.round(((step+1)/count)*100):7;
+  const count=definition?((definition.specials||[]).length+1):1;
+  const progress=definition?Math.max(8,Math.round(((count-steps.length)/count)*100)):5;
   const input=useMemo(()=>({businessId:definition?.id||selectedId,businessName,description,goal,style,
     answers:{...answers,showWelcome,contactPhone,externalBookingUrl},
     businessData:{locationMode,businessName,phone:contactPhone,email,city,address:locationMode==='physical'?address:'',hours,website,whatsapp,viber,locations:locationMode==='physical'?extraLocations:[]}}),
@@ -106,37 +158,64 @@ function App(){
   }
    async function begin(e,manualId=null){
      e?.preventDefault?.();setError('');setLoading(true);
+     if(manualId){addUser(supportedBusinesses.find(b=>b.id===manualId)?.label||manualId);}
+     else if(clarifyText.trim()){addUser(clarifyText.trim());}
+     else if(!clarification)addUser(description.trim());
      try{
        const text=(description+' '+clarifyText).trim().slice(0,800);
        const understood=await json('/api/advisor/understand',{method:'POST',headers:{'Content-Type':'application/json'},
          body:JSON.stringify({description:text,businessId:manualId||selectedId||null,clarified:Boolean(clarifyText.trim())})});
        if(understood.needsClarification){
-         setClarification(understood.clarification);setAdvisorAcknowledgement('Razumem vaš opis. Potrebno je još jedno pojašnjenje.');
+         setClarification(understood.clarification);setAdvisorAcknowledgement('Potrebno je još jedno pojašnjenje.');
+         addReply(understood.clarification?.question||'Možete li precizirati čime se bavite?');
          return;
        }
        const chosen=manualId||selectedId||understood.businessId;
        if(!chosen){
          setClarification({question:'Koja delatnost najbolje opisuje vaš posao?',choices:[]});
+         addReply('Možete li detaljnije opisati delatnost?');
          return;
        }
        if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije podržana.');
        const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
        const signals=understood.signals||{},draft=buildAdvisorDraft(def,signals);
        setRecognizedId(chosen);setAdvisorAcknowledgement(understood.acknowledgement||`Razumem — ${def.label}.`);
+       addReply((understood.acknowledgement||`Razumem — ${def.label}.`)+' '+nextAdvisorQuestion(def,signals));
        setAdvisorSignals(signals);setAdvisorWarnings(understood.warnings||[]);
        setDescription(text);setClarification(null);setClarifyText('');
        setSelectedId(chosen);setDefinition(def);setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);
-       setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
-     }catch(ex){setError(ex.message)}finally{setLoading(false)}
+       setShowWelcome(false);setBusinessName('');setContactPhone('');setEmail('');setHours('');setWebsite('');setWhatsapp('');setViber('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
+     }catch(ex){setError(ex.message);addReply('Nisam uspeo da obradim odgovor. Pokušajte ponovo.');}finally{setLoading(false)}
    }
   function pick(key,value){
     setError('');
+    const option=key.startsWith('special:')?activeSpecial?.options.find(x=>x.id===(value===true?'yes':value===false?'no':value)):null;
+    addUser(option?.label||String(value));
+    const signalKey=key.startsWith('special:')?key.slice(8):key==='operation'?'businessMode':key==='hybrid'?'hybridChoice':key;
+    const updated={...advisorSignals,[signalKey]:value};
     if(key==='goal')setGoal(value);
     else if(key==='style')setStyle(value);
     else if(key==='hybrid')setAnswers(a=>({...a,hybridChoice:value}));
-    else if(key.startsWith('special:'))setAnswers(a=>({...a,[key.slice(8)]:value}));
-    else setAnswers(a=>({...a,[key==='operation'?'businessMode':'emphasis']:value}));
-    setStep(s=>Math.min(steps.length-1,s+1));
+    else if(key.startsWith('special:'))setAnswers(a=>({...a,[signalKey]:value}));
+    else setAnswers(a=>({...a,[signalKey]:value}));
+    setAdvisorSignals(updated);
+    setStep(0);
+    addReply('Razumem. '+nextAdvisorQuestion(definition,updated));
+  }
+  async function continueConversation(e){
+    e.preventDefault();
+    const message=liveInput.trim();if(!message||loading||!replyComplete||!definition)return;
+    addUser(message);setLiveInput('');setError('');setLoading(true);
+    try{
+      const response=await json('/api/advisor/refine',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({businessId:definition.id,message,currentQuestionId:current,signals:{...advisorSignals,...answers},goal,style})});
+      const signals=response.signals||advisorSignals;
+      setAdvisorSignals(signals);setAdvisorWarnings(response.warnings||[]);
+      const draft=buildAdvisorDraft(definition,signals);
+      setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);setStep(0);
+      addReply((response.acknowledgement||'Razumem.')+' '+nextAdvisorQuestion(definition,signals));
+    }catch(ex){setError(ex.message);addReply('Nisam uspeo da obradim izmenu. Možete pokušati ponovo.');}
+    finally{setLoading(false);}
   }
   async function generate(e){
     e.preventDefault();setError('');setLoading(true);
@@ -183,7 +262,10 @@ function App(){
   function startNewSite(){
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
     setSelectedId('');setRecognizedId('');setDescription('');setClarification(null);setClarifyText('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
-    setAdvisorOpen(true);
+    setBusinessName('');setContactPhone('');setEmail('');setCity('');setAddress('');setHours('');setWebsite('');setWhatsapp('');setViber('');
+    setStyle('modern');setGoal('purchase');setShowWelcome(false);setLocationMode('physical');setExtraLocations([]);setExternalBookingUrl('');setExportPairing(null);
+    setLiveMessages([{id:++messageCounter.current,from:'ai',text:firstPrompt}]);
+    setReplyComplete(true);setLatestReplyId(0);setLiveInput('');setAdvisorOpen(true);
   }
   function editSite(){
     setPreviewOpen(false);setError('');setStep(Math.max(0,steps.length-1));setAdvisorOpen(true);
@@ -243,66 +325,63 @@ function App(){
     {advisorOpen&&<div className="advisor-overlay rmc-ai-overlay" id="advisorOverlay" role="presentation">
       <div ref={advisorDialogRef} className="advisor-card rmc-ai-card" role="dialog" aria-modal="true" aria-label="Web Solutions AI Advisor">
         <header className="advisor-head rmc-ai-head">
-          <button type="button" className="rmc-ai-back" aria-label="Nazad" disabled={!definition&&step===0}
-            onClick={()=>{if(step===0){setDefinition(null);setStep(0);}else setStep(s=>s-1);setError('');}}>
+          <button type="button" className="rmc-ai-back" aria-label="Nazad" disabled={!definition&&!clarification}
+            onClick={()=>{if(definition){setDefinition(null);setClarification(null);setStep(0);setSelectedId('');setDescription('');setClarifyText('');setAdvisorSignals({});setAnswers({});addReply('Možemo početi ispočetka. Opišite mi delatnost.');}
+              else{setClarification(null);addReply('Možete dati novi opis.');}setError('');}}>
             ← <span>Nazad</span>
           </button>
           <div className="rmc-ai-progress" role="progressbar" aria-label="Napredak Advisora" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
             <span style={{width:progress+'%'}} />
           </div>
-          <span className="rmc-ai-step-count">{definition?`${step+2} / ${count}`:'1 / …'}</span>
+          <span className="rmc-ai-step-count">{definition?'Još malo':'Početak'}</span>
           <button type="button" className="rmc-ai-close" aria-label="Zatvori Advisor" onClick={()=>setAdvisorOpen(false)}>×</button>
         </header>
-        <div className="rmc-ai-scroll" id="advisorContent" key={definition?current:'intro'}>
-          {!definition?<section className="question rmc-ai-question rmc-ai-intro">
-            <div className="rmc-ai-step-label">✦ AI WEB ADVISOR</div>
-            <h1 id="rmc-ai-modal-title">Opišite čime se bavite.</h1>
-            <p>Pišite prirodno, kao da objašnjavate posao nekome ko vas prvi put upoznaje.</p>
-            {clarification?<div className="rmc-ai-clarify" role="group" aria-label="Pojašnjenje delatnosti">
-               <h2>{clarification.question}</h2>
-               <div className="rmc-ai-clarify-options">{clarification.choices.map(item=><button key={item.id} type="button" className="rmc-ai-choice" disabled={loading} onClick={e=>begin(e,item.id)}>{item.label}</button>)}</div>
-               <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}}>
-                 <label htmlFor="rmc-ai-clarify-text">Nešto drugo — opišite detaljnije</label>
-                 <textarea id="rmc-ai-clarify-text" rows={2} minLength={3} maxLength={400} value={clarifyText} onChange={e=>setClarifyText(e.target.value)} placeholder="Na primer: prodavnica zdrave hrane…"/>
-                 <button type="submit" className="rmc-ai-primary" disabled={loading||clarifyText.trim().length<3}>Pošalji pojašnjenje</button>
-               </form>
-               <button type="button" className="quiet" onClick={()=>{setClarification(null);setClarifyText('');setError('');}}>← Izmeni prvobitni opis</button>
-             </div>:<form id="introForm" onSubmit={begin}>
-              <label className="rmc-ai-form-label" htmlFor="rmc-ai-description">Vaš opis</label>
-              <textarea id="rmc-ai-description" rows={3} maxLength={800} minLength={3} required autoFocus
-                value={description} onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
-                placeholder="Na primer: Imam vinoteku, prodajem vino i organizujem degustacije…"/>
-              <div className="rmc-ai-chips" aria-label="Primeri opisa">
-                {examplePrompts.map(prompt=><button key={prompt} type="button" className="rmc-ai-chip"
-                  onClick={()=>{setDescription(prompt);setSelectedId('');setError('');document.getElementById('rmc-ai-description')?.focus();}}>{prompt}</button>)}
-              </div>
-              <button className="rmc-ai-primary" type="submit" disabled={loading||description.trim().length<3}>
-                {loading?<><span className="rmc-ai-pulse"/> Razumem vaš opis…</>:'Nastavi →'}
-              </button>
-            </form>}
+        <div className="rmc-ai-scroll" id="advisorContent">
+          <LiveThread messages={liveMessages} latestId={latestReplyId} completed={replyComplete}
+            onComplete={()=>setReplyComplete(true)} thinking={loading&&!exporting}/>
+          {!definition?<section className="rmc-live-compose-section">
+            {clarification? <div className="rmc-live-clarification" aria-label="Izbor delatnosti">
+              {replyComplete&&<div className="rmc-live-options rmc-ai-clarify-options">
+                {clarification.choices?.filter(item=>!clarification.question?.includes('prehrambenih')||item.id==='grocery-store').map(item=><button key={item.id} type="button" className="rmc-live-option"
+                  disabled={loading} onClick={e=>begin(e,item.id)}>{item.label}</button>)}
+                {clarification.question?.includes('prehrambenih')&&<button type="button" className="rmc-live-option" onClick={()=>{setClarifyText('Specijalizovana prodavnica: ');setTimeout(()=>document.getElementById('rmc-ai-description')?.focus(),0);}}>Specijalizovana prodavnica</button>}
+              </div>}
+              <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}} className="rmc-live-composer">
+                <textarea id="rmc-ai-description" value={clarifyText} rows={2} maxLength={400}
+                  aria-label="Vaš odgovor" onChange={e=>setClarifyText(e.target.value)} placeholder="Nešto drugo — šta konkretno prodajete?"/>
+                <button type="submit" disabled={!replyComplete||loading||clarifyText.trim().length<3}>Pošalji →</button>
+              </form>
+              <button className="rmc-live-link" type="button" onClick={()=>{setClarification(null);setClarifyText('');setError('');addReply('Možete mi dati novi opis svog posla.');}}>Promeni početni opis</button>
+            </div>:<>
+              <form id="introForm" onSubmit={begin} className="rmc-live-composer">
+                <textarea id="rmc-ai-description" autoFocus value={description} rows={3} maxLength={800} minLength={3} required
+                  aria-label="Opišite svoj posao" onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
+                  placeholder="Na primer: Prodajem prehrambene proizvode…"/>
+                <button type="submit" disabled={!replyComplete||loading||description.trim().length<3}>Pošalji →</button>
+              </form>
+              {!description&&<div className="rmc-live-suggestions">{examplePrompts.map(prompt=><button key={prompt} type="button" disabled={loading}
+                onClick={()=>{setDescription(prompt);setError('');}}>{prompt}</button>)}</div>}
+            </>}
           </section>:<>
-            <div className="rmc-ai-ack" role="status">
-              <span aria-hidden="true">✦</span>
-              <div><strong>{step===0?(advisorAcknowledgement||`Razumem — ${recognizedLabel}.`):recognizedLabel}</strong>
-                <p>{step===0?(current==='company'?'Pripremio sam predlog sajta. Dodajte podatke za svoj ZIP.':'Treba mi još samo informacija koja menja funkcionalnost sajta.'):'Prethodni odgovori su sačuvani.'}</p>
-              </div>
-            </div>
-            {advisorWarnings.length>0&&<div className="rmc-ai-fallback" role="status">{advisorWarnings.map((message,i)=><p key={i}>{message}</p>)}</div>}
-            {current==='goal'&&<ChoiceStep eyebrow="POSLOVNI CILJ" title="Šta je najvažnije za ovaj sajt?" items={availableGoals()} value={goal} onPick={v=>pick('goal',v)}/>}
-            {current==='hybrid'&&<ChoiceStep eyebrow="POVEZANE DELATNOSTI" title={definition.hybrid.question} help={definition.hybrid.help} items={definition.hybrid.options} value={answers.hybridChoice} onPick={v=>pick('hybrid',v)}/>}
-            {current==='operation'&&<ChoiceStep eyebrow="NAČIN POSLOVANJA" title={definition.operation.question} help="Odgovor podešava način na koji sajt prima zahteve." items={definition.operation.options.map(x=>({id:x,label:x}))} value={answers.businessMode} onPick={v=>pick('operation',v)}/>}
-            {activeSpecial&&<ChoiceStep key={activeSpecial.id} eyebrow="POSLOVNE MOGUĆNOSTI" title={activeSpecial.question}
-              help="Ovaj izbor uključuje ili isključuje odgovarajuću funkcionalnost." items={activeSpecial.options}
-              value={typeof answers[activeSpecial.id]==='boolean'?(answers[activeSpecial.id]?'yes':'no'):(answers[activeSpecial.id]??'')}
-              onPick={v=>pick('special:'+activeSpecial.id,v==='yes'?true:v==='no'?false:v)}/>}
-            {current==='emphasis'&&<ChoiceStep eyebrow="IZDVAJAMO" title={definition.emphasis.question}
-              items={definition.emphasis.options.map(x=>({id:x,label:x}))} value={answers.emphasis} onPick={v=>pick('emphasis',v)}/>}
-            {current==='style'&&<ChoiceStep eyebrow="VIZUELNI PRAVAC" title="Kako želite da sajt izgleda?"
-              help="Stil menja vizuelni izraz, a ne odabrane poslovne funkcije."
-              items={definition.styles.map(x=>({id:x.id,label:x.label,desc:x.description}))} value={style} onPick={v=>pick('style',v)}/>}
-          {current==='company'&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Kako se vaš biznis zove?</h2><p>Unesite stvarne podatke. Jedna poslovna adresa uključena je besplatno; za rad na terenu ili onlajn birate odgovarajuću opciju.</p>
+            {current!=='company'&&replyComplete&&<>
+              {activeSpecial&&<div className="rmc-live-options">{activeSpecial.options.map(item=><button type="button" key={item.id} className="rmc-live-option"
+                onClick={()=>pick('special:'+activeSpecial.id,item.id==='yes'?true:item.id==='no'?false:item.id)}>{item.label}</button>)}</div>}
+              {current==='operation'&&<div className="rmc-live-options">{definition.operation.options.map(value=><button type="button" key={value} className="rmc-live-option" onClick={()=>pick('operation',value)}>{value}</button>)}</div>}
+              {current==='hybrid'&&<div className="rmc-live-options">{definition.hybrid.options.map(item=><button type="button" key={item.id} className="rmc-live-option" onClick={()=>pick('hybrid',item.id)}>{item.label}</button>)}</div>}
+            </>}
+            {<form className="rmc-live-composer" onSubmit={continueConversation}>
+              <textarea id="rmc-live-answer" value={liveInput} rows={2} maxLength={400} aria-label="Odgovorite Advisoru"
+                onChange={e=>setLiveInput(e.target.value)} placeholder={current==='company'?'Želite da promenite neki odgovor? Napišite ovde…':'Ili napišite odgovor svojim rečima…'}/>
+              <button type="submit" disabled={!replyComplete||loading||liveInput.trim().length<3}>Pošalji →</button>
+            </form>}
+                    {current==='company'&&replyComplete&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Podaci za vaš sajt</h2><p>Za završetak su potrebni naziv, telefon i način poslovanja. Dodatne informacije su opcione.</p>
             <form id="companyForm" onSubmit={generate}>
-            <label className="field">Naziv firme<input autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
+            <details className="rmc-live-settings"><summary>Opcionalno: stil sajta</summary>
+              <div className="rmc-live-options">{definition.styles.map(item=><button type="button" key={item.id}
+                className={'rmc-live-option'+(style===item.id?' is-selected':'')}
+                onClick={()=>{setStyle(item.id);addUser('Stil: '+item.label);addReply('Stil sam sačuvao. '+nextAdvisorQuestion(definition,advisorSignals));}}>{item.label}</button>)}</div>
+            </details>
+            <label className="field">Naziv firme<input id="rmc-company-name" autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
             <label className="field">Kontakt telefon (obavezno)<input type="tel" required autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
             <fieldset className="v421-mode"><legend>Gde poslujete?</legend>
               <label><input type="radio" name="locationMode" checked={locationMode==='physical'} onChange={()=>setLocationMode('physical')}/> Imam poslovnu adresu (1 lokacija besplatno)</label>

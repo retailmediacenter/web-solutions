@@ -10,6 +10,8 @@ import { exportSiteZip } from './exporter.js';
 import {bookingRouter} from './booking-routes.js';
 import {createBookingQueue} from './booking-queue.js';
 import {qaRouter} from './qa-routes.js';
+import {mergeAdvisorSignals,changedAdvisorSignals,safeAdvisorAcknowledgement,interpretShortAnswer} from './advisor-dialog.js';
+import {phraseVerifiedTurn,answerApprovedAdvisorQuestion} from './advisor-dialog-ai.js';
 import {genericFood,foodClarification,proposeBusinessWithAi} from './advisor-ai.js';
 export const app=express();
 app.disable('x-powered-by');
@@ -78,6 +80,42 @@ app.post('/api/advisor/understand',async(req,res)=>{
    }
  }catch(_err){/* Fail closed to the already audited rules; do not log descriptions or keys. */}
  return res.json(rules);
+});
+// Public refinement accepts brief conversation turns; never store user text.
+// This route cannot select another business or grant any module outside the
+// current server-owned Advisor definition. Existing rules validate fresh facts.
+const refinementHits=new Map();
+app.post('/api/advisor/refine',async(req,res)=>{
+  res.set('Cache-Control','no-store');
+  const ip=req.ip,now=Date.now();
+  const recent=(refinementHits.get(ip)||[]).filter(t=>now-t<3600000);
+  if(recent.length>=30)return res.status(429).json({error:'Previše zahteva. Pokušajte ponovo kasnije.'});
+  recent.push(now);refinementHits.set(ip,recent);
+  if(refinementHits.size>1000)for(const [key,times] of refinementHits)if(times.every(t=>now-t>3600000))refinementHits.delete(key);
+  const businessId=typeof req.body?.businessId==='string'?req.body.businessId:'';
+  const message=typeof req.body?.message==='string'?req.body.message.trim():'';
+  if(message.length<3||message.length>400)return res.status(400).json({error:'Napišite odgovor do 400 znakova.'});
+  if(!listBusinesses().some(b=>b.id===businessId))return res.status(400).json({error:'Nepoznata delatnost.'});
+  try{
+    const def=getAdvisorDefinition(businessId);
+    const prior={...req.body?.signals,goal:req.body?.goal||req.body?.signals?.goal,style:req.body?.style||req.body?.signals?.style};
+    const extraction=understandAdvisorDescription(message,{businessId});
+    const short=interpretShortAnswer(def,req.body?.currentQuestionId,message);
+    const fresh={...extraction.signals,...short};
+    const changes=changedAdvisorSignals(def,prior,fresh);
+    const signals=mergeAdvisorSignals(def,prior,fresh);
+    const baseReply=safeAdvisorAcknowledgement(def,changes);
+    // One optional LLM call per substantial, newly verified free-text correction.
+    // Use the same existing per-process AI quota. For plain chat with no verified
+    // change, never burn tokens inventing business facts or functionality.
+    const phraseOnly=Object.keys(changes).length&&Object.keys(changes).every(k=>['goal','style','emphasis'].includes(k));
+    const polished=phraseOnly&&process.env.OPENAI_API_KEY&&allowAi(ip)
+      ?await phraseVerifiedTurn({message,baseReply,changes,businessLabel:def.label}):null;
+    const faq=!Object.keys(changes).length&&/[?]|\b(?:kako|koliko|da li|moze|mogu|sta znaci|zasto)\b/i.test(message)&&process.env.OPENAI_API_KEY&&allowAi(ip)
+      ?await answerApprovedAdvisorQuestion({message}):null;
+    res.json({businessId,signals,warnings:extraction.warnings||[],
+      acknowledgement:polished||faq||baseReply,engine:polished?'openai-verified-dialog':faq?'openai-limited-faq':'rules-verified-dialog'});
+  }catch{return res.status(400).json({error:'Odgovor nije obrađen. Pokušajte ponovo.'});}
 });
 app.get('/api/advisor/questions/:id',(req,res)=>{
   try{res.json(getAdvisorDefinition(req.params.id));}catch(e){res.status(404).json({error:e.message});}
