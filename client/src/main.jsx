@@ -99,6 +99,9 @@ function App(){
     setReplyComplete(false);setLatestReplyId(id);
     setLiveMessages(old=>[...old,{id,from:'ai',text}]);
   };
+  const [styleSwitchBusy,setStyleSwitchBusy]=useState(false);
+  const [styleSwitchError,setStyleSwitchError]=useState('');
+  const styleSwitchLock=useRef(false);
   const [previewOpen,setPreviewOpen]=useState(false);
   const [samplePreview,setSamplePreview]=useState(null);
   const [currentDemo,setCurrentDemo]=useState('salon');
@@ -236,6 +239,23 @@ function App(){
       setAdvisorOpen(false);setPreviewOpen(true);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
   }
+  // Only the existing visual style value changes. Keep the complete Advisor
+  // payload (including every Booking/Commerce/contact setting) unchanged.
+  async function switchPreviewStyle(nextStyle){
+    if(styleSwitchLock.current||!definition||!result||nextStyle===style)return;
+    if(!definition.styles?.some(candidate=>candidate.id===nextStyle))return;
+    styleSwitchLock.current=true;
+    setStyleSwitchBusy(true);setStyleSwitchError('');
+    try{
+      const updated=await json('/api/site/generate',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...input,style:nextStyle})});
+      // Commit the style only after a successful preview response: the ZIP
+      // export will then use this SAME style through the existing input state.
+      setStyle(nextStyle);setResult(updated);setExportPairing(null);
+    }catch(ex){setStyleSwitchError('Promena izgleda nije uspela: '+ex.message);}
+    finally{styleSwitchLock.current=false;setStyleSwitchBusy(false);}
+  }
   async function exportZip(){
     setError('');setExporting(true);setExportPairing(null);
     try{
@@ -271,6 +291,7 @@ function App(){
     ?.replace('src="site-system.js"','src="'+previewBase+'site-system.js"');
   const previewHtml=hydratePreview(result?.previewHtml);
   function startNewSite(){
+    setStyleSwitchError('');setStyleSwitchBusy(false);
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
     setSelectedId('');setRecognizedId('');setDescription('');setClarification(null);setClarifyText('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
     setBusinessName('');setContactPhone('');setEmail('');setCity('');setAddress('');setHours('');setWebsite('');setWhatsapp('');setViber('');
@@ -329,7 +350,9 @@ function App(){
       html={samplePreview?samplePreview.html:previewHtml} loading={samplePreview?.loading}
       error={samplePreview?.error} selectedDemo={currentDemo} onSelectDemo={openExample}
       onClose={()=>setPreviewOpen(false)} onStart={startNewSite}
-      onExport={exportZip} exporting={exporting} exportPairing={exportPairing}
+      styles={samplePreview?[]:definition?.styles||[]} selectedStyle={style}
+      styleBusy={styleSwitchBusy} styleError={styleSwitchError} onStyleChange={switchPreviewStyle}
+      onExport={exportZip} exporting={exporting||styleSwitchBusy} exportPairing={exportPairing}
       onEdit={editSite} device={device} onDevice={setDevice} frameRef={previewFrame}/>
     <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>
     <LeadDialog packageName={leadPackage} onClose={()=>setLeadPackage('')}/>

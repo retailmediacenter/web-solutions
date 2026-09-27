@@ -1,0 +1,61 @@
+/* RMC V45.3.3: restores ONLY the V41.9 five-style selection in the
+   generated-site PREVIEW. Does not style the iframe content or alter
+   marketing demos, Advisor, Booking, modules or exported ZIP. */
+.rmc-preview-panel.is-generated .rmc-style-picker {
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  flex:0 0 auto;min-width:0;padding:9px 16px;
+  background:#fff;border-bottom:1px solid #dce4f0;
+  color:#25354d;font:600 12px/1.4 Inter,system-ui,sans-serif;
+}
+.rmc-preview-panel.is-generated .rmc-style-picker-label {white-space:nowrap;font-size:12px;letter-spacing:.01em}
+.rmc-preview-panel.is-generated .rmc-style-picker-list {
+  display:flex;flex:1 1 auto;align-items:center;gap:5px;min-width:0;
+  overflow-x:auto;overscroll-behavior-x:contain;
+  scrollbar-width:thin;padding:3px 0 5px;
+}
+.rmc-preview-panel.is-generated .rmc-style-pick {
+  flex:0 0 auto;display:flex;align-items:center;gap:7px;
+  min-height:38px;padding:6px 10px;white-space:nowrap;
+  color:#324866;background:#fff;border:1px solid #dbe3ec;border-radius:9px;
+  font:750 12px/1.3 Inter,system-ui,sans-serif;cursor:pointer;
+}
+.rmc-preview-panel.is-generated .rmc-style-pick:hover {background:#f3f7fe;border-color:#8daee7}
+.rmc-preview-panel.is-generated .rmc-style-pick.is-active {
+  border-color:#215bd6;box-shadow:0 0 0 1px #215bd6 inset;
+  background:#eef4ff;color:#174dbb;
+}
+.rmc-preview-panel.is-generated .rmc-style-pick:focus-visible {outline:3px solid #235fd9;outline-offset:2px}
+.rmc-preview-panel.is-generated .rmc-style-pick:disabled {opacity:.6;cursor:wait}
+.rmc-preview-panel.is-generated .rmc-style-swatch {
+  display:flex;gap:0;width:24px;height:19px;overflow:hidden;
+  border:1px solid #cbd5df;border-radius:3px;
+}
+.rmc-preview-panel.is-generated .rmc-style-swatch i {flex:1;min-width:0}
+/* Original V41.9 palette families, shown only as small visual reminders.
+   The real colours, fonts and module design come from the EXISTING renderer. */
+.rmc-preview-panel .rmc-style-swatch.is-traditional i:nth-child(1){background:#f9fafb}
+.rmc-preview-panel .rmc-style-swatch.is-traditional i:nth-child(2){background:#192329}
+.rmc-preview-panel .rmc-style-swatch.is-traditional i:nth-child(3){background:#315563}
+.rmc-preview-panel .rmc-style-swatch.is-modern i:nth-child(1){background:#f3f6fa}
+.rmc-preview-panel .rmc-style-swatch.is-modern i:nth-child(2){background:#17212b}
+.rmc-preview-panel .rmc-style-swatch.is-modern i:nth-child(3){background:#155eef}
+.rmc-preview-panel .rmc-style-swatch.is-warm i:nth-child(1){background:#fbf5ee}
+.rmc-preview-panel .rmc-style-swatch.is-warm i:nth-child(2){background:#3b3029}
+.rmc-preview-panel .rmc-style-swatch.is-warm i:nth-child(3){background:#bd6b4c}
+.rmc-preview-panel .rmc-style-swatch.is-tech i:nth-child(1){background:#07101d}
+.rmc-preview-panel .rmc-style-swatch.is-tech i:nth-child(2){background:#12243a}
+.rmc-preview-panel .rmc-style-swatch.is-tech i:nth-child(3){background:#64e9ff}
+.rmc-preview-panel .rmc-style-swatch.is-premium i:nth-child(1){background:#16120f}
+.rmc-preview-panel .rmc-style-swatch.is-premium i:nth-child(2){background:#f4eee6}
+.rmc-preview-panel .rmc-style-swatch.is-premium i:nth-child(3){background:#c8a779}
+.rmc-preview-panel.is-generated .rmc-style-feedback {font-size:11px;color:#3e6294}
+.rmc-preview-panel.is-generated .rmc-style-feedback.is-error {color:#a12929}
+@media(max-width:690px){
+  .rmc-preview-panel.is-generated .rmc-style-picker {display:block;padding:7px 9px 3px}
+  .rmc-preview-panel.is-generated .rmc-style-picker-label {display:block;margin:0 0 2px}
+  .rmc-preview-panel.is-generated .rmc-style-picker-list {padding:3px 0 8px;gap:5px}
+  .rmc-preview-panel.is-generated .rmc-style-pick {padding:6px 9px;min-height:41px}
+}
+@media(prefers-reduced-motion:reduce){
+  .rmc-preview-panel.is-generated .rmc-style-picker-list {scroll-behavior:auto}
+}

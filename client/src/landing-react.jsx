@@ -7,6 +7,7 @@ import {createPortal} from 'react-dom';
 import {LANDING_MARKUP} from './landing-layout.js';
 import landingCss from './landing-theme.css?inline';
 import './landing-dialogs.css';
+import './style-preview-v4533.css';
 import './preview-shell-v4532.css';
 
 export const SHOWCASE = [
@@ -110,7 +111,8 @@ function preventBackgroundScroll(active){
 }
 
 export function PreviewDialog({open,mode='site',siteName,html,loading,error,device,onDevice,
-  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,exportPairing,onEdit,frameRef}){
+  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,exportPairing,onEdit,frameRef,
+  styles=[],selectedStyle,styleBusy=false,styleError='',onStyleChange}){
  const close=useRef(null);
  useEffect(()=>{if(!open)return;const done=preventBackgroundScroll(true);close.current?.focus();
    function key(e){if(e.key==='Escape'){e.preventDefault();onClose()}}
@@ -132,7 +134,22 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
            className={selectedDemo===item.id?'active':''} onClick={()=>onSelectDemo(item.id)}>{item.type}</button>)}
        </div>
      </div>}
-     <div className="rmc-preview-content">
+     {!isSample&&styles.length>0&&<nav className="rmc-style-picker" aria-label="Izgled sajta">
+       <span className="rmc-style-picker-label">Promenite izgled</span>
+       <div className="rmc-style-picker-list" role="group" aria-label="Pet originalnih stilova">
+         {styles.map(item=><button key={item.id} type="button"
+           className={'rmc-style-pick'+(selectedStyle===item.id?' is-active':'')}
+           aria-pressed={selectedStyle===item.id}
+           disabled={styleBusy}
+           onClick={()=>onStyleChange?.(item.id)}>
+           <span className={'rmc-style-swatch is-'+item.id} aria-hidden="true"><i/><i/><i/></span>
+           <span>{item.label}</span>
+         </button>)}
+       </div>
+       {styleBusy&&<span className="rmc-style-feedback" role="status">Primenjujem stil…</span>}
+       {styleError&&<span className="rmc-style-feedback is-error" role="alert">{styleError}</span>}
+     </nav>}
+     <div className="rmc-preview-content" aria-busy={styleBusy}>
        {isSample&&staticDemo
         ? <iframe ref={frameRef} key={staticDemo.id} title={'Nezavisni DEMO — '+staticDemo.name}
             src={sampleBase+staticDemo.demoPath+'/index.html'}
