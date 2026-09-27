@@ -324,3 +324,45 @@
   #advisorOverlay.rmc-ai-overlay .rmc-ai-footnote{display:none}
   #advisorOverlay.rmc-ai-overlay .rmc-live-options,#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions{width:100%}
 }
+
+/* V45.3.1 UI final fix: options are flat list rows, never chat bubbles. */
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions,
+#advisorOverlay.rmc-ai-overlay .rmc-live-options{
+  display:flex;flex-direction:column;gap:0;width:100%;max-width:100%;
+  padding:7px 0 12px;margin:0;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button,
+#advisorOverlay.rmc-ai-overlay .rmc-live-option{
+  appearance:none;display:block;width:100%;min-height:49px;
+  padding:13px 28px 13px 3px;margin:0;
+  background:transparent!important;color:#e9f1ff!important;
+  border:0!important;border-bottom:1px solid rgba(177,202,234,.25)!important;
+  border-radius:0!important;box-shadow:none!important;
+  font:650 14px/1.5 Inter,system-ui,sans-serif;
+  text-align:left;white-space:normal;position:relative;
+  transition:color .15s,background-color .15s;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button::after,
+#advisorOverlay.rmc-ai-overlay .rmc-live-option::after{
+  content:'›';position:absolute;right:5px;top:50%;transform:translateY(-50%);
+  color:#97bced;font-size:21px;font-weight:400;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button:hover,
+#advisorOverlay.rmc-ai-overlay .rmc-live-option:hover,
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button:focus-visible,
+#advisorOverlay.rmc-ai-overlay .rmc-live-option:focus-visible{
+  background:rgba(156,187,231,.09)!important;color:#fff!important;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-option.is-selected{
+  color:#c3dcff!important;box-shadow:inset 3px 0 #91baff!important;
+}
+#advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button:last-child,
+#advisorOverlay.rmc-ai-overlay .rmc-live-option:last-child{border-bottom:0!important}
+@media(max-width:650px){
+  #advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button,
+  #advisorOverlay.rmc-ai-overlay .rmc-live-option{min-height:48px;font-size:14px;padding:11px 26px 11px 2px}
+}
+@media(prefers-reduced-motion:reduce){
+  #advisorOverlay.rmc-ai-overlay .rmc-live-suggestions button,
+  #advisorOverlay.rmc-ai-overlay .rmc-live-option{transition:none}
+}

@@ -63,7 +63,7 @@ function LiveThread({messages,latestId,completed,onComplete,thinking}){
         ?<LiveReply text={message.text} onComplete={onComplete}/>:message.text}</div>
     </div>)}
     {thinking&&<div className="rmc-live-row is-ai"><span className="rmc-live-speaker">✦ Advisor</span><div className="rmc-live-bubble rmc-live-thinking" aria-label="Advisor obrađuje vaš odgovor"><i/><i/><i/></div></div>}
-    {completed&&latestId&&<div className="rmc-live-sr-only" role="status">{messages.find(m=>m.id===latestId)?.text}</div>}
+    {completed&&latestId>0&&<div className="rmc-live-sr-only" role="status">{messages.find(m=>m.id===latestId)?.text}</div>}
     <div ref={bottom}/>
   </div>;
 }
@@ -356,7 +356,7 @@ function App(){
               </div>}
               <button className="rmc-live-link" type="button" onClick={()=>{setClarification(null);setClarifyText('');setError('');addReply('Možete mi dati novi opis svog posla.');}}>Promeni početni opis</button>
             </div>:<>
-              {!description&&<div className="rmc-live-suggestions">{examplePrompts.map(prompt=><button key={prompt} type="button" disabled={loading}
+              {liveMessages.length===1&&!description.trim()&&!loading&&<div className="rmc-live-suggestions">{examplePrompts.map(prompt=><button key={prompt} type="button" disabled={loading}
                 onClick={()=>{setDescription(prompt);setError('');}}>{prompt}</button>)}</div>}
             </>}
           </section>:<>
