@@ -10,6 +10,7 @@ import { exportSiteZip } from './exporter.js';
 import {bookingRouter} from './booking-routes.js';
 import {createBookingQueue} from './booking-queue.js';
 import {qaRouter} from './qa-routes.js';
+import {genericFood,foodClarification,proposeBusinessWithAi} from './advisor-ai.js';
 export const app=express();
 app.disable('x-powered-by');
 app.use(express.json({limit:'40kb'}));
@@ -32,6 +33,52 @@ app.use('/api/qa',qaRouter()); // disabled unless explicit STAGING-only RMC_QA_M
 app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));
 app.get('/api/advisor/recognize',(req,res)=>res.set('Cache-Control','no-store').json(understandAdvisorDescription(String(req.query.text||'').slice(0,800),{businessId:listBusinesses().some(b=>b.id===req.query.businessId)?req.query.businessId:null})));
+// AI budget guard is best-effort per-process; use edge/Redis quotas before large public rollout.
+const aiHits=new Map();let aiTotalDay=0,aiDay=new Date().toISOString().slice(0,10);
+function allowAi(ip){
+ const now=Date.now(),day=new Date(now).toISOString().slice(0,10);
+ if(day!==aiDay){aiDay=day;aiTotalDay=0;aiHits.clear();}
+ const recent=(aiHits.get(ip)||[]).filter(t=>now-t<3600000);
+ if(recent.length>=12||aiTotalDay>=200)return false;
+ recent.push(now);aiHits.set(ip,recent);aiTotalDay++;
+ if(aiHits.size>1000)for(const [key,times] of aiHits)if(times.every(t=>now-t>3600000))aiHits.delete(key);
+ return true;
+}
+function ambiguityResult(description,businesses){
+ if(genericFood(description))return {businessId:null,needsClarification:true,
+   clarification:{question:foodClarification.question,choices:foodClarification.choices.filter(id=>businesses.some(b=>b.id===id)).map(id=>businesses.find(b=>b.id===id))}};
+ return null;
+}
+app.post('/api/advisor/understand',async(req,res)=>{
+ res.set('Cache-Control','no-store');
+ const description=typeof req.body?.description==='string'?req.body.description.trim().slice(0,800):'';
+ if(description.length<3)return res.status(400).json({error:'Opišite svoju delatnost.'});
+ const businesses=listBusinesses();
+ const chosen=businesses.some(b=>b.id===req.body?.businessId)?req.body.businessId:null;
+ // A manual clarification is a user decision, never an AI guess.
+ if(chosen)return res.json({...understandAdvisorDescription(description,{businessId:chosen}),needsClarification:false});
+ const fallback=()=>({...understandAdvisorDescription(description),engine:'rules-v45.1'});
+ const forced=req.body?.clarified===true?null:ambiguityResult(description,businesses);
+ if(forced)return res.json({...fallback(),...forced,engine:'clarification-v45.2'});
+ const rules=fallback();
+ const complex=/\b(i|ali|takođe|takodje|pored|osim|uz)\b/i.test(description)&&description.length>45;
+ if(rules.businessId&&!complex)return res.json(rules);
+ if(!process.env.OPENAI_API_KEY||!allowAi(req.ip))return res.json(rules);
+ try{
+   const proposed=await proposeBusinessWithAi(description,businesses);
+   if(proposed?.needsClarification){
+     const choices=proposed.choices.map(id=>businesses.find(b=>b.id===id)).filter(Boolean);
+     if(choices.length)return res.json({...rules,businessId:null,needsClarification:true,clarification:{question:proposed.question||'Koja od ponuđenih delatnosti najbolje opisuje vaš posao?',choices},engine:'openai-clarification'});
+   }
+   const id=rules.businessId||proposed?.businessId;
+   if(id&&businesses.some(b=>b.id===id)){
+     // Explicit facts are extracted by the existing audited V45.1 rules for THIS ID.
+     const checked=understandAdvisorDescription(description,{businessId:id});
+     return res.json({...checked,engine:rules.businessId?'rules+openai-v45.2':'openai-classification-v45.2'});
+   }
+ }catch(_err){/* Fail closed to the already audited rules; do not log descriptions or keys. */}
+ return res.json(rules);
+});
 app.get('/api/advisor/questions/:id',(req,res)=>{
   try{res.json(getAdvisorDefinition(req.params.id));}catch(e){res.status(404).json({error:e.message});}
 });

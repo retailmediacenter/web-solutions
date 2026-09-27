@@ -45,6 +45,7 @@ function App(){
   const [advisorOpen,setAdvisorOpen]=useState(false);
   const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
   const [advisorSignals,setAdvisorSignals]=useState({}),[advisorWarnings,setAdvisorWarnings]=useState([]);
+   const [clarification,setClarification]=useState(null),[clarifyText,setClarifyText]=useState('');
   const [previewOpen,setPreviewOpen]=useState(false);
   const [samplePreview,setSamplePreview]=useState(null);
   const [currentDemo,setCurrentDemo]=useState('salon');
@@ -103,26 +104,31 @@ function App(){
     if(!response.ok)throw new Error(data.error||'Zahtev nije uspeo.');
     return data;
   }
-  async function begin(e){
-    e.preventDefault();setError('');setLoading(true);
-    try{
-      let understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800)));
-      const chosen=selectedId||understood.businessId;
-      if(!chosen)throw new Error('Nisam pouzdano prepoznao delatnost. Izaberi delatnost iz ponuđene liste.');
-      if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije migrirana. Izaberite neku od podržanih delatnosti.');
-      // Manual fallback must NOT reuse conclusions intended for another business.
-      if(understood.businessId!==chosen){
-        understood=await json('/api/advisor/recognize?text='+encodeURIComponent(description.slice(0,800))+'&businessId='+encodeURIComponent(chosen));
-      }
-      const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
-      const signals=understood.signals||{};
-      const draft=buildAdvisorDraft(def,signals);
-      setRecognizedId(chosen);setAdvisorAcknowledgement(understood.acknowledgement||`Razumem — ${def.label}.`);
-      setAdvisorSignals(signals);setAdvisorWarnings(understood.warnings||[]);
-      setSelectedId(chosen);setDefinition(def);setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);
-      setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
-    }catch(ex){setError(ex.message)}finally{setLoading(false)}
-  }
+   async function begin(e,manualId=null){
+     e?.preventDefault?.();setError('');setLoading(true);
+     try{
+       const text=(description+' '+clarifyText).trim().slice(0,800);
+       const understood=await json('/api/advisor/understand',{method:'POST',headers:{'Content-Type':'application/json'},
+         body:JSON.stringify({description:text,businessId:manualId||selectedId||null,clarified:Boolean(clarifyText.trim())})});
+       if(understood.needsClarification){
+         setClarification(understood.clarification);setAdvisorAcknowledgement('Razumem vaš opis. Potrebno je još jedno pojašnjenje.');
+         return;
+       }
+       const chosen=manualId||selectedId||understood.businessId;
+       if(!chosen){
+         setClarification({question:'Koja delatnost najbolje opisuje vaš posao?',choices:[]});
+         return;
+       }
+       if(!supportedBusinesses.some(x=>x.id===chosen))throw new Error('Delatnost još nije podržana.');
+       const def=await json('/api/advisor/questions/'+encodeURIComponent(chosen));
+       const signals=understood.signals||{},draft=buildAdvisorDraft(def,signals);
+       setRecognizedId(chosen);setAdvisorAcknowledgement(understood.acknowledgement||`Razumem — ${def.label}.`);
+       setAdvisorSignals(signals);setAdvisorWarnings(understood.warnings||[]);
+       setDescription(text);setClarification(null);setClarifyText('');
+       setSelectedId(chosen);setDefinition(def);setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);
+       setShowWelcome(false);setBusinessName('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
+     }catch(ex){setError(ex.message)}finally{setLoading(false)}
+   }
   function pick(key,value){
     setError('');
     if(key==='goal')setGoal(value);
@@ -176,7 +182,7 @@ function App(){
   const previewHtml=hydratePreview(result?.previewHtml);
   function startNewSite(){
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
-    setSelectedId('');setRecognizedId('');setDescription('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
+    setSelectedId('');setRecognizedId('');setDescription('');setClarification(null);setClarifyText('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
     setAdvisorOpen(true);
   }
   function editSite(){
@@ -252,7 +258,16 @@ function App(){
             <div className="rmc-ai-step-label">✦ AI WEB ADVISOR</div>
             <h1 id="rmc-ai-modal-title">Opišite čime se bavite.</h1>
             <p>Pišite prirodno, kao da objašnjavate posao nekome ko vas prvi put upoznaje.</p>
-            <form id="introForm" onSubmit={begin}>
+            {clarification?<div className="rmc-ai-clarify" role="group" aria-label="Pojašnjenje delatnosti">
+               <h2>{clarification.question}</h2>
+               <div className="rmc-ai-clarify-options">{clarification.choices.map(item=><button key={item.id} type="button" className="rmc-ai-choice" disabled={loading} onClick={e=>begin(e,item.id)}>{item.label}</button>)}</div>
+               <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}}>
+                 <label htmlFor="rmc-ai-clarify-text">Nešto drugo — opišite detaljnije</label>
+                 <textarea id="rmc-ai-clarify-text" rows={2} minLength={3} maxLength={400} value={clarifyText} onChange={e=>setClarifyText(e.target.value)} placeholder="Na primer: prodavnica zdrave hrane…"/>
+                 <button type="submit" className="rmc-ai-primary" disabled={loading||clarifyText.trim().length<3}>Pošalji pojašnjenje</button>
+               </form>
+               <button type="button" className="quiet" onClick={()=>{setClarification(null);setClarifyText('');setError('');}}>← Izmeni prvobitni opis</button>
+             </div>:<form id="introForm" onSubmit={begin}>
               <label className="rmc-ai-form-label" htmlFor="rmc-ai-description">Vaš opis</label>
               <textarea id="rmc-ai-description" rows={3} maxLength={800} minLength={3} required autoFocus
                 value={description} onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
@@ -261,17 +276,10 @@ function App(){
                 {examplePrompts.map(prompt=><button key={prompt} type="button" className="rmc-ai-chip"
                   onClick={()=>{setDescription(prompt);setSelectedId('');setError('');document.getElementById('rmc-ai-description')?.focus();}}>{prompt}</button>)}
               </div>
-              {error&&<div className="rmc-ai-fallback">
-                <label htmlFor="rmc-ai-business-select">Ako opis nije prepoznat, izaberite podržanu delatnost:</label>
-                <select id="rmc-ai-business-select" value={selectedId} onChange={e=>setSelectedId(e.target.value)}>
-                  <option value="">Izaberite delatnost</option>
-                  {supportedBusinesses.map(b=><option key={b.id} value={b.id}>{b.label}</option>)}
-                </select>
-              </div>}
               <button className="rmc-ai-primary" type="submit" disabled={loading||description.trim().length<3}>
                 {loading?<><span className="rmc-ai-pulse"/> Razumem vaš opis…</>:'Nastavi →'}
               </button>
-            </form>
+            </form>}
           </section>:<>
             <div className="rmc-ai-ack" role="status">
               <span aria-hidden="true">✦</span>
@@ -294,28 +302,8 @@ function App(){
               items={definition.styles.map(x=>({id:x.id,label:x.label,desc:x.description}))} value={style} onPick={v=>pick('style',v)}/>}
           {current==='company'&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Kako se vaš biznis zove?</h2><p>Unesite stvarne podatke. Jedna poslovna adresa uključena je besplatno; za rad na terenu ili onlajn birate odgovarajuću opciju.</p>
             <form id="companyForm" onSubmit={generate}>
-            <details className="rmc-ai-tuning"><summary>Promeni izgled ili predlog Advisora</summary>
-              <label className="field">Stil sajta<select value={style} onChange={e=>setStyle(e.target.value)}>
-                {definition.styles.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-              </select></label>
-              <label className="field">Šta je najvažnije?<select value={goal} onChange={e=>setGoal(e.target.value)}>
-                {availableGoals().map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-              </select></label>
-              {definition.emphasis&&<label className="field">Šta ističemo?<select value={answers.emphasis||''} onChange={e=>setAnswers(a=>({...a,emphasis:e.target.value}))}>
-                {definition.emphasis.options.map(x=><option key={x} value={x}>{x}</option>)}
-              </select></label>}
-              {definition.hybrid&&<label className="field">Dodatna delatnost<select value={answers.hybridChoice||'none'} onChange={e=>setAnswers(a=>({...a,hybridChoice:e.target.value}))}>
-                {definition.hybrid.options.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}
-              </select></label>}
-              {(definition.specials||(definition.special?[definition.special]:[])).map(q=>
-                <label className="field" key={q.id}>{q.question}<select value={typeof answers[q.id]==='boolean'?(answers[q.id]?'yes':'no'):(answers[q.id]??'')}
-                  onChange={e=>setAnswers(a=>({...a,[q.id]:e.target.value==='yes'?true:e.target.value==='no'?false:e.target.value}))}>
-                  <option value="" disabled>Izaberite odgovor</option>
-                  {q.options.map(o=><option key={o.id} value={o.id}>{o.label}</option>)}
-                </select></label>)}
-            </details>
             <label className="field">Naziv firme<input autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
-            <label className="field">Kontakt telefon (opciono)<input type="tel" autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
+            <label className="field">Kontakt telefon (obavezno)<input type="tel" required autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
             <fieldset className="v421-mode"><legend>Gde poslujete?</legend>
               <label><input type="radio" name="locationMode" checked={locationMode==='physical'} onChange={()=>setLocationMode('physical')}/> Imam poslovnu adresu (1 lokacija besplatno)</label>
               <label><input type="radio" name="locationMode" checked={locationMode==='service-area'} onChange={()=>setLocationMode('service-area')}/> Radim na terenu (prikaz područja, bez javne adrese)</label>
@@ -347,7 +335,7 @@ function App(){
              <label className="field">HTTPS link ka spoljnom sistemu za rezervacije<input type="url" required pattern="https://.*" value={externalBookingUrl} onChange={e=>setExternalBookingUrl(e.target.value)} placeholder="https://booking-partner.example/..." /></label>}
             <p className="rmc-ai-booking-note">Ako ste uključili rezervacije ili zakazivanje, prilikom preuzimanja ZIP-a dobićete jednokratni kod za povezivanje sa RMC Business Portalom. Kod se nikada ne unosi u javni sajt.</p>
             <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Prikaži uvodni Welcome prozor</span><small>Opcionalno · isti izgled u svih pet stilova · prikazuje se jednom po poseti.</small></label>
-            <button className="action" type="submit" disabled={loading||!businessName.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
+            <button className="action" type="submit" disabled={loading||!businessName.trim()||!contactPhone.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
           </>}
           {error&&<p role="alert" className="rmc-ai-error">{error}</p>}
         </div>

@@ -36,7 +36,7 @@ export function recognizeBusiness(description){
   if(text.length<3)return null;
   // Preserve explicit recognition for the first three audited scenarios;
   // additional migrated IDs remain selectable by name, no guessed synonyms.
-  if(/\b(mesar|mesnic|butcher)/.test(text))return 'butcher-shop';
+  if(/\b(mesar|mesnic|butcher)/.test(text)||/\b(?:prodajem|prodajemo|prodaja)\s+(?:sveze\s+)?meso\b/.test(text))return 'butcher-shop';
   if(/\b(vinotek|wine shop|prodavnic.*vin|vino.*degust)/.test(text))return 'wine-shop';
   if(/\b(obuc|obuv|cipel|patik|shoe shop)/.test(text))return 'shoe-shop';
   // Explicit Serbian synonyms for the ten new profiles. Do not infer unknown

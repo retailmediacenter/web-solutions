@@ -136,9 +136,9 @@
 #advisorOverlay.rmc-ai-overlay .rmc-ai-company fieldset label,#advisorOverlay.rmc-ai-overlay .rmc-ai-company details p{color:#e3ecfa}
 #advisorOverlay.rmc-ai-overlay .rmc-ai-company .small-note{color:#b8c9df!important;font-size:12px!important}
 #advisorOverlay.rmc-ai-overlay .rmc-ai-company button.action{
-  position:sticky;bottom:0;z-index:2;margin:4px 0 0;min-height:53px;width:100%;
+  position:relative;bottom:auto;z-index:auto;margin:10px 0 20px;min-height:53px;width:100%;
   border:0;border-radius:12px;background:#245de5;color:#fff;font-weight:850;font-size:15px;
-  box-shadow:0 -12px 0 #19283d;cursor:pointer;
+  box-shadow:0 8px 18px rgba(7,18,33,.28);cursor:pointer;
 }
 #advisorOverlay.rmc-ai-overlay .rmc-ai-company button.quiet{color:#b6d1ff}
 #advisorOverlay.rmc-ai-overlay :is(button,input,textarea,select,summary):focus-visible{
@@ -187,3 +187,12 @@
   border-radius:11px;padding:8px 11px;font:500 15px/1.4 Inter,system-ui,sans-serif;
   color:#1e3048;background:#fff;
 }
+
+/* V45.2: contextual clarification replaces the 72-item fallback dropdown. */
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify{display:grid;gap:15px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify h2{font-size:clamp(24px,3.4vw,34px);margin:0}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify-options{display:grid;gap:9px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify form{display:grid;gap:10px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify label{font-weight:750;font-size:14px}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify textarea{width:100%;min-height:72px;max-height:140px;padding:12px;color:#18283d;background:#fff;border:1px solid #ccd8e5;border-radius:12px;font:500 16px/1.5 Inter,system-ui,sans-serif}
+#advisorOverlay.rmc-ai-overlay .rmc-ai-clarify .quiet{justify-self:start;border:0;background:transparent;color:#c8dfff;cursor:pointer}
