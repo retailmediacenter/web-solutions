@@ -23,7 +23,9 @@ const pub=path.join(out,'web-solutions-public'),preview=path.join(out,'web-solut
 const assetPrefix='assets/images/curated/';
 const publicBase=process.env.RMC_PUBLIC_BASE_PATH||'/web-solutions-public/';
 const apiBase=process.env.RMC_PUBLIC_API_URL||'https://rmc-web-solutions-api-staging.onrender.com';
-const liveQa=new Set((process.env.RMC_QA_LIVE_SLUGS||'').split(',').map(x=>x.trim()).filter(Boolean));
+const liveNames=(process.env.RMC_QA_LIVE_SLUGS||'').split(',').map(x=>x.trim()).filter(Boolean);
+// An explicit operator-only "all" enables all nine test sites for a controlled QA run.
+const liveQa=new Set(liveNames.length===1&&liveNames[0]==='all'?scenarios.map(s=>s.slug):liveNames);
 function assertPublicConfig(){
  assert(/^\/[a-zA-Z0-9/_-]*\/$/.test(publicBase),`Neispravan RMC_PUBLIC_BASE_PATH: ${publicBase}`);
  const parsed=new URL(apiBase);
@@ -32,11 +34,12 @@ function assertPublicConfig(){
 const fileExists=r=>existsSync(path.join(client,'public',r));
 const assert=(ok,message)=>{if(!ok)throw Error(message)};
 assertPublicConfig();
-// V44: frizer EXACT_TIME and plumber DAY_PART are the only currently approved
-// live public QA transports. Existing fixed site IDs must never be regenerated.
-const permittedLiveQa=new Set(['frizer','vodoinstalater']);
+// V46: nine fixed QA IDs, with either Booking, Commerce, or both.
+// No site becomes live without the explicit RMC_QA_LIVE_SLUGS operator flag.
+const permittedLiveQa=new Set(['minimarket','butik','auto-servis','vodoinstalater',
+ 'vinoteka','mesara','frizer','restoran','konsultant']);
 assert([...liveQa].every(slug=>permittedLiveQa.has(slug)),
- 'V44: stvarni QA transport trenutno je dozvoljen samo za frizer i vodoinstalater.');
+ 'Nepoznat QA scenario u RMC_QA_LIVE_SLUGS.');
 if(liveQa.size)assert(apiBase==='https://rmc-web-solutions-api-staging.onrender.com'||apiBase.startsWith('http://localhost:'),
  'QA Booking transport sme se usmeriti samo na staging ili lokalni API.');
 const status=s=>console.log('\n[RMC] '+s);
@@ -150,12 +153,12 @@ function previewIndex(manifest){
  // The 9 site previews are public, but the existing page only displays the
  // secure QA login when the administrator elects to enter their secret.
  const cards=categories.map(g=>{const entries=manifest.scenarios.filter(e=>e.category===g.id);
- return `<section aria-labelledby="${g.id}"><div class="section-head"><h2 id="${g.id}">${htmlEscape(g.title)}</h2><p>${htmlEscape(g.description)}</p></div><div class="cards">${entries.map(e=>`<article class="card"><a class="card-link" href="sites/${e.slug}/index.html" target="_blank" rel="noopener noreferrer"><div class="image" style="background-image:url('sites/${e.slug}/${htmlEscape(e.hero)}')"></div><div class="content"><span>${htmlEscape(e.businessId)} · SITE ID <code>${htmlEscape(e.siteId)}</code></span><h3>${htmlEscape(e.label)}</h3><p>${htmlEscape(e.featureLabel)}</p><b>Otvori sajt ↗</b></div></a><div class="qa-controls" data-slug="${htmlEscape(e.slug)}" data-site-id="${htmlEscape(e.siteId)}">${e.bookingLive?`<button class="qa-issue" type="button" disabled>Generiši kod</button><div class="qa-result" hidden><code class="qa-code"></code> <span class="qa-expiry"></span><div class="qa-actions"><button class="qa-copy" type="button">Kopiraj</button><a class="qa-portal" target="_blank" rel="noopener noreferrer">Otvori Portal ↗</a></div></div>`:`<span class="qa-pending">${e.capabilities.booking?'Booking još nije aktiviran':'Portal još nije aktiviran'}</span>`}</div></article>`).join('')}</div></section>`;
+ return `<section aria-labelledby="${g.id}"><div class="section-head"><h2 id="${g.id}">${htmlEscape(g.title)}</h2><p>${htmlEscape(g.description)}</p></div><div class="cards">${entries.map(e=>`<article class="card"><a class="card-link" href="sites/${e.slug}/index.html" target="_blank" rel="noopener noreferrer"><div class="image" style="background-image:url('sites/${e.slug}/${htmlEscape(e.hero)}')"></div><div class="content"><span>${htmlEscape(e.businessId)} · SITE ID <code>${htmlEscape(e.siteId)}</code></span><h3>${htmlEscape(e.label)}</h3><p>${htmlEscape(e.featureLabel)}</p><b>Otvori sajt ↗</b></div></a><div class="qa-controls" data-slug="${htmlEscape(e.slug)}" data-site-id="${htmlEscape(e.siteId)}">${e.qaLive?`<button class="qa-issue" type="button" disabled>Generiši kod</button><div class="qa-result" hidden><code class="qa-code"></code> <span class="qa-expiry"></span><div class="qa-actions"><button class="qa-copy" type="button">Kopiraj</button><a class="qa-portal" target="_blank" rel="noopener noreferrer">Otvori Portal ↗</a></div></div>`:`<span class="qa-pending">${e.capabilities.booking&&e.capabilities.commerce?'Booking i Commerce još nisu aktivirani':e.capabilities.booking?'Booking još nije aktiviran':'Commerce još nije aktiviran'}</span>`}</div></article>`).join('')}</div></section>`;
  }).join('');
  const apiOrigin=htmlEscape(manifest.stagingApiOrigin);
  return `<!doctype html><html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; connect-src 'self' ${apiOrigin}; img-src 'self'; style-src 'unsafe-inline' 'self'; base-uri 'none'; object-src 'none'; form-action 'none'"><title>RMC — 9 razvojnih scenarija</title><link rel="stylesheet" href="qa-console.css"><style>
 :root{font-family:system-ui,Arial,sans-serif;color-scheme:dark;color:#f7f8fb;background:#101728}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#263b5d 0%,#101728 52%);line-height:1.45}main{width:min(1200px,92vw);margin:auto;padding:30px 0 64px}header{border-bottom:1px solid #ffffff21;padding:22px 4vw;display:flex;justify-content:space-between;gap:16px;align-items:center}header a{color:#d8e8ff;text-decoration:none}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.12;margin:12px 0}.intro{color:#cbd7e8;max-width:870px}.top{background:#ffffff12;border:1px solid #ffffff20;border-radius:20px;padding:28px;margin:22px 0 46px}.note{font-size:.95rem;color:#e5ddac}.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:15px;flex-wrap:wrap}.section-head h2{margin-bottom:5px}.section-head p{color:#b8cce3;margin:0}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:20px 0 52px}.card{min-width:0;color:inherit;border:1px solid #ffffff27;border-radius:18px;background:#ffffff0b;overflow:hidden;transition:transform .18s,background .18s}.card:hover,.card:focus-within{transform:translateY(-3px);background:#ffffff19}.image{height:185px;background-color:#253755;background-position:center;background-size:cover}.content{padding:20px}.content span{font-size:.78rem;letter-spacing:.04em;color:#9ec9f0}.content h3{font-size:1.5rem;margin:8px 0}.content p{color:#ced8e6;min-height:48px}.content b{color:#bcdcff;font-size:.93rem}footer{color:#bcc8d9;border-top:1px solid #ffffff27;padding-top:24px;font-size:.86rem}
-</style></head><body data-api-origin="${apiOrigin}"><header><strong>RMC / WEB SOLUTIONS — QA</strong><a href="https://retailmediacenter.github.io/web-solutions-public/" target="_blank" rel="noopener noreferrer">Glavni Web Solutions ↗</a></header><main><div class="top"><p class="note">RAZVOJNO OKRUŽENJE • ${manifest.bookingLive?'STAGING BOOKING':'DEMONSTRACIJA'}</p><h1>Devet sajtova. Jedan sistem.</h1><p class="intro">SITE ID ostaje isti. Kod izdaješ ovde, kada je scenario aktivan.</p><p class="intro"><small>Izvor: ${htmlEscape(manifest.sourceCommit)} · ${htmlEscape(manifest.generatedAt)}</small></p><div class="qa-access" id="qa-access"><form id="qa-login"><label for="qa-password">QA pristup</label><input id="qa-password" type="password" autocomplete="off" placeholder="Administratorski ključ" required><button type="submit" id="qa-login-button">Otključaj</button></form><div id="qa-active" hidden><strong>QA je otključan</strong><button id="qa-logout" type="button">Odjavi</button></div><p id="qa-status" role="status" aria-live="polite"></p></div></div>${cards}<footer><a style="color:#bcdcff" href="manifest.json">Manifest generisanja ↗</a></footer></main><script defer src="qa-console.js"></script></body></html>`;
+</style></head><body data-api-origin="${apiOrigin}"><header><strong>RMC / WEB SOLUTIONS — QA</strong><a href="https://retailmediacenter.github.io/web-solutions-public/" target="_blank" rel="noopener noreferrer">Glavni Web Solutions ↗</a></header><main><div class="top"><p class="note">RAZVOJNO OKRUŽENJE • ${manifest.qaLive?'STAGING QA':'DEMONSTRACIJA'}</p><h1>Devet sajtova. Jedan sistem.</h1><p class="intro">SITE ID ostaje isti. Kod izdaješ ovde, kada je scenario aktivan.</p><p class="intro"><small>Izvor: ${htmlEscape(manifest.sourceCommit)} · ${htmlEscape(manifest.generatedAt)}</small></p><div class="qa-access" id="qa-access"><form id="qa-login"><label for="qa-password">QA pristup</label><input id="qa-password" type="password" autocomplete="off" placeholder="Administratorski ključ" required><button type="submit" id="qa-login-button">Otključaj</button></form><div id="qa-active" hidden><strong>QA je otključan</strong><button id="qa-logout" type="button">Odjavi</button></div><p id="qa-status" role="status" aria-live="polite"></p></div></div>${cards}<footer><a style="color:#bcdcff" href="manifest.json">Manifest generisanja ↗</a></footer></main><script defer src="qa-console.js"></script></body></html>`;
 }
 function writeQaConsole(dir,manifest){
  mkdirSync(dir,{recursive:true});
@@ -218,10 +221,16 @@ function checkPreviewExport(temp,ready){
  for(const {s,p} of ready){
   // Stable QA site ID is public; no owner code or bearer token is generated here.
   const live=liveQa.has(s.slug);
-  if(live){
-   assert(p.siteConfig.bookingProfile&&p.siteConfig.capabilities.booking.enabled,
-    `${s.slug}: QA site cannot send without a complete Booking profile`);
+  const bookingLive=live&&s.expect.booking,commerceLive=live&&s.expect.commerce;
+  if(bookingLive){
+   assert(p.siteConfig.bookingProfile?.services?.length&&p.siteConfig.capabilities.booking.enabled,
+    `${s.slug}: QA Booking nema potpun profil`);
    p.siteConfig.bookingTransport={siteId:s.siteId,apiBaseUrl:apiBase};
+  }
+  if(commerceLive){
+   assert(p.siteConfig.siteProfile?.commerce?.enabled&&p.siteConfig.siteProfile?.commerce?.products?.length,
+    `${s.slug}: QA Commerce nema potpun katalog`);
+   p.siteConfig.commerceTransport={siteId:s.siteId,apiBaseUrl:apiBase};
   }
   const archive=exportSiteZip(p);
   const target=path.join(temp,'web-solutions-preview','sites',s.slug);
@@ -230,11 +239,13 @@ function checkPreviewExport(temp,ready){
   assert(!fileList.includes('BOOKING_UPARIVANJE.txt'),`${s.slug}: kod u javnom ZIP-u`);
   const indexPath=path.join(target,'index.html');
   const site=readFileSync(indexPath,'utf8');
-  assert(Boolean(/"bookingTransport"\s*:\s*\{/.test(site))===live,
+  assert(Boolean(/"bookingTransport"\s*:\s*\{/.test(site))===bookingLive,
    `${s.slug}: pogrešan Booking transport / javni QA status`);
+  assert(Boolean(/"commerceTransport"\s*:\s*\{/.test(site))===commerceLive,
+   `${s.slug}: pogrešan Commerce transport / javni QA status`);
   const badge=`<div class="rmc-qa-bar"><strong>RMC QA: ${htmlEscape(s.label)}</strong>`+
    `<span>SITE ID: <code>${htmlEscape(s.siteId)}</code></span>`+
-   `<span>${live?'STAGING BOOKING — moguće uparivanje':'DEMO — bez stvarnog slanja'}</span></div>`;
+   `<span>${live?'STAGING '+[bookingLive?'BOOKING':null,commerceLive?'COMMERCE':null].filter(Boolean).join(' + ')+' — moguće uparivanje':'DEMO — bez stvarnog slanja'}</span></div>`;
   const css='<style>.rmc-qa-bar{box-sizing:border-box;display:flex;flex-wrap:wrap;gap:8px 16px;'+
    'align-items:center;justify-content:center;padding:8px 12px;background:#131f32;color:#fff;'+
    'font:600 12px/1.4 system-ui,sans-serif;position:relative;z-index:1000}.rmc-qa-bar code{'+
@@ -242,7 +253,10 @@ function checkPreviewExport(temp,ready){
   assert(/<body(?:\s[^>]*)?>/i.test(site)&&site.includes('</head>'),`${s.slug}: nema HTML QA insertion point`);
   writeFileSync(indexPath,site.replace('</head>',css+'</head>')
    .replace(/<body([^>]*)>/i,`<body$1>${badge}`));
-  if(live)assert(fileList.includes('booking-submit.js'),`${s.slug}: nedostaje stvarni B2 pošiljalac`);
+  if(bookingLive)assert(fileList.includes('booking-submit.js'),`${s.slug}: nedostaje Booking pošiljalac`);
+  if(commerceLive)assert(fileList.includes('commerce-submit.js'),`${s.slug}: nedostaje Commerce pošiljalac`);
+  if(!bookingLive)assert(!fileList.includes('booking-submit.js'),`${s.slug}: nedozvoljen Booking pošiljalac`);
+  if(!commerceLive)assert(!fileList.includes('commerce-submit.js'),`${s.slug}: nedozvoljen Commerce pošiljalac`);
   const hero=p.catalog.hero;
   assert(existsSync(path.join(target,hero)),`${s.slug}: hero slika nedostaje u ZIP-u`);
   const b=p.siteConfig.capabilities.booking;
@@ -251,7 +265,7 @@ function checkPreviewExport(temp,ready){
     capabilities:{commerce:Boolean(p.siteConfig.capabilities.commerce),
       booking:Boolean(b?.enabled),timingMode:b?.timingMode||null,
       wineTastings:Boolean(p.siteConfig.capabilities.wineTastings),butcherGrillService:Boolean(p.siteConfig.capabilities.butcherGrillService)},
-    files:fileList.length,siteId:s.siteId,bookingLive:live,paired:false});
+    files:fileList.length,siteId:s.siteId,qaLive:live,bookingLive,commerceLive,paired:false});
   console.log(`[RMC] Export ${s.slug}: ${fileList.length} fajlova; ${featureLabel(p)}.`);
  }
  return manifest;
@@ -270,7 +284,7 @@ async function main(){
   // output is temporary and removed; it cannot accidentally publish anything.
   const scratch=mkdtempSync(path.join(tmpdir(),'rmc-publication-audit-'));
   try{const entries=checkPreviewExport(scratch,ready);
-    writeQaConsole(path.join(scratch,'web-solutions-preview'),{scenarios:entries,stagingApiOrigin:apiBase,bookingLive:entries.some(e=>e.bookingLive),sourceCommit:'audit',generatedAt:'audit'});
+    writeQaConsole(path.join(scratch,'web-solutions-preview'),{scenarios:entries,stagingApiOrigin:apiBase,qaLive:entries.some(e=>e.qaLive),bookingLive:entries.some(e=>e.bookingLive),sourceCommit:'audit',generatedAt:'audit'});
     scanSafe(path.join(scratch,'web-solutions-preview'));
     assert(entries.length===9,'Nije generisano svih 9 stvarnih ZIP-ova.');
     status('AUDIT PASS: 9/9 pravih Node ZIP-ova, stvarne fotografije i sigurnosna provera.');
@@ -316,7 +330,8 @@ async function main(){
   const git=gitInfo(),generatedAt=new Date().toISOString();
   const manifest={project:'RMC Web Solutions',type:'dev-preview',sourceCommit:git.sha,
     workingTreeDirty:git.dirty,generatedAt,stagingApiOrigin:apiBase,
-    bookingLive:entries.some(s=>s.bookingLive),note:'Stabilni DEV QA SITE ID-jevi. Samo eksplicitno omogućeni scenariji imaju staging transport. Nikada nema koda ili vlasničkog tokena u javnim fajlovima.',
+    qaLive:entries.some(s=>s.qaLive),bookingLive:entries.some(s=>s.bookingLive),
+    commerceLive:entries.some(s=>s.commerceLive),note:'Stabilni DEV QA SITE ID-jevi. Samo eksplicitno omogućeni scenariji imaju staging transport. Nikada nema koda ili vlasničkog tokena u javnim fajlovima.',
     scenarios:entries};
   const prev=path.join(staged,'web-solutions-preview');
   writeQaConsole(prev,manifest);
@@ -348,7 +363,7 @@ async function main(){
   console.log('\n========= RMC PUBLICATION PASS =========');
   console.log('PUBLIC : '+pub+'\nPREVIEW: '+preview);
   console.log('GitHub Pages /web-solutions-public/ i /web-solutions-preview/');
-  console.log('Rezervacije: '+(liveQa.size?'Izabrani QA staging transport spreman; E2E proveriti posebno za svaki scenario.':'DEMO; E2E nije uključen.'));
+  console.log('QA transport: '+(liveQa.size?'Izabrani Booking/Commerce scenariji spremni za pojedinačni E2E.':'DEMO; E2E nije uključen.'));
  }catch(error){
   status('BUILD STOP: '+error.message);
   rmSync(staged,{recursive:true,force:true});throw error;

@@ -73,12 +73,19 @@ export function qaRouter(queue=createBookingQueue(),{now=Date.now}={}){
   // fallback; a browser must always present the temporary QA session token.
   const valid=findSession(token)||(!req.get('origin')&&same(token,process.env.RMC_QA_ADMIN_KEY));
   if(!valid)return res.status(403).json({error:'QA sesija je istekla ili pristup nije dozvoljen.'});
-  const s=scenarios.find(x=>x.slug===req.params.slug&&x.expect.booking);
-  if(!s)return res.status(404).json({error:'Nije dostupan Booking za ovaj testni scenario.'});
+  const s=scenarios.find(x=>x.slug===req.params.slug&&(x.expect.booking||x.expect.commerce));
+  if(!s)return res.status(404).json({error:'Nepoznat QA scenario.'});
   try{
-   const p=buildQaPayload(s);
-   if(!p.siteConfig.bookingProfile)throw Error('Nedostaje izvorni Booking profil.');
-   const result=await queue.issue(p.siteConfig.bookingProfile,{siteId:s.siteId});
+   const p=buildQaPayload(s),site=p.siteConfig;
+   const booking=!!(s.expect.booking&&site.capabilities?.booking?.enabled&&site.bookingProfile?.services?.length);
+   const commerce=!!(s.expect.commerce&&site.capabilities?.commerce&&site.siteProfile?.commerce?.enabled);
+   // Never synthesize fake Booking services for Commerce-only businesses.
+   if(Boolean(s.expect.booking)!==booking||Boolean(s.expect.commerce)!==commerce)
+    throw Error('QA profil nije usaglašen sa fiksnim scenarijem.');
+   const profile=commerce?site.siteProfile:site.bookingProfile;
+   if(!profile?.business?.name||!Array.isArray(profile.services)||(commerce&&!profile.commerce?.products?.length))
+    throw Error('Nepotpun QA profil.');
+   const result=await queue.issue(profile,{siteId:s.siteId});
    return res.status(201).json({...result,scenario:s.slug});
   }catch(e){return res.status(e.status||503).json({error:'Nije moguće izdati novi QA kod.'});}
  });

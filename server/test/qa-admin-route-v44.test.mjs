@@ -17,14 +17,15 @@ test('QA re-pair route is private, staging-only and uses pre-existing fixed publ
   let res=await fetch(base+'/api/qa/pairing/frizer',{method:'POST'});
   assert.equal(res.status,403);assert.equal(issued,0);
   res=await fetch(base+'/api/qa/pairing/minimarket',{method:'POST',headers:{Authorization:`Bearer ${key}`}});
-  assert.equal(res.status,404);assert.equal(issued,0);
+  assert.equal(res.status,201);assert.equal(issued,1);assert.ok(profile.commerce?.products?.length);
+  assert.equal(profile.services.length,0,'Minimarket cannot have synthetic Booking services');
   res=await fetch(base+'/api/qa/pairing/frizer',{method:'POST',headers:{Authorization:`Bearer ${key}`}});
   assert.equal(res.status,201);assert.equal(res.headers.get('cache-control'),'no-store');
   const data=await res.json();assert.equal(data.siteId,scenarios.find(s=>s.slug==='frizer').siteId);
-  assert.equal(data.scenario,'frizer');assert.ok(profile.services?.length);assert.equal(issued,1);
+  assert.equal(data.scenario,'frizer');assert.ok(profile.services?.length);assert.equal(issued,2);
   process.env.RMC_QA_MODE='0';
   res=await fetch(base+'/api/qa/pairing/frizer',{method:'POST',headers:{Authorization:`Bearer ${key}`}});
-  assert.equal(res.status,404);assert.equal(issued,1);
+  assert.equal(res.status,404);assert.equal(issued,2);
  }finally{
   await new Promise(resolve=>server.close(resolve));
   if(originalKey==null)delete process.env.RMC_QA_ADMIN_KEY;else process.env.RMC_QA_ADMIN_KEY=originalKey;

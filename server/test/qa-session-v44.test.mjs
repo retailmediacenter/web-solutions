@@ -37,10 +37,10 @@ test('B4 staging session issues existing QA SITE ID without sending secret to Pr
   assert.notEqual(login.sessionToken,VALID);
   assert.ok(!JSON.stringify(login).includes(VALID));
   r=await send(server.base,'/pairing/frizer',{key:VALID,origin:QA_ORIGIN});assert.equal(r.status,403);
-  r=await send(server.base,'/pairing/minimarket',{key:login.sessionToken,origin:QA_ORIGIN});assert.equal(r.status,404);
+  r=await send(server.base,'/pairing/minimarket',{key:login.sessionToken,origin:QA_ORIGIN});assert.equal(r.status,201);
   r=await send(server.base,'/pairing/frizer',{key:login.sessionToken,origin:QA_ORIGIN});assert.equal(r.status,201);
   const pair=await r.json();assert.equal(pair.siteId,scenarios.find(x=>x.slug==='frizer').siteId);
-  assert.equal(issues,1);
+  assert.equal(issues,2);
   r=await send(server.base,'/pairing/frizer',{key:login.sessionToken,origin:'https://attacker.example'});assert.equal(r.status,403);
   r=await send(server.base,'/session',{key:login.sessionToken,origin:QA_ORIGIN,method:'DELETE'});assert.equal(r.status,204);
   r=await send(server.base,'/pairing/frizer',{key:login.sessionToken,origin:QA_ORIGIN});assert.equal(r.status,403);

@@ -17,11 +17,11 @@ test('V44 plumber and frizer keep distinct FIXED QA siteIds and the intended tim
  }
 });
 
-test('V44 public builder permits only frizer/plumber; no pairing secrets are written',()=>{
+test('V46 public builder permits all nine explicitly selected QA scenarios; no pairing secrets are written',()=>{
  const source=readFileSync(new URL('../../scripts/publication/build.mjs',import.meta.url),'utf8');
- const allowed=source.match(/const permittedLiveQa=new Set\(\[([^\]]+)\]\)/)?.[1];
- assert.match(allowed||'',/frizer/);
- assert.match(allowed||'',/vodoinstalater/);
+ const allowed=source.match(/const permittedLiveQa=new Set\(\[([\s\S]*?)\]\)/)?.[1]||'';
+ for(const slug of scenarios.map(s=>s.slug))assert.ok(allowed.includes(slug),`QA scenario missing: ${slug}`);
+ assert.ok(source.includes("liveNames[0]==='all'"),'All nine are activated only with explicit operator flag');
  // A builder may name a secret in a BLOCKING safety check: that is not a leak.
  // Check the public QA client instead, plus the builder's actual HTML guard.
  const qaClient=readFileSync(new URL('../../scripts/publication/qa-console.js',import.meta.url),'utf8');
