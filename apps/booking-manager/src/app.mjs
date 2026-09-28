@@ -5,6 +5,7 @@ import {applySiteProfile,claimPairing,disconnectRemote,getPushPublicKey,pullInbo
 import {ORDER_STATUS,ORDER_LABELS,normalizeIncomingOrder,nextOrderStatus,orderReplyText,orderSelection,acceptOrderWithAmendment} from './order-core.mjs';
 import {activatePortalProfile,activePortalProfileId,detachSiteConnection,portalModules} from './portal-modules.mjs';
 import {dayPartDetailHtml} from './daypart-ui.mjs';
+import {exactTimeDetailHtml} from './exact-time-ui.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -414,25 +415,14 @@ function detailGrid(b,{includeStatus=true}={}){const code=b.reservationCode||'St
 function openDetails(id){const b=reservation(id);if(!b)return;stateUI.selectedId=id;stateUI.proposal=b.proposal?clone(b.proposal):null;
   const dayPart=b.timingMode==='DAY_PART';
   byId('booking-dialog').classList.toggle('daypart-compact',dayPart);
+  byId('booking-dialog').classList.toggle('exact-compact',!dayPart);
   if(dayPart){
     byId('booking-details').innerHTML=dayPartDetailHtml({b,safe,formatDate,dayPartLabel,today,detailGrid,shareActions,STATUS});
     byId('booking-dialog').showModal();return;
   }
   const original=slotCheck(profile(),bookings(),{...b,excludeId:b.id});const options=alternatives(profile(),bookings(),b,4,14);
   const proposalChoices=((b.proposal?[b.proposal]:[]).concat(options.filter(x=>!b.proposal||x.date!==b.proposal.date||x.time!==b.proposal.time)).map(x=>`<button data-action="choose-proposal" data-date="${x.date}" data-time="${x.time}" class="${stateUI.proposal?.date===x.date&&stateUI.proposal?.time===x.time?'selected':''}">${safe(formatDate(x.date))}<br><b>${x.time}</b></button>`).join('')||'<span class="hint">Nema alternativa u narednih 14 dana.</span>');
-  byId('booking-details').innerHTML=`<div class="dialog-head"><div><div class="eyebrow">ZAHTEV / ${safe(b.source==='manual'?'RUČNI UNOS':'TEST')}</div><h2>${safe(b.clientName)}</h2></div><button class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
-  <div class="dialog-body">${detailGrid(b)}
-  ${b.status===STATUS.CONFIRMED?'<div class="success">✓ Termin zauzima kapacitet u lokalnom kalendaru.</div>':b.status===STATUS.CANCELLED||b.status===STATUS.DECLINED?'<div class="warning">Ovaj zahtev je zatvoren i ne zauzima termin.</div>':`<div class="${original.ok?'success':'warning'}">${original.ok?'✓ Traženi termin je trenutno slobodan.':'! '+safe(original.reason)+' Možeš ponuditi prvi slobodan termin.'}</div>`}
-  ${(b.status===STATUS.PENDING||b.status===STATUS.PROPOSED)?`<div class="proposal-box"><h3>Predloži drugi termin</h3><div class="proposal-pills">${proposalChoices}</div><p>Predloženi termin se ne rezerviše dok ne stigne potvrda klijenta.</p><p id="proposal-feedback" class="feedback" aria-live="polite"></p></div>`:''}
-  ${(b.status===STATUS.PROPOSED&&b.proposal)?`<div class="helper-box">Poslednji predlog: ${safe(formatDate(b.proposal.date))} u ${safe(b.proposal.time)}. Ako je klijent prihvatio, potvrdi predloženi termin.</div>`:''}
-  <div class="helper-box">Predlog ne zauzima termin dok ga ne potvrdiš. Poruke se ne šalju automatski.</div></div>
-  ${shareActions(b)}
-  <div class="dialog-actions" style="justify-content:space-between"><div class="detail-actions">
-  ${b.status===STATUS.PENDING||b.status===STATUS.PROPOSED?`<button class="btn btn-primary" data-action="confirm-booking" ${!original.ok?'disabled':''}>✓ Potvrdi traženi</button><button class="btn btn-soft" data-action="save-proposal" ${!stateUI.proposal?'disabled':''}>Predloži termin</button><button class="btn btn-light" data-action="confirm-proposal" ${!b.proposal?'disabled':''}>Potvrdi predlog</button>`:''}
-  ${b.status===STATUS.CONFIRMED?'<button class="btn btn-light" data-action="ics">↓ Dodaj u moj kalendar</button>':''}
-  ${b.status===STATUS.PENDING?'<button class="btn btn-danger" data-action="decline-booking">Odbij</button>':''}
-  ${b.status===STATUS.CONFIRMED||b.status===STATUS.PROPOSED?'<button class="btn btn-danger" data-action="cancel-booking">Otkaži</button>':''}
-  </div></div>`;
+  byId('booking-details').innerHTML=exactTimeDetailHtml({b,STATUS,safe,statName,scheduleText,formatDate,original,proposalChoices,shareActions});
   byId('booking-dialog').showModal();
 }
 function rerenderDetails(){if(stateUI.selectedId){byId('booking-dialog').close();openDetails(stateUI.selectedId);}}
@@ -579,6 +569,12 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='push-enable')return await enablePush();
     if(a==='create-pairing')return await createProfilePairing();
     if(a==='copy-pairing')return await copyPairing();
+    if(a==='open-exact-proposal'){
+      const dialog=byId('booking-dialog');
+      const editor=dialog.querySelector('#exact-proposal-editor');
+      if(editor){editor.hidden=false;btn.hidden=true;editor.querySelector('[data-action="choose-proposal"]')?.focus();}
+      return;
+    }
     if(a==='choose-proposal')return chooseProposal(btn.dataset.date,btn.dataset.time);
     if(a==='save-daypart-proposal')return await saveDayPartProposal();
     if(['confirm-booking','save-proposal','confirm-proposal','cancel-booking','decline-booking'].includes(a))return mutateBooking(a);
