@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {renderHtml} from './render-site.js';
 import {zipFiles} from './zip.js';
+import {addLocalPhonePreview} from './offline-preview.js';
 const projectRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../');
 const publicRoot=path.join(projectRoot,'client','public');
 function staticFile(name){return readFileSync(path.join(publicRoot,name));}
@@ -45,5 +46,5 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
     if(!abs.startsWith(path.resolve(publicRoot)+path.sep)||!existsSync(abs)||statSync(abs).size>5*1024*1024)throw new Error('Asset nije dostupan za export: '+image);
     files.push({name:image,data:readFileSync(abs)});
   }
-  return zipFiles(files);
+  return zipFiles(addLocalPhonePreview(files));
 }
