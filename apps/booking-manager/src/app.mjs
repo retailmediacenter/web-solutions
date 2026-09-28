@@ -7,7 +7,9 @@ import {activatePortalProfile,activePortalProfileId,detachSiteConnection,portalM
 import {dayPartDetailHtml} from './daypart-ui.mjs';
 import {exactTimeDetailHtml} from './exact-time-ui.mjs';
 import {boundSiteId,isCanonicalQaSite,selectProfileForSite,profileDataCounts,clearOnlyCurrentQaData} from './profile-isolation.mjs';
+import {isDemoLocation,buildPublicDemoState} from './demo-mode.mjs';
 
+const demoMode=isDemoLocation(location.search);
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today = () => dateKey(new Date());
@@ -32,6 +34,8 @@ async function readState(){
   catch(e){byId('notice').textContent='Pregledač ne dozvoljava lokalnu bazu. Podaci se NEĆE čuvati. Proveri privatni režim i podešavanja browsera.';return null;}
 }
 async function persist(){
+  // No writes, BroadcastChannel messages or tokens are ever stored in public demo.
+  if(demoMode)return;
   if(!db){byId('notice').textContent='Čuvanje podataka nije dostupno: NE koristi za stvarne rezervacije.';return;}
   // Serialize writes to avoid overwriting later mutations with earlier snapshots.
   const snapshot=clone({...state,savedAt:isoNow()});
@@ -42,6 +46,7 @@ async function persist(){
 }
 // Save must REJECT after failed IndexedDB transaction before any server ACK.
 async function persistStrict(){
+ if(demoMode)return; // Demo-only local status changes: memory, never IndexedDB or API.
  if(!db)throw new Error('Lokalna baza nije dostupna. Povezivanje i preuzimanje su zaustavljeni.');
  const snapshot=clone({...state,savedAt:isoNow()});
  writing=writing.catch(()=>{}).then(()=>new Promise((resolve,reject)=>{
@@ -55,6 +60,7 @@ function profile(){return state.profiles.find(p=>p.id===state.activeProfileId)||
 const emptyPortalState=()=>({schema:1,activeProfileId:null,profiles:[],bookings:[],orders:[],savedAt:null});
 const apiDefault=(import.meta.env.VITE_BOOKING_API_URL||'').trim();
 async function connectShortCode(){
+ if(demoMode)throw new Error('DEMO ne povezuje stvarne firme. Izađi iz demonstracije za aktivaciju.');
  let p=profile();const code=byId('queue-code')?.value.toUpperCase().trim();
  const origin=validApiOrigin(byId('queue-api')?.value.trim()||apiDefault);
  if(!validPairingCode(code))throw new Error('Kod mora imati format XXXX-XXXX-XX.');
@@ -77,6 +83,7 @@ async function connectShortCode(){
  await syncQueuedRequests();
 }
 async function disconnectSite(){
+ if(demoMode)throw new Error('DEMO ne menja prava povezivanja.');
  const p=profile(),conn=p?.queueConnection;
  if(!conn)throw new Error('Sajt nije povezan.');
  if(unlinking)throw new Error('Prekid povezivanja je već u toku.');
@@ -101,6 +108,7 @@ async function disconnectSite(){
  }finally{unlinking=false;}
 }
 async function syncQueuedRequests({silent=false}={}){
+ if(demoMode)return; // Never poll a real API in demo.
  if(polling||unlinking||qaResetting||!db||!navigator.onLine)return;
  const active=profile(),profiles=active?.queueConnection?[active]:[];
  if(!profiles.length)return;
@@ -185,6 +193,7 @@ function shareActions(b,{compact=false}={}){
     ${compact?'':'<p>Otvaranje aplikacije nije potvrda slanja. Pregledaj poruku i pošalji je ručno. Viber može tražiti izbor primaoca.</p>'}</div>`;
 }
 function openChannel(b,channelName){
+ if(demoMode){toast('DEMO: prikaz poruke je informativan; ništa se ne šalje kupcu.');return;}
   const type=communicationType(b?.status);if(!b||!type)throw new Error('Prvo pripremi poslovnu odluku za ovaj zahtev.');
   const msg=messageFor(b,type),phone=communicationPhone(b);
   if(channelName==='whatsapp'){
@@ -211,7 +220,7 @@ function openChannel(b,channelName){
   state.activeProfileId=p.id;
   document.querySelector('.workspace').hidden=false;
   byId('business-name').textContent=p.siteProfile?.business?.name||p.name;
-  document.querySelector('.side-backup').hidden=false;
+  document.querySelector('.side-backup').hidden=demoMode;
   const modules=portalModules(p);
   if(stateUI.view==='reservations'&&!modules.booking)stateUI.view='home';
   if(stateUI.view==='orders'&&!modules.orders)stateUI.view='home';
@@ -225,7 +234,7 @@ function openChannel(b,channelName){
   byId('page-title').textContent=pages[stateUI.view][0];byId('page-subtitle').textContent=pages[stateUI.view][1];
   byId('main-view').innerHTML=({home:renderHome,reservations:renderReservations,orders:renderOrders,settings:renderSettings})[stateUI.view]();
 }
-function renderOnboarding(){return `<section class="portal-welcome panel"><div class="panel-body"><span class="tiny-label">DOBRO DOŠLI</span><h2>Povežite svoju firmu</h2><p class="hint">Jednokratni kod preuzmi sa privatnog završnog ekrana generatora. Portal automatski preuzima poslovni profil i aktivne module.</p>${apiDefault?`<label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label><div class="settings-actions"><button class="btn btn-primary" data-action="queue-connect">Poveži firmu</button></div>`:`<p class="warning">Automatska adresa Booking API-ja nije dostupna. Povezivanje trenutno nije moguće u ovoj instalaciji.</p>`}</div></section>`;}
+function renderOnboarding(){return `<section class="portal-welcome panel"><div class="panel-body"><span class="tiny-label">RMC BUSINESS PORTAL</span><h2>Upoznajte Business Portal</h2><p class="hint">Pogledajte kako rade rezervacije i porudžbine na demonstracionim podacima, bez registracije i bez slanja stvarnih zahteva.</p><div class="portal-demo-actions"><a class="btn btn-primary" href="?demo=1">Isprobaj DEMO</a></div><div class="portal-demo-separator"><strong>Imate aktivan BUSINESS ili COMMERCE paket?</strong><p>Jednokratni kod dobijate od RMC-a nakon aktivacije. Nije deo besplatnog ZIP-a.</p></div>${apiDefault?`<label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label><div class="settings-actions"><button class="btn btn-primary" data-action="queue-connect">Poveži firmu</button></div>`:`<p class="warning">Automatska adresa Booking API-ja nije dostupna. Povezivanje trenutno nije moguće u ovoj instalaciji.</p>`}</div></section>`;}
 function appointmentCard(b){
   return `<div class="booking-item"><span class="time-pill">${safe(b.time)}</span><div class="booking-main"><strong>${safe(b.serviceName)}</strong><small>${safe(b.clientName)} · ${safe(b.duration)} min · ${safe(b.units)} mesto/a</small></div><span class="tag ${safe(b.status)}">${safe(statName[b.status])}</span><button data-action="detail" data-id="${safe(b.id)}" aria-label="Detalji rezervacije">Detalji</button></div>`;
 }
@@ -244,14 +253,14 @@ function freeSuggestions(){const p=profile();const day=stateUI.date,now=new Date
 function renderHome(){const p=profile(),modules=portalModules(p),bs=modules.booking?bookings():[];
   const todayBookings=bs.filter(b=>b.date===stateUI.date&&[STATUS.CONFIRMED,STATUS.PENDING,STATUS.PROPOSED].includes(b.status)).sort((a,b)=>a.time.localeCompare(b.time));
   const attention=bs.filter(b=>[STATUS.PENDING,STATUS.PROPOSED].includes(b.status)).sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
-  const connected=Boolean(p.queueConnection);
+  const connected=Boolean(p.queueConnection)||demoMode;
   if(!modules.booking&&modules.orders)return renderOrdersHome();
   if(!modules.booking)return `<section class="portal-welcome panel"><div class="panel-body"><span class="tiny-label">${connected?'POVEZANA FIRMA':'POSLOVNI PROFIL'}</span><h2>${safe(p.name)}</h2><p class="hint">RMC Business Portal je spreman za poslovne zahteve. Aktivni moduli će se ovde prikazati kada ih firma koristi.</p><div class="portal-status"><span class="status-dot"></span>${connected?'Sajt je povezan sa portalom.':'Poveži poslovni profil u podešavanjima da bi prijem zahteva bio dostupan.'}</div><button class="btn btn-primary" data-action="home-settings">Otvori podešavanja</button></div></section>`;
   const dayLabel=formatDate(stateUI.date);
   return `<div class="portal-overview"><section class="portal-intro"><div><span class="tiny-label">AKTIVNA FIRMA</span><h2>${safe(p.name)}</h2><p>Pregled rezervacija i zahteva za ${safe(dayLabel)}.</p></div><button class="btn btn-primary" data-action="home-reservations">Otvori rezervacije</button></section>
   <div class="stat-grid"><button class="stat-card accent stat-action" data-action="home-reservations" data-tab="requests"><div class="label">Novi zahtevi</div><div class="value">${attention.filter(b=>b.status===STATUS.PENDING).length}</div><div class="foot">Čekaju pregled</div></button><button class="stat-card stat-action" data-action="home-reservations" data-tab="day"><div class="label">Današnje rezervacije</div><div class="value">${todayBookings.filter(b=>b.status===STATUS.CONFIRMED).length}</div><div class="foot">Potvrđeni termini</div></button><button class="stat-card stat-action" data-action="home-reservations" data-tab="requests"><div class="label">Potrebna pažnja</div><div class="value">${attention.length}</div><div class="foot">Zahtevi i predlozi</div></button></div>
   <div class="columns"><section class="panel"><div class="panel-head"><h2>Današnje rezervacije</h2><button class="text-btn" data-action="home-reservations" data-tab="day">Dnevni pregled →</button></div><div class="panel-body">${todayBookings.length?todayBookings.map(appointmentCard).join(''):'<div class="empty">Za danas nema aktivnih rezervacija.</div>'}</div></section><section class="panel"><div class="panel-head"><h2>Sledeće za pregled</h2><button class="text-btn" data-action="home-reservations" data-tab="requests">Svi zahtevi →</button></div><div class="panel-body">${attention.length?attention.slice(0,4).map(appointmentCard).join(''):'<div class="empty">Nema zahteva koji čekaju akciju.</div>'}</div></section></div>
-  ${modules.orders?renderOrdersTeaser():''}<div class="portal-status"><span class="status-dot"></span>${connected?'Povezano sa sajtom. Novi zahtevi se proveravaju dok je portal aktivan.':'Portal još nije povezan sa sajtom. Povezivanje je dostupno u Podešavanjima.'}</div></div>`;
+  ${modules.orders?renderOrdersTeaser():''}<div class="portal-status"><span class="status-dot"></span>${demoMode?'DEMO: nijedan podatak se ne šalje stvarnim kupcima.':connected?'Povezano sa sajtom. Novi zahtevi se proveravaju dok je portal aktivan.':'Portal još nije povezan sa sajtom. Povezivanje je dostupno u Podešavanjima.'}</div></div>`;
 }
 function orderCard(o){
  const modified=Boolean(o.amendment);
@@ -370,6 +379,7 @@ async function changeOrderStatus(next){
  await saveOrderDecision(updated,original,'Status je sačuvan. Ako je potrebno, pošalji poruku kupcu.');
 }
 function shareOrder(channelName){
+ if(demoMode){toast('DEMO: poruka je ilustrativna. WhatsApp, Viber i kopiranje nisu aktivni.');return;}
  const o=orderById(stateUI.selectedOrderId);if(!o||o.status===ORDER_STATUS.NEW)throw new Error('Prvo odluči o zahtevu.');
  const msg=orderReplyText(o,o.status),phone=byId('order-details').querySelector('[data-order-phone]')?.value.trim()||o.phone;
  if(channelName==='copy')return copyText(msg);
@@ -393,7 +403,7 @@ function renderRequests(){let bs=bookings().sort((a,b)=>{const rank={pending:0,p
 function detailRows(values){return values.filter(([,value])=>value).map(([label,value])=>`<div><small>${safe(label)}</small><strong>${safe(value)}</strong></div>`).join('');}
 function operationalEditor(p){if(stateUI.settingsEditor!=='rules')return '';return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">KAPACITET REZERVACIJA</span><h2>Pravila zauzetosti</h2></div><button class="text-btn" data-action="settings-close">Zatvori</button></div><div class="form-grid"><label>Istovremeni kapacitet<input type="number" id="set-capacity" min="1" max="99" value="${p.capacity}"></label><label>Korak termina<select id="set-slot">${[15,30,60].map(n=>`<option value="${n}" ${p.slotStep===n?'selected':''}>${n} minuta</option>`).join('')}</select></label><label>Pauza između potvrđenih rezervacija<select id="set-buffer">${[0,5,10,15,30,60].map(n=>`<option value="${n}" ${p.buffer===n?'selected':''}>${n} minuta</option>`).join('')}</select></label></div><div class="settings-actions"><button class="btn btn-primary" data-action="save-rules">Sačuvaj pravila</button></div></section>`;}
 function serviceSummaryCard(p){const connected=Boolean(p.siteProfile),active=connected?p.services.filter(s=>s.siteServiceId):p.services;return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">${connected?'USLUGE SA SAJTA':'USLUGE'}</span><h2>${connected?'Aktivne usluge':'Lokalne usluge'}</h2></div><button class="btn btn-light" data-action="settings-open" data-editor="services">${connected?'Pregledaj usluge':'Uredi usluge'}</button></div><p class="hint">${active.map(s=>safe(s.name)).join(' · ')||'Nema aktivnih usluga.'}</p></section>`;}function serviceEditor(p){const connected=Boolean(p.siteProfile),visibleServices=connected?p.services.filter(s=>s.siteServiceId):p.services;return `<section class="settings-card"><div class="card-head"><div><span class="tiny-label">${connected?'USLUGE SA SAJTA':'USLUGE'}</span><h2>${connected?'Aktivne usluge':'Uredi usluge'}</h2></div>${!connected?'<button class="text-btn" data-action="add-service">＋ Dodaj uslugu</button>':''}</div><div class="service-summary">${visibleServices.map(s=>connected?`<label class="service-readonly"><span><strong>${safe(s.name)}</strong><small>${safe(s.siteServiceId||'Lokalna usluga')}</small></span><span><input class="field service-duration" data-service-id="${safe(s.id)}" type="number" min="5" max="1440" step="5" value="${s.duration}" aria-label="Trajanje za ${safe(s.name)}"> min</span></label>`:serviceRow(s)).join('')}</div><p class="hint">${connected?'Nazivi i ID-jevi usluga preuzimaju se sa sajta. Lokalno možeš podesiti trajanje, bez menjanja postojećih rezervacija.':'Ovaj profil još nije povezan sa sajtom; ovde uređuješ lokalne usluge.'}</p><div class="settings-actions"><button class="btn btn-primary" data-action="save-services">Sačuvaj trajanja</button></div></section>`;}
-function renderSettings(){const p=profile(),connected=Boolean(p.queueConnection),site=p.siteProfile?.business||{},isAuto=Boolean(p.siteProfile),modules=portalModules(p);const contactRows=detailRows([['Telefon',site.phone],['E-pošta',site.email],['Adresa',[site.address,site.city].filter(Boolean).join(', ')]]);
+function renderSettings(){if(demoMode)return `<div class="settings-stack"><section class="settings-card"><span class="tiny-label">DEMO REŽIM</span><h2>Primer podešavanja</h2><p class="hint">Ovde stvarni vlasnici vide podatke preuzete sa svog sajta, mogućnost povezivanja i lokalnu arhivu. U demonstraciji nema pristupa stvarnim podacima, izdavanja kodova, obaveštenja niti servera.</p><div class="settings-actions"><a class="btn btn-primary" href="${location.pathname}">Otvori svoj Portal</a></div></section></div>`;const p=profile(),connected=Boolean(p.queueConnection),site=p.siteProfile?.business||{},isAuto=Boolean(p.siteProfile),modules=portalModules(p);const contactRows=detailRows([['Telefon',site.phone],['E-pošta',site.email],['Adresa',[site.address,site.city].filter(Boolean).join(', ')]]);
  return `<div class="settings-stack"><section class="settings-card"><div class="card-head"><div><span class="tiny-label">POSLOVNI PROFIL</span><h2>${safe(isAuto?site.name:p.name)}</h2></div>${isAuto?'<span class="profile-source">Preuzeto sa sajta</span>':'<button class="text-btn" data-action="settings-open" data-editor="profile">Izmeni naziv</button>'}</div>${contactRows?`<div class="profile-details">${contactRows}</div>`:isAuto?'<p class="hint">Osnovni poslovni profil i usluge preuzeti su sa povezanog sajta.</p>':'<p class="hint">Ovaj lokalni profil još nema podatke preuzete sa sajta. Povezivanje će sačuvati lokalne rezervacije.</p>'}${stateUI.settingsEditor==='profile'?`<label>Naziv firme<input id="set-name" value="${safe(p.name)}" maxlength="100"></label><div class="settings-actions"><button class="btn btn-primary" data-action="save-profile-name">Sačuvaj naziv</button><button class="btn btn-light" data-action="settings-close">Odustani</button></div>`:''}</section>
  ${modules.orders?`<section class="settings-card"><div class="card-head"><div><span class="tiny-label">COMMERCE SA SAJTA</span><h2>Aktivni katalog</h2></div><span class="profile-source">Preuzeto sa sajta</span></div><p class="hint">Proizvoda: ${p.siteProfile.commerce.products.length}. Cene i nazivi preuzimaju se iz generatora, ne menjaju se lokalno u Portalu.</p></section>`:''}
  ${modules.booking?`<section class="settings-card"><div class="card-head"><div><span class="tiny-label">REZERVACIJE</span><h2>Kapacitet i trajanje</h2></div><button class="btn btn-light" data-action="settings-open" data-editor="rules">Uredi</button></div><p class="hint">Kapacitet: ${p.capacity} · korak: ${p.slotStep} min · razmak: ${p.buffer} min</p></section>${operationalEditor(p)}${serviceSummaryCard(p)}${stateUI.settingsEditor==='services'?serviceEditor(p):''}`:''}
@@ -557,6 +567,7 @@ function parseTestJSON(){const input=window.prompt('Nalepi JSON test-zahtev. Pri
 
 async function onClick(e){const btn=e.target.closest('button[data-action]');if(!btn)return;const a=btn.dataset.action;
   try{
+    if(demoMode&&['export','import','import-test','import-secure','queue-connect','queue-sync','queue-disconnect','qa-data-reset','push-enable','create-pairing','copy-pairing','share-copy','ics'].includes(a))throw new Error('Ova opcija nije aktivna u javnom DEMO režimu.');
     if(a==='hide-banner'){btn.parentElement.remove();return;}
     if(a==='new-request')return openNew();
     if(a==='new-at')return openNew(btn.dataset.date,btn.dataset.time);
@@ -612,23 +623,30 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='ics'){download(`termin_${b.date}_${b.time.replace(':','-')}.ics`,'text/calendar;charset=utf-8',icsFor(profile(),b));toast('Kalendar događaj preuzet.');return;}
   }catch(err){toast(err.message||'Došlo je do greške.');}
 }
-async function init(){state=(await readState())||emptyPortalState();
+async function init(){state=demoMode?buildPublicDemoState():((await readState())||emptyPortalState());
   if(!Array.isArray(state.orders))state.orders=[];
-  if(state.profiles.length){
+  if(state.profiles.length&&!demoMode){
     try{validateImport(state);}catch(e){byId('notice').textContent='Lokalni podaci su neispravni: '+e.message+' Izvezi kopiju ako je moguće.';return;}
     const activeId=activePortalProfileId(state.profiles,state.activeProfileId);
     if(state.activeProfileId!==activeId){state.activeProfileId=activeId;await persist();}
   }
-  if('BroadcastChannel' in window){channel=new BroadcastChannel(CHANNEL);channel.onmessage=()=>{byId('notice').textContent='Podaci su izmenjeni u drugoj kartici. Osveži stranicu pre sledeće izmene kako ne bi prepisao novije podatke.';};}
+  if(demoMode){
+    document.body.classList.add('rmc-demo-mode');
+    const banner=document.createElement('div');banner.className='portal-demo-banner';
+    banner.innerHTML='<strong>DEMO · Samo primeri</strong><span>Promene ostaju privremeno na ovom ekranu. Nema slanja poruka niti stvarnih rezervacija.</span><a href="'+location.pathname+'">Otvori svoj Portal ↗</a>';
+    document.querySelector('.main').prepend(banner);
+    document.querySelector('.side-panel').innerHTML='<strong>DEMO REŽIM</strong><p>Izmišljeni podaci, bez povezivanja sa firmom.</p>';
+  }
+  if(!demoMode&&'BroadcastChannel' in window){channel=new BroadcastChannel(CHANNEL);channel.onmessage=()=>{byId('notice').textContent='Podaci su izmenjeni u drugoj kartici. Osveži stranicu pre sledeće izmene kako ne bi prepisao novije podatke.';};}
   document.addEventListener('click',onClick);
   document.querySelectorAll('button[data-view]').forEach(b=>b.addEventListener('click',()=>{stateUI.view=b.dataset.view;refresh();}));
   byId('request-form').addEventListener('submit',createNew);
   for(const id of ['new-service','new-date','new-time','new-units'])byId(id).addEventListener('change',()=>{if(id==='new-service')byId('new-units').value=serviceOf(byId('new-service').value)?.units||1;checkNew();});
   byId('backup-file').addEventListener('change',async e=>{try{await importState(e.target.files[0]);}catch(err){toast('Uvoz nije uspeo: '+err.message);}finally{e.target.value='';}});
-  if(import.meta.env.PROD && 'serviceWorker' in navigator)serviceWorkerReady=navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>null);
+  if(!demoMode&&import.meta.env.PROD && 'serviceWorker' in navigator)serviceWorkerReady=navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>null);
   refresh();
   if(profile())await handleDirectLink();
-  pollTimer=setInterval(()=>syncQueuedRequests({silent:true}).catch(()=>{}),30000);
+  if(!demoMode)pollTimer=setInterval(()=>syncQueuedRequests({silent:true}).catch(()=>{}),30000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncQueuedRequests({silent:true}).catch(()=>{});});
   window.addEventListener('online',()=>syncQueuedRequests({silent:true}).catch(()=>{}));
   await syncQueuedRequests({silent:true});

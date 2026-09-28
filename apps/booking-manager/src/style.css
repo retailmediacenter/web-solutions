@@ -241,3 +241,11 @@
  #booking-dialog .exact-actions{padding:10px 13px 12px}
  #booking-dialog .exact-actions .btn{flex:1 1 calc(50% - 6px);font-size:12px;padding:10px 8px}
 }
+
+/* V47.1 PUBLIC DEMO */
+.portal-demo-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:#e9f5f3;border:1px solid #b7dacf;color:#1b5551;border-radius:12px;padding:13px 17px;margin-bottom:18px;font-size:12px}
+.portal-demo-banner strong{font-size:13px}.portal-demo-banner span{flex:1;min-width:200px}.portal-demo-banner a{font-weight:800;color:#145c63;text-decoration:underline}
+.portal-demo-actions{display:flex;gap:12px;margin:19px 0}.portal-demo-actions .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.portal-demo-separator{border-top:1px solid #e0e9ed;margin-top:16px;padding-top:16px}.portal-demo-separator strong{font-size:13px;color:#264b5f}.portal-demo-separator p{font-size:12px;color:#657b89;margin:7px 0 0}
+.rmc-demo-mode .side-backup{display:none!important}
+@media(max-width:600px){.portal-demo-banner{align-items:flex-start;flex-direction:column;padding:12px}.portal-demo-actions .btn{width:100%}}

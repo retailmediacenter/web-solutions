@@ -831,3 +831,8 @@ dialog{box-sizing:border-box;max-width:calc(100vw - 24px);max-height:calc(100vh 
 .ws-product .ws-mobile-plan .ws-plan-subscription{font-size:12px;color:#c1d3f2}
 .ws-product .ws-mobile-plan .ws-plan-included{margin-bottom:3px}
 @media(max-width:900px){.ws-product .ws-package-table thead th{padding:18px 10px}.ws-product .ws-plan-subscription{font-size:10px}}
+
+/* V47.1 business portal navigation */
+.ws-product .ws-header #mainNav>a[hidden]{display:none!important}
+.ws-product .ws-header #ws-business-portal-link{white-space:nowrap;color:#b5dfd2;font-weight:800}
+.ws-product .ws-header #ws-business-portal-link:hover{color:#fff}
