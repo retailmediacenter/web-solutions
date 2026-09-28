@@ -820,3 +820,14 @@ dialog{box-sizing:border-box;max-width:calc(100vw - 24px);max-height:calc(100vh 
 .ws-product .snapshot-hero:has(img.is-missing){background:linear-gradient(140deg,#234b7a,#111e30)}
 .ws-product .ws-example-card:has(img.is-missing){background:linear-gradient(140deg,#f1f6fe,#dce7f9)}
 @media(prefers-reduced-motion:reduce){.ws-product [data-reveal].rmc-motion-item{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* RMC V47: pricing/packaging visual accents */
+.ws-product .ws-plan-subscription{display:block;margin-top:9px;font-size:11px;font-weight:800;color:#bfd1ef;line-height:1.4}
+.ws-product .ws-plan-included{display:inline-block;margin-top:7px;font-size:10px;line-height:1.4;color:#a9eccb;font-weight:800}
+.ws-product .ws-pricing-terms{margin:18px 3px 0;color:#a9b8d0;font-size:12px;line-height:1.65}
+.ws-product .ws-package-table thead th{vertical-align:top}
+.ws-product .ws-package-table thead p{margin-top:10px}
+.ws-product .ws-package-table tbody td.ws-catalog{font-size:11px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.ws-product .ws-mobile-plan .ws-plan-subscription{font-size:12px;color:#c1d3f2}
+.ws-product .ws-mobile-plan .ws-plan-included{margin-bottom:3px}
+@media(max-width:900px){.ws-product .ws-package-table thead th{padding:18px 10px}.ws-product .ws-plan-subscription{font-size:10px}}

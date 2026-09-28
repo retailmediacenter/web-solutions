@@ -209,18 +209,22 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
 }
 
 const PACKAGE_INFO={
- structure:['Prilagođavanje strukture','Dodajemo ili prilagođavamo sekcije i module koji nisu deo automatski generisanog sajta.'],
- functions:['Napredne poslovne funkcije','Podešavamo posebne tokove za zakazivanje, naručivanje, upite i druge potrebe vašeg poslovanja.'],
- catalog:['Standardni ili složeni katalog','Veliki katalog uključuje veći broj artikala, kategorije, atribute, varijante i naprednu pretragu.'],
- import:['Masovni uvoz podataka','Po dogovoru uvozimo artikle i druge podatke iz strukturiranih CSV/Excel fajlova.'],
- integrations:['Integracije','Povezivanje sa eksternim sistemima samo kada postoji stvarna, podržana tehnička integracija.'],
+ personalization:['Vaš sajt, vaše poslovanje','Demo sadržaj zamenjujemo vašim tekstovima, fotografijama i poslovnim podacima. Sajt objavljujemo na vašem domenu i pripremamo ga za korišćenje.'],
+ domain:['Vaša internet adresa','Obezbeđujemo .rs domen i hosting za prvu godinu. Nakon toga obnova se naplaćuje posebno, prema ugovorenim uslovima.'],
+ structure:['Sajt prilagođen vašim potrebama','Ako vašem poslovanju nisu dovoljne standardne sekcije, prilagođavamo strukturu sajta i dodajemo dogovorene sadržaje.'],
+ catalog:['Predstavite svoje proizvode','Od jednostavnog prikaza proizvoda do većih kataloga sa kategorijama, varijantama i pretragom. Obim i složenost kataloga zavise od izabranog paketa.'],
+ direct:['Direktna komunikacija sa kupcima','Kupci mogu da izaberu proizvode, zatraže termin ili pošalju upit. Zahtev priprema poruku koju kupac šalje putem dostupnih komunikacionih kanala, bez posebnog softvera.'],
+ portal:['Upravljajte poslovanjem na jednom mestu','Primajte i obrađujte rezervacije i porudžbine, organizujte termine, pratite statuse i pripremajte odgovore kupcima. Sve radi i kada vaš sajt istovremeno koristi rezervacije i prodaju.'],
+ 'advanced-catalog':['Katalog za zahtevnije prodavnice','Veći asortiman, složenije kategorije, varijante proizvoda i detaljnija pretraga, prilagođeni potrebama vaše prodavnice.'],
+ import:['Masovni uvoz podataka — u planu','Masovni uvoz artikala još nije dostupan kao standardna funkcija. Status i obim implementacije dogovaraju se posebno pre uključivanja u ponudu.'],
+ integrations:['Integracije po posebnoj ponudi','Povezivanje sa eksternim sistemima razmatramo pojedinačno, nakon provere tehničke izvodljivosti. Nije automatski uključeno u cenu COMMERCE paketa.'],
  hosting:['Domen i hosting','Partnerski hosting link nije aktiviran dok se ne potvrdi saradnja. Ako želite objavu, pošaljite nam upit.']
 };
 export function InfoDialog({type,onClose}){
  const content=PACKAGE_INFO[type];
- useEffect(()=>{if(!content)return;const done=preventBackgroundScroll(true);const onKey=e=>{if(e.key==='Escape')onClose()};document.addEventListener('keydown',onKey);return()=>{done();document.removeEventListener('keydown',onKey)}},[content,onClose]);
+ useEffect(()=>{if(!content)return;const onKey=e=>{if(e.key==='Escape')onClose()};document.addEventListener('keydown',onKey);return()=>document.removeEventListener('keydown',onKey)},[content,onClose]);
  if(!content)return null;
- return <div className="rmc-small-cover" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
+ return <div className="rmc-small-cover rmc-info-cover" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
    <section role="dialog" aria-modal="true" aria-label={content[0]} className="rmc-small-dialog"><button className="rmc-dialog-close" aria-label="Zatvori" onClick={onClose}>×</button><h2>{content[0]}</h2><p>{content[1]}</p></section>
  </div>;
 }
