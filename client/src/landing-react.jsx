@@ -9,6 +9,7 @@ import landingCss from './landing-theme.css?inline';
 import './landing-dialogs.css';
 import './style-preview-v4533.css';
 import './preview-shell-v4532.css';
+import './preview-compact-v4534.css';
 
 export const SHOWCASE = [
  {id:'salon',demoPath:'salon',businessId:'hair-salon',name:'Studio Forma',type:'Frizerski salon'},
@@ -124,31 +125,35 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
  const sampleBase=(import.meta.env.BASE_URL||'/')+'demo-previews/';
  return <div className="rmc-preview-cover" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}>
    <section className={"rmc-preview-panel rmc-preview-v4532 "+(isSample?"is-sample":"is-generated")} role="dialog" aria-modal="true" aria-label={isSample?'Primer generisanog sajta':'Vaš generisani sajt'}>
-     <header className="rmc-preview-head"><div><small>RMC WEB SOLUTIONS</small>
-       <h2>{isSample?'Primeri sajtova':siteName||'Vaš sajt'}</h2></div>
+     {isSample&&<header className="rmc-preview-head"><div><small>RMC WEB SOLUTIONS</small>
+       <h2>Primeri sajtova</h2></div>
        <button ref={close} className="rmc-dialog-close" type="button" aria-label="Zatvori pregled" onClick={onClose}>×</button>
-     </header>
+     </header>}
      {isSample&&<div className="rmc-preview-tools">
        <div className="rmc-preview-tabs" role="group" aria-label="Primeri sajtova">
          {SHOWCASE.map(item=><button key={item.id} type="button" aria-pressed={selectedDemo===item.id}
            className={selectedDemo===item.id?'active':''} onClick={()=>onSelectDemo(item.id)}>{item.type}</button>)}
        </div>
      </div>}
-     {!isSample&&styles.length>0&&<nav className="rmc-style-picker" aria-label="Izgled sajta">
-       <span className="rmc-style-picker-label">Promenite izgled</span>
-       <div className="rmc-style-picker-list" role="group" aria-label="Pet originalnih stilova">
-         {styles.map(item=><button key={item.id} type="button"
-           className={'rmc-style-pick'+(selectedStyle===item.id?' is-active':'')}
-           aria-pressed={selectedStyle===item.id}
-           disabled={styleBusy}
-           onClick={()=>onStyleChange?.(item.id)}>
-           <span className={'rmc-style-swatch is-'+item.id} aria-hidden="true"><i/><i/><i/></span>
-           <span>{item.label}</span>
-         </button>)}
-       </div>
-       {styleBusy&&<span className="rmc-style-feedback" role="status">Primenjujem stil…</span>}
-       {styleError&&<span className="rmc-style-feedback is-error" role="alert">{styleError}</span>}
-     </nav>}
+     {!isSample&&<div className="rmc-generated-controls">
+       {styles.length>0&&<nav className="rmc-style-picker" aria-label="Izgled sajta">
+         <span className="rmc-style-picker-label" aria-hidden="true">Stil</span>
+         <div className="rmc-style-picker-list" role="group" aria-label="Pet originalnih stilova">
+           {styles.map(item=><button key={item.id} type="button"
+             className={'rmc-style-pick'+(selectedStyle===item.id?' is-active':'')}
+             aria-pressed={selectedStyle===item.id}
+             disabled={styleBusy}
+             onClick={()=>onStyleChange?.(item.id)}>
+             <span className={'rmc-style-swatch is-'+item.id} aria-hidden="true"><i/><i/><i/></span>
+             <span>{item.label}</span>
+           </button>)}
+         </div>
+         {styleBusy&&<span className="rmc-style-feedback" role="status">Primenjujem stil…</span>}
+         {styleError&&<span className="rmc-style-feedback is-error" role="alert">{styleError}</span>}
+       </nav>}
+       <button ref={close} className="rmc-dialog-close rmc-generated-close" type="button"
+         aria-label="Zatvori pregled" onClick={onClose}>×</button>
+     </div>}
      <div className="rmc-preview-content" aria-busy={styleBusy}>
        {isSample&&staticDemo
         ? <iframe ref={frameRef} key={staticDemo.id} title={'Nezavisni DEMO — '+staticDemo.name}
@@ -164,8 +169,8 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
        {isSample?<><span>Ovo je samostalan marketinški DEMO; ne koristi Advisor i ne šalje stvarne zahteve.</span>
          <button type="button" className="rmc-primary" onClick={onStart}>Napravi moj sajt ↗</button></>:
          <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
-           {exporting?'Pripremam ZIP…':'Preuzmi besplatan sajt (ZIP) ↓'}</button>
-           <button type="button" className="rmc-secondary" onClick={onEdit}>Izmeni odgovore</button></div>
+           {exporting?'Pripremam ZIP…':<><span className="rmc-label-mobile">Preuzmi sajt ↓</span><span className="rmc-label-desktop">Preuzmi besplatan sajt (ZIP) ↓</span></>}</button>
+           <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div>
            {exportPairing&&<p className="rmc-pairing" role="status">Kod za povezivanje sa Business Portalom: <strong>{exportPairing.code}</strong>
              <button type="button" onClick={()=>navigator.clipboard?.writeText(exportPairing.code)}>Kopiraj</button>
              <small>Važi približno {exportPairing.minutes} minuta; sačuvajte ga odvojeno od javnog sajta.</small></p>}
