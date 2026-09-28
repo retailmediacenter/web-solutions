@@ -2,7 +2,7 @@ import {STATUS,DAYS,clone,makeId,makeProfile,normalizeRequest,slotCheck,alternat
 import {whatsappUrl,viberUrl,hasWhatsAppRecipient,communicationType,reservationMessage} from './messaging.mjs';
 import {createPairing,decodePairing,openEncryptedLink} from './secure-link.mjs';
 import {applySiteProfile,claimPairing,disconnectRemote,getPushPublicKey,pullInbox,pullOrderInbox,subscribePush,validApiOrigin,validPairingCode} from './queue-client.mjs';
-import {ORDER_STATUS,ORDER_LABELS,normalizeIncomingOrder,nextOrderStatus,orderReplyText} from './order-core.mjs';
+import {ORDER_STATUS,ORDER_LABELS,normalizeIncomingOrder,nextOrderStatus,orderReplyText,orderSelection,acceptOrderWithAmendment} from './order-core.mjs';
 import {activatePortalProfile,activePortalProfileId,detachSiteConnection,portalModules} from './portal-modules.mjs';
 import {dayPartDetailHtml} from './daypart-ui.mjs';
 
@@ -11,7 +11,7 @@ const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','
 const today = () => dateKey(new Date());
 const isoNow = () => new Date().toISOString();
 const statName = {[STATUS.PENDING]:'Čeka odgovor',[STATUS.CONFIRMED]:'Potvrđeno',[STATUS.PROPOSED]:'Predlog pripremljen',[STATUS.DECLINED]:'Odbijeno',[STATUS.CANCELLED]:'Otkazano'};
-const stateUI = {view:'home',reservationTab:'requests',settingsEditor:'',date:today(),filter:'all',selectedId:null,proposal:null,orderFilter:'open',selectedOrderId:null};
+const stateUI = {view:'home',reservationTab:'requests',settingsEditor:'',date:today(),filter:'all',selectedId:null,proposal:null,orderFilter:'open',selectedOrderId:null,orderDraftRemoved:[]};
 const CHANNEL='rmc-booking-local'; let channel; let state,writing=Promise.resolve(),toastTimer;
 let polling=false,pollTimer=null,unlinking=false;
 let serviceWorkerReady=null;
@@ -229,14 +229,118 @@ function renderHome(){const p=profile(),modules=portalModules(p),bs=modules.book
   <div class="columns"><section class="panel"><div class="panel-head"><h2>Današnje rezervacije</h2><button class="text-btn" data-action="home-reservations" data-tab="day">Dnevni pregled →</button></div><div class="panel-body">${todayBookings.length?todayBookings.map(appointmentCard).join(''):'<div class="empty">Za danas nema aktivnih rezervacija.</div>'}</div></section><section class="panel"><div class="panel-head"><h2>Sledeće za pregled</h2><button class="text-btn" data-action="home-reservations" data-tab="requests">Svi zahtevi →</button></div><div class="panel-body">${attention.length?attention.slice(0,4).map(appointmentCard).join(''):'<div class="empty">Nema zahteva koji čekaju akciju.</div>'}</div></section></div>
   ${modules.orders?renderOrdersTeaser():''}<div class="portal-status"><span class="status-dot"></span>${connected?'Povezano sa sajtom. Novi zahtevi se proveravaju dok je portal aktivan.':'Portal još nije povezan sa sajtom. Povezivanje je dostupno u Podešavanjima.'}</div></div>`;
 }
-function orderCard(o){return `<article class="request-card order-card"><div class="request-card-head"><span class="tag ${safe(o.status)}">${safe(ORDER_LABELS[o.status]||o.status)}</span><span class="tiny-label">${o.type==='INQUIRY'?'UPIT':'PORUDŽBINA'} · ${safe(o.orderCode)}</span></div><h3>${safe(o.clientName)}</h3><p>${safe(o.items.map(x=>x.name).slice(0,3).join(' · '))}${o.items.length>3?' …':''}<br><strong>${o.type==='ORDER'?safe(amount(o.total)):'Upit za dostupnost'}</strong></p><div class="request-card-bottom"><small>${safe(orderWhen(o.createdAt))}</small><button class="tiny" data-action="order-detail" data-id="${safe(o.id)}">Otvori →</button></div></article>`;}
+function orderCard(o){
+ const modified=Boolean(o.amendment);
+ const items=(modified?orderSelection(o,o.amendment.excludedIndexes).kept:o.items);
+ // The traffic light belongs ONLY to Commerce cards. Inquiry cards stay neutral.
+ // The color is always accompanied by the actual stored status text.
+ const phase=o.type==='INQUIRY'?'inquiry':o.status===ORDER_STATUS.NEW?'new':
+  [ORDER_STATUS.ACCEPTED,ORDER_STATUS.PREPARING,ORDER_STATUS.READY].includes(o.status)?'progress':
+  o.status===ORDER_STATUS.COMPLETED?'completed':
+  [ORDER_STATUS.DECLINED,ORDER_STATUS.CANCELLED].includes(o.status)?'closed':'inquiry';
+ const baseLabel=o.type==='ORDER'&&o.status===ORDER_STATUS.COMPLETED?
+  (o.fulfillment==='PICKUP'?'Preuzeto':'Završeno'):(ORDER_LABELS[o.status]||o.status);
+ const statusLabel=modified?(o.status===ORDER_STATUS.ACCEPTED?'Prihvaćeno sa izmenom':`${baseLabel} · izmenjena`):baseLabel;
+ const code=o.type==='INQUIRY'?`UPIT · ${safe(o.orderCode)}`:safe(o.orderCode);
+ return `<article class="request-card order-card order-traffic-${phase}"><div class="request-card-head"><span class="order-traffic-label" aria-label="Status: ${safe(statusLabel)}"><span class="order-traffic-dot" aria-hidden="true"></span>${safe(statusLabel)}</span><span class="order-card-code">${code}</span></div><h3>${safe(o.clientName)}</h3><p>${safe(items.map(x=>x.name).slice(0,3).join(' · '))}${items.length>3?' …':''}<br><span class="order-card-count">${items.length} ${items.length===1?'artikal':'artikala'}</span><br><strong>${o.type==='ORDER'?safe(amount(modified?o.amendment.revisedTotal:o.total)):'Upit za dostupnost'}</strong></p><div class="request-card-bottom"><small>${safe(orderWhen(o.createdAt))}</small><button class="tiny" data-action="order-detail" data-id="${safe(o.id)}">Otvori →</button></div></article>`;
+}
 function renderOrdersTeaser(){const recent=orders().filter(x=>x.status===ORDER_STATUS.NEW).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));return `<section class="panel commerce-teaser"><div class="panel-head"><h2>Porudžbine i upiti <span class="tag pending">${recent.length} novih</span></h2><button class="text-btn" data-action="home-orders">Sve porudžbine →</button></div><div class="panel-body">${recent.length?`<div class="request-grid">${recent.slice(0,3).map(orderCard).join('')}</div>`:'<p class="empty">Nema novih Commerce zahteva.</p>'}</div></section>`;}
-function renderOrdersHome(){const fresh=orders().filter(x=>x.status===ORDER_STATUS.NEW);return `<div class="portal-overview"><section class="portal-intro"><div><span class="tiny-label">AKTIVNA FIRMA · COMMERCE</span><h2>${safe(profile().name)}</h2><p>Porudžbine i upiti sa sajta, bez automatskog potvrđivanja lagera ili naplate.</p></div><button class="btn btn-primary" data-action="home-orders">Otvori porudžbine</button></section><div class="stat-grid"><button class="stat-card accent stat-action" data-action="home-orders"><span class="label">Novi zahtevi</span><strong class="value">${fresh.length}</strong><small class="foot">Čekaju pregled</small></button><div class="stat-card"><span class="label">Ukupno primljeno</span><strong class="value">${orders().length}</strong><small class="foot">Lokalna istorija</small></div></div>${renderOrdersTeaser()}<div class="portal-status"><span class="status-dot"></span>${profile().queueConnection?'Sajt povezan; novi Commerce zahtevi se proveravaju dok je Portal otvoren.':'Poveži sajt u Podešavanjima.'}</div></div>`;}
+function renderOrdersHome(){const fresh=orders().filter(x=>x.status===ORDER_STATUS.NEW);return `<div class="portal-overview"><section class="portal-intro"><div><span class="tiny-label">AKTIVNA FIRMA · COMMERCE</span><h2>${safe(profile().name)}</h2><p>Porudžbine i upiti sa sajta, bez automatskog potvrđivanja lagera ili naplate.</p></div><button class="btn btn-primary" data-action="home-orders">Otvori porudžbine</button></section><div class="stat-grid"><button class="stat-card accent stat-action" data-action="home-orders"><div class="label">Novi zahtevi</div><div class="value">${fresh.length}</div><div class="foot">Čekaju pregled</div></button><div class="stat-card"><div class="label">Ukupno primljeno</div><div class="value">${orders().length}</div><div class="foot">Lokalna istorija</div></div></div>${renderOrdersTeaser()}<div class="portal-status"><span class="status-dot"></span>${profile().queueConnection?'Sajt povezan; novi Commerce zahtevi se proveravaju dok je Portal otvoren.':'Poveži sajt u Podešavanjima.'}</div></div>`;}
 function renderOrders(){let list=orders().sort((a,b)=>b.createdAt.localeCompare(a.createdAt));const filter=stateUI.orderFilter;if(filter==='open')list=list.filter(x=>x.status===ORDER_STATUS.NEW||x.status===ORDER_STATUS.ACCEPTED||x.status===ORDER_STATUS.PREPARING);else if(filter==='done')list=list.filter(x=>x.status===ORDER_STATUS.COMPLETED||x.status===ORDER_STATUS.ANSWERED);else if(filter==='closed')list=list.filter(x=>x.status===ORDER_STATUS.DECLINED||x.status===ORDER_STATUS.CANCELLED);else if(filter==='ready')list=list.filter(x=>x.status===ORDER_STATUS.READY);return `<div class="toolbar"><strong>${list.length} zahteva</strong><button class="btn btn-light" data-action="queue-sync">Proveri nove</button></div><div class="filter-bar" role="tablist" aria-label="Filtriranje porudžbina">${[['open','Aktivne'],['ready','Spremne'],['done','Završene'],['closed','Odbijene / otkazane'],['all','Sve']].map(([id,label])=>`<button class="filter ${filter===id?'active':''}" data-action="order-filter" data-filter="${id}" role="tab" aria-selected="${filter===id}">${label}</button>`).join('')}</div><p class="hint">Iznosi su informativni; potvrda porudžbine i poruka kupcu su odvojene radnje. Statusi se čuvaju lokalno na ovom uređaju.</p><div class="request-grid">${list.map(orderCard).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
-function orderDialog(o){const possible=o.type==='INQUIRY'?o.status==='new'?['answered','declined']:[]:{new:['accepted','declined'],accepted:['preparing','cancelled'],preparing:['ready','cancelled'],ready:['completed','cancelled']}[o.status]||[];const sendAllowed=o.status!==ORDER_STATUS.NEW;const items=o.items.map(item=>`<div class="order-line">${/^https:\/\//i.test(item.image)?`<img src="${safe(item.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:''}<div><strong>${safe(item.name)}</strong><small>${[item.size,item.variant,item.preparation].filter(Boolean).map(safe).join(' · ')}</small><span>${safe(item.quantity)} ${safe(item.unit)} × ${safe(amount(item.unitPrice))}</span></div><strong>${safe(amount(item.lineTotal))}</strong></div>`).join('');return `<div class="dialog-head"><div><div class="eyebrow">${o.type==='INQUIRY'?'UPIT':'PORUDŽBINA'} / ${safe(o.orderCode)}</div><h2>${safe(o.clientName)}</h2><span class="tag ${safe(o.status)}">${safe(ORDER_LABELS[o.status]||o.status)}</span></div><button class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div><div class="dialog-body order-dialog-body"><div class="detail-grid"><div class="detail-cell"><small>Telefon</small><strong>${safe(o.phone)}</strong></div><div class="detail-cell"><small>Primljeno</small><strong>${safe(orderWhen(o.createdAt))}</strong></div><div class="detail-cell"><small>Preuzimanje</small><strong>${safe(o.fulfillment==='PICKUP'?'Lično preuzimanje':o.fulfillment==='AGREEMENT'?'Po dogovoru':'Nije primenljivo')}</strong></div></div><section class="order-lines">${items}</section>${o.type==='ORDER'?`<div class="order-total">Informativni iznos <strong>${safe(amount(o.total))}</strong></div>`:''}${o.note?`<div class="helper-box"><strong>Napomena kupca</strong><p>${safe(o.note)}</p></div>`:''}${possible.length?`<div class="order-decisions">${possible.map(next=>`<button class="btn ${next==='declined'||next==='cancelled'?'btn-danger':'btn-primary'}" data-action="order-status" data-status="${next}">${safe(ORDER_LABELS[next])}</button>`).join('')}</div>`:''}${sendAllowed?`<section class="order-share"><strong>Poruka kupcu (ručno slanje)</strong><label>Broj primaoca<input type="tel" data-order-phone value="${safe(o.phone)}" autocomplete="tel" placeholder="+381…"></label><textarea class="message-preview" readonly>${safe(orderReplyText(o,o.status))}</textarea><div class="share-actions"><button class="btn share-whatsapp" data-action="order-whatsapp">WhatsApp ↗</button><button class="btn share-viber" data-action="order-viber">Viber ↗</button><button class="btn btn-light" data-action="order-copy">Kopiraj</button></div><small>Poruka se ne šalje automatski i otvaranje aplikacije ne dokazuje isporuku.</small></section>`:'<p class="hint">Prvo odluči da li prihvataš zahtev; kupac ne dobija automatsku potvrdu.</p>'}</div>`;}
-function openOrderDetails(id){const o=orderById(id);if(!o)return;stateUI.selectedOrderId=id;byId('order-details').innerHTML=orderDialog(o);byId('order-dialog').showModal();}
-async function changeOrderStatus(next){const order=orderById(stateUI.selectedOrderId);if(!order)throw new Error('Porudžbina nije pronađena.');if(['declined','cancelled'].includes(next)&&!window.confirm('Da li potvrđuješ ovu odluku?'))return;const index=state.orders.indexOf(order),updated=nextOrderStatus(order,next);state.orders[index]=updated;try{await persistStrict();}catch(error){state.orders[index]=order;throw error;}refresh();byId('order-details').innerHTML=orderDialog(updated);toast('Status sačuvan lokalno. Poruku kupcu pošalji zasebno.');}
-function shareOrder(channelName){const o=orderById(stateUI.selectedOrderId);if(!o||o.status===ORDER_STATUS.NEW)throw new Error('Prvo odluči o zahtevu.');const msg=orderReplyText(o,o.status),phone=byId('order-details').querySelector('[data-order-phone]')?.value.trim()||o.phone;if(channelName==='copy')return copyText(msg);if(channelName==='whatsapp'){if(!hasWhatsAppRecipient(phone))throw new Error('Unesi validan WhatsApp broj sa pozivnim brojem.');window.open(whatsappUrl(phone,msg),'_blank','noopener,noreferrer');toast('WhatsApp je otvoren; poruku moraš poslati ručno.');}else{window.location.href=viberUrl(msg);toast('Viber je otvoren. Proveri primaoca i pošalji ručno.');}}
+function orderDialog(o){
+ const editable=o.type==='ORDER'&&o.status===ORDER_STATUS.NEW;
+ const savedRemoved=o.amendment?.excludedIndexes||[];
+ const removed=editable?stateUI.orderDraftRemoved:savedRemoved;
+ const selected=o.type==='ORDER'?orderSelection(o,removed):null;
+ const modified=Boolean(o.amendment);
+ const isDifferent=editable&&removed.length>0;
+ const possible=o.type==='INQUIRY'?o.status==='new'?['answered','declined']:[]:editable?[]:{accepted:['preparing','cancelled'],preparing:['ready','cancelled'],ready:['completed','cancelled']}[o.status]||[];
+ const baseLabel=o.type==='ORDER'&&o.status===ORDER_STATUS.COMPLETED&&o.fulfillment==='PICKUP'?'Preuzeto':(ORDER_LABELS[o.status]||o.status);
+ const statusLabel=modified?(o.status==='accepted'?'Prihvaćeno sa izmenom':`${baseLabel} · izmenjena`):baseLabel;
+ const lines=o.items.map((item,index)=>{
+  const isRemoved=removed.includes(index);
+  return `<div class="order-row ${isRemoved?'removed':''}">
+   ${/^https:\/\//i.test(item.image)?`<img class="order-row-image" src="${safe(item.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:''}
+   <div class="order-row-info"><strong>${safe(item.name)}</strong>
+    ${[item.size,item.variant,item.preparation].filter(Boolean).length?`<span class="order-row-variant">${[item.size,item.variant,item.preparation].filter(Boolean).map(safe).join(' · ')}</span>`:''}
+    <span>${safe(item.quantity)} ${safe(item.unit)} × ${safe(amount(item.unitPrice))}</span>
+   </div><strong class="order-row-price">${safe(amount(item.lineTotal))}</strong>
+   ${editable?`<button type="button" class="order-item-toggle ${isRemoved?'restore':''}" data-action="order-toggle-item" data-index="${index}" aria-pressed="${isRemoved}">${isRemoved?'Vrati':'Nema na stanju'}</button>`:isRemoved?'<span class="order-item-removed">Nije dostupno</span>':''}
+  </div>`;
+ }).join('');
+ const total=o.type==='ORDER'?(editable?selected.revisedTotal:modified?o.amendment.revisedTotal:o.total):null;
+ const openDetails=`<div class="order-meta">
+  ${o.note?`<div class="order-note"><span>Napomena kupca</span><p>${safe(o.note)}</p></div>`:''}
+  <div class="order-meta-line"><span>Preuzimanje / isporuka</span><strong>${safe(o.fulfillment==='PICKUP'?'Lično preuzimanje':o.fulfillment==='AGREEMENT'?'Po dogovoru':'Nije navedeno')}</strong></div>
+  <div class="order-meta-line"><span>Telefon kupca</span><a href="tel:${safe(String(o.phone||'').replace(/[^\d+]/g,''))}">${safe(o.phone)}</a></div>
+  <div class="order-meta-line quiet"><span>Primljeno</span><span>${safe(orderWhen(o.createdAt))}</span></div>
+ </div>`;
+ const share=o.status!==ORDER_STATUS.NEW?`<section class="order-share order-message"><strong>Obaveštenje kupcu — ručno slanje</strong>
+  <label>Broj primaoca<input type="tel" data-order-phone value="${safe(o.phone)}" autocomplete="tel" placeholder="+381…"></label>
+  <textarea class="message-preview" readonly>${safe(orderReplyText(o,o.status))}</textarea>
+  <p class="hint">Portal priprema poruku; otvaranje WhatsApp-a ili Vibera nije potvrda slanja.</p>
+ </section>`:'';
+ return `<div class="dialog-head order-dialog-head"><div><h2>${o.type==='INQUIRY'?'UPIT ':''}${safe(o.orderCode)}</h2><div class="order-customer-title">${safe(o.clientName)}</div><span class="tag ${safe(o.status)}">${safe(statusLabel)}</span></div><button class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
+ <div class="dialog-body order-dialog-body">
+  <section class="order-products" aria-label="${o.type==='INQUIRY'?'Traženi':'Naručeni'} artikli"><h3>Artikli</h3><div class="order-list">${lines}</div>
+  ${isDifferent?`<div class="order-draft-note" role="status">Označeno kao nedostupno: ${removed.length}. Originalna porudžbina ostaje sačuvana.</div>`:''}
+  </section>
+  ${o.type==='ORDER'?`<div class="order-total"><span>${isDifferent||modified?'Informativni iznos posle izmene':'Informativni iznos'}</span><strong>${safe(amount(total))}</strong></div>${isDifferent||modified?`<div class="order-original-total">Prvobitno: ${safe(amount(o.total))}</div>`:''}`:''}
+  ${openDetails}
+  ${share}
+ </div>
+ <div class="order-modal-footer">
+  ${editable?`<button type="button" class="btn btn-danger" data-action="order-status" data-status="declined">Odbijeno</button>
+    <button type="button" class="btn btn-primary" data-action="order-status" data-status="accepted" ${isDifferent?'disabled title="Prvo vrati uklonjene artikle ili prihvati sa izmenom"':''}>Prihvaćeno</button>
+    <button type="button" class="btn btn-soft" data-action="order-accept-modified" ${!isDifferent||!selected.kept.length?'disabled':''}>Prihvaćeno sa izmenom</button>`:
+    possible.length?possible.map(next=>`<button type="button" class="btn ${next==='declined'||next==='cancelled'?'btn-danger':'btn-primary'}" data-action="order-status" data-status="${next}">${safe(ORDER_LABELS[next])}</button>`).join(''):''}
+  ${o.status!==ORDER_STATUS.NEW?`<div class="order-share-actions"><button class="btn share-whatsapp" data-action="order-whatsapp">WhatsApp ↗</button><button class="btn share-viber" data-action="order-viber">Viber ↗</button><button class="btn btn-light" data-action="order-copy">Kopiraj</button></div>`:''}
+ </div>`;
+}
+function rerenderOrderDialog(){
+ const o=orderById(stateUI.selectedOrderId);if(!o)return;
+ byId('order-details').innerHTML=orderDialog(o);
+}
+function openOrderDetails(id){
+ const o=orderById(id);if(!o)return;
+ stateUI.selectedOrderId=id;stateUI.orderDraftRemoved=[];
+ rerenderOrderDialog();byId('order-dialog').showModal();
+}
+function toggleOrderItem(index){
+ const o=orderById(stateUI.selectedOrderId);
+ if(o?.type!=='ORDER'||o.status!==ORDER_STATUS.NEW||!Number.isInteger(index)||index<0||index>=o.items.length)throw new Error('Nije moguće promeniti ovaj artikal.');
+ const i=stateUI.orderDraftRemoved.indexOf(index);
+ if(i>=0)stateUI.orderDraftRemoved.splice(i,1);else stateUI.orderDraftRemoved.push(index);
+ rerenderOrderDialog();
+}
+async function saveOrderDecision(updated,original,message){
+ const index=state.orders.indexOf(original);
+ state.orders[index]=updated;
+ try{await persistStrict();}catch(error){state.orders[index]=original;throw error;}
+ stateUI.orderDraftRemoved=[];refresh();rerenderOrderDialog();toast(message);
+}
+async function acceptModifiedOrder(){
+ const original=orderById(stateUI.selectedOrderId);
+ if(!original)throw new Error('Porudžbina nije pronađena.');
+ const updated=acceptOrderWithAmendment(original,stateUI.orderDraftRemoved);
+ await saveOrderDecision(updated,original,'Izmena je sačuvana. Pošalji obaveštenje kupcu.');
+}
+async function changeOrderStatus(next){
+ const original=orderById(stateUI.selectedOrderId);if(!original)throw new Error('Porudžbina nije pronađena.');
+ if(next==='accepted'&&stateUI.orderDraftRemoved.length)throw new Error('Postoje uklonjeni artikli: izaberi Prihvaćeno sa izmenom ili vrati artikle.');
+ if(['declined','cancelled'].includes(next)&&!window.confirm('Da li potvrđuješ ovu odluku?'))return;
+ const updated=nextOrderStatus(original,next);
+ await saveOrderDecision(updated,original,'Status je sačuvan. Ako je potrebno, pošalji poruku kupcu.');
+}
+function shareOrder(channelName){
+ const o=orderById(stateUI.selectedOrderId);if(!o||o.status===ORDER_STATUS.NEW)throw new Error('Prvo odluči o zahtevu.');
+ const msg=orderReplyText(o,o.status),phone=byId('order-details').querySelector('[data-order-phone]')?.value.trim()||o.phone;
+ if(channelName==='copy')return copyText(msg);
+ if(channelName==='whatsapp'){
+  if(!hasWhatsAppRecipient(phone))throw new Error('Unesi validan WhatsApp broj sa pozivnim brojem.');
+  window.open(whatsappUrl(phone,msg),'_blank','noopener,noreferrer');toast('WhatsApp je otvoren; pošalji poruku ručno.');
+ }else{window.location.href=viberUrl(msg);toast('Viber je otvoren. Proveri primaoca i pošalji ručno.');}
+}
 function renderReservations(){const tabs=[['requests','Zahtevi'],['day','Dan'],['week','Nedelja']];const content={requests:renderRequests,day:renderDay,week:renderWeek}[stateUI.reservationTab]||renderRequests;return `<div class="reservation-tabs" role="tablist" aria-label="Prikazi rezervacija">${tabs.map(([id,label])=>`<button class="filter ${stateUI.reservationTab===id?'active':''}" data-action="reservation-tab" data-tab="${id}" role="tab" aria-selected="${stateUI.reservationTab===id}">${label}</button>`).join('')}</div>${content()}`;}
 function renderDay(){const bs=bookings().filter(b=>b.date===stateUI.date),st=runStats();const visible=bs.filter(b=>b.status===STATUS.CONFIRMED||b.status===STATUS.PENDING||b.status===STATUS.PROPOSED).sort((a,b)=>a.time.localeCompare(b.time));
   const booked=bs.filter(b=>b.status===STATUS.CONFIRMED).sort((a,b)=>a.time.localeCompare(b.time));const waiting=bs.filter(b=>b.status===STATUS.PENDING).sort((a,b)=>a.time.localeCompare(b.time));
@@ -420,6 +524,8 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='home-orders'){stateUI.view='orders';stateUI.orderFilter='open';refresh();return;}
     if(a==='order-filter'){stateUI.orderFilter=btn.dataset.filter;refresh();return;}
     if(a==='order-detail')return openOrderDetails(btn.dataset.id);
+    if(a==='order-toggle-item')return toggleOrderItem(Number(btn.dataset.index));
+    if(a==='order-accept-modified')return await acceptModifiedOrder();
     if(a==='order-status')return await changeOrderStatus(btn.dataset.status);
     if(['order-whatsapp','order-viber','order-copy'].includes(a))return shareOrder(a.slice(6));
     if(a==='detail')return openDetails(btn.dataset.id);

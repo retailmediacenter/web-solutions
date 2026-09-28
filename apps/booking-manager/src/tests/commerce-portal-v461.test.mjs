@@ -29,7 +29,7 @@ test('Portal UI ima odvojen Commerce prikaz, statuse i ručno slanje; Booking os
  const app=readFileSync(here('../app.mjs'),'utf8'),index=readFileSync(here('../../index.html'),'utf8');
  assert.match(index,/data-view="reservations"/);assert.match(index,/data-view="orders"/);assert.match(index,/id="order-dialog"/);
  for(const s of ['pullOrderInbox','persistStrict','renderOrdersHome','renderOrders','orderDialog','changeOrderStatus','orderReplyText','shareOrder'])assert.ok(app.includes(s),s);
- assert.match(app,/state\.orders\[index\]=order;throw error/);
+ assert.match(app,/state\.orders\[index\]=original;throw error/);
  assert.match(app,/statusi se čuvaju lokalno/i);
  assert.equal(ORDER_STATUS.NEW,'new');
 });

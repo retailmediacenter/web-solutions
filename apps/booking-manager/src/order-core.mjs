@@ -25,9 +25,48 @@ export function nextOrderStatus(order,next){
  if(order.type==='ORDER'&&next==='answered')throw new Error('Porudžbina ne može biti označena kao upit.');
  return {...copy(order),status:next,updatedAt:new Date().toISOString()};
 }
+// Original received items always remain untouched. A local amendment stores only
+// excluded line indexes and a checked revised total; Redis/Booking are not involved.
+const roundMoney=value=>Math.round((value+Number.EPSILON)*100)/100;
+export function orderSelection(order,excluded=[]){
+ if(!order||order.type!=='ORDER'||!Array.isArray(order.items)||!Array.isArray(excluded))throw new Error('Neispravna porudžbina.');
+ const seen=new Set();
+ for(const index of excluded){
+  if(!Number.isInteger(index)||index<0||index>=order.items.length||seen.has(index))throw new Error('Neispravan izbor artikala.');
+  seen.add(index);
+ }
+ const kept=order.items.filter((item,index)=>!seen.has(index));
+ const removed=order.items.filter((item,index)=>seen.has(index));
+ return {kept,removed,revisedTotal:roundMoney(kept.reduce((sum,item)=>sum+item.lineTotal,0))};
+}
+export function acceptOrderWithAmendment(order,excluded){
+ if(order?.type!=='ORDER'||order?.status!==ORDER_STATUS.NEW)throw new Error('Izmena je dostupna samo za novu porudžbinu.');
+ const selected=orderSelection(order,excluded);
+ if(!selected.removed.length)throw new Error('Označi nedostupan artikal ili prihvati celu porudžbinu.');
+ if(!selected.kept.length)throw new Error('Svi artikli su izbačeni; porudžbinu je moguće samo odbiti.');
+ const result=nextOrderStatus(order,ORDER_STATUS.ACCEPTED);
+ result.amendment={excludedIndexes:[...excluded].sort((a,b)=>a-b),originalTotal:order.total,revisedTotal:selected.revisedTotal,modifiedAt:result.updatedAt};
+ return result;
+}
+export function validateOrderAmendment(order){
+ if(order?.amendment==null)return true;
+ const mod=order.amendment;
+ if(order.type!=='ORDER'||order.status==='new'||!mod||typeof mod!=='object'||Array.isArray(mod)||!Array.isArray(mod.excludedIndexes)||!mod.excludedIndexes.length||mod.excludedIndexes.length>=order.items.length)throw new Error('Neispravna izmena porudžbine.');
+ let selected;try{selected=orderSelection(order,mod.excludedIndexes);}catch{throw new Error('Neispravna izmena porudžbine.');}
+ if(typeof mod.modifiedAt!=='string'||Number.isNaN(Date.parse(mod.modifiedAt))||!Number.isFinite(mod.originalTotal)||!Number.isFinite(mod.revisedTotal)||Math.abs(mod.originalTotal-order.total)>.011||Math.abs(mod.revisedTotal-selected.revisedTotal)>.011)throw new Error('Neispravan iznos izmene porudžbine.');
+ return true;
+}
 export function orderReplyText(order,next){
  const code=String(order?.orderCode||'');
  const name=String(order?.clientName||'');
  const label=ORDER_LABELS[next]||'Ažurirano';
+ if(order?.type==='ORDER'&&order.amendment&&next!==ORDER_STATUS.CANCELLED){
+  const {kept,removed,revisedTotal}=orderSelection(order,order.amendment.excludedIndexes);
+  const removedText=removed.map(item=>`${item.name} (${item.quantity} ${item.unit})`).join(', ');
+  const keptText=kept.map(item=>`${item.name} (${item.quantity} ${item.unit})`).join(', ');
+  const money=value=>new Intl.NumberFormat('sr-RS',{minimumFractionDigits:2,maximumFractionDigits:2}).format(value)+' RSD';
+  const status=next==='accepted'?'prihvaćena sa izmenom':label.toLowerCase()+' (sa izmenom)';
+  return `Poštovani ${name},\n\nVaša porudžbina ${code} je ${status}.\n\nNisu dostupni: ${removedText}.\nPreostali artikli: ${keptText}.\nNovi informativni iznos: ${money(revisedTotal)}.\n\nAko vam izmena ne odgovara, kontaktirajte prodavnicu. Hvala.`;
+ }
  return `Poštovani ${name},\n\nVaš ${order?.type==='INQUIRY'?'upit':'zahtev za porudžbinu'} ${code}: ${label.toLowerCase()}.\n\n${order?.type==='INQUIRY'?'Kontaktiraćemo vas sa informacijama o dostupnosti.':'Konačna dostupnost i cena potvrđuju se dogovorom.'}`;
 }
