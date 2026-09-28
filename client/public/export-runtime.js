@@ -195,6 +195,11 @@
       const setState=(text,{retry=false,close=false,confirmation=''}={})=>{
         live.hidden=false;message.textContent=text;code.textContent=confirmation;
         retryButton.hidden=!retry;closeButton.hidden=!close;
+        // The shared modal shell watches this state and shows only the
+        // relevant fixed action; no stale form Submit after a receipt.
+        if(confirmation){$('orderKicker').textContent='ZAHTEV JE PRIMLJEN';$('orderHeading').textContent='Zahtev je uspešno poslat';}
+        else if(retry){$('orderKicker').textContent='SLANJE NIJE USPELO';$('orderHeading').textContent='Zahtev nije poslat';}
+        else{$('orderKicker').textContent='SLANJE ZAHTEVA';$('orderHeading').textContent='Šaljemo zahtev…';}
       };
       const data={type:orderIntent==='inquiry'?'INQUIRY':'ORDER',clientName:info.name,phone:info.phone,
         note:info.note||'',fulfillment:orderIntent==='inquiry'?'':info.fulfillment==='Preuzimanje u radnji'?'PICKUP':'AGREEMENT',

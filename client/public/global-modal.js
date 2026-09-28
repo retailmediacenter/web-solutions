@@ -6,10 +6,18 @@
  const dialogOpen=(d)=>{if(!d.open)return;
    const f=first(d,'.modal-footer .modal-footer-form');
    const s=first(d,'.modal-footer .modal-footer-share');
-   if(!f&&!s)return;
+   const l=first(d,'.modal-footer .modal-footer-live');
+   if(!f&&!s&&!l)return;
    const share=first(d,'#sharePanel');
-   if(f)f.hidden=Boolean(share&&!share.hidden);
-   if(s)s.hidden=Boolean(share?.hidden);
+   const live=first(d,'#orderLivePanel');
+   const isLive=Boolean(live&&!live.hidden);
+   if(f)f.hidden=isLive||Boolean(share&&!share.hidden);
+   if(s)s.hidden=isLive||Boolean(share?.hidden);
+   if(l)l.hidden=!isLive;
+   if(live){
+     d.dataset.commerceStatus=isLive?'true':'false';
+     d.dataset.commerceResult=isLive&&Boolean(first(d,'#orderConfirmationCode')?.textContent)?'true':'false';
+   }
  };
  function setup(dialog){if(dialog.dataset.modalSystem===D)return;
    // A native dialog remains the modal/focus implementation; this layer unifies shell & fixed actions.
@@ -54,7 +62,11 @@
      if(submit){submit.setAttribute('form','orderForm');const group=document.createElement('div');group.className='modal-footer-group modal-footer-form';group.append(submit);footer.append(group);}
      const shareActions=first(body,'#sharePanel .dialog-actions');
      if(shareActions){const group=document.createElement('div');group.className='modal-footer-group modal-footer-share';group.append(shareActions);footer.append(group);}
+     const liveActions=first(body,'#orderLivePanel .dialog-actions');
+     if(liveActions){const group=document.createElement('div');group.className='modal-footer-group modal-footer-live';group.append(liveActions);footer.append(group);}
      const share=first(body,'#sharePanel');if(share)new MutationObserver(()=>dialogOpen(dialog)).observe(share,{attributes:true,attributeFilter:['hidden']});
+     const live=first(body,'#orderLivePanel');if(live)new MutationObserver(()=>dialogOpen(dialog)).observe(live,{attributes:true,attributeFilter:['hidden']});
+     const code=first(body,'#orderConfirmationCode');if(code)new MutationObserver(()=>dialogOpen(dialog)).observe(code,{childList:true,characterData:true,subtree:true});
    }else if(!bookingStatus){
      const selector=dialog.id==='vehicleDetailDialog'?'#vehicleRequest':'.dialog-actions, .hybrid-actions';
      const actions=first(body,selector);if(actions)footer.append(actions);

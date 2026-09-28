@@ -140,3 +140,21 @@ html body dialog.site-dialog[data-modal-system="v419"][data-booking-status="true
 .site-dialog[data-modal-system="v419"][data-booking-status="true"] .modal-body .booking-submit-state > section:not([hidden]) .dialog-actions{
   display:flex;justify-content:center;
 }
+
+/* V46.3.3: compact Commerce result, same responsive envelope as Booking D5.
+   Scoped to live order status: cart, product and order ENTRY stay unchanged. */
+html body dialog.site-dialog[data-modal-system="v419"][data-commerce-status="true"]{height:fit-content;max-height:min(88dvh,640px)}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] .modal-body{flex:0 1 auto;padding-block:20px}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] #orderLivePanel{display:grid;justify-items:center;text-align:center;gap:14px}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] #orderLiveMessage{margin:0;max-width:430px;line-height:1.55}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] #orderConfirmationCode:not(:empty){display:inline-block;letter-spacing:.15em;font:800 clamp(1.6rem,8vw,2.4rem)/1 ui-monospace,SFMono-Regular,Consolas,monospace;background:#f5f8fd;color:#19263b;border:1px solid #dae3ef;border-radius:12px;padding:13px 16px}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] .modal-footer-live{width:100%}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] .modal-footer-live .dialog-actions{display:flex;justify-content:center;width:100%}
+.site-dialog[data-modal-system="v419"][data-commerce-status="true"] .modal-footer-live button{min-width:150px}
+@media(max-width:490px){
+ html body dialog.site-dialog[data-modal-system="v419"][data-commerce-status="true"]{width:min(94vw,420px);max-height:78dvh}
+ .site-dialog[data-modal-system="v419"][data-commerce-status="true"] #orderConfirmationCode:not(:empty){font-size:1.55rem;padding:12px}
+ .site-dialog[data-modal-system="v419"][data-commerce-status="true"] .modal-footer-live button{min-height:48px;width:100%;min-width:0}
+}
+
+.site-dialog[data-modal-system="v419"][data-commerce-result="true"] .modal-body > .dialog-pad > .hint{display:none}

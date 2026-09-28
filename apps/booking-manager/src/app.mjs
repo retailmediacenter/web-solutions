@@ -178,8 +178,9 @@ function shareActions(b,{compact=false}={}){
   const correction=valid?'':`<label class="contact-correction">Broj za poruku<input type="tel" data-contact-phone value="${safe(phone)}" autocomplete="tel" placeholder="npr. +381 64 123 4567"></label><p class="warning">Broj iz zahteva nije validan za direktan WhatsApp razgovor. Ispravi ga samo za ovu poruku; original u rezervaciji ostaje nepromenjen.</p>`;
   const preview=`<textarea class="message-preview" readonly aria-label="Pripremljena poruka">${safe(messageFor(b,type))}</textarea>`;
   return `<div class="share-bar${compact?' daypart-share':''}"><strong>Poruka za klijenta: ${label}</strong>${correction}
-    ${compact?`<details class="message-disclosure"><summary>Pregledaj poruku</summary>${preview}</details>`:preview}
-    <div class="share-actions"><button type="button" class="btn share-whatsapp" data-action="share-whatsapp">WhatsApp ↗</button><button type="button" class="btn share-viber" data-action="share-viber">Viber ↗</button><button type="button" class="btn btn-light" data-action="share-copy">Kopiraj poruku</button></div>
+    <details class="message-disclosure"><summary>Pregledaj poruku</summary>${preview}</details>
+    <div class="share-actions"><button type="button" class="btn share-whatsapp" data-action="share-whatsapp">WhatsApp ↗</button><button type="button" class="btn share-viber" data-action="share-viber">Viber ↗</button></div>
+    <details class="message-disclosure share-fallback"><summary>Ostale opcije</summary><button type="button" class="btn btn-light" data-action="share-copy">Kopiraj poruku</button></details>
     ${compact?'':'<p>Otvaranje aplikacije nije potvrda slanja. Pregledaj poruku i pošalji je ručno. Viber može tražiti izbor primaoca.</p>'}</div>`;
 }
 function openChannel(b,channelName){
@@ -310,8 +311,9 @@ function orderDialog(o){
   <div class="order-meta-line quiet"><span>Primljeno</span><span>${safe(orderWhen(o.createdAt))}</span></div>
  </div>`;
  const share=o.status!==ORDER_STATUS.NEW?`<section class="order-share order-message"><strong>Obaveštenje kupcu — ručno slanje</strong>
-  <label>Broj primaoca<input type="tel" data-order-phone value="${safe(o.phone)}" autocomplete="tel" placeholder="+381…"></label>
-  <textarea class="message-preview" readonly>${safe(orderReplyText(o,o.status))}</textarea>
+  <details class="message-disclosure order-phone-options"><summary>Promeni broj za poruku</summary><label>Broj primaoca<input type="tel" data-order-phone value="${safe(o.phone)}" autocomplete="tel" placeholder="+381…"></label></details>
+  <details class="message-disclosure"><summary>Pregledaj poruku</summary><textarea class="message-preview" readonly>${safe(orderReplyText(o,o.status))}</textarea></details>
+  <details class="message-disclosure share-fallback"><summary>Ostale opcije</summary><button type="button" class="btn btn-light" data-action="order-copy">Kopiraj poruku</button></details>
   <p class="hint">Portal priprema poruku; otvaranje WhatsApp-a ili Vibera nije potvrda slanja.</p>
  </section>`:'';
  return `<div class="dialog-head order-dialog-head"><div><h2>${o.type==='INQUIRY'?'UPIT ':''}${safe(o.orderCode)}</h2><div class="order-customer-title">${safe(o.clientName)}</div><span class="tag ${safe(o.status)}">${safe(statusLabel)}</span></div><button class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
@@ -328,7 +330,7 @@ function orderDialog(o){
     <button type="button" class="btn btn-primary" data-action="order-status" data-status="accepted" ${isDifferent?'disabled title="Prvo vrati uklonjene artikle ili prihvati sa izmenom"':''}>Prihvaćeno</button>
     <button type="button" class="btn btn-soft" data-action="order-accept-modified" ${!isDifferent||!selected.kept.length?'disabled':''}>Prihvaćeno sa izmenom</button>`:
     possible.length?possible.map(next=>`<button type="button" class="btn ${next==='declined'||next==='cancelled'?'btn-danger':'btn-primary'}" data-action="order-status" data-status="${next}">${safe(ORDER_LABELS[next])}</button>`).join(''):''}
-  ${o.status!==ORDER_STATUS.NEW?`<div class="order-share-actions"><button class="btn share-whatsapp" data-action="order-whatsapp">WhatsApp ↗</button><button class="btn share-viber" data-action="order-viber">Viber ↗</button><button class="btn btn-light" data-action="order-copy">Kopiraj</button></div>`:''}
+  ${o.status!==ORDER_STATUS.NEW?`<div class="order-share-actions"><button class="btn share-whatsapp" data-action="order-whatsapp">WhatsApp ↗</button><button class="btn share-viber" data-action="order-viber">Viber ↗</button></div>`:''}
  </div>`;
 }
 function rerenderOrderDialog(){
