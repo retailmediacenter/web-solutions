@@ -6,6 +6,7 @@ import {ORDER_STATUS,ORDER_LABELS,normalizeIncomingOrder,nextOrderStatus,orderRe
 import {activatePortalProfile,activePortalProfileId,detachSiteConnection,portalModules} from './portal-modules.mjs';
 import {dayPartDetailHtml} from './daypart-ui.mjs';
 import {exactTimeDetailHtml} from './exact-time-ui.mjs';
+import {boundSiteId,isCanonicalQaSite,selectProfileForSite,profileDataCounts,clearOnlyCurrentQaData} from './profile-isolation.mjs';
 
 const byId = id => document.getElementById(id);
 const safe = value => String(value ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -14,7 +15,7 @@ const isoNow = () => new Date().toISOString();
 const statName = {[STATUS.PENDING]:'Čeka odgovor',[STATUS.CONFIRMED]:'Potvrđeno',[STATUS.PROPOSED]:'Predlog pripremljen',[STATUS.DECLINED]:'Odbijeno',[STATUS.CANCELLED]:'Otkazano'};
 const stateUI = {view:'home',reservationTab:'requests',settingsEditor:'',date:today(),filter:'all',selectedId:null,proposal:null,orderFilter:'open',selectedOrderId:null,orderDraftRemoved:[]};
 const CHANNEL='rmc-booking-local'; let channel; let state,writing=Promise.resolve(),toastTimer;
-let polling=false,pollTimer=null,unlinking=false;
+let polling=false,pollTimer=null,unlinking=false,qaResetting=false;
 let serviceWorkerReady=null;
 let pendingIncoming=(location.hash.match(/^#rmb=(B1\.[a-zA-Z0-9_-]+)$/)||[])[1]||null;
 
@@ -58,13 +59,11 @@ async function connectShortCode(){
  const origin=validApiOrigin(byId('queue-api')?.value.trim()||apiDefault);
  if(!validPairingCode(code))throw new Error('Kod mora imati format XXXX-XXXX-XX.');
  if(!db)throw new Error('Lokalna baza nije dostupna. Ne povezuj uređaj.');
- if(p?.queueConnection&&!window.confirm('Ova firma je već povezana. Zameniti pristup na ovom uređaju? Staro sanduče više neće biti dostupno kroz ovaj profil.'))return;
+ if(p?.queueConnection)throw new Error('Pre povezivanja drugog sajta prvo prekini postojecu vezu u Podesavanjima. Stare lokalne rezervacije se ne brisu.');
  const connected=await claimPairing(origin,code);
-  if(!p){
-  if(!connected.profile)throw new Error('Server nije vratio poslovni profil. Povezivanje nije sačuvano.');
-  p=makeProfile(connected.profile.business.name);p.services=[];
-  state=activatePortalProfile(state,p);
- }
+ const existing=state.profiles.find(item=>boundSiteId(item)===connected.siteId);
+ if(!connected.profile&&!existing)throw new Error('Server nije vratio poslovni profil novog sajta.');
+ p=selectProfileForSite(state,connected.siteId,connected.profile?.business?.name||existing?.name||'Firma',makeProfile);
  if(connected.profile)applySiteProfile(p,connected.profile);
  p.queueConnection={siteId:connected.siteId,accessToken:connected.accessToken,apiOrigin:origin,connectedAt:isoNow()};
  try{await persistStrict();}
@@ -90,6 +89,7 @@ async function disconnectSite(){
   // Remote revocation happens FIRST; an API error must not silently remove local access.
   await disconnectRemote(conn);
   const previous={queueConnection:conn,pushEnabledAt:p.pushEnabledAt};
+  p.boundSiteId=conn.siteId; // Keep this firm's historical owner ID after token revocation.
   detachSiteConnection(p);
   try{await persistStrict();}
   catch(error){
@@ -101,7 +101,7 @@ async function disconnectSite(){
  }finally{unlinking=false;}
 }
 async function syncQueuedRequests({silent=false}={}){
- if(polling||unlinking||!db||!navigator.onLine)return;
+ if(polling||unlinking||qaResetting||!db||!navigator.onLine)return;
  const active=profile(),profiles=active?.queueConnection?[active]:[];
  if(!profiles.length)return;
  polling=true;
@@ -398,6 +398,7 @@ function renderSettings(){const p=profile(),connected=Boolean(p.queueConnection)
  ${modules.orders?`<section class="settings-card"><div class="card-head"><div><span class="tiny-label">COMMERCE SA SAJTA</span><h2>Aktivni katalog</h2></div><span class="profile-source">Preuzeto sa sajta</span></div><p class="hint">Proizvoda: ${p.siteProfile.commerce.products.length}. Cene i nazivi preuzimaju se iz generatora, ne menjaju se lokalno u Portalu.</p></section>`:''}
  ${modules.booking?`<section class="settings-card"><div class="card-head"><div><span class="tiny-label">REZERVACIJE</span><h2>Kapacitet i trajanje</h2></div><button class="btn btn-light" data-action="settings-open" data-editor="rules">Uredi</button></div><p class="hint">Kapacitet: ${p.capacity} · korak: ${p.slotStep} min · razmak: ${p.buffer} min</p></section>${operationalEditor(p)}${serviceSummaryCard(p)}${stateUI.settingsEditor==='services'?serviceEditor(p):''}`:''}
  <section class="settings-card"><div class="card-head"><div><span class="tiny-label">POVEZIVANJE I OBAVEŠTENJA</span><h2>${connected?'Sajt je povezan':'Povežite svoj sajt'}</h2></div><span class="connection-status ${connected?'connected':''}">${connected?'Povezano':'Nije povezano'}</span></div>${connected?`<div class="profile-details"><div><small>Povezani sajt</small><strong>${safe(site.name||p.name)}</strong></div><div><small>Push obaveštenja</small><strong>${p.pushEnabledAt?'Uključena na ovom uređaju':'Nisu uključena'}</strong></div></div><div class="settings-actions"><button class="btn btn-primary" data-action="push-enable">${p.pushEnabledAt?'Push obaveštenja uključena':'Uključi Push obaveštenja'}</button><button class="btn btn-light" data-action="queue-sync">Proveri nove zahteve</button></div><div class="settings-actions unlink-row"><button class="btn btn-danger" data-action="queue-disconnect">Prekini vezu sa sajtom</button></div><p class="hint">Rezervacije ostaju na ovom uređaju. Za nove zahteve biće potreban nov jednokratni kod.</p>`:apiDefault?`<p class="hint">Unesi jednokratni kod sa privatnog završnog ekrana generatora.</p><label>Jednokratni kod<input id="queue-code" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="XXXX-XXXX-XX"></label><div class="settings-actions"><button class="btn btn-primary" data-action="queue-connect">Poveži firmu</button></div>`:`<p class="warning">Automatska adresa Booking API-ja nije dostupna. Povezivanje trenutno nije moguće u ovoj instalaciji.</p>`}<p id="queue-status" class="hint"></p></section>
+ ${isCanonicalQaSite(boundSiteId(p))?`<section class="settings-card qa-data-cleanup"><div class="card-head"><div><span class="tiny-label">SAMO QA TEST</span><h2>Obrisi testne zapise ove firme</h2></div></div><p class="hint">Brise samo lokalne rezervacije i porudzbine aktivne QA firme i uklanja zastarele usluge drugih sajtova. Cini samo ovu firmu testno praznom, a cuva njen SITE ID, povezanost, postavke i ostale firme. Pre toga preuzima backup.</p><div class="settings-actions"><button class="btn btn-danger" data-action="qa-data-reset">Backup i reset testnih podataka</button></div></section>`:''}
  <section class="settings-card"><div class="card-head"><div><span class="tiny-label">REZERVNA KOPIJA</span><h2>Sačuvajte lokalne podatke</h2></div></div><p class="hint">Rezervacije, porudžbine i podešavanja ostaju na ovom uređaju. Vraćanje kopije zamenjuje postojeće lokalne podatke nakon potvrde.</p><div class="settings-actions"><button class="btn btn-light" data-action="export">↧ Izvezi rezervnu kopiju</button><button class="btn btn-light" data-action="import">↥ Vrati kopiju</button></div></section></div>`;}
 function saveRules(){const p=profile(),capacity=Number(byId('set-capacity').value);if(!Number.isInteger(capacity)||capacity<1||capacity>99)throw new Error('Kapacitet mora biti od 1 do 99.');Object.assign(p,{capacity,slotStep:Number(byId('set-slot').value),buffer:Number(byId('set-buffer').value)});persist();stateUI.settingsEditor='';refresh();toast('Pravila rezervacija sačuvana.');}
 function saveServices(){const p=profile(),connected=Boolean(p.siteProfile);const rows=connected?[...document.querySelectorAll('.service-duration')].map(input=>({id:input.dataset.serviceId,duration:Number(input.value)})):[...document.querySelectorAll('.service-row')].map(row=>({id:row.dataset.serviceId,name:row.querySelector('[data-field="name"]').value.trim(),duration:Number(row.querySelector('[data-field="duration"]').value),units:Number(row.querySelector('[data-field="units"]').value)}));if(!rows.length)throw new Error('Potrebna je bar jedna usluga.');for(const row of rows){if(!Number.isInteger(row.duration)||row.duration<5||row.duration>1440)throw new Error('Trajanje mora biti od 5 do 1440 minuta.');const service=p.services.find(x=>x.id===row.id);if(!service)throw new Error('Usluga nije pronađena.');if(!connected&&(!row.name||row.name.length>90||!Number.isInteger(row.units)||row.units<1||row.units>p.capacity))throw new Error('Proveri naziv usluge i potreban kapacitet.');Object.assign(service,row);}persist();refresh();toast('Usluge sačuvane.');}
@@ -464,6 +465,32 @@ function mutateBooking(action){const b=reservation(stateUI.selectedId);if(!b)ret
   b.updatedAt=isoNow();persist();refresh();rerenderDetails();toast(action==='save-proposal'?'Predlog pripremljen. Izaberi WhatsApp ili Viber.':'Status ažuriran. Ako treba, pošalji poruku klijentu.');
 }
 function exportState(){download(`RMC_BUSINESS_PORTAL_BACKUP_${today()}.json`,'application/json',JSON.stringify({...state,savedAt:isoNow()},null,2));toast('Kopija preuzeta. Sačuvaj je na sigurnom mestu.');}
+
+// Explicit QA-only local cleanup. Export full encrypted-token-containing backup
+// before any deletion; only remove active profile's entries, never its pairing.
+async function resetCurrentQaSiteData(){
+ const p=profile(),site=boundSiteId(p);
+ if(!p||!isCanonicalQaSite(site))throw new Error('Reset je dostupan samo za devet QA primera.');
+ if(polling||unlinking||qaResetting)throw new Error('Sacekaj da se zavrsi trenutna sinhronizacija.');
+ if(!db)throw new Error('Lokalna baza nije dostupna. Brisanje nije dozvoljeno.');
+ const counts=profileDataCounts(state,p.id);
+ if(!counts.bookings&&!counts.orders){toast('Ovaj QA sajt nema lokalnih rezervacija ni porudzbina.');return;}
+ qaResetting=true;
+ try{
+  // Backup is a browser download; require operator to verify it really saved.
+  exportState();
+  if(!window.confirm('Preuzeo si kopiju SVIH profila. Proveri da li je backup JSON zaista sacuvan pre nastavka. Brisanje je trajno za ovaj uredjaj. Nastaviti?'))return;
+  const wanted=p.siteProfile?.business?.name||p.name;
+  if(window.prompt(`Brises SAMO ${counts.bookings} rezervacija i ${counts.orders} porudzbina ovog QA sajta. Unesi tacan naziv firme za potvrdu: ${wanted}`)!==wanted)return;
+  const before=state;
+  state=clearOnlyCurrentQaData(state,p.id);
+  try{await persistStrict();}
+  catch(err){state=before;throw err;}
+  stateUI.selectedId=null;stateUI.selectedOrderId=null;stateUI.orderDraftRemoved=[];
+  stateUI.view='home';refresh();toast('Lokalni QA podaci ove firme su obrisani. SITE ID i povezivanje ostaju.');
+ }finally{qaResetting=false;}
+}
+
 async function importState(file){if(!file)return;if(file.size>25*1024*1024)throw new Error('Datoteka je prevelika.');const contents=await file.text(),parsed=validateImport(JSON.parse(contents));if(!window.confirm('UVOZ ZAMENJUJE SVE postojeće lokalne podatke, uključujući sve firme, rezervacije i porudžbine. Nastaviti?'))return;
   state=parsed;if(!state.profiles.find(x=>x.id===state.activeProfileId))state.activeProfileId=state.profiles[0].id;await persist();refresh();toast('Rezervna kopija uspešno učitana.');
 }
@@ -566,6 +593,7 @@ async function onClick(e){const btn=e.target.closest('button[data-action]');if(!
     if(a==='queue-connect')return await connectShortCode();
     if(a==='queue-sync')return await syncQueuedRequests();
     if(a==='queue-disconnect')return await disconnectSite();
+    if(a==='qa-data-reset')return await resetCurrentQaSiteData();
     if(a==='push-enable')return await enablePush();
     if(a==='create-pairing')return await createProfilePairing();
     if(a==='copy-pairing')return await copyPairing();
