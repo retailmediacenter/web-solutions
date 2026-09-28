@@ -135,7 +135,29 @@ const amount=n=>new Intl.NumberFormat('sr-RS',{minimumFractionDigits:2,maximumFr
 const orderWhen=s=>{const date=new Date(s);return Number.isNaN(date.getTime())?'':date.toLocaleString('sr-RS',{dateStyle:'medium',timeStyle:'short'});};
 function reservation(id){return state.bookings.find(x=>x.id===id && x.profileId===profile().id);}
 function serviceOf(id){return profile().services.find(x=>x.id===id);}
-function toast(message){const e=byId('toast');e.textContent=message;e.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('visible'),3400);}
+// Notifications belong to the active native dialog's top layer, never behind its backdrop.
+function toast(message){
+ clearTimeout(toastTimer);
+ const outside=byId('toast');
+ outside.classList.remove('visible');
+ document.querySelectorAll('.dialog-inline-toast').forEach(node=>node.remove());
+ const dialog=document.querySelector('dialog[open]');
+ if(dialog){
+  const note=document.createElement('div');
+  note.className='dialog-inline-toast';
+  note.setAttribute('role','status');
+  note.setAttribute('aria-live','polite');
+  note.textContent=message;
+  const heading=dialog.querySelector('.dialog-head');
+  if(heading)heading.insertAdjacentElement('afterend',note);
+  else dialog.prepend(note);
+  toastTimer=setTimeout(()=>note.remove(),3400);
+  return;
+ }
+ outside.textContent=message;
+ outside.classList.add('visible');
+ toastTimer=setTimeout(()=>outside.classList.remove('visible'),3400);
+}
 function download(name,mime,text){const u=URL.createObjectURL(new Blob([text],{type:mime}));const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
 async function copyText(value){
   try{await navigator.clipboard.writeText(value);toast('Poruka kopirana. Nalepi je u Viber ili WhatsApp.');}
@@ -246,7 +268,19 @@ function orderCard(o){
 }
 function renderOrdersTeaser(){const recent=orders().filter(x=>x.status===ORDER_STATUS.NEW).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));return `<section class="panel commerce-teaser"><div class="panel-head"><h2>Porudžbine i upiti <span class="tag pending">${recent.length} novih</span></h2><button class="text-btn" data-action="home-orders">Sve porudžbine →</button></div><div class="panel-body">${recent.length?`<div class="request-grid">${recent.slice(0,3).map(orderCard).join('')}</div>`:'<p class="empty">Nema novih Commerce zahteva.</p>'}</div></section>`;}
 function renderOrdersHome(){const fresh=orders().filter(x=>x.status===ORDER_STATUS.NEW);return `<div class="portal-overview"><section class="portal-intro"><div><span class="tiny-label">AKTIVNA FIRMA · COMMERCE</span><h2>${safe(profile().name)}</h2><p>Porudžbine i upiti sa sajta, bez automatskog potvrđivanja lagera ili naplate.</p></div><button class="btn btn-primary" data-action="home-orders">Otvori porudžbine</button></section><div class="stat-grid"><button class="stat-card accent stat-action" data-action="home-orders"><div class="label">Novi zahtevi</div><div class="value">${fresh.length}</div><div class="foot">Čekaju pregled</div></button><div class="stat-card"><div class="label">Ukupno primljeno</div><div class="value">${orders().length}</div><div class="foot">Lokalna istorija</div></div></div>${renderOrdersTeaser()}<div class="portal-status"><span class="status-dot"></span>${profile().queueConnection?'Sajt povezan; novi Commerce zahtevi se proveravaju dok je Portal otvoren.':'Poveži sajt u Podešavanjima.'}</div></div>`;}
-function renderOrders(){let list=orders().sort((a,b)=>b.createdAt.localeCompare(a.createdAt));const filter=stateUI.orderFilter;if(filter==='open')list=list.filter(x=>x.status===ORDER_STATUS.NEW||x.status===ORDER_STATUS.ACCEPTED||x.status===ORDER_STATUS.PREPARING);else if(filter==='done')list=list.filter(x=>x.status===ORDER_STATUS.COMPLETED||x.status===ORDER_STATUS.ANSWERED);else if(filter==='closed')list=list.filter(x=>x.status===ORDER_STATUS.DECLINED||x.status===ORDER_STATUS.CANCELLED);else if(filter==='ready')list=list.filter(x=>x.status===ORDER_STATUS.READY);return `<div class="toolbar"><strong>${list.length} zahteva</strong><button class="btn btn-light" data-action="queue-sync">Proveri nove</button></div><div class="filter-bar" role="tablist" aria-label="Filtriranje porudžbina">${[['open','Aktivne'],['ready','Spremne'],['done','Završene'],['closed','Odbijene / otkazane'],['all','Sve']].map(([id,label])=>`<button class="filter ${filter===id?'active':''}" data-action="order-filter" data-filter="${id}" role="tab" aria-selected="${filter===id}">${label}</button>`).join('')}</div><p class="hint">Iznosi su informativni; potvrda porudžbine i poruka kupcu su odvojene radnje. Statusi se čuvaju lokalno na ovom uređaju.</p><div class="request-grid">${list.map(orderCard).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;}
+function renderOrders(){
+ const all=orders().sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+ const counts={open:0,ready:0,done:0,closed:0,all:all.length};
+ for(const o of all){
+  if([ORDER_STATUS.NEW,ORDER_STATUS.ACCEPTED,ORDER_STATUS.PREPARING].includes(o.status))counts.open++;
+  else if(o.status===ORDER_STATUS.READY)counts.ready++;
+  else if([ORDER_STATUS.COMPLETED,ORDER_STATUS.ANSWERED].includes(o.status))counts.done++;
+  else if([ORDER_STATUS.DECLINED,ORDER_STATUS.CANCELLED].includes(o.status))counts.closed++;
+ }
+ const filter=stateUI.orderFilter;
+ const list=all.filter(o=>filter==='all'||(filter==='open'&&[ORDER_STATUS.NEW,ORDER_STATUS.ACCEPTED,ORDER_STATUS.PREPARING].includes(o.status))||(filter==='ready'&&o.status===ORDER_STATUS.READY)||(filter==='done'&&[ORDER_STATUS.COMPLETED,ORDER_STATUS.ANSWERED].includes(o.status))||(filter==='closed'&&[ORDER_STATUS.DECLINED,ORDER_STATUS.CANCELLED].includes(o.status)));
+ return `<div class="toolbar"><strong>Ukupno: ${counts.all} zahteva</strong><button class="btn btn-light" data-action="queue-sync">Proveri nove</button></div><div class="filter-bar" role="tablist" aria-label="Filtriranje porudžbina">${[['open','Aktivne'],['ready','Spremne'],['done','Završene'],['closed','Odbijene / otkazane'],['all','Sve']].map(([id,label])=>`<button class="filter ${filter===id?'active':''}" data-action="order-filter" data-filter="${id}" role="tab" aria-selected="${filter===id}">${label} <span class="order-filter-count">${counts[id]}</span></button>`).join('')}</div><p class="hint">Iznosi su informativni; potvrda porudžbine i poruka kupcu su odvojene radnje. Statusi se čuvaju lokalno na ovom uređaju.</p><div class="request-grid">${list.map(orderCard).join('')||'<div class="panel empty">Nema zahteva za izabrani filter.</div>'}</div>`;
+}
 function orderDialog(o){
  const editable=o.type==='ORDER'&&o.status===ORDER_STATUS.NEW;
  const savedRemoved=o.amendment?.excludedIndexes||[];

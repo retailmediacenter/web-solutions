@@ -180,3 +180,9 @@
 /* Inquiry is a distinct business event, never misleadingly shown as an order. */
 .order-card.order-traffic-inquiry .order-traffic-label{background:#e9f2f7;color:#315d7a}
 @media(max-width:550px){.order-card .request-card-head{align-items:flex-start;flex-wrap:wrap}.order-card .order-card-code{font-size:12px}}
+
+/* V46.3.2: stable total, per-tab counts, notifications inside native dialog top layer. */
+.order-filter-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;margin-left:4px;border-radius:99px;background:#eef3f6;color:#456576;font-size:11px;font-weight:800;line-height:1}
+.filter.active .order-filter-count{background:#eef8f8;color:#215266}
+.dialog-inline-toast{flex:none;max-width:calc(100% - 42px);margin:12px 21px 0;padding:11px 13px;border:1px solid #c8e1dc;border-radius:10px;background:#e9f6f1;color:#245a51;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:550px){.dialog-inline-toast{margin:10px 14px 0;max-width:calc(100% - 28px)}}
