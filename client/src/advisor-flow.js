@@ -21,9 +21,14 @@ export function buildAdvisorDraft(definition,signals={}){
     if(valid)answers[q.id]=value;
     else pending.push('special:'+q.id);
   }
-  // The external-booking choice actually changes the renderer/URL contract.
-  // Other old operation questions select presentation wording, not capabilities.
-  if(definition?.id==='hotel'||definition?.id==='apartments'){
+  // Operations are usually presentation preferences and should not add
+  // redundant Advisor steps. These exceptions are real server contracts:
+  // - Pharmacy chooses independently between eligible orders and catalog inquiry.
+  //   The consultation special is a SEPARATE yes/no decision, not an alternative.
+  // - Hotels/apartments need the operation choice for external-booking routing.
+  // A valid operation explicitly extracted from the user's description skips
+  // this step; an unknown operation must NEVER be silently fabricated.
+  if(['pharmacy','hotel','apartments'].includes(definition?.id)){
     if(!answers.businessMode)pending.unshift('operation');
   }
   return {
