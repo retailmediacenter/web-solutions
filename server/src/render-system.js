@@ -1,6 +1,6 @@
 import {demoBrandFromEnvironment} from './site-system.js';
-// Global V42 layer: independent of each business renderer and theme.
-// Must be applied identically to React srcDoc preview and standalone ZIP HTML.
+// V45.4: shared presentation layer. Business/Booking/Commerce rules remain elsewhere.
+// Exactly the same renderHtml result is used for srcDoc Preview and exported ZIP.
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const callLabel=id=>({plumber:'Pozovite majstora',electrician:'Pozovite majstora',
  'plumbing-supplies':'Pozovite za informacije','electrical-supplies':'Pozovite za informacije',
@@ -9,69 +9,76 @@ const callLabel=id=>({plumber:'Pozovite majstora',electrician:'Pozovite majstora
  cafe:'Pozovite lokal','pharmacy':'Pozovite apoteku',hotel:'Pozovite recepciju',
  'rent-a-car':'Pozovite rent-a-car'}[id]||'Pozovite nas');
 const tel=p=>'tel:'+String(p).replace(/[^\d+]/g,'');
-const maps=(x)=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent([x.address,x.city].filter(Boolean).join(', '));
+const contactCss=`<style id="ws-v454-contact-css">
+.ws-location-section,.ws-v454-contact{clear:both;scroll-margin-top:110px}
+.ws-v454-contact{max-width:1280px;margin:0 auto;padding:clamp(30px,5vw,72px) clamp(20px,4vw,64px);background:var(--section-bg,#f8fafc);color:var(--ink,#17263c);font-family:var(--body-font,Arial,sans-serif)}
+.ws-v454-contact h2{font:750 clamp(24px,3vw,38px)/1.25 var(--display-font,Arial,sans-serif);color:var(--ink,#17263c);margin:10px 0 18px}
+.ws-v454-contact-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ws-v454-contact .ws-v454-phone{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 20px;border-radius:var(--button-radius,11px);background:var(--accent,#1e5bca);color:var(--on-accent,#fff)!important;border:0;text-decoration:none;font-weight:800;white-space:normal;overflow-wrap:anywhere}
+.ws-v454-contact .ws-v454-phone:focus-visible{outline:3px solid #6fa6ff;outline-offset:3px}
+.ws-v454-contact .ws-v454-extra{display:inline-flex;align-items:center;color:var(--accent,#264e88);overflow-wrap:anywhere;min-height:44px}
+.ws-v454-contact .service-contact-form{width:100%;margin-top:22px}
+.ws-v454-map-title{font-size:clamp(20px,2.2vw,30px)!important}
+@media(max-width:690px){.ws-v454-contact{padding:32px 17px}.ws-v454-contact .ws-v454-phone{width:100%;text-align:center}}
+</style>`;
 function locationCard(x,idx){
  const address=[x.address,x.city].filter(Boolean).join(', ');
- // Do not imply exact geolocation when only city is supplied.
- const exact=!!x.address&&!!x.city;
- const mapUrl=maps(x);
  return `<article class="ws-place"><h3>${esc(x.label||('Lokacija '+(idx+1)))}</h3><p class="ws-place-address">${esc(address)}</p>
- ${x.hours?`<p class="ws-place-hours">Radno vreme: ${esc(x.hours)}</p>`:''}
- <a class="ws-directions" href="${esc(mapUrl)}" target="_blank" rel="noopener noreferrer">${exact?'Prikaži lokaciju i navigaciju':'Prikaži oblast na mapi'} ↗</a></article>`;
+ ${x.hours?`<p class="ws-place-hours">Radno vreme: ${esc(x.hours)}</p>`:''}</article>`;
 }
-function dynamicSection(data,site){
- const id=site.business.id,phone=data.phone;
- const call=phone?`<a class="ws-contact-link ws-call" href="${esc(tel(phone))}">${esc(callLabel(id))}: ${esc(phone)}</a>`:'';
- const mail=data.email?`<a class="ws-contact-link" href="mailto:${esc(data.email)}">${esc(data.email)}</a>`:'';
- const website=data.website?`<a class="ws-contact-link" href="${esc(data.website)}" target="_blank" rel="noopener noreferrer">Posetite naš sajt ↗</a>`:'';
- // WhatsApp and Viber are messaging channels for context-rich forms (V43),
- // NOT location data. Do not expose separate channel numbers beside the map.
- // Keep them in businessData; existing form renderers are deliberately untouched.
- const services=[call,mail,website].filter(Boolean).join('');
- const locs=data.locations.map(locationCard).join('');
- const mapLocation=data.locations.find(l=>l.address&&l.city);
- const mapQuery=mapLocation?[mapLocation.address,mapLocation.city].join(', '):'';
- // No geocoding API key, no fabricated pins. The external map is loaded only by explicit visitor click.
- const map=mapQuery?`<div class="ws-map-wrap"><button type="button" class="ws-map-load" data-ws-map="${esc(mapQuery)}">Učitaj mapu prve lokacije</button><p class="ws-map-hint">Mapa koristi spoljnu uslugu i učitava se samo na vaš zahtev.</p><div class="ws-map-host" aria-live="polite"></div></div>`:'';
- if(!services&&!locs)return '';
- return `<section class="site-section ws-location-section" id="${locs?'lokacije':'brzi-kontakt'}" aria-labelledby="ws-locations-title"><div class="kicker">${locs?'GDE SMO I KAKO NAS DOBITI':'KONTAKT'}</div><h2 id="ws-locations-title">${locs?'Kontakt i lokacije':'Brzi kontakt'}</h2><div class="ws-contact-grid">
- ${services?`<div class="ws-contacts" aria-label="Direktan kontakt">${services}</div>`:''}
- ${locs?`<div class="ws-place-grid">${locs}</div>`:''}</div>${map}</section>`;
+function sections(data,site,retainedForm=''){
+ const phone=data.phone||'';
+ const locations=Array.isArray(data.locations)?data.locations:[];
+ const firstExact=locations.find(l=>l.address&&l.city);
+ const mapQuery=firstExact?[firstExact.address,firstExact.city].join(', '):'';
+ // Existing site-system.js creates the iframe only when the visitor clicks.
+ // No Google Maps navigation links or imaginary pins for city-only businesses.
+ const map=mapQuery?`<div class="ws-map-wrap"><button type="button" class="ws-map-load" data-ws-map="${esc(mapQuery)}">Prikaži mapu</button><p class="ws-map-hint">Mapa se učitava samo na vaš zahtev.</p><div class="ws-map-host" aria-live="polite"></div></div>`:'';
+ const places=locations.length?`<section class="site-section ws-location-section" id="lokacije" aria-labelledby="ws-locations-title">
+ <div class="kicker">LOKACIJA</div><h2 class="ws-v454-map-title" id="ws-locations-title">${map?'Pronađite nas':'Područje rada'}</h2>
+ <div class="ws-place-grid">${locations.map(locationCard).join('')}</div>${map}</section>`:'';
+ const mainContact=phone?`<a class="ws-v454-phone" href="${esc(tel(phone))}">${esc(callLabel(site.business.id))}: ${esc(phone)}</a>`:
+ '<p>Kontakt telefon nije unet.</p>';
+ const mail=data.email?`<a class="ws-v454-extra" href="mailto:${esc(data.email)}">${esc(data.email)}</a>`:'';
+ const website=data.website?`<a class="ws-v454-extra" href="${esc(data.website)}" target="_blank" rel="noopener noreferrer">Naš sajt ↗</a>`:'';
+ const contact=`<section class="site-section ws-v454-contact" id="kontakt" aria-labelledby="ws-v454-contact-heading">
+ <div class="kicker">KONTAKT</div><h2 id="ws-v454-contact-heading">Kontaktirajte nas</h2>
+ <div class="ws-v454-contact-row">${mainContact}${mail}${website}</div>${retainedForm}</section>`;
+ return places+contact;
+}
+/** Replaces only the three known old GENERIC contact wrappers. Never removes a
+ * booking section, Booking IDs, or the inactive-service inquiry form. */
+function removeLegacyContact(html){
+ const match=/<section class="site-section contact(?: [^\"]*)?" id="kontakt">[\s\S]*?<\/section>/.exec(html);
+ if(!match) return {html,retainedForm:''};
+ const old=match[0];
+ const inquiry=old.match(/<div class="service-contact-form">[\s\S]*?<\/form><\/div>/);
+ // The non-booking service inquiry is pre-existing. Retain it, including its
+ // original requestForm ID and JavaScript handlers, in the new final contact.
+ return {html:html.replace(old,''),retainedForm:inquiry?.[0]||''};
 }
 export function renderSystemLayer(html,site){
  const data=site.businessData||{phone:site.contact?.phone||'',locations:[]};
  const isDemo=site.siteMode!=='production';
- let result=html;
- // Existing business-specific forms stay unchanged. V43 owns their final unification.
- const section=dynamicSection(data,site);
- if(section){const at=result.lastIndexOf('<section class="site-section contact');
-  const atVertical=result.lastIndexOf('<section class="site-section contact vertical-contact');
-  const insert=atVertical>=0?atVertical:at;
-  if(insert>=0)result=result.slice(0,insert)+section+'\n'+result.slice(insert);
-  else result=result.replace('</main>',section+'</main>');
-  if(data.locations.length){result=result.replace('<a href="#kontakt">Kontakt</a>','<a href="#lokacije">Lokacije</a><a href="#kontakt">Kontakt</a>');}
- }
+ const cleaned=removeLegacyContact(html);
+ let result=cleaned.html;
+ const locations=Array.isArray(data.locations)?data.locations:[];
+ const unified=sections({...data,locations},site,cleaned.retainedForm);
+ result=result.replace('</main>',unified+'</main>');
+ if(locations.length)result=result.replace('<a href="#kontakt">Kontakt</a>','<a href="#lokacije">Lokacije</a><a href="#kontakt">Kontakt</a>');
+ // The header call is independent of the final section; preserve the old
+ // business-specific header CTA and avoid changing booking action targets.
  const direct=data.phone?`<a class="ws-header-call" href="${esc(tel(data.phone))}">${esc(callLabel(site.business.id))}</a>`:'';
- if(direct){ // Header contact is supplementary: preserve primary business CTA.
-   result=result.replace('</header>',direct+'</header>');
- }
- // Remove legacy placeholder phone hints and duplicate old generic tel buttons; shared layer owns phone display.
- if(section){
-  result=result.replace(/<a\b[^>]*\bhref="tel:[^"]*"[^>]*>[^<]*<\/a>/g, m=>m.includes('ws-header-call')||m.includes('ws-call')?m:'');
-  // restore dynamic header and contact entries if the regex also matched injected links
-  // above includes `ws-header-call` and `ws-call`, so these remain untouched.
- }
+ if(direct)result=result.replace('</header>',direct+'</header>');
+ // Do not invent placeholder phone numbers when a legacy API omits business data.
  result=result.replace(/<p class="hint">(?:Unesite pravi telefon pre objavljivanja sajta\.|Telefon se dodaje pre objavljivanja sajta\.|Telefon nije unet — nema lažnog pozivnog dugmeta\.)<\/p>/g,'');
- // No hardcoded RMC text in the badge component. Brand comes from server-side config.
  const brand=site.demoBrand||demoBrandFromEnvironment();
  const badgeUrl=new URL(brand.url);
  badgeUrl.searchParams.set('source','demo-site');badgeUrl.searchParams.set('business',site.business.id);
- // The internal siteMode="demo" is not a visible label. All free sites show a discreet attribution.
  const badge=isDemo?`<a class="ws-demo-badge" data-system="demoBadge" href="${esc(badgeUrl.toString())}" target="_blank" rel="noopener noreferrer" aria-label="Kreirano uz ${esc(brand.label)}"><span class="ws-badge-intro">Kreirano uz</span><span class="ws-demo-label">${esc(brand.label)}</span></a>`:'';
- // Remove hard-coded legacy footers in BOTH modes; branding belongs only to the global system layer.
  result=result.replace(/<span>(?:Demo sajt · Kreirano pomoću RMC Web Solutions|DEMO · RMC Web Solutions)<\/span>/gi,'');
- result=result.replace('</head>','<link rel="stylesheet" href="site-system.css"></head>');
- if(badge)result=result.replace('</header>','</header>'+badge); // desktop CSS floats; mobile sticky follows header in document flow
+ result=result.replace('</head>',contactCss+'<link rel="stylesheet" href="site-system.css"></head>');
+ if(badge)result=result.replace('</header>','</header>'+badge);
  result=result.replace('</body>','<script src="site-system.js" defer></script></body>');
  return result;
 }

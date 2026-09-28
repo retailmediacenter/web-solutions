@@ -9,7 +9,9 @@ const base='<html><head></head><body><header></header><main></main></body></html
 const site={business:{id:'butcher-shop',name:'Test mesara'},siteMode:'demo',businessData:{phone:'+381601234567',email:'info@example.rs',website:'',whatsapp:'+381601234567',viber:'+381601234567',locations:[{id:'lokacija-1',city:'Beograd',address:'Primer 12',hours:'Pon–Pet 09–18'}]}};
 test('Map/contact block excludes Viber and WhatsApp direct shortcuts',()=>{
  const html=renderSystemLayer(base,site);
- assert.match(html,/Učitaj mapu prve lokacije/);
+ assert.match(html,/>Prikaži mapu<\/button>/);
+ assert.match(html,/data-ws-map=/);
+ assert.doesNotMatch(html,/<iframe|ws-directions|google\.com\/maps\/search/);
  assert.match(html,/tel:\+381601234567/);
  assert.match(html,/info@example.rs/);
  assert.doesNotMatch(html,/WhatsApp kontakt|Viber kontakt|wa\.me|viber:\/\/chat/);

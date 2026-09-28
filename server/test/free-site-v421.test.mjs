@@ -28,7 +28,7 @@ test('V42.1: one real address is required for physical free sites; no dummy loca
 test('Online and service-area paths are deliberate and never invent a street or embed a map',()=>{
  assert.throws(()=>build('plumber',{locationMode:'service-area'}),/grad/);
  const area=renderHtml(build('plumber',{locationMode:'service-area',city:'Beograd'}));
- assert.match(area,/Područje rada/);assert.match(area,/Prikaži oblast na mapi/);assert.doesNotMatch(area,/data-ws-map=/);
+ assert.match(area,/Područje rada/);assert.doesNotMatch(area,/Prikaži oblast na mapi|ws-directions/);assert.doesNotMatch(area,/data-ws-map=/);
  const remote=renderHtml(build('consultant',{locationMode:'online',phone:'+381601234567'}));
  assert.doesNotMatch(remote,/id="lokacije"/);assert.doesNotMatch(remote,/data-ws-map=/);
  assert.throws(()=>build('consultant',{locationMode:'online',locations:[{city:'Niš',address:'Test 2'}]}),/bez javne/);

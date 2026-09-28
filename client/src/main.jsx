@@ -4,6 +4,7 @@ import {apiUrl} from './api.js';
 import './style.css';
 import './react-adapter.css';
 import './advisor-ai-v395.css';
+import './advisor-final-v454.css';
 import {Landing,PreviewDialog,InfoDialog,LeadDialog,SHOWCASE} from './landing-react.jsx';
 import {buildAdvisorDraft} from './advisor-flow.js';
 
@@ -47,7 +48,7 @@ const firstPrompt='Opišite svoj posao svojim rečima. Razumeću šta je jasno, 
 function nextAdvisorQuestion(definition,signals={}){
   if(!definition)return '';
   const draft=buildAdvisorDraft(definition,signals),next=draft.steps[0];
-  if(next==='company')return 'Imam dovoljno podataka o funkcionalnosti sajta. Kako se zove vaš biznis i koji je kontakt telefon?';
+  if(next==='company')return 'Imam sve što mi treba o vašoj delatnosti. Kako se zove vaš biznis?';
   if(next==='operation')return definition.operation?.question||'';
   if(next==='hybrid')return definition.hybrid?.question||'';
   if(next?.startsWith('special:'))return (definition.specials||[]).find(q=>q.id===next.slice(8))?.question||'';
@@ -81,6 +82,8 @@ function App(){
   const [website,setWebsite]=useState(''),[whatsapp,setWhatsapp]=useState(''),[viber,setViber]=useState('');
   const [extraLocations,setExtraLocations]=useState([]);
   const [locationMode,setLocationMode]=useState('physical');
+  // V45.4: client-side presentation only. Canonical Advisor payload stays unchanged.
+  const [companyStage,setCompanyStage]=useState(0);
   const modifyLocation=(index,key,value)=>setExtraLocations(old=>old.map((loc,i)=>i===index?{...loc,[key]:value}:loc));
   const [result,setResult]=useState(null),[loading,setLoading]=useState(false),[error,setError]=useState('');
   const [device,setDevice]=useState('desktop'),[exporting,setExporting]=useState(false);
@@ -139,11 +142,11 @@ function App(){
     const task=requestAnimationFrame(()=>{
       const card=advisorDialogRef.current;
       // History stays visible; LiveThread follows the latest message.
-      const field=card?.querySelector(current==='intro'?'#rmc-ai-description':current==='company'?'#rmc-company-name':'#rmc-live-answer');
+      const field=card?.querySelector(current==='intro'?'#rmc-ai-description':current==='company'?(companyStage===0?'#rmc-company-name':companyStage===1?'#rmc-company-phone':'.rmc-company-stage'):'#rmc-live-answer');
       if(field && (replyComplete||current==='intro'))field.focus({preventScroll:true});
     });
     return()=>cancelAnimationFrame(task);
-  },[advisorOpen,current,replyComplete]);
+  },[advisorOpen,current,companyStage,replyComplete]);
   useEffect(()=>{
     if(!advisorOpen||!replyComplete)return;
     const node=advisorScrollRef.current;
@@ -198,7 +201,7 @@ function App(){
        setAdvisorSignals(signals);setAdvisorWarnings(understood.warnings||[]);
        setDescription(text);setClarification(null);setClarifyText('');
        setSelectedId(chosen);setDefinition(def);setAnswers(draft.answers);setGoal(draft.goal);setStyle(draft.style);
-       setShowWelcome(false);setBusinessName('');setContactPhone('');setEmail('');setHours('');setWebsite('');setWhatsapp('');setViber('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
+       setCompanyStage(0);setShowWelcome(false);setBusinessName('');setContactPhone('');setEmail('');setHours('');setWebsite('');setWhatsapp('');setViber('');setExternalBookingUrl('');setLocationMode('physical');setExtraLocations([]);setCity('');setAddress('');setStep(0);setResult(null);
      }catch(ex){setError(ex.message);addReply('Nisam uspeo da obradim odgovor. Pokušajte ponovo.');}finally{setLoading(false)}
    }
   function pick(key,value){
@@ -269,6 +272,51 @@ function App(){
       if(pairingCode)setExportPairing({code:pairingCode,minutes:Math.round(expires/60)});
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
+  // The last Advisor section continues as four short questions. No change to
+  // resolveBusinessData, bookingProfile, siteConfig or API request structure.
+  function acceptCompanyName(event){
+    event.preventDefault();const value=businessName.trim();
+    if(!value){setError('Unesite naziv biznisa.');return;}
+    setBusinessName(value);setError('');addUser(value);setCompanyStage(1);
+    addReply('Hvala. Koji broj telefona želite da prikažemo na sajtu?');
+  }
+  function acceptCompanyPhone(event){
+    event.preventDefault();const value=contactPhone.trim();
+    const digits=value.replace(/\D/g,'');
+    if(!/^[+\d ()\-]+$/.test(value)||digits.length<6||digits.length>15){
+      setError('Unesite ispravan telefon sa 6 do 15 cifara.');return;
+    }
+    setContactPhone(value);setError('');addUser(value);setCompanyStage(2);
+    addReply('Gde poslujete? Adresu tražim samo ako imate poslovni prostor.');
+  }
+  function acceptLocationMode(next){
+    if(!['physical','service-area','online'].includes(next))return;
+    setLocationMode(next);setError('');
+    if(next==='online'){setCity('');setAddress('');setExtraLocations([])}
+    else if(next==='service-area'){setAddress('');setExtraLocations([])}
+    const label={physical:'Imam poslovnu adresu', 'service-area':'Radim na terenu',online:'Poslujem samo onlajn'}[next];
+    addUser(label);
+    if(next==='online'){
+      setCompanyStage(4);addReply('Odlično. Sada možemo da pregledamo podatke i kreiramo vaš sajt.');
+    }else{
+      setCompanyStage(3);
+      addReply(next==='physical'?'U kom gradu i na kojoj adresi se nalazi vaš biznis?':
+        'Koji grad ili područje pokrivate? Neću prikazivati uličnu adresu.');
+    }
+  }
+  function acceptCompanyLocation(event){
+    event.preventDefault();
+    if(!city.trim()||(locationMode==='physical'&&!address.trim())){
+      setError('Popunite potrebne podatke o lokaciji.');return;
+    }
+    setError('');addUser(locationMode==='physical'?city.trim()+', '+address.trim():city.trim());
+    setCompanyStage(4);
+    addReply('Hvala. Proverite podatke; ako želite, možete dodati i ostale informacije.');
+  }
+  function backCompany(){
+    setError('');
+    setCompanyStage(stage=>stage===4?(locationMode==='online'?2:3):Math.max(0,stage-1));
+  }
   // HTML adapter exclusively for the generated Advisor result.
   // Six frozen marketing examples load separately from /demo-previews/.
   const previewBase=window.location.origin+import.meta.env.BASE_URL;
@@ -294,13 +342,13 @@ function App(){
     setStyleSwitchError('');setStyleSwitchBusy(false);
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
     setSelectedId('');setRecognizedId('');setDescription('');setClarification(null);setClarifyText('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
-    setBusinessName('');setContactPhone('');setEmail('');setCity('');setAddress('');setHours('');setWebsite('');setWhatsapp('');setViber('');
+    setCompanyStage(0);setBusinessName('');setContactPhone('');setEmail('');setCity('');setAddress('');setHours('');setWebsite('');setWhatsapp('');setViber('');
     setStyle('modern');setGoal('purchase');setShowWelcome(false);setLocationMode('physical');setExtraLocations([]);setExternalBookingUrl('');setExportPairing(null);
     setLiveMessages([{id:++messageCounter.current,from:'ai',text:firstPrompt}]);
     setReplyComplete(true);setLatestReplyId(0);setLiveInput('');setAdvisorOpen(true);
   }
   function editSite(){
-    setPreviewOpen(false);setError('');setStep(Math.max(0,steps.length-1));setAdvisorOpen(true);
+    setPreviewOpen(false);setError('');setCompanyStage(4);setStep(Math.max(0,steps.length-1));setAdvisorOpen(true);
   }
   // Marketing-only demos are six frozen, self-contained pages bundled under
   // client/public/demo-previews/. They never call the Advisor or Node generator.
@@ -360,7 +408,7 @@ function App(){
       <div ref={advisorDialogRef} className="advisor-card rmc-ai-card" role="dialog" aria-modal="true" aria-label="Web Solutions AI Advisor">
         <header className="advisor-head rmc-ai-head">
           <button type="button" className="rmc-ai-back" aria-label="Nazad" disabled={!definition&&!clarification}
-            onClick={()=>{if(definition){setDefinition(null);setClarification(null);setStep(0);setSelectedId('');setDescription('');setClarifyText('');setAdvisorSignals({});setAnswers({});addReply('Možemo početi ispočetka. Opišite mi delatnost.');}
+            onClick={()=>{if(current==='company'&&companyStage>0){backCompany();return;}if(definition){setDefinition(null);setClarification(null);setStep(0);setSelectedId('');setDescription('');setClarifyText('');setAdvisorSignals({});setAnswers({});addReply('Možemo početi ispočetka. Opišite mi delatnost.');}
               else{setClarification(null);addReply('Možete dati novi opis.');}setError('');}}>
             ← <span>Nazad</span>
           </button>
@@ -389,25 +437,58 @@ function App(){
               {current==='operation'&&<div className="rmc-live-options">{definition.operation.options.map(value=><button type="button" key={value} className="rmc-live-option" onClick={()=>pick('operation',value)}>{value}</button>)}</div>}
               {current==='hybrid'&&<div className="rmc-live-options">{definition.hybrid.options.map(item=><button type="button" key={item.id} className="rmc-live-option" onClick={()=>pick('hybrid',item.id)}>{item.label}</button>)}</div>}
             </>}
-                    {current==='company'&&replyComplete&&<section className="question rmc-ai-question rmc-ai-company"><div className="rmc-ai-step-label">ZAVRŠNI KORAK</div><h2>Podaci za vaš sajt</h2><p>Za završetak su potrebni naziv, telefon i način poslovanja. Dodatne informacije su opcione.</p>
-            <form id="companyForm" onSubmit={generate}>
+          {current==='company'&&replyComplete&&<section className="question rmc-ai-question rmc-ai-company rmc-company-stage"
+              aria-label="Završni poslovni podaci">
+            {companyStage===0&&<form className="rmc-company-one" onSubmit={acceptCompanyName}>
+              <div className="rmc-company-question">Kako se zove vaš biznis?</div>
+              <label className="field">Naziv biznisa
+                <input id="rmc-company-name" autoFocus required maxLength={100} value={businessName}
+                  onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/>
+              </label><button className="action" type="submit" disabled={!businessName.trim()}>Dalje →</button>
+            </form>}
+            {companyStage===1&&<form className="rmc-company-one" onSubmit={acceptCompanyPhone}>
+              <div className="rmc-company-question">Koji broj telefona da prikažemo?</div>
+              <label className="field">Kontakt telefon
+                <input id="rmc-company-phone" type="tel" autoComplete="tel" required maxLength={35}
+                  value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/>
+              </label><button className="action" type="submit" disabled={!contactPhone.trim()}>Dalje →</button>
+            </form>}
+            {companyStage===2&&<div className="rmc-company-one">
+              <div className="rmc-company-question">Gde poslujete?</div>
+              <div className="rmc-company-options" role="group" aria-label="Način poslovanja">
+                <button type="button" onClick={()=>acceptLocationMode('physical')}>Imam poslovnu adresu</button>
+                <button type="button" onClick={()=>acceptLocationMode('service-area')}>Radim na terenu</button>
+                <button type="button" onClick={()=>acceptLocationMode('online')}>Poslujem samo onlajn</button>
+              </div>
+            </div>}
+            {companyStage===3&&<form className="rmc-company-one" onSubmit={acceptCompanyLocation}>
+              <div className="rmc-company-question">{locationMode==='physical'?'Gde se nalazi vaš biznis?':'Koje područje pokrivate?'}</div>
+              <label className="field">{locationMode==='physical'?'Grad':'Grad / područje rada'}
+                <input required maxLength={80} value={city} onChange={e=>setCity(e.target.value)} placeholder="Beograd"/>
+              </label>
+              {locationMode==='physical'&&<label className="field">Ulica i broj (obavezno)
+                <input required maxLength={180} value={address} onChange={e=>setAddress(e.target.value)} placeholder="Ulica i broj"/>
+              </label>}
+              <p className="small-note">{locationMode==='physical'?
+                'Jedna poslovna lokacija uključena je besplatno. Mapa se prikazuje samo na zahtev posetioca.':
+                'Prikazaćemo područje rada bez precizne mape i ulične adrese.'}</p>
+              <button className="action" type="submit" disabled={!city.trim()||(locationMode==='physical'&&!address.trim())}>Dalje →</button>
+            </form>}
+            {companyStage===4&&<div className="rmc-company-one rmc-company-summary">
+              <div className="rmc-company-question">Proverite podatke</div>
+              <div className="rmc-company-facts">
+                <div><span>Naziv</span><strong>{businessName}</strong><button type="button" onClick={()=>setCompanyStage(0)}>Izmeni</button></div>
+                <div><span>Telefon</span><strong>{contactPhone}</strong><button type="button" onClick={()=>setCompanyStage(1)}>Izmeni</button></div>
+                <div><span>Poslovanje</span><strong>{{physical:'Poslovna adresa','service-area':'Rad na terenu',online:'Onlajn'}[locationMode]}</strong><button type="button" onClick={()=>setCompanyStage(2)}>Izmeni</button></div>
+                {locationMode!=='online'&&<div><span>Lokacija</span><strong>{[city,locationMode==='physical'?address:''].filter(Boolean).join(', ')}</strong>
+                  <button type="button" onClick={()=>setCompanyStage(3)}>Izmeni</button></div>}
+              </div>
+              <form id="companyForm" onSubmit={generate}>
             <details className="rmc-live-settings"><summary>Opcionalno: stil sajta</summary>
               <div className="rmc-live-options">{definition.styles.map(item=><button type="button" key={item.id}
                 className={'rmc-live-option'+(style===item.id?' is-selected':'')}
-                onClick={()=>{setStyle(item.id);addUser('Stil: '+item.label);addReply('Stil sam sačuvao. '+nextAdvisorQuestion(definition,advisorSignals));}}>{item.label}</button>)}</div>
+                onClick={()=>setStyle(item.id)}>{item.label}</button>)}</div>
             </details>
-            <label className="field">Naziv firme<input id="rmc-company-name" autoFocus required maxLength={100} value={businessName} onChange={e=>setBusinessName(e.target.value)} placeholder="Naziv firme"/></label>
-            <label className="field">Kontakt telefon (obavezno)<input type="tel" required autoComplete="tel" maxLength={35} value={contactPhone} onChange={e=>setContactPhone(e.target.value)} placeholder="+381 ..."/></label>
-            <fieldset className="v421-mode"><legend>Gde poslujete?</legend>
-              <label><input type="radio" name="locationMode" checked={locationMode==='physical'} onChange={()=>setLocationMode('physical')}/> Imam poslovnu adresu (1 lokacija besplatno)</label>
-              <label><input type="radio" name="locationMode" checked={locationMode==='service-area'} onChange={()=>setLocationMode('service-area')}/> Radim na terenu (prikaz područja, bez javne adrese)</label>
-              <label><input type="radio" name="locationMode" checked={locationMode==='online'} onChange={()=>setLocationMode('online')}/> Poslujem samo onlajn (bez mape)</label>
-            </fieldset>
-            {locationMode!=='online'&&<div className="v421-required-location">
-              <label className="field">{locationMode==='physical'?'Grad (obavezno)':'Grad / područje rada (obavezno)'}<input required maxLength={80} value={city} onChange={e=>setCity(e.target.value)} placeholder="Beograd"/></label>
-              {locationMode==='physical'&&<label className="field">Ulica i broj (obavezno)<input required maxLength={180} value={address} onChange={e=>setAddress(e.target.value)} placeholder="Ulica i broj"/></label>}
-              <p className="small-note">{locationMode==='physical'?'Jedna lokacija je uključena u besplatan sajt. Mapa se prikazuje samo kada je posetilac zatraži.':'Na sajtu se prikazuje samo područje rada, bez ulične adrese i bez precizne mape.'}</p>
-            </div>}
             <details className="v42-contact"><summary>Dodatni kontakt podaci (opciono)</summary>
               <p>Koristimo samo podatke koje unesete. Na sajtu nema lažnih brojeva telefona ili adresa.</p>
               <label className="field">Email<input type="email" maxLength={160} value={email} onChange={e=>setEmail(e.target.value)} placeholder="kontakt@firma.rs"/></label>
@@ -429,11 +510,26 @@ function App(){
              <label className="field">HTTPS link ka spoljnom sistemu za rezervacije<input type="url" required pattern="https://.*" value={externalBookingUrl} onChange={e=>setExternalBookingUrl(e.target.value)} placeholder="https://booking-partner.example/..." /></label>}
             <p className="rmc-ai-booking-note">Ako ste uključili rezervacije ili zakazivanje, prilikom preuzimanja ZIP-a dobićete jednokratni kod za povezivanje sa RMC Business Portalom. Kod se nikada ne unosi u javni sajt.</p>
             <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Prikaži uvodni Welcome prozor</span><small>Opcionalno · isti izgled u svih pet stilova · prikazuje se jednom po poseti.</small></label>
-            <button className="action" type="submit" disabled={loading||!businessName.trim()||!contactPhone.trim()}>{loading?'Generišem sajt...':'Kreiraj moj sajt →'}</button></form></section>}
+
+                <button className="action" type="submit" disabled={loading||!businessName.trim()||!contactPhone.trim()||
+                  (locationMode!=='online'&&!city.trim())||(locationMode==='physical'&&!address.trim())}>
+                  {loading?'Generišem sajt...':'Kreiraj moj sajt →'}
+                </button>
+              </form>
+              <details className="rmc-company-previous"><summary>Želite li da promenite raniji odgovor?</summary>
+                <form onSubmit={continueConversation} className="rmc-company-refine">
+                  <textarea value={liveInput} maxLength={400} rows={2} aria-label="Izmenite raniji odgovor"
+                    onChange={e=>setLiveInput(e.target.value)} placeholder="Napišite šta želite da promenite…"/>
+                  <button type="submit" disabled={loading||liveInput.trim().length<3}>Pošalji →</button>
+                </form>
+              </details>
+            </div>}
+          </section>}
+
           </>}
           {error&&<p role="alert" className="rmc-ai-error">{error}</p>}
         </div>
-        <div className="rmc-ai-compose-dock" aria-label="Odgovor Advisoru">
+        <div className={"rmc-ai-compose-dock"+(current==='company'?" is-hidden":"")} aria-label="Odgovor Advisoru">
           {!definition?(clarification?
             <form onSubmit={e=>{e.preventDefault();if(clarifyText.trim().length>=3)begin(e);}} className="rmc-live-composer">
               <textarea id="rmc-ai-description" value={clarifyText} rows={2} maxLength={400}
@@ -446,11 +542,11 @@ function App(){
                 placeholder="Opišite svoj posao svojim rečima…"/>
               <button type="submit" disabled={!replyComplete||loading||description.trim().length<3}>Pošalji →</button>
             </form>):
-            <form className="rmc-live-composer" onSubmit={continueConversation}>
+            current!=='company'?<form className="rmc-live-composer" onSubmit={continueConversation}>
               <textarea id="rmc-live-answer" value={liveInput} rows={2} maxLength={400} aria-label="Odgovorite Advisoru"
                 onChange={e=>setLiveInput(e.target.value)} placeholder={current==='company'?'Želite da promenite odgovor? Napišite ovde…':'Napišite odgovor svojim rečima…'}/>
               <button type="submit" disabled={!replyComplete||loading||liveInput.trim().length<3}>Pošalji →</button>
-            </form>}
+            </form>:null}
         </div>
         <footer className="rmc-ai-footnote"><span>RMC WEB SOLUTIONS</span><span>Bez registracije · Besplatan pregled</span></footer>
       </div>

@@ -36,7 +36,7 @@ test('Global data single source and phone/mobile CTA across commerce, booking, v
   const html=renderHtml(p);
   assert.match(html,/href="tel:\+381601234567"/);
   assert.match(html,/id="lokacije"/);
-  assert.match(html,/https:\/\/www.google.com\/maps\/search\/\?api=1/);
+  assert.doesNotMatch(html,/google\.com\/maps\/search/); // V45.4: no external navigation link
   assert.match(html,/data-ws-map="Knez Mihailova 12, Beograd"/);
   assert.match(html,/data-system="demoBadge"/);
   assert.match(html,/source=demo-site&amp;business=/);
@@ -60,7 +60,7 @@ test('No imaginary phone, map or directions when no business data exists',()=>{
 });
 test('City-only shows an area, NOT an exact address or pin, and no embed request is made by HTML',()=>{
  const html=renderHtml(buildSitePayload(req('hotel',{businessData:{city:'Niš'}})));
- assert.match(html,/Prikaži oblast na mapi/);
+ assert.match(html,/Područje rada/);assert.doesNotMatch(html,/ws-directions/);
  assert.doesNotMatch(html,/data-ws-map=/);
  assert.doesNotMatch(html,/<iframe/);
 });
@@ -99,7 +99,7 @@ test('Trusted production rendering fully omits demo badge, not a CSS hide; foote
  assert.doesNotMatch(html,/<span>DEMO · RMC/);
  assert.match(html,/site-system\.css/);
 });
-test('Preview and ZIP have the same system layers, active map link and own runtime assets',()=>{
+test('Preview and ZIP have the same system layers, on-demand map and own runtime assets',()=>{
  const p=buildSitePayload(req('butcher-shop',{businessData:locationData}));
  const html=renderHtml(p),files=unzip(exportSiteZip(p));
  assert.equal(files['index.html'].toString('utf8'),html);

@@ -3,8 +3,10 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const ui=readFileSync(new URL('../../client/src/main.jsx',import.meta.url),'utf8');
 const css=readFileSync(new URL('../../client/src/advisor-ai-v395.css',import.meta.url),'utf8');
-test('V45.2 required phone and no redundant tuning form',()=>{
- assert.match(ui,/Kontakt telefon \(obavezno\)/);assert.ok(!ui.includes('Promeni izgled ili predlog Advisora'));
+test('V45.4 required phone remains validated in progressive completion, without redundant tuning form',()=>{
+ assert.match(ui,/companyStage===1[\s\S]*?type="tel"[\s\S]*?required/);
+ assert.match(ui,/digits.length<6\|\|digits.length>15/);
+ assert.ok(!ui.includes('Promeni izgled ili predlog Advisora'));
 });
 test('V45.2 has a conversational clarification, no huge select',()=>{
  assert.ok(ui.includes('rmc-ai-clarify-options'));
