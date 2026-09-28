@@ -1,30 +1,29 @@
 <!doctype html><html lang="sr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#12344d"><meta name="description" content="RMC Booking Manager — rezervacije koje rade lokalno.">
-<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon-192.png">
-<title>RMC Booking Manager · V43.2</title><link rel="stylesheet" href="./src/style.css">
+<meta name="theme-color" content="#12344d"><meta name="description" content="RMC Business Portal — lokalni poslovni pregled i zahtevi.">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./assets/icon-192.png"><link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+<title>RMC Business Portal · V46.1</title><link rel="stylesheet" href="./src/style.css">
 </head><body>
 <div id="app" class="shell">
   <aside class="sidebar">
-    <div class="brand"><div class="brand-mark" aria-hidden="true">R<span>·</span></div><div><strong>BOOKING <span>MANAGER</span></strong><small>RMC WEB SOLUTIONS / V43.2</small></div></div>
-    <div class="workspace"><label class="small-label" for="business-switch">AKTIVNA FIRMA</label><select id="business-switch" aria-label="Izbor firme"></select></div>
+    <div class="brand"><img class="brand-logo" src="./assets/rmc-logo.png" width="44" height="44" alt="RMC"><div><strong>RMC <span>BUSINESS PORTAL</span></strong><small>RMC WEB SOLUTIONS / V46.1</small></div></div>
+    <div class="workspace"><span class="small-label">AKTIVNA FIRMA</span><strong id="business-name">Povežite firmu</strong></div>
     <nav class="nav" aria-label="Glavna navigacija">
-      <button type="button" data-view="day" class="nav-item active"><span class="nav-icon">▦</span><span>Dan</span></button>
-      <button type="button" data-view="week" class="nav-item"><span class="nav-icon">▤</span><span>Nedelja</span></button>
-      <button type="button" data-view="requests" class="nav-item"><span class="nav-icon">☷</span><span>Zahtevi</span><span id="pending-count" class="nav-badge" hidden>0</span></button>
+      <button type="button" data-view="home" class="nav-item active"><span class="nav-icon">⌂</span><span>Početna</span></button>
+      <button type="button" data-view="reservations" class="nav-item"><span class="nav-icon">▦</span><span>Rezervacije</span><span id="pending-count" class="nav-badge" hidden>0</span></button>
+      <button type="button" data-view="orders" class="nav-item"><span class="nav-icon">▤</span><span>Porudžbine</span><span id="order-pending-count" class="nav-badge" hidden>0</span></button>
       <button type="button" data-view="settings" class="nav-item"><span class="nav-icon">⚙</span><span>Podešavanja</span></button>
     </nav>
     <div class="side-spacer"></div>
-    <div class="side-panel"><span class="status-dot"></span><strong>LOKALNI REŽIM</strong><p>Rezervacije ostaju na ovom uređaju. Nema servera ni automatske sinhronizacije.</p></div>
+    <div class="side-panel"><span class="status-dot"></span><strong>LOKALNI REŽIM</strong><p>Rezervacije i porudžbine čuvaju se lokalno. Za oporavak čuvaj redovne rezervne kopije; drugi uređaj nema automatsku sinhronizaciju.</p></div>
     <button type="button" class="side-backup" data-action="export">↧ &nbsp;Sačuvaj rezervnu kopiju</button>
   </aside>
   <main class="main">
-    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BOOKING</p><h1 id="page-title">Kalendar</h1><p class="page-subtitle" id="page-subtitle">Lokalni pregled i potvrđivanje rezervacija.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button><button type="button" class="btn btn-light" data-action="import-secure">Uvezi Booking link</button></header>
-    <div class="banner"><span class="banner-icon">ⓘ</span><span><strong>V43.2 — povezivanje sa sajtom.</strong> Podešavanja → kopiraj JAVNI kod u Advisor. Zahtevi sa sajta stižu šifrovanim linkom. Ne testiraj stvarnim podacima.</span><button type="button" aria-label="Zatvori obaveštenje" data-action="hide-banner">×</button></div>
+    <header class="topbar"><div><p class="eyebrow">RMC WEB SOLUTIONS <span class="slash">/</span> BUSINESS PORTAL</p><h1 id="page-title">Poslovni pregled</h1><p class="page-subtitle" id="page-subtitle">Pregled zahteva i aktivnosti na jednom mestu.</p></div><button type="button" class="btn btn-primary new-request" data-action="new-request"><span>＋</span> Novi zahtev</button></header>
     <div id="notice" aria-live="polite"></div><div id="main-view"></div>
   </main>
 </div>
-<dialog id="request-dialog" class="dialog"><form method="dialog" id="request-form" class="dialog-form"><div class="dialog-head"><div><div class="eyebrow">RMC BOOKING MANAGER</div><h2>Novi zahtev</h2></div><button type="button" class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
+<dialog id="request-dialog" class="dialog"><form method="dialog" id="request-form" class="dialog-form"><div class="dialog-head"><div><div class="eyebrow">RMC BUSINESS PORTAL</div><h2>Novi zahtev</h2></div><button type="button" class="close" data-action="close-dialog" aria-label="Zatvori">×</button></div>
  <div class="dialog-body"><p class="form-intro">Unesi zahtev kao da je stigao sa sajta. Sam unos još ne zauzima termin.</p>
  <label>Usluga <select id="new-service" name="serviceId" required></select></label>
  <div class="form-row"><label>Datum <input id="new-date" type="date" name="date" required></label><label>Traženo vreme <input id="new-time" type="time" name="time" value="10:00" step="900" required></label></div>
@@ -35,6 +34,7 @@
  </div><div class="dialog-actions"><button type="button" class="btn btn-soft" data-action="close-dialog">Odustani</button><button type="submit" class="btn btn-primary">Sačuvaj zahtev →</button></div>
 </form></dialog>
 <dialog id="booking-dialog" class="dialog"><div id="booking-details"></div></dialog>
+<dialog id="order-dialog" class="dialog"><div id="order-details"></div></dialog>
 <input id="backup-file" type="file" accept=".json,application/json" hidden>
 <div id="toast" role="status" aria-live="polite"></div>
 <script type="module" src="./src/app.mjs"></script>

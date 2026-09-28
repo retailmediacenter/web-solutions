@@ -1,4 +1,7 @@
+import {ORDER_STATUS,validateOrderAmendment} from './order-core.mjs';
 // V43.1 — pure scheduling functions shared by browser and Node tests.
+export const DAY_PARTS = Object.freeze({MORNING:'MORNING',AFTERNOON:'AFTERNOON',ANY:'ANY'});
+export const dayPartLabel=value=>({MORNING:'Pre podne',AFTERNOON:'Posle podne',ANY:'Svejedno'})[value]||'Nije navedeno';
 export const STATUS = Object.freeze({ PENDING:'pending', CONFIRMED:'confirmed', PROPOSED:'proposed', DECLINED:'declined', CANCELLED:'cancelled' });
 export const DAYS = ['Pon','Uto','Sre','Čet','Pet','Sub','Ned'];
 export const DEFAULT_HOURS = [
@@ -36,8 +39,8 @@ export const demoState = () => { const p=makeProfile(); return {schema:1,activeP
 export function normalizeRequest(input,profile) {
   const service = profile.services.find(s=>s.id===input.serviceId);
   if (!service) throw new Error('Izaberite uslugu.');
-  const date = String(input.date || ''); const time=String(input.time || '');
-  if (!isDate(date)||!isTime(time)) throw new Error('Unesite ispravan datum i vreme.');
+  const date = String(input.date || ''); const timingMode=input.timingMode==='DAY_PART'?'DAY_PART':'EXACT_TIME'; const time=timingMode==='EXACT_TIME'?String(input.time||''):''; const dayPart=timingMode==='DAY_PART'?String(input.dayPart||''):'';
+  if (!isDate(date)||(timingMode==='EXACT_TIME'&&!isTime(time))||(timingMode==='DAY_PART'&&!Object.values(DAY_PARTS).includes(dayPart))) throw new Error('Unesite ispravan datum i vreme ili deo dana.');
   const name=String(input.clientName||'').trim();
   if (name.length<2||name.length>100) throw new Error('Ime klijenta mora imati 2–100 znakova.');
   const phone=String(input.phone||'').trim();
@@ -46,21 +49,14 @@ export function normalizeRequest(input,profile) {
   const units=Number(input.units||service.units||1);
   if (!Number.isInteger(units)||units<1||units>profile.capacity) throw new Error('Broj mesta/resursa prevazilazi podešeni kapacitet.');
   return {id: input.id || makeId(),profileId:profile.id,serviceId:service.id,serviceName:service.name,
-    duration:service.duration, units, date,time,clientName:name,phone,notes,status:STATUS.PENDING,
+    duration:service.duration, units, date,time,timingMode,dayPart,clientName:name,phone,notes,status:STATUS.PENDING,
     createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),proposal:null,source:input.source||'manual'};
 }
-function hoursFor(profile,date) { return profile.hours[weekdayIndex(date)]; }
 export function slotCheck(profile,bookings,{date,time,duration,units=1,excludeId=null}) {
   if(!isDate(date)||!isTime(time)) return {ok:false,reason:'Neispravan datum ili vreme.'};
   if (!Number.isInteger(duration)||duration<5||duration>1440) return {ok:false,reason:'Neispravno trajanje usluge.'};
   if(!Number.isInteger(units)||units<1||units>profile.capacity) return {ok:false,reason:'Traženi kapacitet nije dostupan.'};
-  if ((profile.closedDates||[]).includes(date)) return {ok:false,reason:'Neradni dan.'};
-  const h=hoursFor(profile,date);
-  if(!h?.enabled) return {ok:false,reason:'Zatvoreno tog dana.'};
   const start=toMin(time), end=start+duration;
-  if (start<toMin(h.start)||end>toMin(h.end)) return {ok:false,reason:'Termin je van radnog vremena.'};
-  const b=profile.breaks;
-  if(b?.enabled && start<toMin(b.end) && end>toMin(b.start)) return {ok:false,reason:'Termin se preklapa sa pauzom.'};
   const buffer=Number(profile.buffer)||0;
   const confirmed=bookings.filter(x=>x.profileId===profile.id && x.status===STATUS.CONFIRMED && x.date===date && x.id!==excludeId);
   // A candidate is valid if at every moment during its interval, concurrent resource usage fits capacity.
@@ -81,15 +77,12 @@ export function slotCheck(profile,bookings,{date,time,duration,units=1,excludeId
 }
 export function alternatives(profile,bookings,request,count=4,maxDays=14) {
   if(!isDate(request.date)||!isTime(request.time)) return [];
-  const out=[]; const step=Number(profile.slotStep)||15; const after=toMin(request.time);
+  const out=[],step=Number(profile.slotStep)||15,after=toMin(request.time);
   for(let day=0;day<maxDays && out.length<count;day++) {
-    const date=addDays(request.date,day); const h=hoursFor(profile,date);
-    if(!h?.enabled||profile.closedDates?.includes(date)) continue;
-    const lower=day===0 ? Math.max(after+step,toMin(h.start)) : toMin(h.start);
-    const first=Math.ceil(lower/step)*step;
-    for(let min=first;min+Number(request.duration)<=toMin(h.end) && out.length<count;min+=step){
+    const date=addDays(request.date,day),lower=day===0?after+step:after,first=Math.ceil(lower/step)*step;
+    for(let min=first;min+Number(request.duration)<=1440 && out.length<count;min+=step){
       const time=fromMin(min);
-      if(slotCheck(profile,bookings,{date,time,duration:request.duration,units:request.units,excludeId:request.id}).ok) out.push({date,time});
+      if(slotCheck(profile,bookings,{date,time,duration:request.duration,units:request.units||1,excludeId:request.id}).ok)out.push({date,time});
     }
   }
   return out;
@@ -107,10 +100,44 @@ export function validateImport(json){
     ids.add(p.id);
   }
   for(const b of json.bookings){
-    if(!b||typeof b.id!=='string'||!ids.has(b.profileId)||!isDate(b.date)||!isTime(b.time)||!Object.values(STATUS).includes(b.status)) throw new Error('Oštećen unos rezervacije.');
+    if(!b||typeof b.id!=='string'||!ids.has(b.profileId)||!isDate(b.date)||((b.timingMode==='DAY_PART')?!Object.values(DAY_PARTS).includes(b.dayPart):!isTime(b.time))||!Object.values(STATUS).includes(b.status)) throw new Error('Oštećen unos rezervacije.');
     if(!Number.isInteger(b.duration)||b.duration<5||b.duration>1440||!Number.isInteger(b.units)||b.units<1||b.units>99) throw new Error('Neispravno trajanje ili kapacitet rezervacije.');
   }
-  return clone(json);
+  // V47.2: previous Booking-only backups have no Commerce orders field.
+  // Validate the complete Commerce payload before replacing local Portal data.
+  const orders=json.orders===undefined?[]:json.orders;
+  if(!Array.isArray(orders)||orders.length>50000) throw new Error('Oštećena lista porudžbina u rezervnoj kopiji.');
+  const orderIds=new Set(), orderSources=new Set();
+  const orderCodes=/^[A-HJ-NP-Z2-9]{8}$/;
+  for(const o of orders){
+    if(!o||typeof o!=='object'||Array.isArray(o)||typeof o.id!=='string'||!o.id||orderIds.has(o.id)||
+       typeof o.profileId!=='string'||!ids.has(o.profileId)||
+       !['ORDER','INQUIRY'].includes(o.type)||!Object.values(ORDER_STATUS).includes(o.status)||
+       (o.type==='INQUIRY'&&!['new','answered','declined'].includes(o.status))||
+       (o.type==='ORDER'&&o.status==='answered')||
+       typeof o.orderCode!=='string'||!orderCodes.test(o.orderCode)||
+       typeof o.sourceRequestId!=='string'||!o.sourceRequestId||
+       typeof o.sourceSiteId!=='string'||!o.sourceSiteId||
+       typeof o.clientName!=='string'||typeof o.phone!=='string'||
+       !Array.isArray(o.items)||!o.items.length||o.items.length>30||
+       !Number.isFinite(o.total)||o.total<0||o.currency!=='RSD'||o.pricing!=='indicative')
+      throw new Error('Oštećena ili tuđa porudžbina u rezervnoj kopiji.');
+    const sourceKey=JSON.stringify([o.profileId,o.sourceSiteId,o.sourceRequestId]);
+    if(orderSources.has(sourceKey))throw new Error('Duplirana porudžbina u rezervnoj kopiji.');
+    orderIds.add(o.id);orderSources.add(sourceKey);
+    let sum=0;
+    for(const item of o.items){
+      if(!item||typeof item.productId!=='string'||typeof item.name!=='string'||
+         !['kom','kg','par'].includes(item.unit)||!Number.isFinite(item.quantity)||item.quantity<=0||
+         !Number.isFinite(item.unitPrice)||item.unitPrice<0||!Number.isFinite(item.lineTotal)||item.lineTotal<0||
+         Math.abs(item.quantity*item.unitPrice-item.lineTotal)>0.011)
+        throw new Error('Oštećen artikal porudžbine u rezervnoj kopiji.');
+      sum+=item.lineTotal;
+    }
+    if(Math.abs(sum-o.total)>0.011)throw new Error('Neispravan iznos porudžbine u rezervnoj kopiji.');
+    validateOrderAmendment(o);
+  }
+  return clone({...json,orders});
 }
 export function icsFor(business,booking){
   if(booking.status!==STATUS.CONFIRMED) throw new Error('Samo potvrđene rezervacije mogu u kalendar.');
