@@ -205,7 +205,7 @@
         if(!crypto?.randomUUID){setState('Otvorite sajt putem HTTPS-a da biste poslali zahtev.',{retry:false});return;}
         commerceRetry={fingerprint,requestId:crypto.randomUUID()};
       }
-      commerceSending=true;form.querySelector('[type="submit"]').disabled=true;
+      commerceSending=true;$('orderSubmit').disabled=true;
       setState('Šaljemo zahtev. Sačekajte potvrdu.');
       try{
         if(!window.RMCCommerceSubmit)throw new Error('Modul za slanje porudžbina nije učitan.');
@@ -214,7 +214,7 @@
         setState((data.type==='INQUIRY'?'Upit je primljen.':'Zahtev za porudžbinu je primljen.')+' Prodavnica će potvrditi dostupnost, cenu i preuzimanje.',
           {close:true,confirmation:receipt.orderCode});
       }catch(error){setState('Zahtev nije potvrđen. '+error.message,{retry:true});}
-      finally{commerceSending=false;form.querySelector('[type="submit"]').disabled=false;}
+      finally{commerceSending=false;$('orderSubmit').disabled=false;}
       return;
     }
     // Existing offline/preview fallback remains explicit: prepares a message, no fake order receipt.
