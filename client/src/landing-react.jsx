@@ -105,6 +105,33 @@ export function Landing({onStart,onOpenSite,onExample,onLead,onInfo,hasResult}){
  </div>;
 }
 
+// V45.4 iPhone-only Preview interoperability: keep the native tel: link in
+// generated HTML/ZIP, but forward taps made inside the sandboxed Preview to
+// the top-level browsing context. Do not intercept other navigation or forms.
+function wireGeneratedPhoneLinks(frame){
+  try {
+    const doc=frame.contentDocument;
+    if(!doc)return;
+    frame.__rmcPhoneLinkCleanup?.();
+    const onClick=event=>{
+      const node=event.target instanceof Element?event.target:event.target?.parentElement;
+      const anchor=node?.closest?.('a[href^="tel:"]');
+      if(!anchor)return;
+      const phoneLink=anchor.getAttribute('href')||'';
+      // render-system.js generates only sanitized tel:+digits. Forward only
+      // that narrow protocol, never arbitrary iframe or server-provided URLs.
+      if(!/^tel:\+?\d{3,20}$/i.test(phoneLink))return;
+      event.preventDefault();
+      event.stopPropagation();
+      window.location.assign(phoneLink);
+    };
+    doc.addEventListener('click',onClick,true);
+    frame.__rmcPhoneLinkCleanup=()=>doc.removeEventListener('click',onClick,true);
+  } catch {
+    // Cross-origin frames are never inspected. Native link behavior remains.
+  }
+}
+
 function preventBackgroundScroll(active){
  const before=document.body.style.overflow;
  if(active)document.body.style.overflow='hidden';
@@ -162,7 +189,8 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
         :loading?<div className="rmc-preview-message" role="status">Pripremam vaš sajt…</div>:
         error?<div className="rmc-preview-message" role="alert">{error}</div>:
         html?<iframe ref={frameRef} key={siteName} title={siteName||'Pregled sajta'} srcDoc={html}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox" />:
+              onLoad={event=>wireGeneratedPhoneLinks(event.currentTarget)}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-top-navigation-to-custom-protocols" />:
         <div className="rmc-preview-message">Nema generisanog pregleda.</div>}
      </div>
      <footer className="rmc-preview-footer">
