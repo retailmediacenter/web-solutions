@@ -1,4 +1,5 @@
 import {resolveBookingPairing} from './booking-pairing.js';
+import {commerceFromSite} from './commerce-profile.js';
 import {resolvePharmacySiteConfig} from './pharmacy-engine.js';
 import {resolveBusinessData,demoBrandFromEnvironment} from './site-system.js';
 import {SERVICE_BUSINESSES,resolveServiceSiteConfig} from './service-engine.js';
@@ -48,5 +49,14 @@ export function buildSitePayload(input){
  payload.siteConfig.demoBrand=demoBrandFromEnvironment();
  payload.siteConfig.presentation={...(payload.siteConfig.presentation||{}),showWelcome:input?.answers?.showWelcome===true};
  payload.siteConfig.bookingProfile=bookingProfile(payload.siteConfig);
+ // V46.0: Advisor is the authority; a Commerce-only shop has no fake services.
+ const commerce=commerceFromSite(payload.siteConfig,payload.catalog);
+ if(commerce){
+  const data=payload.siteConfig.businessData||{},location=(data.locations||[])[0]||{};
+  const business=payload.siteConfig.bookingProfile?.business||{
+   name:payload.siteConfig.business.name,phone:data.phone||'',email:data.email||'',
+   city:location.city||data.city||'',address:location.address||data.address||'',hours:location.hours||data.hours||''};
+  payload.siteConfig.siteProfile={version:2,business,services:payload.siteConfig.bookingProfile?.services||[],commerce};
+ }
  return payload;
 }

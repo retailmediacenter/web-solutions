@@ -61,7 +61,7 @@ export function createPushNotifications(redis,env=process.env,{fetcher=fetch}={}
  }
  async function publicKey(siteId,accessToken,authenticate){if(!validSiteId(siteId))throw err(400,'Neispravan identifikator sajta.');await authenticate(siteId,accessToken);if(!config)throw err(503,'Push obaveštenja nisu konfigurisana.');return {publicKey:config.publicKey};}
  async function notify(siteId,event){
-  if(!config||event?.type!==NOTIFICATION_TYPES.BOOKING||!validSiteId(siteId))return {sent:0};
+  if(!config||![NOTIFICATION_TYPES.BOOKING,NOTIFICATION_TYPES.ORDER].includes(event?.type)||!validSiteId(siteId))return {sent:0};
   const ids=await redis('SMEMBERS',key('push-index',siteId));let sent=0;
   for(const storageKey of ids||[]){
    let subscription;try{subscription=validSubscription(JSON.parse(await redis('GET',storageKey)));}catch{};

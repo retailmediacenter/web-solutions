@@ -8,6 +8,7 @@ import { buildSitePayload } from './site.js';
 import { renderHtml } from './render-site.js';
 import { exportSiteZip } from './exporter.js';
 import {bookingRouter} from './booking-routes.js';
+import {commerceRouter} from './commerce-routes.js';
 import {createBookingQueue} from './booking-queue.js';
 import {qaRouter} from './qa-routes.js';
 import {mergeAdvisorSignals,changedAdvisorSignals,safeAdvisorAcknowledgement,interpretShortAnswer} from './advisor-dialog.js';
@@ -20,7 +21,7 @@ app.use(express.json({limit:'40kb'}));
 const origins=(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
 app.use((req,res,next)=>{
   const origin=req.get('origin');
-  const publicSubmit=req.path==='/api/booking/requests' && (req.method==='POST'||req.method==='OPTIONS');
+  const publicSubmit=['/api/booking/requests','/api/commerce/orders'].includes(req.path) && (req.method==='POST'||req.method==='OPTIONS');
   // The protected B4 login works on the same public QA Preview page.
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
@@ -31,6 +32,7 @@ app.use((req,res,next)=>{
   next();
 });
 app.use('/api/booking',bookingRouter());
+app.use('/api/commerce',commerceRouter());
 app.use('/api/qa',qaRouter()); // disabled unless explicit STAGING-only RMC_QA_MODE=1 + secret
 app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));

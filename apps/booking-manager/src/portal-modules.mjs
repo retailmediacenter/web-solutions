@@ -1,7 +1,8 @@
 // Shared, data-only module detection. Future Commerce can enable orders here
 // without making the Portal home or settings depend on a booking calendar.
 export function portalModules(profile={}){
-  return {booking:Array.isArray(profile.services)&&profile.services.length>0,orders:false};
+  const sourceServices=profile.siteProfile?profile.siteProfile.services:profile.services;
+  return {booking:Array.isArray(sourceServices)&&sourceServices.length>0,orders:profile.siteProfile?.commerce?.enabled===true};
 }
 
 // Older local backups may contain several profiles. Keep the last active

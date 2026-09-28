@@ -13,14 +13,19 @@ export function validSiteProfile(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))return null;
  const business=raw.business&&typeof raw.business==='object'&&!Array.isArray(raw.business)?raw.business:{};
  const name=text(business.name,100),services=Array.isArray(raw.services)?raw.services:[];
- if(!name||!services.length||services.length>60)return null;
+ const commerce=raw.commerce?.enabled===true?raw.commerce:null;
+ if(!name||services.length>60||(!services.length&&!commerce))return null;
+ if(commerce){
+  if(commerce.currency!=='RSD'||!Array.isArray(commerce.products)||!commerce.products.length||commerce.products.length>500)return null;
+  if(commerce.products.some(p=>!p||!(/^[A-Za-z0-9:_-]{2,120}$/).test(p.id||'')||!p.name||!['kom','kg','par'].includes(p.unit)||!Number.isFinite(p.price)||p.price<0))return null;
+ }
  const used=new Set(),normalized=[];
  for(const service of services){
   const id=text(service?.id,120),serviceName=text(service?.name,100);
   if(!/^[A-Za-z0-9:_-]{2,120}$/.test(id)||!serviceName||used.has(id))return null;
   used.add(id);normalized.push({id,name:serviceName});
  }
- return {version:1,business:{name,phone:text(business.phone,35),email:text(business.email,160),city:text(business.city,80),address:text(business.address,180),hours:text(business.hours,140)},services:normalized};
+ return {version:commerce?2:1,business:{name,phone:text(business.phone,35),email:text(business.email,160),city:text(business.city,80),address:text(business.address,180),hours:text(business.hours,140)},services:normalized,...(commerce?{commerce:structuredClone(commerce)}:{})};
 }
 const sameName=(a,b)=>String(a||'').toLocaleLowerCase('sr').trim()===String(b||'').toLocaleLowerCase('sr').trim();
 // Preserve local schedule and all existing bookings. Re-pairing updates only
@@ -28,6 +33,7 @@ const sameName=(a,b)=>String(a||'').toLocaleLowerCase('sr').trim()===String(b||'
 export function applySiteProfile(profile,raw){
  const siteProfile=validSiteProfile(raw);if(!siteProfile)throw new Error('Server nije vratio ispravan Booking profil sajta.');
  profile.siteProfile=siteProfile;profile.name=siteProfile.business.name;
+ if(!Array.isArray(profile.services))profile.services=[];
  for(const incoming of siteProfile.services){
   let service=(profile.services||[]).find(item=>item.siteServiceId===incoming.id);
   if(!service)service=(profile.services||[]).find(item=>!item.siteServiceId&&sameName(item.name,incoming.name));
@@ -50,7 +56,7 @@ export async function claimPairing(apiOrigin,pairingCode,{fetcher}={}){
  const result=await request(apiOrigin,'/pairings/claim',{method:'POST',body:{pairingCode},fetcher});
  if(!/^[A-Za-z0-9_-]{24}$/.test(result.siteId||'')||!/^[A-Za-z0-9_-]{43}$/.test(result.accessToken||''))throw new Error('Server nije vratio validne pristupne podatke.');
  const profile=result.profile==null?null:validSiteProfile(result.profile);
- if(result.profile!=null&&!profile)throw new Error('Server nije vratio ispravan Booking profil sajta.');
+ if(result.profile!=null&&!profile)throw new Error('Server nije vratio ispravan poslovni profil sajta.');
  return {siteId:result.siteId,accessToken:result.accessToken,profile};
 }
 export async function getPushPublicKey(connection,{fetcher}={}){
@@ -92,4 +98,36 @@ export async function pullInbox({connection,profile,bookings,save,normalize,fetc
 export async function disconnectRemote(connection,{fetcher}={}){
  if(!/^[A-Za-z0-9_-]{24}$/.test(connection?.siteId||'')||!/^[A-Za-z0-9_-]{43}$/.test(connection?.accessToken||''))throw new Error('Neispravno lokalno povezivanje.');
  return request(connection.apiOrigin,`/connections/${connection.siteId}`,{method:'DELETE',token:connection.accessToken,fetcher});
+}
+
+// V46.0: separate ORDER/INQUIRY inbox, identical SITE ID and owner token.
+// The caller MUST provide IndexedDB-backed `save` that rejects on failure.
+export async function pullOrderInbox({connection,profile,orders,save,normalize,fetcher}){
+ const {apiOrigin,siteId,accessToken}=connection;
+ if(!/^[A-Za-z0-9_-]{24}$/.test(siteId||'')||!/^[A-Za-z0-9_-]{43}$/.test(accessToken||''))throw new Error('Neispravno povezivanje.');
+ // Booking's existing request() is unchanged; Commerce uses its own route.
+ const commerceRequest=async(path,opts={})=>{
+  const response=await (fetcher||fetch)(`${validApiOrigin(apiOrigin)}/api/commerce${path}`,{
+   method:opts.method||'GET',headers:{Authorization:`Bearer ${accessToken}`},cache:'no-store',signal:AbortSignal.timeout(12000)});
+  let result;try{result=await response.json();}catch{throw new Error('Commerce API nije vratio odgovor.');}
+  if(!response.ok)throw new Error(result?.error||`Commerce greška (${response.status}).`);return result;
+ };
+ if(!Array.isArray(orders))throw new Error('Lokalna lista porudžbina nije inicijalizovana.');
+ if(typeof save!=='function'||typeof normalize!=='function')throw new Error('Nedostaje bezbedno čuvanje porudžbina.');
+ const result=await commerceRequest(`/orders/${siteId}`);
+ if(!Array.isArray(result.orders)||result.orders.length>250)throw new Error('Commerce API je vratio neispravno sanduče.');
+ let added=0;
+ for(const incoming of result.orders){
+  if(!incoming||typeof incoming.requestId!=='string'||!/^[0-9a-f-]{36}$/i.test(incoming.requestId))throw new Error('Neispravan ID porudžbine.');
+  const existing=orders.find(item=>item.sourceSiteId===siteId&&item.sourceRequestId===incoming.requestId);
+  if(!existing){
+   const candidate=normalize(incoming,profile.id,siteId);
+   orders.push(candidate);
+   try{await save();}catch(error){orders.splice(orders.indexOf(candidate),1);throw error;}
+   added++;
+  }
+  // ACK strictly after successful local save, or for an already saved request.
+  await commerceRequest(`/orders/${siteId}/${incoming.requestId}/ack`,{method:'POST'});
+ }
+ return added;
 }

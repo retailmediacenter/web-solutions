@@ -1,5 +1,6 @@
 /* V43.2.1: short one-time pairing + durable Redis inbox. No manager credentials in exported sites. */
 import {randomBytes,createHash,timingSafeEqual} from 'node:crypto';
+import {normalizeCommerceProfile} from './commerce-profile.js';
 const QUEUE_TTL=72*60*60, CODE_TTL=30*60;
 const PREFIX='rmc:booking:v1:';
 const sha=value=>createHash('sha256').update(value).digest('hex');
@@ -38,13 +39,16 @@ function parseBookingProfile(raw){
  const name=profileText(business.name,100);
  if(!name)throw err(400,'Booking profil nema naziv firme.');
  const services=Array.isArray(raw.services)?raw.services:[];
- if(!services.length||services.length>60)throw err(400,'Booking profil nema ispravne usluge.');
+ const commerce=raw.commerce==null?null:normalizeCommerceProfile(raw.commerce);
+ if(services.length>60||(!services.length&&!commerce))throw err(400,'Poslovni profil mora imati Booking usluge ili aktivan Commerce katalog.');
  const used=new Set();
- return {version:1,business:{name,phone:profileText(business.phone,35),email:profileText(business.email,160),city:profileText(business.city,80),address:profileText(business.address,180),hours:profileText(business.hours,140)},services:services.map(service=>{
+ const validated={version:commerce?2:1,business:{name,phone:profileText(business.phone,35),email:profileText(business.email,160),city:profileText(business.city,80),address:profileText(business.address,180),hours:profileText(business.hours,140)},services:services.map(service=>{
   const id=profileText(service?.id,120),serviceName=profileText(service?.name,100);
   if(!/^[A-Za-z0-9:_-]{2,120}$/.test(id)||!serviceName||used.has(id))throw err(400,'Booking profil ima neispravnu uslugu.');
   used.add(id);return {id,name:serviceName};
  })};
+ if(commerce)validated.commerce=commerce;
+ return validated;
 }
 function parseBooking(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Neispravna rezervacija.');
@@ -89,6 +93,11 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode}={
    const siteId=ensureSite(pairing?.siteId);
    const profile=parseBookingProfile(pairing?.profile);
    const accessToken=randomBytes(32).toString('base64url');
+   // Persist only trusted, server-issued product facts. Commerce requests
+   // resolve SKU/price against this snapshot, NEVER customer JSON.
+   // Re-pair always replaces the saved source profile. Booking-only renewal
+   // consequently revokes any older Commerce permission for this SITE ID.
+   await redis('SET',key('profile',siteId),JSON.stringify(profile));
    await redis('SET',key('owner',siteId),sha(accessToken));
    return {siteId,accessToken,profile};
  }
