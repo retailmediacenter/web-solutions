@@ -118,6 +118,23 @@ function extractZip(buffer,target){
   assert(name!=='BOOKING_UPARIVANJE.txt'&&!name.toLowerCase().includes('pairing'),`STOP: vlasnički kod u exportu: ${name}`);
   const from=pos+30+nameLen+extra;
   assert(from+comp<=buffer.length,'ZIP je nepotpun');
+  // The all-in-one iPhone HTML is delivered inside customer ZIPs only.
+  // Public QA uses the standard index.html and individual assets; do not
+  // unpack or publish this optional large file in the nine QA exports.
+  // Still validate its declared size and actual HTML before skipping it.
+  if(name==='PREGLED_NA_TELEFONU.html'){
+    const previewLimit=32*1024*1024;
+    assert(raw>0&&raw<=previewLimit&&comp>0&&comp<=previewLimit,
+      'Offline preview size exceeds QA audit limit');
+    const previewChunk=buffer.subarray(from,from+comp);
+    const previewHtml=method===8
+      ?inflateRawSync(previewChunk,{maxOutputLength:previewLimit}):previewChunk;
+    assert(previewHtml.length===raw&&/^\s*<!doctype\s+html/i.test(previewHtml.subarray(0,256).toString('utf8')),
+      'Offline preview is not a valid HTML ZIP entry');
+    pos=from+comp;n++;
+    assert(n<=70,'Previše fajlova u exportu');
+    continue;
+  }
   const chunk=buffer.subarray(from,from+comp),data=method===8?inflateRawSync(chunk):chunk;
   assert(data.length===raw&&data.length<=5*1024*1024,'ZIP sadržaj je neispravan/prevelik');
   const full=path.join(target,...name.split('/'));
