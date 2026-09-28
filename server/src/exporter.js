@@ -7,6 +7,13 @@ import {addLocalPhonePreview} from './offline-preview.js';
 const projectRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../');
 const publicRoot=path.join(projectRoot,'client','public');
 function staticFile(name){return readFileSync(path.join(publicRoot,name));}
+/** Export-only script injection. The app Preview remains safe and unpaired. */
+export function injectCommerceSender(html,siteConfig){
+ if(!siteConfig?.commerceTransport)return html;
+ const marker='<script src="export-runtime.js" defer></script>';
+ if(!html.includes(marker))throw new Error('Nedostaje Commerce export runtime.');
+ return html.replace(marker,'<script src="commerce-submit.js" defer></script>'+marker);
+}
 export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
   // pairingCode/expiresIn accepted for compatibility only. A ZIP is publishable
   // and must never contain the one-time owner code. The generator receives it
@@ -17,6 +24,7 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
     siteHtml=siteHtml.replace(/<script src="(booking-runtime|export-runtime)\.js" defer><\/script>/,
       '<script src="booking-submit.js" defer></script>$&');
   }
+  siteHtml=injectCommerceSender(siteHtml,payload.siteConfig);
   const catalog=payload.catalog;
   const isService=!!payload.siteConfig.capabilities?.serviceProfile;
   const isVertical=!!payload.siteConfig.capabilities?.vertical;
@@ -27,6 +35,7 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
     {name:'index.html',data:siteHtml},
     {name:'site.css',data:staticFile('site.css')},
     {name:'export-runtime.js',data:staticFile('export-runtime.js')},
+    ...(payload.siteConfig.commerceTransport?[{name:'commerce-submit.js',data:staticFile('commerce-submit.js')}]:[]),
     ...(payload.siteConfig.bookingTransport?[{name:'booking-submit.js',data:staticFile('booking-submit.js')}]:[]),
     {name:'visual-system.css',data:staticFile('visual-system.css')},
     {name:'global-modal.css',data:staticFile('global-modal.css')},

@@ -10,6 +10,7 @@
   const money=n=>new Intl.NumberFormat('sr-RS',{maximumFractionDigits:0}).format(n)+' RSD';
   const products=new Map(catalog.products.map(p=>[p.id,p]));
   let chosen=null,cart=[],orderSelection=[],orderIntent='purchase',prepared='',bookingPrepared='';
+  let commerceSending=false,commerceRetry=null;
   const minQty=p=>p?.unit==='kg'?.5:1;
   const stepQty=p=>p?.step||1;
   const roundQty=n=>Math.round(n*100)/100;
@@ -99,9 +100,9 @@
     orderIntent=intent;
     $('orderKicker').textContent=intent==='inquiry'?'UPIT':'PORUDŽBINA';
     $('orderHeading').textContent=intent==='inquiry'?'Proverite dostupnost proizvoda':'Proverite i pošaljite zahtev';
-    $('orderSubmit').textContent=intent==='inquiry'?'Pripremi upit':'Pripremi poruku';
+    $('orderSubmit').textContent=site.commerceTransport?'Pošalji zahtev':(intent==='inquiry'?'Pripremi upit':'Pripremi poruku');
     $('fulfillmentWrap').hidden=intent==='inquiry';
-    $('orderForm').hidden=false;$('sharePanel').hidden=true;$('orderForm').reset();prepared='';
+    $('orderForm').hidden=false;$('sharePanel').hidden=true;$('orderLivePanel').hidden=true;$('orderForm').reset();prepared='';
     show($('orderDialog'));
   }
   function messageFor(lines,info){
@@ -170,6 +171,8 @@
     if(minus||plus){const i=Number((minus||plus).dataset.cartMinus??(minus||plus).dataset.cartPlus),line=cart[i];if(line){const next=roundQty(line.qty+(plus?stepQty(line):-stepQty(line)));if(next<minQty(line))cart.splice(i,1);else line.qty=next;updateCart();}return;}
     if(e.target.closest('#clearCart')){cart=[];updateCart();return;}
     if(e.target.closest('#orderFromCart')){order(cart);return;}
+    if(e.target.closest('#orderLiveRetry')){$('orderForm').requestSubmit();return;}
+    if(e.target.closest('#orderLiveClose')){$('orderDialog').close();return;}
     if(e.target.closest('#copyMessage')){copyText(prepared,'copyStatus');return;}
     if(e.target.closest('#viberMessage')){tryCopyBeforeViber(prepared,'copyStatus');return;}
     if(e.target.closest('#copyBooking')){copyText(bookingPrepared);$('copyBooking').textContent='Kopirano ✓';return;}
@@ -184,9 +187,37 @@
     $('catalogCount').textContent=`Prikazano: ${count}`;
   }
   $('catalogSearch').addEventListener('input',applyFilter);
-  $('orderForm').addEventListener('submit',e=>{
-    e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
+  $('orderForm').addEventListener('submit',async e=>{
+    e.preventDefault();const form=e.currentTarget;if(commerceSending||!form.reportValidity())return;
     const info=Object.fromEntries(new FormData(form).entries());
+    if(site.commerceTransport && site.capabilities.commerce){
+      const live=$('orderLivePanel'),message=$('orderLiveMessage'),code=$('orderConfirmationCode'),retryButton=$('orderLiveRetry'),closeButton=$('orderLiveClose');
+      const setState=(text,{retry=false,close=false,confirmation=''}={})=>{
+        live.hidden=false;message.textContent=text;code.textContent=confirmation;
+        retryButton.hidden=!retry;closeButton.hidden=!close;
+      };
+      const data={type:orderIntent==='inquiry'?'INQUIRY':'ORDER',clientName:info.name,phone:info.phone,
+        note:info.note||'',fulfillment:orderIntent==='inquiry'?'':info.fulfillment==='Preuzimanje u radnji'?'PICKUP':'AGREEMENT',
+        items:orderSelection.map(line=>({productId:line.id,quantity:line.qty,size:line.size||'',
+          preparation:line.preparation||'',variant:line.variant||''}))};
+      const fingerprint=JSON.stringify(data);
+      if(!commerceRetry || commerceRetry.fingerprint!==fingerprint){
+        if(!crypto?.randomUUID){setState('Otvorite sajt putem HTTPS-a da biste poslali zahtev.',{retry:false});return;}
+        commerceRetry={fingerprint,requestId:crypto.randomUUID()};
+      }
+      commerceSending=true;form.querySelector('[type="submit"]').disabled=true;
+      setState('Šaljemo zahtev. Sačekajte potvrdu.');
+      try{
+        if(!window.RMCCommerceSubmit)throw new Error('Modul za slanje porudžbina nije učitan.');
+        const receipt=await window.RMCCommerceSubmit.send(site.commerceTransport,{...data,requestId:commerceRetry.requestId});
+        form.hidden=true;
+        setState((data.type==='INQUIRY'?'Upit je primljen.':'Zahtev za porudžbinu je primljen.')+' Prodavnica će potvrditi dostupnost, cenu i preuzimanje.',
+          {close:true,confirmation:receipt.orderCode});
+      }catch(error){setState('Zahtev nije potvrđen. '+error.message,{retry:true});}
+      finally{commerceSending=false;form.querySelector('[type="submit"]').disabled=false;}
+      return;
+    }
+    // Existing offline/preview fallback remains explicit: prepares a message, no fake order receipt.
     prepared=messageFor(orderSelection,info);
     $('orderMessage').textContent=prepared;$('waMessage').href=whatsappUrl(prepared);$('viberMessage').href=viberUrl(prepared);
     form.hidden=true;$('sharePanel').hidden=false;

@@ -10,6 +10,7 @@ import { exportSiteZip } from './exporter.js';
 import {bookingRouter} from './booking-routes.js';
 import {commerceRouter} from './commerce-routes.js';
 import {createBookingQueue} from './booking-queue.js';
+import {attachPublicSiteTransport} from './site-export-transport.js';
 import {qaRouter} from './qa-routes.js';
 import {mergeAdvisorSignals,changedAdvisorSignals,safeAdvisorAcknowledgement,interpretShortAnswer} from './advisor-dialog.js';
 import {phraseVerifiedTurn,answerApprovedAdvisorQuestion} from './advisor-dialog-ai.js';
@@ -141,16 +142,10 @@ app.post('/api/site/export',async(req,res)=>{
   if(exportHits.size>500){for(const [ip,times] of exportHits)if(times.every(t=>now-t>60000))exportHits.delete(ip);}
   try{
     const payload=buildSitePayload(req.body||{});
-    // Bookings only: issue an independent, expiring pairing for this exact ZIP.
-    // The public site ID is embedded; the secret stays only with Booking Manager.
-    const book=payload.siteConfig.capabilities?.booking;
-    const needsPairing=!!(book?.enabled&&payload.siteConfig.bookingProfile);
-    let issued=null;
-    if(needsPairing){
-      if(payload.siteConfig.bookingPairing)throw Object.assign(new Error('Stari kod za šifrovane linkove nije kompatibilan sa novim izvozom. Uklonite ga i ponovite izvoz.'),{status:400});
-      issued=await createBookingQueue().issue(payload.siteConfig.bookingProfile);
-      payload.siteConfig.bookingTransport={siteId:issued.siteId,apiBaseUrl:process.env.PUBLIC_API_BASE_URL||(process.env.NODE_ENV==='production'?(()=>{throw Object.assign(new Error('PUBLIC_API_BASE_URL nije konfigurisan.'),{status:503});})():`http://localhost:${process.env.PORT||3000}`)};
-    }
+    // One pairing and SITE ID for Booking, Commerce, or BOTH; never in ZIP.
+    const issued=await attachPublicSiteTransport(payload,createBookingQueue(),{
+      apiBaseUrl:process.env.PUBLIC_API_BASE_URL||(process.env.NODE_ENV==='production'?'':`http://localhost:${process.env.PORT||3000}`)
+    });
     const zip=exportSiteZip(payload,{pairingCode:issued?.pairingCode,expiresIn:issued?.expiresIn});
     if(issued)res.set({'X-RMC-Booking-Code':issued.pairingCode,'X-RMC-Booking-Expires':String(issued.expiresIn)});
     res.set({ 'Content-Type':'application/zip', 'Content-Disposition':'attachment; filename="rmc-besplatan-sajt.zip"', 'Cache-Control':'no-store', 'Content-Length':String(zip.length)}).end(zip);
