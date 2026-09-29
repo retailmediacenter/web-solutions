@@ -36,6 +36,17 @@ test('only activation issues a one-time code and it claims the stored profile',a
  await assert.rejects(()=>queue.claim(issued.pairingCode),/iskorišćen/);
 });
 
+test('activated export adds only the selected Portal transport to the stored source payload',async()=>{
+ const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue);
+ const payload={siteConfig:structuredClone(bookable),catalog:{hero:'assets/images/curated/salon/hero.jpg',services:[]}};
+ const created=await projects.register(payload);
+ const activated=await projects.activateExport(created.siteId,'booking','https://api.example.test');
+ assert.equal(activated.payload.siteConfig.projectId,created.siteId);
+ assert.deepEqual(activated.payload.siteConfig.bookingTransport,{siteId:created.siteId,apiBaseUrl:'https://api.example.test'});
+ assert.equal(activated.payload.siteConfig.commerceTransport,undefined);
+ assert.match(activated.pairingCode,/^[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{2}$/);
+});
+
 test('a project without a Portal capability is never registered for activation',async()=>{
  const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue);
  assert.equal(await projects.register({capabilities:{booking:{enabled:false},commerce:false}}),null);

@@ -147,7 +147,7 @@ app.post('/api/site/export',async(req,res)=>{
     const payload=buildSitePayload(req.body||{});
     // A public ZIP receives only a non-secret Project ID. Pairing is issued later
     // by an authenticated RMC administrator after package activation.
-    const project=await projectRegistry.register(payload.siteConfig);
+    const project=await projectRegistry.register(payload);
     if(project)payload.siteConfig.projectId=project.siteId;
     const zip=exportSiteZip(payload);
     if(project)res.set('X-RMC-Project-Id',project.siteId);

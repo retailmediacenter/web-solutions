@@ -13,7 +13,8 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   try{return JSON.parse(raw);}catch{throw invalid('Sačuvani projekat nije čitljiv.',503);}
  };
  const save=async project=>{await queue.redis('SET',key(project.siteId),JSON.stringify(project));return project;};
- async function register(site){
+ async function register(sourcePayload){
+  const site=sourcePayload?.siteConfig||sourcePayload;
   const booking=Boolean(site?.capabilities?.booking?.enabled&&site.bookingProfile?.services?.length);
   const commerce=Boolean(site?.capabilities?.commerce&&site.siteProfile?.commerce?.enabled);
   if(!booking&&!commerce)return null;
@@ -24,7 +25,7 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
    profiles.business=queue.validateProfile(site.siteProfile);
   }else profiles.business=profiles.booking;
   for(let attempt=0;attempt<4;attempt++){
-   const siteId=id(),project={version:1,siteId,business:{name:profiles.business.business.name},capabilities:{booking,commerce},profiles,siteConfig:site,createdAt:now(),activation:null};
+   const siteId=id(),project={version:2,siteId,business:{name:profiles.business.business.name},capabilities:{booking,commerce},profiles,siteConfig:site,sourcePayload:sourcePayload?.siteConfig?sourcePayload:{siteConfig:site},createdAt:now(),activation:null};
    if(await queue.redis('SET',key(siteId),JSON.stringify(project),'NX'))return project;
   }
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
@@ -38,5 +39,27 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name};
  }
- return {register,summary,activate};
+ async function activateExport(siteId,packageName,apiBaseUrl){
+  const project=await read(siteId),name=String(packageName||'').toLowerCase();
+  const profile=name==='booking'?project.profiles.booking:name==='commerce'?project.profiles.commerce:name==='business'?project.profiles.business:null;
+  if(!profile)throw invalid('Izabrani paket nije dostupan za ovaj projekat.');
+  let url;try{url=new URL(apiBaseUrl);}catch{throw invalid('Produkcioni API za aktivirani ZIP nije podešen.',503);}
+  if(url.protocol!=='https:'||url.pathname!=='/'||url.search||url.hash)throw invalid('Produkcioni API za aktivirani ZIP nije bezbedno podešen.',503);
+  if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvane podatke za aktivirani ZIP. Generišite ga ponovo.',409);
+  const payload=structuredClone(project.sourcePayload),site=payload.siteConfig;
+  site.projectId=project.siteId;
+  const transport={siteId:project.siteId,apiBaseUrl:url.origin};
+  if(name==='booking'||name==='business'){
+   if(!project.profiles.booking)throw invalid('Booking paket nije dostupan za ovaj projekat.');
+   site.bookingTransport=transport;
+  }
+  if(name==='commerce'||name==='business'){
+   if(!project.profiles.commerce)throw invalid('Commerce paket nije dostupan za ovaj projekat.');
+   site.commerceTransport=transport;
+  }
+  const issued=await queue.issue(profile,{siteId:project.siteId});
+  project.activation={package:name,issuedAt:now()};await save(project);
+  return {...issued,package:name,payload};
+ }
+ return {register,summary,activate,activateExport};
 }

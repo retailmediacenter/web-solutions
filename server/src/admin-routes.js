@@ -1,5 +1,6 @@
 import {Router} from 'express';
 import {createHash,randomBytes,timingSafeEqual} from 'node:crypto';
+import {exportSiteZip} from './exporter.js';
 
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const same=(a,b)=>typeof a==='string'&&typeof b==='string'&&timingSafeEqual(Buffer.from(hash(a),'hex'),Buffer.from(hash(b),'hex'));
@@ -20,6 +21,13 @@ export function adminRouter(projects,{now=Date.now}={}){
   router.use((req,res,next)=>valid(auth(req))?next():res.status(401).json({error:'Administratorska sesija je istekla.'}));
   router.get('/projects/:siteId',(req,res,next)=>projects.summary(req.params.siteId).then(project=>res.json({project})).catch(next));
   router.post('/projects/:siteId/activate',(req,res,next)=>projects.activate(req.params.siteId,req.body?.package).then(result=>res.status(201).json(result)).catch(next));
+  router.post('/projects/:siteId/activated-export',async(req,res,next)=>{
+   try{
+    const result=await projects.activateExport(req.params.siteId,req.body?.package,process.env.PUBLIC_API_BASE_URL);
+    const zip=exportSiteZip(result.payload);
+    res.set({'Content-Type':'application/zip','Content-Disposition':'attachment; filename="rmc-aktivirani-sajt.zip"','Cache-Control':'no-store','Content-Length':String(zip.length),'X-RMC-Booking-Code':result.pairingCode,'X-RMC-Booking-Expires':String(result.expiresIn)}).status(201).end(zip);
+   }catch(error){next(error);}
+  });
   router.use((error,_req,res,_next)=>res.status(error?.status||503).json({error:error?.message||'Administrativna operacija nije uspela.'}));
   return router;
 }
