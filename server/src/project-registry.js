@@ -24,6 +24,15 @@ const formFields=value=>{
   if(type==='select'&&(options.length<2||options.length>10))throw invalid('Izbor mora imati od 2 do 10 opcija.');if(type!=='select'&&options.length)throw invalid('Opcije su dozvoljene samo za polje izbora.');
   return {id,label,type,required:Boolean(row?.required),placeholder:text(row?.placeholder,120),options};});
 };
+const creatorFieldTypes=new Set(['text','textarea','select','checkbox','email','tel','date','number']);
+const creatorFields=value=>{
+ const rows=Array.isArray(value)?value:[];if(rows.length<1||rows.length>12)throw invalid('Nova forma mora imati od 1 do 12 polja.');
+ const used=new Set();return rows.map((row,index)=>{const id=text(row?.id,50),label=text(row?.label,80),type=text(row?.type,20),options=Array.isArray(row?.options)?row.options.map(x=>text(x,80)).filter(Boolean):[];
+  if(!/^field-[a-z0-9_-]{2,42}$/i.test(id)||used.has(id)||!label||!creatorFieldTypes.has(type))throw invalid(`Polje nove forme ${index+1} nije ispravno.`);used.add(id);
+  if(type==='select'&&(options.length<2||options.length>10))throw invalid('Lista izbora mora imati od 2 do 10 opcija.');if(type!=='select'&&options.length)throw invalid('Opcije su dozvoljene samo za listu izbora.');
+  return {id,label,type,required:Boolean(row?.required),placeholder:text(row?.placeholder,120),options};});
+};
+const email=value=>{const result=text(value,180);if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result))throw invalid('Nova forma mora imati ispravnu e-mail adresu primaoca.');return result;};
 const listKey=catalog=>Array.isArray(catalog?.services)?'services':Array.isArray(catalog?.products)?'products':Array.isArray(catalog?.cards)?'cards':null;
 
 // The editor deliberately accepts a narrow content document instead of a raw
@@ -59,7 +68,7 @@ function applyEditorContent(project,content,now){
  const safeForm={title:moduleText(bookingForm.title,120,''),description:moduleText(bookingForm.description,600,''),submitLabel:moduleText(bookingForm.submitLabel,80,''),successMessage:moduleText(bookingForm.successMessage,240,''),fields:formFields(bookingForm.fields)};
  catalog.editorModules={services:{kicker:moduleText(services.kicker,40,'PONUDA'),description:moduleText(services.description,500,'Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.')},booking:{kicker:moduleText(booking.kicker,40,''),title:moduleText(booking.title,120,''),description:moduleText(booking.description,600,''),form:safeForm}};
  if(site.bookingProfile)site.bookingProfile.form=safeForm;
- site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const title=moduleText(entry?.title,120);const body=moduleText(entry?.body,1200);if(!title||!body)throw invalid(`Novi blok ${index+1} mora imati naslov i tekst.`);return {id:text(entry?.id,80)||`custom-${index+1}`,kicker:moduleText(entry?.kicker,40,''),title,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
+ site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const type=entry?.type==='form'?'form':'content',title=moduleText(entry?.title,120);if(!title)throw invalid(`Novi blok ${index+1} mora imati naslov.`);const base={id:text(entry?.id,80)||`custom-${index+1}`,type,kicker:moduleText(entry?.kicker,40,''),title};if(type==='form'){const form=entry?.form&&typeof entry.form==='object'?entry.form:{};return {...base,body:moduleText(entry?.body,600,''),form:{recipient:email(form.recipient),submitLabel:moduleText(form.submitLabel,80,'Pošalji upit'),successMessage:moduleText(form.successMessage,240,'Otvaramo poruku za slanje.'),fields:creatorFields(form.fields)}};}const body=moduleText(entry?.body,1200);if(!body)throw invalid(`Novi blok ${index+1} mora imati tekst.`);return {...base,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
  const key=listKey(catalog),incoming=content.items;
  if(key&&incoming!==undefined){
   if(!Array.isArray(incoming)||incoming.length<1||incoming.length>500)throw invalid('Ponuda mora imati između 1 i 500 stavki.');
