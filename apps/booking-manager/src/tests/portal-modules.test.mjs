@@ -8,10 +8,11 @@ test('Commerce-ready Portal profile does not require a booking calendar',()=>{
   assert.deepEqual(portalModules({services:[{id:'cut'}]}),{booking:true,orders:false});
 });
 
-test('existing multi-profile data keeps its active profile without deleting legacy profiles',()=>{
+test('existing unpaired local data never becomes the active public Portal profile',()=>{
  const profiles=[{id:'old'},{id:'connected',queueConnection:{siteId:'site'}},{id:'active'}];
- assert.equal(activePortalProfileId(profiles,'active'),'active');
+ assert.equal(activePortalProfileId(profiles,'active'),'connected');
  assert.equal(activePortalProfileId(profiles,'missing'),'connected');
+ assert.equal(activePortalProfileId([{id:'legacy'}],'legacy'),null);
  assert.equal(activePortalProfileId([],''),null);
 });
 

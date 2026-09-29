@@ -206,7 +206,7 @@ function openChannel(b,channelName){
   }
 }function refresh(){
   const p=profile();
-  if(!p){
+  if(!p||(!demoMode&&!p.queueConnection)){
     stateUI.view='home';
     document.querySelector('.workspace').hidden=true;
     byId('business-name').textContent='Povežite firmu';

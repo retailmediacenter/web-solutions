@@ -5,12 +5,12 @@ export function portalModules(profile={}){
   return {booking:Array.isArray(sourceServices)&&sourceServices.length>0,orders:profile.siteProfile?.commerce?.enabled===true};
 }
 
-// Older local backups may contain several profiles. Keep the last active
-// profile whenever possible; the remaining profiles stay intact as legacy
-// local data and are no longer exposed by the one-business Portal UI.
+// Public Portal starts only with an actually connected site. Older local
+// profiles remain in IndexedDB for backup/recovery, but must never look like
+// an active business while Settings correctly asks for a pairing code.
 export function activePortalProfileId(profiles=[],activeProfileId=''){
-  if(profiles.some(profile=>profile?.id===activeProfileId))return activeProfileId;
-  return profiles.find(profile=>profile?.queueConnection)?.id||profiles[0]?.id||null;
+  if(profiles.some(profile=>profile?.id===activeProfileId&&profile?.queueConnection))return activeProfileId;
+  return profiles.find(profile=>profile?.queueConnection)?.id||null;
 }
 
 export function activatePortalProfile(state,profile){
