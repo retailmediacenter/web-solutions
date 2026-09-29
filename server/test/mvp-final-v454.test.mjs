@@ -50,7 +50,7 @@ test('V45.4: existing Booking and non-Booking service request targets are not re
   else assert.match(html,/class="service-contact-form"/);
  }
 });
-test('V45.4: only existing UI collects the staged inputs; booking/export request payload is unchanged',()=>{
+test('V45.4/V47: staged inputs remain, while public Advisor has no pairing-code input',()=>{
  const ui=readFileSync(path.join(root,'client/src/main.jsx'),'utf8');
  assert.match(ui,/companyStage===0/);
  assert.match(ui,/companyStage===1/);
@@ -60,5 +60,5 @@ test('V45.4: only existing UI collects the staged inputs; booking/export request
  assert.match(ui,/\/api\/site\/generate/);
  assert.match(ui,/\/api\/site\/export/);
  assert.match(ui,/externalBookingUrl/);
- assert.match(ui,/bookingPairing|exportPairing/);
+ assert.doesNotMatch(ui,/bookingPairing|exportPairing/);
 });
