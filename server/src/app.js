@@ -28,7 +28,7 @@ app.use((req,res,next)=>{
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
   if(origin&&(origins.includes(origin)||publicSubmit||qaPreview)){
-    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Expose-Headers':'X-RMC-Project-Id','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
+    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
   }
   if(req.method==='OPTIONS')return (origins.includes(origin)||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
   next();
@@ -150,8 +150,7 @@ app.post('/api/site/export',async(req,res)=>{
     const project=await projectRegistry.register(payload);
     if(project)payload.siteConfig.projectId=project.siteId;
     const zip=exportSiteZip(payload);
-    if(project)res.set('X-RMC-Project-Id',project.siteId);
-    res.set({ 'Content-Type':'application/zip', 'Content-Disposition':'attachment; filename="rmc-besplatan-sajt.zip"', 'Cache-Control':'no-store', 'Content-Length':String(zip.length)}).end(zip);
+      res.set({ 'Content-Type':'application/zip', 'Content-Disposition':'attachment; filename="rmc-besplatan-sajt.zip"', 'Cache-Control':'no-store', 'Content-Length':String(zip.length)}).end(zip);
   }catch(e){res.status(e.status|| (e.message?.includes('Redis')?503:400)).json({error:e.status?e.message:e.message?.includes('Redis')?'Servis za uparivanje trenutno nije dostupan.':'Izvoz nije uspeo: '+e.message});}
 });
 // Reference V39.5 is served read-only in local development only, NEVER on Render.

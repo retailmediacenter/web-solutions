@@ -88,7 +88,6 @@ function App(){
   const modifyLocation=(index,key,value)=>setExtraLocations(old=>old.map((loc,i)=>i===index?{...loc,[key]:value}:loc));
   const [result,setResult]=useState(null),[loading,setLoading]=useState(false),[error,setError]=useState('');
   const [device,setDevice]=useState('desktop'),[exporting,setExporting]=useState(false);
-  const [exportProject,setExportProject]=useState(null);
   const [advisorOpen,setAdvisorOpen]=useState(false);
   const [advisorAcknowledgement,setAdvisorAcknowledgement]=useState('');
   const [advisorSignals,setAdvisorSignals]=useState({}),[advisorWarnings,setAdvisorWarnings]=useState([]);
@@ -239,7 +238,7 @@ function App(){
     e.preventDefault();setError('');setLoading(true);
     try{
       const data=await json('/api/site/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)});
-      setResult(data);setDevice('desktop');setExportProject(null);setSamplePreview(null);
+      setResult(data);setDevice('desktop');setSamplePreview(null);
       setAdvisorOpen(false);setPreviewOpen(true);
     }catch(ex){setError(ex.message)}finally{setLoading(false)}
   }
@@ -256,20 +255,18 @@ function App(){
         body:JSON.stringify({...input,style:nextStyle})});
       // Commit the style only after a successful preview response: the ZIP
       // export will then use this SAME style through the existing input state.
-      setStyle(nextStyle);setResult(updated);setExportProject(null);
+      setStyle(nextStyle);setResult(updated);
     }catch(ex){setStyleSwitchError('Promena izgleda nije uspela: '+ex.message);}
     finally{styleSwitchLock.current=false;setStyleSwitchBusy(false);}
   }
   async function exportZip(){
-    setError('');setExporting(true);setExportProject(null);
+    setError('');setExporting(true);
     try{
       const response=await fetch(apiUrl('/api/site/export'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(input)});
       if(!response.ok){let error;try{error=(await response.json()).error}catch{}throw new Error(error||'ZIP nije generisan.');}
-      const projectId=response.headers.get('X-RMC-Project-Id');
       const blob=await response.blob(),url=URL.createObjectURL(blob),link=document.createElement('a');
       link.href=url;link.download='RMC_'+(businessName||'besplatan_sajt').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w-]+/g,'_').slice(0,45)+'_WEB.zip';
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
-      if(projectId)setExportProject({id:projectId});
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
   // The last Advisor section continues as four short questions. No change to
@@ -343,7 +340,7 @@ function App(){
     setPreviewOpen(false);setSamplePreview(null);setDefinition(null);setResult(null);
     setSelectedId('');setRecognizedId('');setDescription('');setClarification(null);setClarifyText('');setAdvisorSignals({});setAdvisorWarnings([]);setStep(0);setError('');
     setCompanyStage(0);setBusinessName('');setContactPhone('');setEmail('');setCity('');setAddress('');setHours('');setWebsite('');setWhatsapp('');setViber('');
-    setStyle('modern');setGoal('purchase');setShowWelcome(false);setLocationMode('physical');setExtraLocations([]);setExternalBookingUrl('');setExportProject(null);
+    setStyle('modern');setGoal('purchase');setShowWelcome(false);setLocationMode('physical');setExtraLocations([]);setExternalBookingUrl('');
     setLiveMessages([{id:++messageCounter.current,from:'ai',text:firstPrompt}]);
     setReplyComplete(true);setLatestReplyId(0);setLiveInput('');setAdvisorOpen(true);
   }
@@ -400,7 +397,7 @@ function App(){
       onClose={()=>setPreviewOpen(false)} onStart={startNewSite}
       styles={samplePreview?[]:definition?.styles||[]} selectedStyle={style}
       styleBusy={styleSwitchBusy} styleError={styleSwitchError} onStyleChange={switchPreviewStyle}
-      onExport={exportZip} exporting={exporting||styleSwitchBusy} exportProject={exportProject}
+      onExport={exportZip} exporting={exporting||styleSwitchBusy}
       onEdit={editSite} device={device} onDevice={setDevice} frameRef={previewFrame}/>
     <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>
     <LeadDialog packageName={leadPackage} onClose={()=>setLeadPackage('')}/>
