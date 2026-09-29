@@ -62,6 +62,6 @@ test('disconnect endpoint is private and CORS remains allow-list based',()=>{
  const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
  assert.match(routes,/router\.delete\('\/connections\/:siteId'/);
  assert.match(routes,/queue\.disconnect\(req\.params\.siteId,auth\(req\)\)/);
- assert.match(app,/Access-Control-Allow-Methods.*GET,POST,DELETE,OPTIONS/);
+ assert.match(app,/Access-Control-Allow-Methods.*GET,POST,PUT,DELETE,OPTIONS/);
  assert.match(app,/origins\.includes\(origin\)/);
 });
