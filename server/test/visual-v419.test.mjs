@@ -50,14 +50,18 @@ test('Text wrap and motion accessibility are shared and traditional has no revea
  assert.ok(behavior.includes("dataset.style!=='traditional'"));
 });
 
-test('Optional Welcome is explicitly owned by Advisor, with shared Preview/ZIP modal; default has no forced popup',()=>{
+test('Optional Welcome is explicitly owned by Advisor and uses a real V33 featured item, never the hero',()=>{
  const input={businessId:'butcher-shop',businessName:'Dobro došli',style:'modern',goal:'purchase',answers:{butcherGrillService:'grilled'}};
  const off=renderHtml(buildSitePayload(input));
  const payload=buildSitePayload({...input,answers:{...input.answers,showWelcome:true}});
  const on=renderHtml(payload);
  assert.ok(!off.includes('id="welcomeDialog"'));
- assert.ok(on.includes('id="welcomeDialog"'));
- assert.ok(on.includes('id="welcomeContinue"'));
+  assert.ok(on.includes('id="welcomeDialog"'));
+  assert.ok(on.includes('id="welcomeContinue"'));
+  assert.ok(on.includes('IZDVAJAMO'));
+  assert.ok(on.includes(payload.catalog.products[0].image));
+  assert.equal((on.match(/data-welcome-index=/g)||[]).length,3,'Welcome exposes three V33 items as a slider');
+  assert.ok(!on.includes(`class="welcome-photo" src="${payload.catalog.hero}"`));
  const zip=exportSiteZip(payload);
  const firstNameSize=zip.readUInt16LE(26),compSize=zip.readUInt32LE(18),method=zip.readUInt16LE(8);
  const zippedBody=zip.subarray(30+firstNameSize,30+firstNameSize+compSize);

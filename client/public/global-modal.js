@@ -100,6 +100,23 @@
      const close=()=>{if(welcome.open)welcome.close()};
      welcome.querySelector('#welcomeContinue')?.addEventListener('click',close);
      welcome.querySelector('.dialog-close')?.addEventListener('click',close);
+     let welcomeItems=[];
+     try{welcomeItems=JSON.parse(first(welcome,'[data-welcome-items]')?.dataset.welcomeItems||'[]')}catch{}
+     if(welcomeItems.length>1){
+       let active=0;
+       const setActive=index=>{
+         active=(index+welcomeItems.length)%welcomeItems.length;
+         const item=welcomeItems[active];
+         const title=first(welcome,'[data-welcome-title]'),meta=first(welcome,'[data-welcome-meta]'),image=first(welcome,'[data-welcome-image]');
+         if(title)title.textContent=item.title;
+         if(meta)meta.textContent=`${item.meta}. Pogledajte izdvojenu preporuku iz ponude.`;
+         if(image&&item.image){image.src=item.image;image.alt=item.title;}
+         for(const thumb of welcome.querySelectorAll('[data-welcome-index]')){const on=Number(thumb.dataset.welcomeIndex)===active;thumb.classList.toggle('is-active',on);thumb.setAttribute('aria-pressed',on?'true':'false');}
+       };
+       welcome.querySelector('[data-welcome-prev]')?.addEventListener('click',()=>setActive(active-1));
+       welcome.querySelector('[data-welcome-next]')?.addEventListener('click',()=>setActive(active+1));
+       for(const thumb of welcome.querySelectorAll('[data-welcome-index]'))thumb.addEventListener('click',()=>setActive(Number(thumb.dataset.welcomeIndex)));
+     }
      const key='rmc-welcome-'+(document.title||location.pathname);
      let seen=false;
      try{seen=sessionStorage.getItem(key)==='1';}catch{}

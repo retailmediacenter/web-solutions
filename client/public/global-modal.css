@@ -70,9 +70,20 @@ html body dialog.site-dialog[data-modal-system="v419"] *,html body dialog.site-d
 @media(max-height:520px) and (orientation:landscape){html body dialog.site-dialog[data-modal-system="v419"]{height:96dvh;max-height:96dvh}}
 @media(prefers-reduced-motion:reduce){.site-dialog[data-modal-system="v419"]{transition:none!important;animation:none!important}}
 
-/* Welcome shares EXACT shell and fixed action footer; photo is content, not a theme token. */
-.site-dialog[data-modal-system="v419"] .welcome-photo{width:100%;max-height:clamp(130px,26dvh,220px);object-fit:cover;border-radius:12px;display:block;margin:2px 0 14px}
-.site-dialog[data-modal-system="v419"] .modal-body .welcome-dialog p{color:var(--modal-muted)}
+/* V33 Welcome: three real featured items, responsive from desktop down to iOS portrait. */
+.site-dialog[data-modal-system="v419"] .welcome-featured{display:grid;gap:13px}
+.site-dialog[data-modal-system="v419"] .welcome-stage{min-height:0}
+.site-dialog[data-modal-system="v419"] .welcome-photo{width:100%;height:clamp(145px,27dvh,230px);object-fit:cover;border-radius:12px;display:block}
+.site-dialog[data-modal-system="v419"] .modal-body .welcome-dialog p{margin:0;color:var(--modal-muted)}
+.site-dialog[data-modal-system="v419"] .welcome-slider-controls{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:8px;align-items:center}
+.site-dialog[data-modal-system="v419"] .welcome-arrow{width:42px;height:42px;border:1px solid #d8e1ed;border-radius:50%;background:#fff;color:#182b43;font-size:21px;font-weight:800;cursor:pointer}
+.site-dialog[data-modal-system="v419"] .welcome-arrow:hover,.site-dialog[data-modal-system="v419"] .welcome-arrow:focus-visible{border-color:var(--modal-accent);color:var(--modal-accent)}
+.site-dialog[data-modal-system="v419"] .welcome-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.site-dialog[data-modal-system="v419"] .welcome-thumb{min-width:0;padding:4px;border:1px solid #d8e1ed;border-radius:9px;background:#fff;color:#233750;font:700 10px/1.2 inherit;text-align:left;cursor:pointer;overflow:hidden}
+.site-dialog[data-modal-system="v419"] .welcome-thumb.is-active{border-color:var(--modal-accent);box-shadow:0 0 0 1px var(--modal-accent)}
+.site-dialog[data-modal-system="v419"] .welcome-thumb img{display:block;width:100%;height:42px;object-fit:cover;border-radius:5px;margin-bottom:4px}
+.site-dialog[data-modal-system="v419"] .welcome-thumb span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px 2px}
+@media(max-width:520px){.site-dialog[data-modal-system="v419"] .welcome-photo{height:clamp(135px,25dvh,190px)}.site-dialog[data-modal-system="v419"] .welcome-slider-controls{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}.site-dialog[data-modal-system="v419"] .welcome-arrow{width:36px;height:36px;font-size:18px}.site-dialog[data-modal-system="v419"] .welcome-thumbs{gap:5px}.site-dialog[data-modal-system="v419"] .welcome-thumb{padding:3px;font-size:9px}.site-dialog[data-modal-system="v419"] .welcome-thumb img{height:34px;margin-bottom:3px}}
 
 /* Native <dialog> provides focus isolation; lock scrolling behind it as well. */
 html.has-site-modal,html.has-site-modal body{overflow:hidden!important;overscroll-behavior:none}

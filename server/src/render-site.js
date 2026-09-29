@@ -62,11 +62,27 @@ function renderBaseHtml({siteConfig:site,catalog,secondary}){
 /** Presentation-only system. One HTML output for React iframe and static ZIP. */
 export function renderHtml(payload){
   let html=renderBaseHtml(payload);
-  if(payload.siteConfig?.presentation?.showWelcome){
-    const name=esc(payload.siteConfig.business.name);
-    const photo=payload.catalog?.hero && /^assets\/images\/curated\/[a-z0-9/_-]+\.jpe?g$/.test(payload.catalog.hero)?payload.catalog.hero:null;
-    // Optional: shown only after explicit Advisor opt-in, not a popup forced on all demos.
-    const markup=`<dialog id="welcomeDialog" class="site-dialog welcome-dialog" aria-label="Dobro došli"><button class="dialog-close" type="button" data-close aria-label="Zatvori">×</button><div class="dialog-pad"><div class="kicker">DOBRO DOŠLI</div><h2>${name}</h2>${photo?`<img class="welcome-photo" src="${esc(photo)}" alt="" loading="lazy">`:''}<p>Upoznajte našu ponudu i pronađite ono što vas zanima.</p><div class="dialog-actions"><button class="primary" type="button" id="welcomeContinue">Uđite na sajt</button></div></div></dialog>`;
+  const featuredItems=payload.catalog?.products||payload.catalog?.services||payload.catalog?.cards||[];
+  // V33 owns the Welcome content.  Keep a compact, real three-item selection
+  // rather than substituting the hero image when a site has no highlighted item.
+  const welcomeItems=featuredItems.slice(0,3).filter(item=>item&&item.title);
+  const welcomeItem=welcomeItems[0]||null;
+  // Service and vertical renderers use their real offer section as V33's
+  // source. Retail has a dedicated #izdvajamo section.
+  const welcomeTarget=payload.catalog?.products?'#izdvajamo':payload.catalog?.services?'#usluge':'#ponuda';
+  const hasFeatured=payload.siteConfig?.modulePlan?.active?.includes('featured');
+  if(payload.siteConfig?.presentation?.showWelcome&&hasFeatured&&welcomeItem){
+    const photo=typeof welcomeItem.image==='string'&&/^assets\/images\/curated\/[a-z0-9/_-]+\.jpe?g$/.test(welcomeItem.image)?welcomeItem.image:null;
+    const title=esc(welcomeItem.title||payload.siteConfig.business.name);
+    const meta=esc(welcomeItem.category||'Izdvajamo');
+    const welcomeData=welcomeItems.map(item=>({
+      title:String(item.title||payload.siteConfig.business.name),
+      meta:String(item.category||'Izdvajamo'),
+      image:typeof item.image==='string'&&/^assets\/images\/curated\/[a-z0-9/_-]+\.jpe?g$/.test(item.image)?item.image:''
+    }));
+    const thumbs=welcomeData.map((item,index)=>`<button type="button" class="welcome-thumb${index===0?' is-active':''}" data-welcome-index="${index}" aria-label="Prikaži: ${esc(item.title)}" aria-pressed="${index===0?'true':'false'}">${item.image?`<img src="${esc(item.image)}" alt="" loading="lazy">`:''}<span>${esc(item.title)}</span></button>`).join('');
+    const slider=welcomeData.length>1?`<div class="welcome-slider-controls"><button type="button" class="welcome-arrow" data-welcome-prev aria-label="Prethodna preporuka">←</button><div class="welcome-thumbs" role="group" aria-label="Izdvojene preporuke">${thumbs}</div><button type="button" class="welcome-arrow" data-welcome-next aria-label="Sledeća preporuka">→</button></div>`:'';
+    const markup=`<dialog id="welcomeDialog" class="site-dialog welcome-dialog" aria-label="Izdvojene preporuke"><button class="dialog-close" type="button" data-close aria-label="Zatvori">×</button><div class="dialog-pad welcome-featured" data-welcome-items="${esc(JSON.stringify(welcomeData))}"><div class="kicker">IZDVAJAMO</div><h2 data-welcome-title>${title}</h2><div class="welcome-stage">${photo?`<img class="welcome-photo" data-welcome-image src="${esc(photo)}" alt="${title}" loading="lazy">`:''}</div><p data-welcome-meta>${meta}. Pogledajte izdvojenu preporuku iz ponude.</p>${slider}<div class="dialog-actions"><a class="primary" href="${welcomeTarget}" id="welcomeContinue">Pogledajte izdvojeno</a></div></div></dialog>`;
     html=html.replace('</body>',markup+'</body>');
   }
   // Append last so the five selected themes and immutable modal skin win over
