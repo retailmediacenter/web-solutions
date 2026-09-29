@@ -62,6 +62,9 @@ test('Optional Welcome is explicitly owned by Advisor and uses a real V33 featur
   assert.ok(on.includes(payload.catalog.products[0].image));
   assert.equal((on.match(/data-welcome-index=/g)||[]).length,3,'Welcome exposes three V33 items as a slider');
   assert.ok(!on.includes(`class="welcome-photo" src="${payload.catalog.hero}"`));
+  const vertical=buildSitePayload({businessId:'construction',businessName:'Gradnja',style:'modern',goal:'visit',answers:{verticalEnabled:true,showWelcome:true}});
+  assert.ok(vertical.siteConfig.modulePlan.active.includes('featured'),'Welcome activates V33 when a vertical site did not otherwise need it');
+  assert.ok(renderHtml(vertical).includes('id="welcomeDialog"'),'the newly active V33 renders its real offer cards in Welcome');
  const zip=exportSiteZip(payload);
  const firstNameSize=zip.readUInt16LE(26),compSize=zip.readUInt32LE(18),method=zip.readUInt16LE(8);
  const zippedBody=zip.subarray(30+firstNameSize,30+firstNameSize+compSize);

@@ -27,6 +27,17 @@ function ensureWineBookingContract(siteConfig){
  if(siteConfig?.business?.id!=='wine-shop'||!siteConfig.capabilities?.wineTastings)return;
  siteConfig.capabilities.booking={enabled:true,mode:'reservation',timingMode:'EXACT_TIME',fields:{service:true,date:true,time:true,partySize:true,note:true},offerings:WINE_TASTING_SERVICES.map(x=>x.name),services:WINE_TASTING_SERVICES.map(x=>({...x})),confirmation:'request'};
 }
+function ensureWelcomeFeaturedModule(siteConfig,enabled){
+ if(!enabled||siteConfig?.modulePlan?.active?.includes('featured'))return;
+ // Welcome is a V33 presentation of the first three truthful offer cards.
+ // The module is therefore explicit in the project contract, including for
+ // vertical profiles whose normal first section is portfolio or listings.
+ const plan=siteConfig.modulePlan;
+ const heroIndex=Math.max(0,plan.active.indexOf('hero'));
+ plan.active.splice(heroIndex+1,0,'featured');
+ const featured=plan.library?.find(module=>module.id==='featured');
+ if(featured){featured.state='active';featured.available=true;delete featured.reason;}
+}
 function bookingProfile(siteConfig){
  const booking=siteConfig?.capabilities?.booking;
  if(!booking?.enabled)return null;
@@ -47,7 +58,9 @@ export function buildSitePayload(input){
  payload.siteConfig.contact={...(payload.siteConfig.contact||{}),phone:payload.siteConfig.businessData.phone}; // backward compatibility
  payload.siteConfig.siteMode='demo';
  payload.siteConfig.demoBrand=demoBrandFromEnvironment();
- payload.siteConfig.presentation={...(payload.siteConfig.presentation||{}),showWelcome:input?.answers?.showWelcome===true};
+ const showWelcome=input?.answers?.showWelcome===true;
+ payload.siteConfig.presentation={...(payload.siteConfig.presentation||{}),showWelcome};
+ ensureWelcomeFeaturedModule(payload.siteConfig,showWelcome);
  payload.siteConfig.bookingProfile=bookingProfile(payload.siteConfig);
  // V46.0: Advisor is the authority; a Commerce-only shop has no fake services.
  const commerce=commerceFromSite(payload.siteConfig,payload.catalog);
