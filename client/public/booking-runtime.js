@@ -29,6 +29,7 @@ const serviceIdFor=name=>serviceDefinitions.find(item=>item.name===name)?.id||''
 const date=form.elements.namedItem('date');if(date)date.min=todayLocal();
 const apiBooking=Boolean(site.bookingTransport&&site.booking?.enabled);
 const dayPartCodes=Object.freeze({Prepodne:'MORNING',Popodne:'AFTERNOON','Bilo kada':'ANY'});
+const customFields=Array.isArray(site.booking?.form?.fields)?site.booking.form.fields:[];
 let retryRequest=null;
 const clearRetry=()=>{retryRequest=null;};
 form.addEventListener('input',clearRetry);form.addEventListener('change',clearRetry);
@@ -37,7 +38,7 @@ function setApiState(state,{reservationCode='',error=''}={}){
  const preview=$('bookingSubmitPreview'),sending=$('bookingSubmitSending'),success=$('bookingSubmitSuccess'),failed=$('bookingSubmitError');
  if(!sending||!success||!failed||!preview)return;
  preview.hidden=state!=='preview';sending.hidden=state!=='sending';success.hidden=state!=='success';failed.hidden=state!=='error';
- if(state==='success')$('bookingReservationCode').textContent=reservationCode;
+ if(state==='success'){$('bookingReservationCode').textContent=reservationCode;const message=site.booking?.form?.successMessage;const node=success.querySelector('p:last-of-type');if(message&&node)node.textContent=message;}
  if(state==='error')$('bookingSubmitErrorText').textContent=error;
 }
 function setSubmitting(value){const submit=form.querySelector('[type="submit"]');if(submit){submit.disabled=value;submit.setAttribute('aria-busy',String(value));}}
@@ -98,12 +99,13 @@ form.addEventListener('submit',async e=>{
   if(extra.length>700){setApiState('error',{error:'Opis je predugačak. Skratite napomenu i dodatne podatke (do 700 znakova ukupno).'});showDialog();return;}
   const serviceName=entry.service||entry.eventType||'',serviceId=serviceIdFor(serviceName);
   if(!serviceId){setApiState('error',{error:'Izaberite jednu od ponuđenih usluga za rezervaciju.'});showDialog();return;}
-  const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,daypart:entry.daypart,name:entry.name,phone:entry.phone,note:extra});
+  const answers=customFields.map(field=>{const raw=field.type==='checkbox'?(form.elements.namedItem(field.id)?.checked?'Da':'Ne'):String(entry[field.id]||'').trim();return {id:field.id,value:raw};}).filter(answer=>answer.value);
+  const fingerprint=JSON.stringify({serviceId,serviceName,date:entry.date,time:entry.time,daypart:entry.daypart,name:entry.name,phone:entry.phone,note:extra,answers});
   if(!retryRequest||retryRequest.fingerprint!==fingerprint)retryRequest={fingerprint,requestId:crypto.randomUUID()};
   setSubmitting(true);setApiState('sending');showDialog();
   try{
    if(!window.RMCBookingSubmit)throw new Error('Nedostaje modul za slanje rezervacija.');
-   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:timingMode==='EXACT_TIME'?entry.time:'',timingMode,dayPart:timingMode==='DAY_PART'?(dayPartCodes[entry.daypart]||''):'',note:extra});
+   const result=await window.RMCBookingSubmit.send(site.bookingTransport,{requestId:retryRequest.requestId,clientName:entry.name,phone:entry.phone,serviceId,serviceName,date:entry.date,time:timingMode==='EXACT_TIME'?entry.time:'',timingMode,dayPart:timingMode==='DAY_PART'?(dayPartCodes[entry.daypart]||''):'',note:extra,answers});
    setApiState('success',{reservationCode:result.reservationCode});
   }catch(err){setApiState('error',{error:'Zahtev nije poslat. '+err.message});}
   finally{setSubmitting(false);}return;

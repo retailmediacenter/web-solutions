@@ -11,7 +11,14 @@ function select(name,choices){
   return `<select name="${esc(name)}" required>${placeholder}${options.map((c,i)=>`<option value="${esc(c)}"${options.length===1&&i===0?' selected':''}>${esc(c)}</option>`).join('')}</select>`;
 }
 const input=(name,type='text',props='')=>`<input name="${esc(name)}" type="${type}" ${props}>`;
-function serviceForm(booking){
+function customFormField(entry){
+ const required=entry.required?' required':'';const placeholder=entry.placeholder?` placeholder="${esc(entry.placeholder)}"`:'';
+ if(entry.type==='textarea')return field(entry.id,entry.label,`<textarea name="${esc(entry.id)}" rows="3" maxlength="500"${placeholder}${required}></textarea>`,{wide:true});
+ if(entry.type==='select')return field(entry.id,entry.label,`<select name="${esc(entry.id)}"${required}><option value="">Izaberite</option>${entry.options.map(option=>`<option value="${esc(option)}">${esc(option)}</option>`).join('')}</select>`);
+ if(entry.type==='checkbox')return `<label class="wide service-checkbox"><input name="${esc(entry.id)}" type="checkbox" value="Da"${required}> ${esc(entry.label)}</label>`;
+ return field(entry.id,entry.label,input(entry.id,'text',`maxlength="500"${placeholder}${required}`),{wide:true});
+}
+function serviceForm(booking,formCopy={}){
   const {enabled,mode,fields,offerings}=booking;
   const f=[];
   f.push(field('service',mode==='reservation'?'Vrsta rezervacije':mode==='consultation'?'Tema konsultacije':mode==='request-slot'?'Vrsta usluge / intervencije':'Usluga', select('service',offerings)));
@@ -30,8 +37,10 @@ function serviceForm(booking){
   f.push(field('name','Ime',input('name','text','autocomplete="name" required maxlength="90"')));
   f.push(field('phone','Telefon',input('phone','tel','autocomplete="tel" required maxlength="35"')));
   f.push(field('note','Napomena (opciono)','<textarea name="note" rows="2" maxlength="350" placeholder="Dodatne informacije"></textarea>',{wide:true}));
+  const additional=Array.isArray(formCopy.fields)?formCopy.fields:[];
+  f.push(...additional.map(customFormField));
   return `<form class="service-request-form" id="requestForm" data-mode="${esc(mode)}">
-    ${f.join('')}<button type="submit" class="primary wide">${enabled?mode==='reservation'?'Pošalji zahtev za rezervaciju':mode==='consultation'?'Pošalji zahtev za konsultaciju':'Pošalji zahtev za termin':'Pripremi kontakt upit'}</button>
+    ${f.join('')}<button type="submit" class="primary wide">${esc(formCopy.submitLabel|| (enabled?mode==='reservation'?'Pošalji zahtev za rezervaciju':mode==='consultation'?'Pošalji zahtev za konsultaciju':'Pošalji zahtev za termin':'Pripremi kontakt upit'))}</button>
   </form>`;
 }
 export function renderServiceHtml({siteConfig:site,catalog}){
@@ -45,11 +54,12 @@ export function renderServiceHtml({siteConfig:site,catalog}){
   const bookingKicker=bookingCopy.kicker||(book.mode==='reservation'?'REZERVACIJE':book.mode==='consultation'?'KONSULTACIJE':'ZAKAZIVANJE');
   const bookingTitle=bookingCopy.title||actionLabel;
   const bookingDescription=bookingCopy.description||`Izaberite željeni termin. Nakon objavljivanja i povezivanja sajta, zahtev se šalje firmi ${business.name} preko Business Portala. Termin nije potvrđen dok vam firma ne odgovori.`;
+  const formCopy=bookingCopy.form||{};
   // Only public-facing presentation data crosses the server/browser boundary.
   const publicData={business:{name:business.name,id:business.id},contact:{phone:contact.phone||''},
-    booking:{enabled:book.enabled,mode:book.mode,timingMode:book.timingMode||'EXACT_TIME',offerings:book.offerings,services:book.services||[]},bookingTransport:site.bookingTransport||null,...(site.bookingPairing?{bookingManager:site.bookingPairing}:{})};
+    booking:{enabled:book.enabled,mode:book.mode,timingMode:book.timingMode||'EXACT_TIME',offerings:book.offerings,services:book.services||[],form:{fields:Array.isArray(formCopy.fields)?formCopy.fields:[],successMessage:formCopy.successMessage||''}},bookingTransport:site.bookingTransport||null,...(site.bookingPairing?{bookingManager:site.bookingPairing}:{})};
   const cards=catalog.services.map(s=>`<article class="service-card"><img src="${esc(s.image)}" loading="lazy" alt="${esc(s.title)}"><div class="service-card-body"><h3>${esc(s.title)}</h3><p>${esc(s.description)}</p><a href="#${actionTarget}" class="secondary" ${book.mode==='reservation'?'':`data-service="${esc(s.title)}"`}>${book.enabled?book.mode==='reservation'?'Pošalji rezervaciju':'Zatraži termin':'Pošalji upit'} →</a></div></article>`).join('');
-  const form=serviceForm(book);
+  const form=serviceForm(book,formCopy);
   const booking=book.enabled?`<section class="site-section booking-service" id="zakazivanje"><div class="section-heading"><div class="kicker">${esc(bookingKicker)}</div><h2>${esc(bookingTitle)}</h2><p>${esc(bookingDescription)}</p></div>${form}</section>`:'';
   const contactForm=book.enabled?'':`<div class="service-contact-form"><h3>Pošaljite kontakt upit</h3><p>Ova firma trenutno ne nudi zakazivanje putem sajta.</p>${form}</div>`;
   const requestDialog=book.enabled&&!(site.bookingPairing&&!site.bookingTransport)

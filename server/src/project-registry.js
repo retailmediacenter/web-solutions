@@ -16,6 +16,14 @@ const href=value=>{
  return valueText;
 };
 const moduleText=(value,max,fallback='')=>text(value,max)||fallback;
+const formFieldTypes=new Set(['text','textarea','select','checkbox']);
+const formFields=value=>{
+ const rows=Array.isArray(value)?value:[];if(rows.length>8)throw invalid('Forma može imati najviše 8 dodatnih polja.');
+ const used=new Set();return rows.map((row,index)=>{const id=text(row?.id,50),label=text(row?.label,80),type=text(row?.type,20),options=Array.isArray(row?.options)?row.options.map(x=>text(x,80)).filter(Boolean):[];
+  if(!/^custom-[a-z0-9_-]{2,42}$/i.test(id)||used.has(id)||!label||!formFieldTypes.has(type))throw invalid(`Dodatno polje ${index+1} nije ispravno.`);used.add(id);
+  if(type==='select'&&(options.length<2||options.length>10))throw invalid('Izbor mora imati od 2 do 10 opcija.');if(type!=='select'&&options.length)throw invalid('Opcije su dozvoljene samo za polje izbora.');
+  return {id,label,type,required:Boolean(row?.required),placeholder:text(row?.placeholder,120),options};});
+};
 const listKey=catalog=>Array.isArray(catalog?.services)?'services':Array.isArray(catalog?.products)?'products':Array.isArray(catalog?.cards)?'cards':null;
 
 // The editor deliberately accepts a narrow content document instead of a raw
@@ -47,7 +55,10 @@ function applyEditorContent(project,content,now){
  const contactModule=modules.contact&&typeof modules.contact==='object'?modules.contact:{};
  const custom=Array.isArray(content.customSections)?content.customSections:[];
  if(custom.length>12)throw invalid('Možete dodati najviše 12 novih sadržajnih blokova.');
- catalog.editorModules={services:{kicker:moduleText(services.kicker,40,'PONUDA'),description:moduleText(services.description,500,'Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.')},booking:{kicker:moduleText(booking.kicker,40,''),title:moduleText(booking.title,120,''),description:moduleText(booking.description,600,'')}};
+ const bookingForm=booking.form&&typeof booking.form==='object'&&!Array.isArray(booking.form)?booking.form:{};
+ const safeForm={title:moduleText(bookingForm.title,120,''),description:moduleText(bookingForm.description,600,''),submitLabel:moduleText(bookingForm.submitLabel,80,''),successMessage:moduleText(bookingForm.successMessage,240,''),fields:formFields(bookingForm.fields)};
+ catalog.editorModules={services:{kicker:moduleText(services.kicker,40,'PONUDA'),description:moduleText(services.description,500,'Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.')},booking:{kicker:moduleText(booking.kicker,40,''),title:moduleText(booking.title,120,''),description:moduleText(booking.description,600,''),form:safeForm}};
+ if(site.bookingProfile)site.bookingProfile.form=safeForm;
  site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const title=moduleText(entry?.title,120);const body=moduleText(entry?.body,1200);if(!title||!body)throw invalid(`Novi blok ${index+1} mora imati naslov i tekst.`);return {id:text(entry?.id,80)||`custom-${index+1}`,kicker:moduleText(entry?.kicker,40,''),title,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
  const key=listKey(catalog),incoming=content.items;
  if(key&&incoming!==undefined){
@@ -108,7 +119,7 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
  }
  async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,activation:p.activation};}
- async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);await save(project);return summary(siteId);}
+ async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
  async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function activate(siteId,packageName){
