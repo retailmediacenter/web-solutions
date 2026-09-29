@@ -44,7 +44,7 @@ export function Landing({onStart,onOpenSite,onExample,onLead,onInfo,hasResult}){
  useEffect(()=>{
    if(!shadow)return;
    const link=shadow.querySelector('#ws-business-portal-link');
-   const raw=String(import.meta.env.VITE_PUBLIC_PORTAL_URL||'').trim();
+    const raw=String(import.meta.env.VITE_PUBLIC_PORTAL_URL||'https://rmc-booking-manager.onrender.com/').trim();
    let url;try{url=new URL(raw);}catch{}
    const valid=url?.protocol==='https:';
    const publicPages=window.location.hostname.endsWith('github.io');
@@ -150,7 +150,7 @@ function preventBackgroundScroll(active){
 }
 
 export function PreviewDialog({open,mode='site',siteName,html,loading,error,device,onDevice,
-  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,exportPairing,onEdit,frameRef,
+  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,exportProject,onEdit,frameRef,
   styles=[],selectedStyle,styleBusy=false,styleError='',onStyleChange}){
  const close=useRef(null);
  useEffect(()=>{if(!open)return;const done=preventBackgroundScroll(true);close.current?.focus();
@@ -210,9 +210,9 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
          <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
            {exporting?'Pripremam ZIP…':<><span className="rmc-label-mobile">Preuzmi sajt ↓</span><span className="rmc-label-desktop">Preuzmi besplatan sajt (ZIP) ↓</span></>}</button>
            <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div>
-           {exportPairing&&<p className="rmc-pairing" role="status">Kod za povezivanje sa Business Portalom: <strong>{exportPairing.code}</strong>
-             <button type="button" onClick={()=>navigator.clipboard?.writeText(exportPairing.code)}>Kopiraj</button>
-             <small>Važi približno {exportPairing.minutes} minuta; sačuvajte ga odvojeno od javnog sajta.</small></p>}
+            {exportProject&&<p className="rmc-pairing" role="status">Project ID za aktivaciju: <strong>{exportProject.id}</strong>
+              <button type="button" onClick={()=>navigator.clipboard?.writeText(exportProject.id)}>Kopiraj</button>
+              <small>Ovo nije kod za povezivanje. RMC izdaje kod tek nakon aktivacije Business ili Commerce paketa.</small></p>}
          </>}
      </footer>
    </section>

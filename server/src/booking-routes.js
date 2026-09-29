@@ -13,7 +13,6 @@ export function bookingRouter(queue=createBookingQueue(),push=createPushNotifica
  };
  const handle=fn=>(req,res)=>Promise.resolve().then(()=>fn(req,res)).catch(e=>res.status(e.status||503).json({error:e.status?e.message:'Servis trenutno nije dostupan.'}));
  const auth=req=>(req.get('authorization')||'').replace(/^Bearer\s+/i,'');
- router.post('/pairings',rate,handle(async(req,res)=>res.status(201).json(await queue.issue())));
  router.post('/pairings/claim',rate,handle(async(req,res)=>res.json(await queue.claim(req.body?.pairingCode))));
  router.post('/requests',rate,handle(async(req,res)=>{
   const result=await queue.submit(req.body?.siteId,req.body?.booking);res.status(202).json(result);

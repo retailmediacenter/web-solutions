@@ -10,7 +10,8 @@ import { exportSiteZip } from './exporter.js';
 import {bookingRouter} from './booking-routes.js';
 import {commerceRouter} from './commerce-routes.js';
 import {createBookingQueue} from './booking-queue.js';
-import {attachPublicSiteTransport} from './site-export-transport.js';
+import {createProjectRegistry} from './project-registry.js';
+import {adminRouter} from './admin-routes.js';
 import {qaRouter} from './qa-routes.js';
 import {mergeAdvisorSignals,changedAdvisorSignals,safeAdvisorAcknowledgement,interpretShortAnswer} from './advisor-dialog.js';
 import {phraseVerifiedTurn,answerApprovedAdvisorQuestion} from './advisor-dialog-ai.js';
@@ -27,13 +28,15 @@ app.use((req,res,next)=>{
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
   if(origin&&(origins.includes(origin)||publicSubmit||qaPreview)){
-    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Expose-Headers':'X-RMC-Booking-Code, X-RMC-Booking-Expires','Access-Control-Allow-Methods':'GET,POST,DELETE,OPTIONS'});
+    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Expose-Headers':'X-RMC-Project-Id','Access-Control-Allow-Methods':'GET,POST,DELETE,OPTIONS'});
   }
   if(req.method==='OPTIONS')return (origins.includes(origin)||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
   next();
 });
-app.use('/api/booking',bookingRouter());
-app.use('/api/commerce',commerceRouter());
+const bookingQueue=createBookingQueue(),projectRegistry=createProjectRegistry(bookingQueue);
+app.use('/api/booking',bookingRouter(bookingQueue));
+app.use('/api/commerce',commerceRouter(bookingQueue));
+app.use('/api/admin',adminRouter(projectRegistry));
 app.use('/api/qa',qaRouter()); // disabled unless explicit STAGING-only RMC_QA_MODE=1 + secret
 app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));
@@ -142,12 +145,12 @@ app.post('/api/site/export',async(req,res)=>{
   if(exportHits.size>500){for(const [ip,times] of exportHits)if(times.every(t=>now-t>60000))exportHits.delete(ip);}
   try{
     const payload=buildSitePayload(req.body||{});
-    // One pairing and SITE ID for Booking, Commerce, or BOTH; never in ZIP.
-    const issued=await attachPublicSiteTransport(payload,createBookingQueue(),{
-      apiBaseUrl:process.env.PUBLIC_API_BASE_URL||(process.env.NODE_ENV==='production'?'':`http://localhost:${process.env.PORT||3000}`)
-    });
-    const zip=exportSiteZip(payload,{pairingCode:issued?.pairingCode,expiresIn:issued?.expiresIn});
-    if(issued)res.set({'X-RMC-Booking-Code':issued.pairingCode,'X-RMC-Booking-Expires':String(issued.expiresIn)});
+    // A public ZIP receives only a non-secret Project ID. Pairing is issued later
+    // by an authenticated RMC administrator after package activation.
+    const project=await projectRegistry.register(payload.siteConfig);
+    if(project)payload.siteConfig.projectId=project.siteId;
+    const zip=exportSiteZip(payload);
+    if(project)res.set('X-RMC-Project-Id',project.siteId);
     res.set({ 'Content-Type':'application/zip', 'Content-Disposition':'attachment; filename="rmc-besplatan-sajt.zip"', 'Cache-Control':'no-store', 'Content-Length':String(zip.length)}).end(zip);
   }catch(e){res.status(e.status|| (e.message?.includes('Redis')?503:400)).json({error:e.status?e.message:e.message?.includes('Redis')?'Servis za uparivanje trenutno nije dostupan.':'Izvoz nije uspeo: '+e.message});}
 });

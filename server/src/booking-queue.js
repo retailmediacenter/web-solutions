@@ -32,7 +32,7 @@ const ensureReservationCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{8}$/.t
 const TIMING_MODES=new Set(['EXACT_TIME','DAY_PART']);
 const DAY_PARTS=new Set(['MORNING','AFTERNOON','ANY']);
 const profileText=(value,max=180)=>String(value??'').trim().slice(0,max);
-function parseBookingProfile(raw){
+export function validateBookingProfile(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Nedostaje Booking profil sajta.');
  const business=raw.business&&typeof raw.business==='object'&&!Array.isArray(raw.business)?raw.business:{};
  const name=profileText(business.name,100);
@@ -73,7 +73,7 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode,na
  redis=redis||((...args)=>redisFromEnvironment()(...args));
  async function issue(profile,{siteId=null}={}){
    // A pairing without a bootstrap profile can never be completed safely.
-   const validProfile=parseBookingProfile(profile);
+   const validProfile=validateBookingProfile(profile);
    const assignedId=siteId==null?id():ensureSite(siteId);const pairingCode=code();
    const pairing={siteId:assignedId,profile:validProfile};
    await redis('SET',key('pair',sha(pairingCode)),JSON.stringify(pairing),'EX',CODE_TTL,'NX');
@@ -86,12 +86,12 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode,na
    // Validate before the one-way GETDEL. Invalid legacy data is left to expire.
    const preview=await redis('GET',pairKey);
    if(!preview)throw err(404,'Kod je iskorišćen ili je istekao. Generiši novi sajt i kod.');
-   let checked;try{checked=JSON.parse(preview);parseBookingProfile(checked?.profile);ensureSite(checked?.siteId);}catch{throw err(400,'Kod nema ispravan Booking profil. Generiši novi sajt i kod.');}
+   let checked;try{checked=JSON.parse(preview);validateBookingProfile(checked?.profile);ensureSite(checked?.siteId);}catch{throw err(400,'Kod nema ispravan Booking profil. Generiši novi sajt i kod.');}
    const stored=await redis('GETDEL',pairKey);
    if(!stored)throw err(404,'Kod je iskorišćen ili je istekao. Generiši novi sajt i kod.');
    let pairing;try{pairing=JSON.parse(stored);}catch{throw err(400,'Kod nema ispravan Booking profil.');}
    const siteId=ensureSite(pairing?.siteId);
-   const profile=parseBookingProfile(pairing?.profile);
+   const profile=validateBookingProfile(pairing?.profile);
    const accessToken=randomBytes(32).toString('base64url');
    // Persist only trusted, server-issued product facts. Commerce requests
    // resolve SKU/price against this snapshot, NEVER customer JSON.
@@ -165,5 +165,5 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode,na
    await redis('ZREM',key('index',siteId),requestId);
    return {ok:true};
  }
- return {issue,claim,authenticate,disconnect,submit,pending,acknowledge,redis,key,namespace};
+ return {issue,claim,authenticate,disconnect,submit,pending,acknowledge,redis,key,namespace,validateProfile:validateBookingProfile};
 }

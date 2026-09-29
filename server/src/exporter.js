@@ -33,6 +33,7 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
   if(payload.secondary){for(const image of payload.secondary.type==='service'?payload.secondary.services.slice(0,3).map(x=>x.image):payload.secondary.type==='products'?payload.secondary.products.slice(0,4).map(x=>x.image):payload.secondary.type==='vehicles'?payload.secondary.products.map(x=>x.image):[])if(image)requested.add(image);}
   const files=[
     {name:'index.html',data:siteHtml},
+    ...(payload.siteConfig.projectId?[{name:'RMC_PROJEKAT.txt',data:Buffer.from(`RMC Project ID: ${payload.siteConfig.projectId}\nOvo nije kod za uparivanje. RMC izdaje kod nakon aktivacije Business ili Commerce paketa.\n`,'utf8')}]:[]),
     {name:'site.css',data:staticFile('site.css')},
     {name:'export-runtime.js',data:staticFile('export-runtime.js')},
     ...(payload.siteConfig.commerceTransport?[{name:'commerce-submit.js',data:staticFile('commerce-submit.js')}]:[]),

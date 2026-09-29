@@ -1,0 +1,31 @@
+import React,{useMemo,useState} from 'react';
+import {apiUrl} from './api.js';
+import './project-admin.css';
+
+const storageKey='rmc-project-admin-session';
+const request=async(path,{token,method='GET',body}={})=>{
+ const response=await fetch(apiUrl(path),{method,headers:{...(body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},body:body?JSON.stringify(body):undefined});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(data.error||'Operacija nije uspela.');
+ return data;
+};
+const packageLabel={booking:'BUSINESS — rezervacije',commerce:'COMMERCE — porudžbine',business:'BUSINESS — rezervacije i porudžbine'};
+
+export function ProjectAdmin(){
+ const [key,setKey]=useState('');
+ const [token,setToken]=useState(()=>sessionStorage.getItem(storageKey)||'');
+ const [siteId,setSiteId]=useState('');
+ const [project,setProject]=useState(null);
+ const [issued,setIssued]=useState(null);
+ const [message,setMessage]=useState('');
+ const [busy,setBusy]=useState(false);
+ const enabled=useMemo(()=>project?Object.entries(project.capabilities).filter(([,value])=>value).map(([name])=>name):[],[project]);
+ const signIn=async event=>{event.preventDefault();setBusy(true);setMessage('');try{const result=await request('/api/admin/session',{method:'POST',token:key});sessionStorage.setItem(storageKey,result.sessionToken);setToken(result.sessionToken);setKey('');}catch(error){setMessage(error.message)}finally{setBusy(false)}};
+ const lookup=async event=>{event.preventDefault();setBusy(true);setMessage('');setIssued(null);try{const result=await request('/api/admin/projects/'+encodeURIComponent(siteId.trim()),{token});setProject(result.project)}catch(error){setProject(null);setMessage(error.message)}finally{setBusy(false)}};
+ const activate=async packageName=>{setBusy(true);setMessage('');try{const result=await request('/api/admin/projects/'+encodeURIComponent(project.siteId)+'/activate',{token,method:'POST',body:{package:packageName}});setIssued(result);setProject(previous=>({...previous,activation:{package:result.package,issuedAt:new Date().toISOString()}}));}catch(error){setMessage(error.message)}finally{setBusy(false)}};
+ const signOut=()=>{sessionStorage.removeItem(storageKey);setToken('');setProject(null);setIssued(null);setMessage('');};
+ if(!token)return <main className="rmc-admin"><section className="rmc-admin-card"><p className="rmc-admin-eyebrow">RMC INTERNAL</p><h1>Aktivacija poslovnog paketa</h1><p>Pronađite postojeći projekat preko Project ID-ja iz ZIP-a i izdajte jednokratni kod tek nakon aktivacije paketa.</p><form onSubmit={signIn}><label>Administrativni ključ<input type="password" value={key} onChange={e=>setKey(e.target.value)} autoComplete="current-password" required/></label><button disabled={busy}>{busy?'Proveravam…':'Prijavi se'}</button></form>{message&&<p className="rmc-admin-error" role="alert">{message}</p>}</section></main>;
+ return <main className="rmc-admin"><section className="rmc-admin-card"><header><div><p className="rmc-admin-eyebrow">RMC INTERNAL</p><h1>Aktivacija Business Portala</h1></div><button className="rmc-admin-link" onClick={signOut}>Odjavi se</button></header><p>Ovaj alat ne menja ZIP, sajt ni postojeće profile. Izdaje samo novi jednokratni kod za sačuvani projekat.</p><form className="rmc-admin-lookup" onSubmit={lookup}><label>Project ID<input value={siteId} onChange={e=>setSiteId(e.target.value)} placeholder="24 znaka iz RMC_PROJEKAT.txt" pattern="[A-Za-z0-9_-]{24}" required/></label><button disabled={busy}>{busy?'Učitavam…':'Pronađi projekat'}</button></form>{message&&<p className="rmc-admin-error" role="alert">{message}</p>}
+ {project&&<section className="rmc-admin-project"><p className="rmc-admin-eyebrow">PRONAĐEN PROJEKAT</p><h2>{project.business.name}</h2><dl><div><dt>Project ID</dt><dd>{project.siteId}</dd></div><div><dt>Dostupno</dt><dd>{enabled.length?enabled.map(item=>item==='booking'?'rezervacije':'porudžbine').join(' i '):'nema Portal modula'}</dd></div>{project.activation&&<div><dt>Poslednja aktivacija</dt><dd>{packageLabel[project.activation.package]||project.activation.package}</dd></div>}</dl>{project.profiles?.business&&<div className="rmc-admin-profile"><strong>Sačuvani poslovni profil i usluge</strong><p>{project.profiles.business.business.name}{project.profiles.business.business.city?` · ${project.profiles.business.business.city}`:''}</p>{project.profiles.business.services?.length?<ul>{project.profiles.business.services.map(service=><li key={service.id}>{service.name} <small>({service.id})</small></li>)}</ul>:<p>Nema Booking usluga; aktivira se Commerce profil.</p>}</div>}<div className="rmc-admin-actions">{project.capabilities.booking&&<button disabled={busy} onClick={()=>activate('booking')}>Aktiviraj Booking</button>}{project.capabilities.commerce&&<button disabled={busy} onClick={()=>activate('commerce')}>Aktiviraj Commerce</button>}{project.capabilities.booking&&project.capabilities.commerce&&<button disabled={busy} onClick={()=>activate('business')}>Aktiviraj Business</button>}</div></section>}
+ {issued&&<section className="rmc-admin-issued" role="status"><p className="rmc-admin-eyebrow">KOD JE IZDAN</p><h2>{issued.pairingCode}</h2><button type="button" onClick={()=>navigator.clipboard?.writeText(issued.pairingCode)}>Kopiraj kod</button><p>Važi približno {Math.round(issued.expiresIn/60)} minuta. Vlasnik ga unosi u javni RMC Business Portal.</p></section>}</section></main>;
+}
