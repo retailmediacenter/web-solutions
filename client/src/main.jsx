@@ -51,6 +51,7 @@ function nextAdvisorQuestion(definition,signals={}){
   const draft=buildAdvisorDraft(definition,signals),next=draft.steps[0];
   if(next==='company')return 'Imam sve što mi treba o vašoj delatnosti. Kako se zove vaš biznis?';
   if(next==='operation')return definition.operation?.question||'';
+  if(next==='emphasis')return definition.emphasis?.question||'';
   if(next==='hybrid')return definition.hybrid?.question||'';
   if(next?.startsWith('special:'))return (definition.specials||[]).find(q=>q.id===next.slice(8))?.question||'';
   return '';
@@ -432,6 +433,7 @@ function App(){
               {activeSpecial&&<div className="rmc-live-options">{activeSpecial.options.map(item=><button type="button" key={item.id} className="rmc-live-option"
                 onClick={()=>pick('special:'+activeSpecial.id,item.id==='yes'?true:item.id==='no'?false:item.id)}>{item.label}</button>)}</div>}
               {current==='operation'&&<div className="rmc-live-options">{definition.operation.options.map(value=><button type="button" key={value} className="rmc-live-option" onClick={()=>pick('operation',value)}>{value}</button>)}</div>}
+              {current==='emphasis'&&<div className="rmc-live-options">{definition.emphasis.options.map(value=><button type="button" key={value} className="rmc-live-option" onClick={()=>pick('emphasis',value)}>{value}</button>)}</div>}
               {current==='hybrid'&&<div className="rmc-live-options">{definition.hybrid.options.map(item=><button type="button" key={item.id} className="rmc-live-option" onClick={()=>pick('hybrid',item.id)}>{item.label}</button>)}</div>}
             </>}
           {current==='company'&&replyComplete&&<section className="question rmc-ai-question rmc-ai-company rmc-company-stage"

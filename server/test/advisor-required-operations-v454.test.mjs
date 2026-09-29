@@ -12,20 +12,20 @@ test('pharmacy asks product operation and consultation separately',()=>{
   assert.deepEqual(def.operation.options,pharmacyOperations);
   assert.deepEqual(def.specials.map(s=>s.id),['pharmacyConsultations']);
   const empty=buildAdvisorDraft(def,{});
-  assert.deepEqual(empty.steps,['operation','special:pharmacyConsultations','company']);
+  assert.deepEqual(empty.steps,['operation','special:pharmacyConsultations','emphasis','company']);
   assert.equal(empty.answers.businessMode,undefined);
   assert.equal(empty.answers.pharmacyConsultations,undefined);
   for(const mode of pharmacyOperations){
     const known=buildAdvisorDraft(def,{businessMode:mode});
-    assert.deepEqual(known.steps,['special:pharmacyConsultations','company']);
+    assert.deepEqual(known.steps,['special:pharmacyConsultations','emphasis','company']);
     assert.equal(known.answers.businessMode,mode);
     for(const consult of [true,false]){
       const complete=buildAdvisorDraft(def,{businessMode:mode,pharmacyConsultations:consult});
-      assert.deepEqual(complete.steps,['company']);
+      assert.deepEqual(complete.steps,['emphasis','company']);
       assert.equal(complete.answers.pharmacyConsultations,consult);
     }
   }
-  assert.deepEqual(buildAdvisorDraft(def,{businessMode:'unknown',pharmacyConsultations:true}).steps,['operation','company']);
+  assert.deepEqual(buildAdvisorDraft(def,{businessMode:'unknown',pharmacyConsultations:true}).steps,['operation','emphasis','company']);
 });
 
 test('pharmacy product orders and optional consultation are independent across all 5 styles and 3 goals',()=>{

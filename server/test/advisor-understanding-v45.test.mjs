@@ -10,10 +10,10 @@ test('V45 extracts explicit retail facts and preserves negations',()=>{
  const no=draft('Imam prodavnicu obuće u Čačku; ne prodajemo online; samo katalog, premium stil');
  assert.equal(no.u.businessId,'shoe-shop');assert.equal(no.u.signals.ordersEnabled,false);
  assert.equal(no.d.answers.ordersEnabled,false);assert.equal(no.d.style,'premium');assert.equal(no.d.goal,'catalog');
- assert.deepEqual(no.d.steps,['company']);
+ assert.deepEqual(no.d.steps,['emphasis','company']);
  const yes=draft('Prodavnica obuće. Kupci mogu da naruče preko sajta, želim moderan izgled');
  assert.equal(yes.u.signals.ordersEnabled,true);assert.equal(yes.u.signals.bookingEnabled,undefined);
- assert.deepEqual(yes.d.steps,['company']);
+ assert.deepEqual(yes.d.steps,['emphasis','company']);
  const unclear=draft('Imam prodavnicu obuće, predstavite ponudu i kategorije');
  assert.deepEqual(unclear.d.steps,['special:ordersEnabled','company']);
  const payment=u('Prodavnica obuće, želim online poručivanje ali bez online plaćanja');
@@ -34,24 +34,24 @@ test('V45 wine keeps catalog, orders and ONLINE tasting reservations independent
 
 test('V45 Booking requires explicit yes/no and never infers it from profession',()=>{
  const y=draft('Frizerski salon. Želim online zakazivanje termina.');
- assert.equal(y.u.signals.acceptsTimeRequests,true);assert.deepEqual(y.d.steps,['company']);
+ assert.equal(y.u.signals.acceptsTimeRequests,true);assert.deepEqual(y.d.steps,['emphasis','company']);
  const no=draft('Frizerski salon, bez online zakazivanja.');
- assert.equal(no.u.signals.acceptsTimeRequests,false);assert.deepEqual(no.d.steps,['company']);
+ assert.equal(no.u.signals.acceptsTimeRequests,false);assert.deepEqual(no.d.steps,['emphasis','company']);
  const unknown=draft('Frizerski salon, moderan izgled.');
  assert.equal(unknown.u.signals.acceptsTimeRequests,undefined);
- assert.deepEqual(unknown.d.steps,['special:acceptsTimeRequests','company']);
+ assert.deepEqual(unknown.d.steps,['special:acceptsTimeRequests','emphasis','company']);
  const plumber=draft('Vodoinstalater, zakazivanje termina preko sajta');
  assert.equal(plumber.u.signals.acceptsTimeRequests,true);
- assert.deepEqual(plumber.d.steps,['company']);
+ assert.deepEqual(plumber.d.steps,['emphasis','company']);
 });
 
 test('V45 hybrids only select existing authorized combination',()=>{
  const x=draft('Prodajemo auto-delove i radimo auto-servis, želimo porudžbine preko sajta');
  assert.equal(x.u.businessId,'auto-parts');assert.equal(x.d.answers.hybridChoice,'auto-service');
- assert.equal(x.d.answers.ordersEnabled,true);assert.deepEqual(x.d.steps,['company']);
+ assert.equal(x.d.answers.ordersEnabled,true);assert.deepEqual(x.d.steps,['emphasis','company']);
  const furniture=draft('Imam salon nameštaja. Radimo i montažu.');
  assert.equal(furniture.u.businessId,'furniture-store');assert.equal(furniture.d.answers.hybridChoice,'carpenter');
- assert.deepEqual(furniture.d.steps,['special:ordersEnabled','company']);
+ assert.deepEqual(furniture.d.steps,['special:ordersEnabled','emphasis','company']);
  const unsupported=u('Prodajem klima uređaje i radim montažu.');
  assert.equal(unsupported.businessId,'hvac');assert.equal(unsupported.signals.hybridChoice,undefined);
  assert.ok(unsupported.warnings.some(w=>/nije.*hibrid/.test(w)));

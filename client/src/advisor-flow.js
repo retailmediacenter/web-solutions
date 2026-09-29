@@ -4,8 +4,7 @@
 export function buildAdvisorDraft(definition,signals={}){
   const answers={};
   if(definition?.hybrid)answers.hybridChoice=definition.hybrid.options.some(o=>o.id===signals.hybridChoice)?signals.hybridChoice:'none';
-  if(definition?.emphasis)answers.emphasis=definition.emphasis.options.includes(signals.emphasis)
-    ?signals.emphasis:(definition.emphasis.options[0]||'');
+  if(definition?.emphasis&&definition.emphasis.options.includes(signals.emphasis))answers.emphasis=signals.emphasis;
   const ops=definition?.operation?.options||[];
   if(ops.includes(signals.businessMode))answers.businessMode=signals.businessMode;
   // The generic operation question is often redundant with the independent
@@ -31,6 +30,10 @@ export function buildAdvisorDraft(definition,signals={}){
   if(['pharmacy','hotel','apartments'].includes(definition?.id)){
     if(!answers.businessMode)pending.unshift('operation');
   }
+  // A rich template needs one explicit content priority. The old V39.5
+  // Advisor asked this question; silently taking the first option is why the
+  // current flow often created the same sparse result for every business.
+  if(definition?.emphasis&&!answers.emphasis)pending.push('emphasis');
   return {
     steps:[...pending,'company'],answers,
     goal:['purchase','visit','catalog'].includes(signals.goal)?signals.goal:'purchase',
