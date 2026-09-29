@@ -6,6 +6,7 @@ import advisorData from './data/business-advisor-v395.json' with { type: 'json' 
 import pilotData from './data/pilot-catalog-v395.json' with { type: 'json' };
 import retailData from './data/retail-catalog-v395.json' with { type: 'json' };
 import commerceData from './data/commerce-capabilities-v395.json' with { type: 'json' };
+import {createModulePlan} from './module-plan.js';
 
 // Advisor owns meaning, choices, capabilities and module plan. Registry owns ONLY facts.
 export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData), ...SERVICE_BUSINESSES,...VERTICAL_IDS]);
@@ -98,7 +99,7 @@ export function recognizeBusiness(description){
     ['marketing-agency',/\b(marketing.*agenc|reklamn.*agenc|digital.*marketing)/],
     ['print-shop',/\b(stamparij|stampars|print shop)/],
     ['real-estate',/\b(nekretnin|agencij.*stanov)/],
-    ['construction',/\b(investitor|gradnja objek|stamben.*gradnj)/],
+    ['construction',/\b(investitor|gradnja objek|gradim zgrad|gradnj|izgradnj.*stanov|stamben.*gradnj|gradjevinsk.*kompan)/],
     ['interior-design',/\b(dizajn enterijer|projektovanje enterijer)/],
     ['language-school',/\b(skola jezik|casov.*englesk)/],
     ['training-center',/\b(centar za obuk|edukativni centar|strucne obuke)/],
@@ -237,6 +238,7 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
     business:{id:businessId,name,label:def.label},
     input:{description:String(description??'').slice(0,800),goal,mode,emphasis},
     style,capabilities:features,modules,
+    modulePlan:createModulePlan({family:'retail',commerce:features.commerce,request:features.inquiry}),
     commerce:{...commerceData[businessId],mode:features.commerce?'cart':features.inquiry?'inquiry':'catalog',currency:'RSD',prices:'illustrative-demo'},
     contact:{phone:cleanPhone},
     assets:{assetRoot:facts.assetRoot,assetRoles:[...facts.assetRoles]},

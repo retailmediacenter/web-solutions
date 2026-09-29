@@ -1,6 +1,7 @@
 // V41.8 - Advisor-owned sector-specific decisions. V39.5 Registry remains data-only.
 import profiles from './data/vertical-profiles-v418.json' with {type:'json'};
 import {getBusinessFacts} from './registry.js';
+import {createModulePlan} from './module-plan.js';
 export const VERTICAL_IDS=Object.freeze(Object.keys(profiles));
 export const verticalProfile=id=>profiles[id]||null;
 export function verticalQuestion(id){
@@ -38,7 +39,7 @@ export function resolveVerticalSiteConfig({businessId,businessName,description='
   siteConfig:{schemaVersion:'41.8-vertical',reference:'V39.5',siteStatus:'preview-and-export',
    business:{id:businessId,name,label:p.label},
    input:{description:String(description??'').slice(0,800),goal,mode:answers.businessMode||'',emphasis:answers.emphasis||''},
-   style,contact:{phone},modules,
+   style,contact:{phone},modules,modulePlan:createModulePlan({family:'vertical',primary:modules[1],request:enabled}),
    capabilities:{vertical:true,verticalKind:p.kind,verticalEnabled:enabled,liveAvailability:false,
     payments:false,illustrative:true,externalBookingUrl,photoAssetsComplete:!!p.hero&&p.cards.every(c=>!!c.image)},
    assets:{assetRoot:facts.assetRoot,assetRoles:[...(facts.assetRoles||[])]}},

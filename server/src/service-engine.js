@@ -2,6 +2,7 @@
 // Rendering never decides which booking mode a business should use.
 import services from './data/service-profiles-v395.json' with {type:'json'};
 import {getBusinessFacts} from './registry.js';
+import {createModulePlan} from './module-plan.js';
 export const SERVICE_BUSINESSES=Object.freeze(Object.keys(services));
 export const BOOKING_MODES=Object.freeze(['appointment','reservation','consultation','request-slot']);
 export const serviceProfile=id=>services[id]||null;
@@ -76,7 +77,7 @@ export function resolveServiceSiteConfig(input,STYLES){
       business:{id:businessId,name,label:source.label},
       input:{description:String(description).slice(0,800),goal,
         mode:source.mode,emphasis:typeof answers.emphasis==='string'?answers.emphasis:''},
-      style,modules,contact:{phone:cleanPhone},
+      style,modules,modulePlan:createModulePlan({family:'service',booking:enabled,request:!enabled}),contact:{phone:cleanPhone},
       capabilities:{serviceProfile:true,bookingEnabled:enabled,bookingMode:mode,
         booking:{enabled,mode,timingMode:source.mode==='request-slot'?'DAY_PART':'EXACT_TIME',fields:enabled?bookingFields(businessId,source.mode):{service:true,note:true},
           offerings:profile.offerings,services:bookingServices,confirmation:'request'}},
