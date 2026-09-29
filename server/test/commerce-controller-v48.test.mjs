@@ -29,8 +29,8 @@ test('V39.5 commerce controllers are restored for every supported retail profile
   }
 });
 
-test('furniture and wine controller assets are included in their publish ZIPs',()=>{
-  for(const businessId of ['furniture-store','wine-shop']){
+test('every controller profile includes its visual assets in the publish ZIP',()=>{
+  for(const businessId of profiles){
     const zip=exportSiteZip(payloadFor(businessId));
     assert.ok(zip.length>1_000_000,`${businessId} ZIP includes its visual assets`);
   }
