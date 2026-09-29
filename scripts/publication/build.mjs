@@ -301,6 +301,7 @@ async function main(){
    {env:{...process.env,VITE_BASE_PATH:publicBase,VITE_API_BASE_URL:apiBase}});
   const built=path.join(client,'dist'),dst=path.join(staged,'web-solutions-public');
   assert(existsSync(path.join(built,'index.html')),'Vite nije napravio index.html');
+  mkdirSync(path.dirname(dst),{recursive:true});
   // An older local client/public/v395 directory can still exist for reference.
   // Vite copies public/ unconditionally: strip this legacy directory from
   // the GENERATED DIST only; never modify the user's actual source assets.
