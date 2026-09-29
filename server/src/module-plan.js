@@ -4,6 +4,7 @@ export const MODULE_LIBRARY=Object.freeze([
  {id:'header',version:'V31',label:'Header / Menu',tier:'core'},
  {id:'hero',version:'V32',label:'Hero',tier:'core'},
  {id:'featured',version:'V33',label:'Izdvajamo',tier:'content'},
+ {id:'commerce-controller',version:'V34.5',label:'Commerce Controller / Izbor ponude',tier:'commerce'},
  {id:'catalog',version:'V34',label:'Katalog / Shop-lite',tier:'commerce'},
  {id:'portfolio',version:'V35',label:'Portfolio / Projekti',tier:'content'},
  {id:'trust',version:'V36',label:'Trust / Proof',tier:'content'},
@@ -24,7 +25,7 @@ const unique=items=>[...new Set(items.filter(item=>known.has(item)))];
  * becomes active when its renderer has actual data; no review, team member or
  * business claim is invented from a generic industry label.
  */
-export function createModulePlan({family='service',primary='services',booking=false,commerce=false,request=false}={}){
+export function createModulePlan({family='service',primary='services',booking=false,commerce=false,commerceController=false,request=false}={}){
  // `active` means this generation has a real rendered section. It must never
  // say that the site has reviews, a team, or proof merely because the business
  // category normally benefits from them. Those records remain addable in the
@@ -32,6 +33,9 @@ export function createModulePlan({family='service',primary='services',booking=fa
  const active=['header','hero'];
  const rendererBlocks=['header','hero'];
  if(family==='retail'){
+  active.push('featured');
+  rendererBlocks.push('featured');
+  if(commerceController){active.push('commerce-controller');rendererBlocks.push('commerce-controller');}
   active.push('catalog');
   rendererBlocks.push('catalog');
  }else if(family==='vertical'){

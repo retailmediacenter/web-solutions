@@ -1,6 +1,9 @@
 import profiles from './data/commerce-controllers-v345.json' with {type:'json'};
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 const list=v=>Array.isArray(v)?v:[];
+// Commerce Controller is a presentation-and-filter module. It never owns a
+// second catalog: every card narrows the existing V34 catalog below it.
+export function hasCommerceController(id){return Boolean(profiles[id]?.groups?.length);}
 export function controllerAssets(id){return list(profiles[id]?.groups).flatMap(group=>list(group.items).map(item=>item.image)).filter(Boolean);}
 export function renderCommerceController(id){
  const profile=profiles[id];if(!profile)return '';

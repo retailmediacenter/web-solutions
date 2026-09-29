@@ -24,7 +24,10 @@ function renderBaseHtml({siteConfig:site,catalog,secondary}){
     <div class="shop-card-body"><small>${esc(p.category)}</small><h3>${esc(p.title)}</h3><strong>${money(p.price)}${p.unit==='kg'?'/kg':''}</strong><button type="button" data-product="${esc(p.id)}" class="secondary">${site.capabilities.commerce?'Detalji i poručivanje →':'Detalji →'}</button></div>
   </article>`;
   const categories=[...new Set(catalog.products.map(x=>x.category))];
-  const commerceController=renderCommerceController(site.business.id);
+  // The independent V34.5 controller sits after featured content and filters
+  // the V34 catalog below. Old payloads without a module plan keep no hidden
+  // controller added behind the Advisor's back.
+  const commerceController=site.modulePlan?.active?.includes('commerce-controller')?renderCommerceController(site.business.id):'';
   const tastingSection=wine?`<section class="site-section tasting" id="degustacije"><div class="tasting-photo"><img src="${asset(catalog.tastingImage)}" loading="lazy" alt="Vođena degustacija vina"></div><div class="tasting-copy"><div class="kicker">DOŽIVLJAJ</div><h2>Degustacije vina</h2><p>Vođena degustacija uz pažljivo odabrana vina. Pošaljite željeni datum i broj osoba, a vinoteka će potvrditi mogućnosti.</p>
   <form id="tastingForm" class="booking-form"><label>Vrsta degustacije<select name="experience" required>${(site.capabilities?.booking?.offerings||['Vođena degustacija']).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></label>
   <label>Datum<input type="date" name="date" required></label><label>Željeno vreme<input type="time" name="time" required></label><label>Broj osoba<input type="number" name="partySize" min="1" max="30" value="2" required></label>

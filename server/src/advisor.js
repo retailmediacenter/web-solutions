@@ -7,6 +7,7 @@ import pilotData from './data/pilot-catalog-v395.json' with { type: 'json' };
 import retailData from './data/retail-catalog-v395.json' with { type: 'json' };
 import commerceData from './data/commerce-capabilities-v395.json' with { type: 'json' };
 import {createModulePlan} from './module-plan.js';
+import {hasCommerceController} from './commerce-controller.js';
 
 // Advisor owns meaning, choices, capabilities and module plan. Registry owns ONLY facts.
 export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData), ...SERVICE_BUSINESSES,...VERTICAL_IDS]);
@@ -212,13 +213,15 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
     impliedOrder!==null?impliedOrder:(goal==='purchase'&&sourceMode==='cart');
   const features={commerce:canOrder,inquiry:!canOrder,
     variantNote:isNewRetail&&!!commerceData[businessId]?.variantNote,
-    requireVehicle:businessId==='auto-parts'};
+    requireVehicle:businessId==='auto-parts',commerceController:hasCommerceController(businessId)};
   const variantLabels={'fashion-shop':'Veličina / boja','phone-store':'Model / boja',
     'furniture-store':'Model / dimenzije','auto-parts':'Marka / model / godište vozila',
     'plumbing-supplies':'Dimenzije / specifikacija','electrical-supplies':'Tip / specifikacija',
     'electronics-store':'Model / varijanta','liquor-store':'Pakovanje / varijanta','home-decor':'Boja / dimenzije'};
   features.variantLabel=variantLabels[businessId]||'Varijanta / napomena';
-  const modules=['hero','featured','catalog'];
+  const modules=['hero','featured'];
+  if(features.commerceController)modules.push('commerce-controller');
+  modules.push('catalog');
   if(features.commerce)modules.push('cart');
   const mode=businessMode;
   const emphasis=typeof answers.emphasis==='string'&&def.emphasis.options.includes(answers.emphasis)?answers.emphasis:'';
@@ -238,7 +241,7 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
     business:{id:businessId,name,label:def.label},
     input:{description:String(description??'').slice(0,800),goal,mode,emphasis},
     style,capabilities:features,modules,
-    modulePlan:createModulePlan({family:'retail',commerce:features.commerce,request:features.inquiry}),
+    modulePlan:createModulePlan({family:'retail',commerce:features.commerce,commerceController:features.commerceController,request:features.inquiry}),
     commerce:{...commerceData[businessId],mode:features.commerce?'cart':features.inquiry?'inquiry':'catalog',currency:'RSD',prices:'illustrative-demo'},
     contact:{phone:cleanPhone},
     assets:{assetRoot:facts.assetRoot,assetRoles:[...facts.assetRoles]},
