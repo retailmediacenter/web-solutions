@@ -25,22 +25,41 @@ const unique=items=>[...new Set(items.filter(item=>known.has(item)))];
  * business claim is invented from a generic industry label.
  */
 export function createModulePlan({family='service',primary='services',booking=false,commerce=false,request=false}={}){
- const shared=['header','hero','featured','trust','portfolio','reviews','about','faq','location','contact'];
- const active=family==='retail'
-   ?['header','hero','featured','catalog','trust','portfolio','reviews','about','faq','location','contact']
-   :family==='vertical'
-     ?['header','hero','featured',primary,'portfolio','trust','reviews','about','faq','location','contact']
-     :['header','hero','featured','services','portfolio','trust','reviews','about','faq','location','contact'];
- // `services` and vertical primary blocks are renderer-specific aliases. They
- // are recorded in the plan but library modules remain V31–V42 canonical.
- const canonical=active.map(id=>id==='services'||id===primary&&family==='vertical'?'featured':id);
- if(booking)canonical.splice(canonical.indexOf('location'),0,'booking');
- if(commerce&&!canonical.includes('catalog'))canonical.splice(canonical.indexOf('location'),0,'catalog');
+ // `active` means this generation has a real rendered section. It must never
+ // say that the site has reviews, a team, or proof merely because the business
+ // category normally benefits from them. Those records remain addable in the
+ // Editor until RMC enters approved content.
+ const active=['header','hero'];
+ const rendererBlocks=['header','hero'];
+ if(family==='retail'){
+  active.push('catalog');
+  rendererBlocks.push('catalog');
+ }else if(family==='vertical'){
+  const canonicalPrimary=primary==='projects'?'portfolio':primary==='catalog'?'catalog':'featured';
+  active.push(canonicalPrimary);
+  rendererBlocks.push(primary);
+ }else{
+  active.push('featured');
+  rendererBlocks.push('services');
+ }
+ if(booking){active.push('booking');rendererBlocks.push('booking');}
+ // The current vertical request form is part of the contact flow; it is not a
+ // Booking section and therefore must not activate V40.
+ if(request)rendererBlocks.push('request');
+ active.push('location','contact');
+ rendererBlocks.push('location','contact');
+ const activeSet=new Set(unique(active));
+ const library=MODULE_LIBRARY.map(module=>{
+  const activeNow=activeSet.has(module.id);
+  const locked=module.id==='booking'&&!booking || module.id==='catalog'&&family!=='retail'&&!commerce;
+  return {...module,available:!locked,state:activeNow?'active':locked?'locked':'available',
+    ...(locked?{reason:module.id==='booking'?'Business paket aktivira rezervacije.':'Commerce paket aktivira katalog i poručivanje.'}:{})};
+ });
  return {
   version:'v1',
-  library:MODULE_LIBRARY.map(({id,version,label,tier})=>({id,version,label,tier,available:true})),
-  active:unique(canonical),
-  rendererBlocks:unique(active.filter(id=>known.has(id))).concat(active.filter(id=>id==='services'||(family==='vertical'&&id===primary))),
+  library,
+  active:unique(active),
+  rendererBlocks:unique(rendererBlocks),
   entitlements:{booking:Boolean(booking),commerce:Boolean(commerce),request:Boolean(request)},
   source:'advisor'
  };

@@ -18,4 +18,7 @@ test('every generated site records the V31–V42 module library and its selected
  }
  assert.ok(service.modulePlan.active.includes('booking'));
  assert.ok(!construction.modulePlan.active.includes('booking'));
+ assert.ok(!service.modulePlan.active.includes('reviews'),'reviews are not invented by a sector label');
+ assert.equal(service.modulePlan.library.find(x=>x.id==='reviews').state,'available');
+ assert.equal(construction.modulePlan.library.find(x=>x.id==='booking').state,'locked');
 });
