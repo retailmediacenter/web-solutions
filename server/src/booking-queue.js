@@ -32,6 +32,20 @@ const ensureReservationCode=x=>{if(typeof x!=='string'||!/^[A-HJ-NP-Z2-9]{8}$/.t
 const TIMING_MODES=new Set(['EXACT_TIME','DAY_PART']);
 const DAY_PARTS=new Set(['MORNING','AFTERNOON','ANY']);
 const profileText=(value,max=180)=>String(value??'').trim().slice(0,max);
+const FORM_TYPES=new Set(['text','textarea','select','checkbox']);
+function formFields(raw){
+ const fields=Array.isArray(raw)?raw:[];
+ if(fields.length>8)throw err(400,'Forma može imati najviše 8 dodatnih polja.');
+ const used=new Set();
+ return fields.map((field,index)=>{
+  const id=profileText(field?.id,50),label=profileText(field?.label,80),type=profileText(field?.type,20);
+  if(!/^custom-[a-z0-9_-]{2,42}$/i.test(id)||used.has(id)||!label||!FORM_TYPES.has(type))throw err(400,`Dodatno polje ${index+1} nije ispravno.`);
+  used.add(id);const options=Array.isArray(field?.options)?field.options.map(x=>profileText(x,80)).filter(Boolean):[];
+  if(type==='select'&&(options.length<2||options.length>10))throw err(400,'Izbor u formi mora imati od 2 do 10 opcija.');
+  if(type!=='select'&&options.length)throw err(400,'Opcije su dozvoljene samo za polje izbora.');
+  return {id,label,type,required:Boolean(field?.required),placeholder:profileText(field?.placeholder,120),options};
+ });
+}
 export function validateBookingProfile(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Nedostaje Booking profil sajta.');
  const business=raw.business&&typeof raw.business==='object'&&!Array.isArray(raw.business)?raw.business:{};
@@ -46,12 +60,15 @@ export function validateBookingProfile(raw){
   if(!/^[A-Za-z0-9:_-]{2,120}$/.test(id)||!serviceName||used.has(id))throw err(400,'Booking profil ima neispravnu uslugu.');
   used.add(id);return {id,name:serviceName};
  })};
+ if(raw.form&&typeof raw.form==='object'&&!Array.isArray(raw.form)){const editorForm=raw.form;
+  validated.form={title:profileText(editorForm.title,120),description:profileText(editorForm.description,600),submitLabel:profileText(editorForm.submitLabel,80),successMessage:profileText(editorForm.successMessage,240),fields:formFields(editorForm.fields)};
+ }
  if(commerce)validated.commerce=commerce;
  return validated;
 }
-function parseBooking(raw){
+function parseBooking(raw,profile){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw err(400,'Neispravna rezervacija.');
- const allowed=['clientName','phone','serviceId','serviceName','date','time','timingMode','dayPart','duration','note','requestId'];
+ const allowed=['clientName','phone','serviceId','serviceName','date','time','timingMode','dayPart','duration','note','requestId','answers'];
  if(Object.keys(raw).some(x=>!allowed.includes(x)))throw err(400,'Nepoznata polja rezervacije.');
  const clientName=String(raw.clientName||'').trim(),phone=String(raw.phone||'').trim(),serviceName=String(raw.serviceName||'').trim(),note=String(raw.note||'').trim();
  if(!clientName||clientName.length>100||phone.length>35||!serviceName||serviceName.length>100||note.length>700)throw err(400,'Proveri ime, telefon, uslugu i napomenu.');
@@ -65,7 +82,12 @@ function parseBooking(raw){
  const date=new Date(`${raw.date}T00:00:00Z`);if(Number.isNaN(date.getTime())||date.toISOString().slice(0,10)!==raw.date)throw err(400,'Datum nije ispravan.');
  const serviceId=raw.serviceId==null?'':String(raw.serviceId).trim();
  if(serviceId&&!/^[A-Za-z0-9:_-]{2,120}$/.test(serviceId))throw err(400,'Neispravan identifikator usluge.');
- return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:timingMode==='EXACT_TIME'?String(raw.time):'',timingMode,dayPart:timingMode==='DAY_PART'?dayPart:'',duration:raw.duration,note};
+ const schema=Array.isArray(profile?.form?.fields)?profile.form.fields:[], supplied=Array.isArray(raw.answers)?raw.answers:[];
+ if(supplied.length>schema.length||!Array.isArray(raw.answers)&&raw.answers!=null)throw err(400,'Dodatni odgovori nisu ispravni.');
+ const byId=new Map(schema.map(x=>[x.id,x])),used=new Set(),answers=[];
+ for(const answer of supplied){const id=String(answer?.id||'');const field=byId.get(id);const value=String(answer?.value??'').trim();if(!field||used.has(id)||value.length>500)throw err(400,'Dodatni odgovor nije dozvoljen.');if(field.type==='select'&&!field.options.includes(value))throw err(400,'Izabrana opcija nije dozvoljena.');if(field.type==='checkbox'&&!['Da','Ne'].includes(value))throw err(400,'Potvrda nije ispravna.');if(field.required&&!value)throw err(400,`Polje „${field.label}” je obavezno.`);used.add(id);if(value)answers.push({id,label:field.label,value});}
+ for(const field of schema)if(field.required&&!used.has(field.id))throw err(400,`Polje „${field.label}” je obavezno.`);
+ return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:timingMode==='EXACT_TIME'?String(raw.time):'',timingMode,dayPart:timingMode==='DAY_PART'?dayPart:'',duration:raw.duration,note,answers};
 }
 // Small injectable command adapter allows offline, deterministic tests without secrets.
 export function createBookingQueue(redis,{makeReservationCode=reservationCode,namespace=redisNamespace()}={}){
@@ -124,7 +146,8 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode,na
  async function submit(siteId,raw){
    ensureSite(siteId);
    if(!await redis('EXISTS',key('owner',siteId)))throw err(404,'Sajt nije povezan sa Booking Managerom.');
-   const booking=parseBooking(raw),requestCodeKey=key('request-code',siteId,booking.requestId);
+   const rawProfile=await redis('GET',key('profile',siteId));let profile;try{profile=validateBookingProfile(JSON.parse(rawProfile));}catch{throw err(503,'Profil povezanog sajta nije čitljiv.');}
+   const booking=parseBooking(raw,profile),requestCodeKey=key('request-code',siteId,booking.requestId);
    const knownCode=await redis('GET',requestCodeKey);
    if(knownCode)return {requestId:booking.requestId,reservationCode:ensureReservationCode(knownCode),duplicate:true};
    let assignedCode='';
