@@ -44,12 +44,21 @@ export function Landing({onStart,onOpenSite,onExample,onLead,onInfo,hasResult}){
  useEffect(()=>{
    if(!shadow)return;
    const link=shadow.querySelector('#ws-business-portal-link');
-    const raw=String(import.meta.env.VITE_PUBLIC_PORTAL_URL||'https://rmc-booking-manager.onrender.com/').trim();
+   const raw=String(import.meta.env.VITE_PUBLIC_PORTAL_URL||'https://rmc-booking-manager.onrender.com/').trim();
    let url;try{url=new URL(raw);}catch{}
    const valid=url?.protocol==='https:';
    const publicPages=window.location.hostname.endsWith('github.io');
    const staging=/staging/i.test(url?.hostname||'');
    if(!valid||(publicPages&&staging)){link?.remove();return;}
+   if(link){link.href=url.href;link.hidden=false;}
+ },[shadow]);
+ useEffect(()=>{
+   if(!shadow)return;
+   const link=shadow.querySelector('#ws-showcase-link');
+   const raw=String(import.meta.env.VITE_SHOWCASE_URL||'https://retailmediacenter.github.io/web-solutions-showcase/').trim();
+   let url;try{url=new URL(raw,window.location.origin);}catch{}
+   const valid=url?.protocol==='https:' && (raw.startsWith('/')||url.hostname===window.location.hostname||url.hostname==='retailmediacenter.github.io');
+   if(!valid){link?.remove();return;}
    if(link){link.href=url.href;link.hidden=false;}
  },[shadow]);
  useEffect(()=>{
