@@ -1,10 +1,9 @@
 import {createECDH,createPrivateKey,createSign,createHash,hkdfSync,randomBytes,createCipheriv} from 'node:crypto';
+import {redisNamespace,redisPrefix} from './redis-namespace.js';
 
 // Shared transport contract: only BOOKING is emitted in V43.3. ORDER and
 // INQUIRY reserve stable message types for the future combined manager.
 export const NOTIFICATION_TYPES=Object.freeze({BOOKING:'BOOKING',ORDER:'ORDER',INQUIRY:'INQUIRY'});
-const PREFIX='rmc:booking:v1:';
-const key=(...parts)=>PREFIX+parts.join(':');
 const b64url=value=>Buffer.from(value).toString('base64url');
 const fromB64url=value=>Buffer.from(value,'base64url');
 const err=(status,message)=>Object.assign(new Error(message),{status});
@@ -48,6 +47,7 @@ export function encryptPayload(subscription,payload){
 }
 
 export function createPushNotifications(redis,env=process.env,{fetcher=fetch}={}){
+ const prefix=redisPrefix('booking',redisNamespace(env)),key=(...parts)=>prefix+parts.join(':');
  const config=vapidConfig(env);
  async function subscribe(siteId,accessToken,subscription,authenticate){
   if(!validSiteId(siteId))throw err(400,'Neispravan identifikator sajta.');

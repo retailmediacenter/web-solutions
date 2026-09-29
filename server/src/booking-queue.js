@@ -1,8 +1,8 @@
 /* V43.2.1: short one-time pairing + durable Redis inbox. No manager credentials in exported sites. */
 import {randomBytes,createHash,timingSafeEqual} from 'node:crypto';
 import {normalizeCommerceProfile} from './commerce-profile.js';
+import {redisNamespace,redisPrefix} from './redis-namespace.js';
 const QUEUE_TTL=72*60*60, CODE_TTL=30*60;
-const PREFIX='rmc:booking:v1:';
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const code=()=>{
   // 10 symbols: 50 bits of entropy; 12 chars including two hyphens.
@@ -12,7 +12,6 @@ const code=()=>{
 };
 const id=()=>randomBytes(18).toString('base64url');
 const reservationCode=()=>{const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';const bytes=randomBytes(8);return [...bytes].map(n=>alphabet[n%alphabet.length]).join('');};
-const key=(...parts)=>PREFIX+parts.join(':');
 function redisFromEnvironment(env=process.env){
   const url=env.UPSTASH_REDIS_REST_URL,token=env.UPSTASH_REDIS_REST_TOKEN;
   if(!url||!token)throw new Error('Redis nije konfigurisan.');
@@ -69,7 +68,8 @@ function parseBooking(raw){
  return {requestId:ensureRequestId(raw.requestId),clientName,phone,serviceId,serviceName,date:raw.date,time:timingMode==='EXACT_TIME'?String(raw.time):'',timingMode,dayPart:timingMode==='DAY_PART'?dayPart:'',duration:raw.duration,note};
 }
 // Small injectable command adapter allows offline, deterministic tests without secrets.
-export function createBookingQueue(redis,{makeReservationCode=reservationCode}={}){
+export function createBookingQueue(redis,{makeReservationCode=reservationCode,namespace=redisNamespace()}={}){
+ const prefix=redisPrefix('booking',namespace),key=(...parts)=>prefix+parts.join(':');
  redis=redis||((...args)=>redisFromEnvironment()(...args));
  async function issue(profile,{siteId=null}={}){
    // A pairing without a bootstrap profile can never be completed safely.
@@ -165,5 +165,5 @@ export function createBookingQueue(redis,{makeReservationCode=reservationCode}={
    await redis('ZREM',key('index',siteId),requestId);
    return {ok:true};
  }
- return {issue,claim,authenticate,disconnect,submit,pending,acknowledge,redis};
+ return {issue,claim,authenticate,disconnect,submit,pending,acknowledge,redis,key,namespace};
 }

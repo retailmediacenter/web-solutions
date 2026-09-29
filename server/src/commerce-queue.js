@@ -1,10 +1,9 @@
 /* V46.0: Commerce shares the Booking site's owner credential/Redis, but uses
    a separate event inbox so legacy Booking managers never misread an ORDER. */
 import {randomBytes} from 'node:crypto';
-const PREFIX='rmc:commerce:v1:';
-const BOOKING_PREFIX='rmc:booking:v1:';
+import {redisPrefix} from './redis-namespace.js';
 const TTL=72*60*60;
-const key=(...p)=>PREFIX+p.join(':');
+
 const e=(status,message)=>Object.assign(new Error(message),{status});
 const siteId=x=>{if(typeof x!=='string'||!/^[A-Za-z0-9_-]{24}$/.test(x))throw e(400,'Neispravan SITE ID.');return x;};
 const requestId=x=>{if(typeof x!=='string'||!/^[a-f0-9-]{36}$/i.test(x))throw e(400,'Neispravan ID zahteva.');return x.toLowerCase();};
@@ -44,11 +43,11 @@ function normalizeOrder(raw,profile){
 }
 export function createCommerceQueue(bookingQueue,{makeOrderCode=orderCode}={}){
  if(!bookingQueue?.redis||!bookingQueue?.authenticate)throw new Error('Commerce zahteva postojeći Booking autentikacioni sloj.');
- const redis=bookingQueue.redis;
+ const redis=bookingQueue.redis,namespace=bookingQueue.namespace||'',prefix=redisPrefix('commerce',namespace),bookingPrefix=redisPrefix('booking',namespace),key=(...p)=>prefix+p.join(':');
  async function submit(site,raw){
   siteId(site);
-  if(!await redis('EXISTS',BOOKING_PREFIX+'owner:'+site))throw e(404,'Sajt nije povezan sa Business Portalom.');
-  const rawProfile=await redis('GET',BOOKING_PREFIX+'profile:'+site);
+  if(!await redis('EXISTS',bookingPrefix+'owner:'+site))throw e(404,'Sajt nije povezan sa Business Portalom.');
+  const rawProfile=await redis('GET',bookingPrefix+'profile:'+site);
   let profile;try{profile=JSON.parse(rawProfile);}catch{}
   if(!profile?.commerce?.enabled)throw e(403,'Commerce nije aktiviran za ovaj povezani sajt.');
   const order=normalizeOrder(raw,profile);

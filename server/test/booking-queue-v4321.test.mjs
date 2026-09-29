@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createBookingQueue} from '../src/booking-queue.js';
+import {redisPrefix} from '../src/redis-namespace.js';
 function mockRedis(){
  const m=new Map(),z=new Map();
  return async(cmd,...a)=>{
@@ -68,4 +69,12 @@ test('DAY_PART accepts no fabricated time and pairing cannot be issued without a
  assert.match(result.reservationCode,/^[A-HJ-NP-Z2-9]{8}$/);
  const pending=await q.pending(issued.siteId,owner.accessToken);
  assert.equal(pending[0].timingMode,'DAY_PART');assert.equal(pending[0].time,'');assert.equal(pending[0].dayPart,'MORNING');
+});
+
+test('Redis namespace separates production keys while preserving legacy staging keys',()=>{
+ const staging=createBookingQueue(mockRedis()),production=createBookingQueue(mockRedis(),{namespace:'prod'});
+ assert.equal(staging.key('owner','site'),'rmc:booking:v1:owner:site');
+ assert.equal(production.key('owner','site'),'rmc:booking:prod:v1:owner:site');
+ assert.equal(redisPrefix('commerce','prod'),'rmc:commerce:prod:v1:');
+ assert.notEqual(staging.key('profile','site'),production.key('profile','site'));
 });

@@ -109,3 +109,15 @@ test('real Advisor/QA profiles preserve independent commerce and booking capabil
  assert.equal(pharmacy.siteConfig.siteProfile.commerce.products.length,3);
  assert.equal(pharmacy.siteConfig.capabilities.pharmacyConsultations,true);
 });
+
+test('production namespace isolates Booking and Commerce keys in a shared Redis database',async()=>{
+ const {redis,db}=fakeRedis(),q=createBookingQueue(redis,{namespace:'prod'}),cq=createCommerceQueue(q);
+ const issued=await q.issue(onlyShop),claimed=await q.claim(issued.pairingCode);
+ await q.submit(issued.siteId,booking);await cq.submit(issued.siteId,order);
+ const keys=[...db.keys()];
+ assert.ok(keys.some(key=>key.startsWith('rmc:booking:prod:v1:')));
+ assert.ok(keys.some(key=>key.startsWith('rmc:commerce:prod:v1:')));
+ assert.equal(keys.some(key=>key.startsWith('rmc:booking:v1:')||key.startsWith('rmc:commerce:v1:')),false);
+ assert.equal((await q.pending(issued.siteId,claimed.accessToken)).length,1);
+ assert.equal((await cq.pending(issued.siteId,claimed.accessToken)).length,1);
+});
