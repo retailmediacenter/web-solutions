@@ -96,6 +96,7 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
  }
  async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,activation:p.activation};}
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);await save(project);return summary(siteId);}
+ async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function activate(siteId,packageName){
   const project=await read(siteId),name=String(packageName||'').toLowerCase();
@@ -127,5 +128,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,updateContent,exportProject,activate,activateExport};
+ return {register,summary,updateContent,previewContent,exportProject,activate,activateExport};
 }
