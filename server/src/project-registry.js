@@ -10,6 +10,12 @@ const image=value=>{
  if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
  return valueText;
 };
+const href=value=>{
+ const valueText=text(value,400);if(!valueText)return '';
+ if(!/^(?:https:\/\/|mailto:|tel:|#[A-Za-z][A-Za-z0-9_-]*$)/i.test(valueText))throw invalid('Link mora biti HTTPS adresa, tel:, mailto: ili interna #sekcija.');
+ return valueText;
+};
+const moduleText=(value,max,fallback='')=>text(value,max)||fallback;
 const listKey=catalog=>Array.isArray(catalog?.services)?'services':Array.isArray(catalog?.products)?'products':Array.isArray(catalog?.cards)?'cards':null;
 
 // The editor deliberately accepts a narrow content document instead of a raw
@@ -35,6 +41,14 @@ function applyEditorContent(project,content,now){
  catalog.offerTitle=text(content.offerTitle,120);
  catalog.hero=image(content.hero);
  if(!catalog.headline||!catalog.subtitle)throw invalid('Hero naslov i opis su obavezni.');
+ const modules=content.modules&&typeof content.modules==='object'&&!Array.isArray(content.modules)?content.modules:{};
+ const services=modules.services&&typeof modules.services==='object'?modules.services:{};
+ const booking=modules.booking&&typeof modules.booking==='object'?modules.booking:{};
+ const contactModule=modules.contact&&typeof modules.contact==='object'?modules.contact:{};
+ const custom=Array.isArray(content.customSections)?content.customSections:[];
+ if(custom.length>12)throw invalid('Možete dodati najviše 12 novih sadržajnih blokova.');
+ catalog.editorModules={services:{kicker:moduleText(services.kicker,40,'PONUDA'),description:moduleText(services.description,500,'Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.')},booking:{kicker:moduleText(booking.kicker,40,''),title:moduleText(booking.title,120,''),description:moduleText(booking.description,600,'')}};
+ site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const title=moduleText(entry?.title,120);const body=moduleText(entry?.body,1200);if(!title||!body)throw invalid(`Novi blok ${index+1} mora imati naslov i tekst.`);return {id:text(entry?.id,80)||`custom-${index+1}`,kicker:moduleText(entry?.kicker,40,''),title,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
  const key=listKey(catalog),incoming=content.items;
  if(key&&incoming!==undefined){
   if(!Array.isArray(incoming)||incoming.length<1||incoming.length>500)throw invalid('Ponuda mora imati između 1 i 500 stavki.');

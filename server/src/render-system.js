@@ -19,6 +19,7 @@ const contactCss=`<style id="ws-v454-contact-css">
 .ws-v454-contact .ws-v454-extra{display:inline-flex;align-items:center;color:var(--accent,#264e88);overflow-wrap:anywhere;min-height:44px}
 .ws-v454-contact .service-contact-form{width:100%;margin-top:22px}
 .ws-v454-map-title{font-size:clamp(20px,2.2vw,30px)!important}
+.ws-editor-section{clear:both;max-width:1280px;margin:0 auto;padding:clamp(30px,5vw,72px) clamp(20px,4vw,64px);background:var(--section-bg,#f8fafc);color:var(--ink,#17263c);font-family:var(--body-font,Arial,sans-serif)}.ws-editor-section h2{font:750 clamp(24px,3vw,38px)/1.25 var(--display-font,Arial,sans-serif);margin:10px 0 14px}.ws-editor-section p{max-width:760px;line-height:1.65}.ws-editor-section .primary{display:inline-flex;margin-top:10px}
 @media(max-width:690px){.ws-v454-contact{padding:32px 17px}.ws-v454-contact .ws-v454-phone{width:100%;text-align:center}}
 </style>`;
 function locationCard(x,idx){
@@ -41,10 +42,12 @@ function sections(data,site,retainedForm=''){
  '<p>Kontakt telefon nije unet.</p>';
  const mail=data.email?`<a class="ws-v454-extra" href="mailto:${esc(data.email)}">${esc(data.email)}</a>`:'';
  const website=data.website?`<a class="ws-v454-extra" href="${esc(data.website)}" target="_blank" rel="noopener noreferrer">Naš sajt ↗</a>`:'';
+ const editor=site.editorModules||{},contactCopy=editor.contact||{},custom=Array.isArray(editor.customSections)?editor.customSections:[];
+ const customSections=custom.map((entry,index)=>`<section class="site-section ws-editor-section" id="${esc(entry.id||`custom-${index+1}`)}"><div class="kicker">${esc(entry.kicker||'VIŠE INFORMACIJA')}</div><h2>${esc(entry.title)}</h2><p>${esc(entry.body)}</p>${entry.linkLabel&&entry.linkHref?`<a class="primary" href="${esc(entry.linkHref)}"${/^https:/i.test(entry.linkHref)?' target="_blank" rel="noopener noreferrer"':''}>${esc(entry.linkLabel)}</a>`:''}</section>`).join('');
  const contact=`<section class="site-section ws-v454-contact" id="kontakt" aria-labelledby="ws-v454-contact-heading">
- <div class="kicker">KONTAKT</div><h2 id="ws-v454-contact-heading">Kontaktirajte nas</h2>
+ <div class="kicker">${esc(contactCopy.kicker||'KONTAKT')}</div><h2 id="ws-v454-contact-heading">${esc(contactCopy.title||'Kontaktirajte nas')}</h2>${contactCopy.description?`<p>${esc(contactCopy.description)}</p>`:''}
  <div class="ws-v454-contact-row">${mainContact}${mail}${website}</div>${retainedForm}</section>`;
- return places+contact;
+ return places+customSections+contact;
 }
 /** Replaces only the three known old GENERIC contact wrappers. Never removes a
  * booking section, Booking IDs, or the inactive-service inquiry form. */
