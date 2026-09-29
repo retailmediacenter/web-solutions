@@ -4,6 +4,7 @@ import {fileURLToPath} from 'node:url';
 import {renderHtml} from './render-site.js';
 import {zipFiles} from './zip.js';
 import {addLocalPhonePreview} from './offline-preview.js';
+import {controllerAssets} from './commerce-controller.js';
 const projectRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../');
 const publicRoot=path.join(projectRoot,'client','public');
 function staticFile(name){return readFileSync(path.join(publicRoot,name));}
@@ -30,6 +31,7 @@ export function exportSiteZip(payload,{pairingCode=null,expiresIn=0}={}){
   const isVertical=!!payload.siteConfig.capabilities?.vertical;
   const requested=new Set([catalog.hero,...(isVertical?catalog.cards:isService?catalog.services:catalog.products).map(x=>x.image)].filter(Boolean));
   if(payload.siteConfig.capabilities.wineTastings&&catalog.tastingImage)requested.add(catalog.tastingImage);
+  for(const image of controllerAssets(payload.siteConfig.business.id))requested.add(image);
   if(payload.secondary){for(const image of payload.secondary.type==='service'?payload.secondary.services.slice(0,3).map(x=>x.image):payload.secondary.type==='products'?payload.secondary.products.slice(0,4).map(x=>x.image):payload.secondary.type==='vehicles'?payload.secondary.products.map(x=>x.image):[])if(image)requested.add(image);}
   const files=[
     {name:'index.html',data:siteHtml},

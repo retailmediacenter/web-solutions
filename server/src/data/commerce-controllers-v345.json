@@ -1,0 +1,658 @@
+{
+  "auto-parts": {
+    "title": "Izaberite prema poslu",
+    "intro": "Počnite od servisa ili aktuelnog izbora; katalog će prikazati relevantne delove.",
+    "groups": [
+      {
+        "id": "projects",
+        "label": "Po servisu",
+        "items": [
+          {
+            "id": "minor-service",
+            "title": "Mali servis",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_minor_service_01.jpg",
+            "match": {
+              "titles": [
+                "Filter vazduha",
+                "Filter kabine",
+                "Filter ulja",
+                "Motorno ulje"
+              ]
+            }
+          },
+          {
+            "id": "major-service",
+            "title": "Veliki servis",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_major_service_01.jpg",
+            "match": {
+              "titles": [
+                "Filter vazduha",
+                "Filter kabine",
+                "Filter ulja",
+                "Motorno ulje",
+                "Svećice",
+                "Metlice brisača"
+              ]
+            }
+          },
+          {
+            "id": "brake-service",
+            "title": "Servis kočnica",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_brake_service_01.jpg",
+            "match": {
+              "categories": [
+                "Kočioni sistem"
+              ]
+            }
+          },
+          {
+            "id": "suspension",
+            "title": "Vešanje i trap",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_suspension_01.jpg",
+            "match": {
+              "categories": [
+                "Vešanje i trap"
+              ]
+            }
+          },
+          {
+            "id": "electrical",
+            "title": "Elektrika i rasveta",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_electrical_01.jpg",
+            "match": {
+              "categories": [
+                "Elektrika"
+              ]
+            }
+          },
+          {
+            "id": "seasonal",
+            "title": "Sezonska priprema",
+            "image": "assets/images/curated/retail/auto-parts/controller/projects/auto_parts_project_seasonal_check_01.jpg",
+            "match": {
+              "titles": [
+                "Akumulator",
+                "Metlice brisača",
+                "Motorno ulje",
+                "Sijalica fara"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "promotions",
+        "label": "Aktuelni izbori",
+        "items": [
+          {
+            "id": "battery-selection",
+            "title": "Akumulatori za sezonu",
+            "image": "assets/images/curated/retail/auto-parts/controller/promotions/auto_parts_promo_battery_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Akumulator"
+              ]
+            }
+          },
+          {
+            "id": "brake-selection",
+            "title": "Kočnice i sigurnost",
+            "image": "assets/images/curated/retail/auto-parts/controller/promotions/auto_parts_promo_brake_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Kočioni sistem"
+              ]
+            }
+          },
+          {
+            "id": "filters-oil",
+            "title": "Filteri i ulje",
+            "image": "assets/images/curated/retail/auto-parts/controller/promotions/auto_parts_promo_filters_oil_01.jpg",
+            "match": {
+              "categories": [
+                "Filteri",
+                "Održavanje"
+              ]
+            }
+          },
+          {
+            "id": "service-bundle",
+            "title": "Paket za mali servis",
+            "image": "assets/images/curated/retail/auto-parts/controller/promotions/auto_parts_promo_service_bundle_01.jpg",
+            "match": {
+              "titles": [
+                "Filter vazduha",
+                "Filter kabine",
+                "Filter ulja",
+                "Motorno ulje"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "butcher-shop": {
+    "title": "Izaberite paket ili priliku",
+    "intro": "Brzo suzite dnevnu ponudu prema kupovini koju planirate.",
+    "groups": [
+      {
+        "id": "promotions",
+        "label": "Paketi i izbori",
+        "items": [
+          {
+            "id": "family-pack",
+            "title": "Porodični paket",
+            "image": "assets/images/curated/retail/butcher-shop/controller/promotions/butcher_shop_promo_family_pack_01.jpg",
+            "match": {
+              "titles": [
+                "Juneće pečenje",
+                "Pileće belo meso",
+                "Svinjski kotleti",
+                "Mleveno meso"
+              ]
+            }
+          },
+          {
+            "id": "grill-selection",
+            "title": "Grill selekcija",
+            "image": "assets/images/curated/retail/butcher-shop/controller/promotions/butcher_shop_promo_grill_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Roštilj i priprema"
+              ]
+            }
+          },
+          {
+            "id": "premium-cuts",
+            "title": "Premium komadi",
+            "image": "assets/images/curated/retail/butcher-shop/controller/promotions/butcher_shop_promo_premium_cuts_01.jpg",
+            "match": {
+              "titles": [
+                "Biftek",
+                "Jagnjeći kotleti",
+                "Juneće pečenje"
+              ]
+            }
+          },
+          {
+            "id": "weekend-selection",
+            "title": "Vikend selekcija",
+            "image": "assets/images/curated/retail/butcher-shop/controller/promotions/butcher_shop_promo_weekend_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Ćevapi",
+                "Kobasice",
+                "Ražnjići",
+                "Svinjski vrat"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "electrical-supplies": {
+    "title": "Kupujte prema poslu",
+    "intro": "Izaberite projekat ili aktuelni izbor; isti Universal Catalog prikazaće odgovarajući materijal.",
+    "groups": [
+      {
+        "id": "projects",
+        "label": "Kupujte po projektu",
+        "items": [
+          {
+            "id": "apartment-renovation",
+            "title": "Renoviranje stana",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_apartment_renovation_01.jpg",
+            "match": {
+              "categories": [
+                "Prekidači i utičnice"
+              ]
+            }
+          },
+          {
+            "id": "new-installation",
+            "title": "Nova električna instalacija",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_new_installation_01.jpg",
+            "match": {
+              "categories": [
+                "Kablovi",
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "interior-lighting",
+            "title": "Unutrašnja rasveta",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_interior_lighting_01.jpg",
+            "match": {
+              "categories": [
+                "Rasveta"
+              ]
+            }
+          },
+          {
+            "id": "led-ambient",
+            "title": "Ambijentalni LED",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_led_ambient_01.jpg",
+            "match": {
+              "titles": [
+                "LED traka",
+                "LED napajanje"
+              ]
+            }
+          },
+          {
+            "id": "outdoor-installation",
+            "title": "Spoljna instalacija",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_outdoor_installation_01.jpg",
+            "match": {
+              "categories": [
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "distribution-protection",
+            "title": "Razvod i zaštita",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/projects/electrical_supplies_project_distribution_protection_01.jpg",
+            "match": {
+              "titles": [
+                "Razvodni orman",
+                "Razvodna kutija",
+                "Automatski osigurač",
+                "RCD zaštitni prekidač"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "promotions",
+        "label": "Aktuelni izbori",
+        "items": [
+          {
+            "id": "distribution-selection",
+            "title": "Razvod i zaštita",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/promotions/electrical_supplies_promo_distribution_protection_01.jpg",
+            "match": {
+              "titles": [
+                "Razvodni orman",
+                "Razvodna kutija",
+                "Automatski osigurač",
+                "RCD zaštitni prekidač"
+              ]
+            }
+          },
+          {
+            "id": "installation-essentials",
+            "title": "Osnovno za instalaciju",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/promotions/electrical_supplies_promo_installation_essentials_01.jpg",
+            "match": {
+              "categories": [
+                "Kablovi",
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "led-selection",
+            "title": "LED izbor",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/promotions/electrical_supplies_promo_led_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Rasveta"
+              ]
+            }
+          },
+          {
+            "id": "switch-socket",
+            "title": "Prekidači i utičnice",
+            "image": "assets/images/curated/retail/electrical-supplies/controller/promotions/electrical_supplies_promo_switch_socket_collection_01.jpg",
+            "match": {
+              "categories": [
+                "Prekidači i utičnice"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "furniture-store": {
+    "title": "Istražite nameštaj po prostoriji",
+    "intro": "Izaberite prostoriju; isti Universal Catalog prikazaće odgovarajući nameštaj.",
+    "groups": [
+      {
+        "id": "rooms",
+        "label": "Po prostoriji",
+        "items": [
+          {
+            "id": "living-room",
+            "title": "Dnevna soba",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_living_room_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Dnevna soba"
+                ]
+              }
+            }
+          },
+          {
+            "id": "dining-room",
+            "title": "Trpezarija",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_dining_room_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Trpezarija"
+                ]
+              }
+            }
+          },
+          {
+            "id": "bedroom",
+            "title": "Spavaća soba",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_bedroom_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Spavaća soba"
+                ]
+              }
+            }
+          },
+          {
+            "id": "home-office",
+            "title": "Home office",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_home_office_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Home office"
+                ]
+              }
+            }
+          },
+          {
+            "id": "kids-room",
+            "title": "Dečja soba",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_kids_room_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Dečja soba"
+                ]
+              }
+            }
+          },
+          {
+            "id": "entryway",
+            "title": "Predsoblje",
+            "image": "assets/images/curated/retail/furniture-store/controller/rooms/furniture_store_room_entryway_01.jpg",
+            "match": {
+              "fields": {
+                "rooms": [
+                  "Predsoblje"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "phone-store": {
+    "title": "Izaberite tip ponude",
+    "intro": "Aktuelne selekcije vode direktno na relevantne telefone i dodatnu opremu.",
+    "groups": [
+      {
+        "id": "promotions",
+        "label": "Aktuelne selekcije",
+        "items": [
+          {
+            "id": "best-buy",
+            "title": "Best Buy izbor",
+            "image": "assets/images/curated/retail/phone-store/controller/promotions/phone_store_promo_best_buy_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Povoljan telefon",
+                "Telefon srednje klase"
+              ]
+            }
+          },
+          {
+            "id": "flagship",
+            "title": "Flagship selekcija",
+            "image": "assets/images/curated/retail/phone-store/controller/promotions/phone_store_promo_flagship_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Premium telefon",
+                "Telefon sa naprednom kamerom"
+              ]
+            }
+          },
+          {
+            "id": "new-models",
+            "title": "Novi modeli",
+            "image": "assets/images/curated/retail/phone-store/controller/promotions/phone_store_promo_new_models_01.jpg",
+            "match": {
+              "titles": [
+                "Preklopni telefon",
+                "Gaming telefon",
+                "Telefon sa naprednom kamerom"
+              ]
+            }
+          },
+          {
+            "id": "accessory-bundle",
+            "title": "Dodatna oprema",
+            "image": "assets/images/curated/retail/phone-store/controller/promotions/phone_store_promo_phone_accessory_bundle_01.jpg",
+            "match": {
+              "categories": [
+                "Dodaci"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "plumbing-supplies": {
+    "title": "Kupujte prema projektu",
+    "intro": "Izaberite posao koji radite ili aktuelni izbor; katalog se odmah sužava na odgovarajuću robu.",
+    "groups": [
+      {
+        "id": "projects",
+        "label": "Kupujte po projektu",
+        "items": [
+          {
+            "id": "bathroom-renovation",
+            "title": "Renoviranje kupatila",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_bathroom_renovation_01.jpg",
+            "match": {
+              "categories": [
+                "Slavine",
+                "Kupatilo"
+              ]
+            }
+          },
+          {
+            "id": "kitchen-plumbing",
+            "title": "Kuhinjska instalacija",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_kitchen_plumbing_01.jpg",
+            "match": {
+              "categories": [
+                "Slavine",
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "new-installation",
+            "title": "Nova vodovodna instalacija",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_new_installation_01.jpg",
+            "match": {
+              "categories": [
+                "Instalacioni materijal",
+                "Ventili"
+              ]
+            }
+          },
+          {
+            "id": "leak-repair",
+            "title": "Popravka curenja",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_leak_repair_01.jpg",
+            "match": {
+              "categories": [
+                "Ventili",
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "heating",
+            "title": "Grejanje",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_heating_01.jpg",
+            "match": {
+              "titles": [
+                "Bojler",
+                "Radijatorski ventil",
+                "Pumpa za vodu"
+              ]
+            }
+          },
+          {
+            "id": "drainage",
+            "title": "Odvod",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/projects/plumbing_supplies_project_drainage_01.jpg",
+            "match": {
+              "titles": [
+                "Sifon za sudoperu",
+                "Set fitinga",
+                "PEX cev"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "promotions",
+        "label": "Aktuelni izbori",
+        "items": [
+          {
+            "id": "bathroom-upgrade",
+            "title": "Kupatilo — kompletan izbor",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/promotions/plumbing_supplies_promo_bathroom_upgrade_01.jpg",
+            "match": {
+              "categories": [
+                "Slavine",
+                "Kupatilo"
+              ]
+            }
+          },
+          {
+            "id": "installation-bundle",
+            "title": "Sve za novu instalaciju",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/promotions/plumbing_supplies_promo_installation_bundle_01.jpg",
+            "match": {
+              "categories": [
+                "Instalacioni materijal",
+                "Ventili"
+              ]
+            }
+          },
+          {
+            "id": "repair-essentials",
+            "title": "Osnovno za popravku",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/promotions/plumbing_supplies_promo_repair_essentials_01.jpg",
+            "match": {
+              "categories": [
+                "Ventili",
+                "Instalacioni materijal"
+              ]
+            }
+          },
+          {
+            "id": "shower-selection",
+            "title": "Tuš program",
+            "image": "assets/images/curated/retail/plumbing-supplies/controller/promotions/plumbing_supplies_promo_shower_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Kupatilo"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "wine-shop": {
+    "title": "Izaberite vinsku selekciju",
+    "intro": "Odabrane selekcije vode na odgovarajuće etikete u jednom katalogu.",
+    "groups": [
+      {
+        "id": "promotions",
+        "label": "Selekcije",
+        "items": [
+          {
+            "id": "premium-red",
+            "title": "Premium crvena vina",
+            "image": "assets/images/curated/retail/wine-shop/controller/promotions/wine_shop_promo_premium_red_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Crvena vina"
+              ]
+            }
+          },
+          {
+            "id": "gift-selection",
+            "title": "Poklon selekcija",
+            "image": "assets/images/curated/retail/wine-shop/controller/promotions/wine_shop_promo_gift_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Premium crveno vino",
+                "Premium belo vino",
+                "Prosecco"
+              ]
+            }
+          },
+          {
+            "id": "signature-selection",
+            "title": "Signature selekcija",
+            "image": "assets/images/curated/retail/wine-shop/controller/promotions/wine_shop_promo_signature_selection_01.jpg",
+            "match": {
+              "titles": [
+                "Premium crveno vino",
+                "Premium belo vino",
+                "Roze vino"
+              ]
+            }
+          },
+          {
+            "id": "sparkling-selection",
+            "title": "Penušava vina",
+            "image": "assets/images/curated/retail/wine-shop/controller/promotions/wine_shop_promo_sparkling_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Penušava vina"
+              ]
+            }
+          },
+          {
+            "id": "summer-white",
+            "title": "Letnja bela vina",
+            "image": "assets/images/curated/retail/wine-shop/controller/promotions/wine_shop_promo_summer_white_selection_01.jpg",
+            "match": {
+              "categories": [
+                "Bela vina",
+                "Rosé"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
