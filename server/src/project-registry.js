@@ -3,6 +3,70 @@ import {randomBytes} from 'node:crypto';
 const invalid=(message,status=400)=>Object.assign(new Error(message),{status});
 const validSiteId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{24}$/.test(value);
 const id=()=>randomBytes(18).toString('base64url');
+const text=(value,max)=>String(value??'').trim().slice(0,max);
+const image=value=>{
+ const valueText=text(value,260);
+ if(!valueText)return '';
+ if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
+ return valueText;
+};
+const listKey=catalog=>Array.isArray(catalog?.services)?'services':Array.isArray(catalog?.products)?'products':Array.isArray(catalog?.cards)?'cards':null;
+
+// The editor deliberately accepts a narrow content document instead of a raw
+// export payload. It can never change a business type, enabled package, API
+// transport or owner credentials; those remain controlled by the Advisor and
+// the activation flow.
+function applyEditorContent(project,content,now){
+ if(!content||typeof content!=='object'||Array.isArray(content))throw invalid('Nedostaje sadržaj za uređivanje.');
+ const payload=structuredClone(project.sourcePayload),site=payload.siteConfig,catalog=payload.catalog;
+ const businessName=text(content.businessName,100);
+ if(!businessName)throw invalid('Naziv firme je obavezan.');
+ site.business={...(site.business||{}),name:businessName};
+ if(site.businessData)site.businessData.name=businessName;
+ if(site.bookingProfile?.business)site.bookingProfile.business.name=businessName;
+ if(site.siteProfile?.business)site.siteProfile.business.name=businessName;
+ const phone=text(content.phone,35).replace(/[^+\d\s()\-]/g,'');
+ site.contact={...(site.contact||{}),phone};
+ if(site.businessData)site.businessData.phone=phone;
+ if(site.bookingProfile?.business)site.bookingProfile.business.phone=phone;
+ if(site.siteProfile?.business)site.siteProfile.business.phone=phone;
+ catalog.headline=text(content.headline,180);
+ catalog.subtitle=text(content.subtitle,500);
+ catalog.offerTitle=text(content.offerTitle,120);
+ catalog.hero=image(content.hero);
+ if(!catalog.headline||!catalog.subtitle)throw invalid('Hero naslov i opis su obavezni.');
+ const key=listKey(catalog),incoming=content.items;
+ if(key&&incoming!==undefined){
+  if(!Array.isArray(incoming)||incoming.length<1||incoming.length>500)throw invalid('Ponuda mora imati između 1 i 500 stavki.');
+  const original=catalog[key],byId=new Map(original.map(item=>[String(item.id),item]));
+  const used=new Set();
+  catalog[key]=incoming.map((item,index)=>{
+   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=previous?String(previous.id):suppliedId;
+   if(!/^[A-Za-z0-9:_-]{2,120}$/.test(itemId))throw invalid('Nova stavka zahteva ispravan stabilan identifikator.');
+   if(used.has(itemId))throw invalid('Stavke ponude moraju imati različite identifikatore.');used.add(itemId);
+   const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image);
+   if(!title)throw invalid('Svaka stavka ponude mora imati naziv.');
+   const next={...(previous||{}),id:itemId,title,image:itemImage};
+   if('description' in (previous||{})||description)next.description=description;
+   if(key==='products'||'category' in (previous||{}))next.category=text(item?.category,80)||previous?.category||'Ponuda';
+   if(key==='products'||'price' in (previous||{})){const price=Number(item?.price);if(!Number.isFinite(price)||price<0||price>10000000)throw invalid('Cena proizvoda nije ispravna.');next.price=Math.round(price*100)/100;if(!previous){next.unit='kom';next.step=1;}}
+   return next;
+  });
+  // Booking and Commerce profiles feed the activated Portal. Keep their
+  // customer-facing labels and products in lockstep with the published site.
+  if(key==='services'){
+   const services=catalog.services.map((item,index)=>({id:item.id||site.bookingProfile?.services?.[index]?.id||`service-${index+1}`,name:item.title}));
+   if(site.bookingProfile)site.bookingProfile.services=services;
+   if(site.siteProfile)site.siteProfile.services=services;
+   if(site.capabilities?.booking){site.capabilities.booking.services=services;site.capabilities.booking.offerings=services.map(item=>item.name);}
+  }
+  if(key==='products'&&site.siteProfile?.commerce){
+   site.siteProfile.commerce.products=catalog.products.map((item,index)=>({...site.siteProfile.commerce.products[index],id:item.id,name:item.title,image:item.image,price:item.price}));
+  }
+ }
+ project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
+ return project;
+}
 
 export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={}){
  if(!queue?.redis||!queue?.key||!queue?.validateProfile)throw new Error('Project Registry zahteva Booking Redis sloj.');
@@ -30,7 +94,9 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   }
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
  }
- async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,createdAt:p.createdAt,activation:p.activation};}
+ async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,activation:p.activation};}
+ async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);await save(project);return summary(siteId);}
+ async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function activate(siteId,packageName){
   const project=await read(siteId),name=String(packageName||'').toLowerCase();
   const profile=name==='booking'?project.profiles.booking:name==='commerce'?project.profiles.commerce:name==='business'?project.profiles.business:null;
@@ -61,5 +127,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,activate,activateExport};
+ return {register,summary,updateContent,exportProject,activate,activateExport};
 }

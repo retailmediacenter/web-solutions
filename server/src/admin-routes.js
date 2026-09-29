@@ -20,6 +20,8 @@ export function adminRouter(projects,{now=Date.now}={}){
  });
   router.use((req,res,next)=>valid(auth(req))?next():res.status(401).json({error:'Administratorska sesija je istekla.'}));
   router.get('/projects/:siteId',(req,res,next)=>projects.summary(req.params.siteId).then(project=>res.json({project})).catch(next));
+  router.put('/projects/:siteId/content',(req,res,next)=>projects.updateContent(req.params.siteId,req.body?.content).then(project=>res.json({project})).catch(next));
+  router.post('/projects/:siteId/export',async(req,res,next)=>{try{const result=await projects.exportProject(req.params.siteId),zip=exportSiteZip(result.payload);res.set({'Content-Type':'application/zip','Content-Disposition':'attachment; filename="rmc-publish-sajt.zip"','Cache-Control':'no-store','Content-Length':String(zip.length)}).status(201).end(zip);}catch(error){next(error);}});
   router.post('/projects/:siteId/activate',(req,res,next)=>projects.activate(req.params.siteId,req.body?.package).then(result=>res.status(201).json(result)).catch(next));
   router.post('/projects/:siteId/activated-export',async(req,res,next)=>{
    try{
