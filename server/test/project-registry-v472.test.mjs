@@ -74,7 +74,12 @@ test('Publish ZIP source carries edited content but never mints a pairing code',
  assert.equal(result.payload.siteConfig.bookingTransport,undefined);
 });
 
-test('a project without a Portal capability is never registered for activation',async()=>{
+test('a project without a Portal capability still receives a Project ID for content-only editing',async()=>{
  const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue);
- assert.equal(await projects.register({capabilities:{booking:{enabled:false},commerce:false}}),null);
+ const payload={siteConfig:{business:{name:'Kontakt salon'},capabilities:{booking:{enabled:false},commerce:false}},catalog:{headline:'Naslov',subtitle:'Opis',offerTitle:'Ponuda',hero:'',services:[{id:'contact',title:'Kontakt',description:'',image:''}]}};
+ const created=await projects.register(payload),exported=await projects.exportProject(created.siteId);
+ assert.match(created.siteId,/^[A-Za-z0-9_-]{24}$/);
+ assert.deepEqual(created.capabilities,{booking:false,commerce:false});
+ assert.equal(exported.payload.siteConfig.projectId,created.siteId);
+ await assert.rejects(()=>projects.activate(created.siteId,'booking'),/nije dostupan/);
 });

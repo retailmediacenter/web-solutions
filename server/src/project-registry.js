@@ -81,15 +81,14 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   const site=sourcePayload?.siteConfig||sourcePayload;
   const booking=Boolean(site?.capabilities?.booking?.enabled&&site.bookingProfile?.services?.length);
   const commerce=Boolean(site?.capabilities?.commerce&&site.siteProfile?.commerce?.enabled);
-  if(!booking&&!commerce)return null;
   const profiles={};
   if(booking)profiles.booking=queue.validateProfile(site.bookingProfile);
   if(commerce){
    profiles.commerce=queue.validateProfile({...site.siteProfile,services:[]});
    profiles.business=queue.validateProfile(site.siteProfile);
-  }else profiles.business=profiles.booking;
+  }else if(booking)profiles.business=profiles.booking;
   for(let attempt=0;attempt<4;attempt++){
-   const siteId=id(),project={version:2,siteId,business:{name:profiles.business.business.name},capabilities:{booking,commerce},profiles,siteConfig:site,sourcePayload:sourcePayload?.siteConfig?sourcePayload:{siteConfig:site},createdAt:now(),activation:null};
+   const siteId=id(),project={version:2,siteId,business:{name:profiles.business?.business?.name||site?.business?.name||'RMC sajt'},capabilities:{booking,commerce},profiles,siteConfig:site,sourcePayload:sourcePayload?.siteConfig?sourcePayload:{siteConfig:site},createdAt:now(),activation:null};
    if(await queue.redis('SET',key(siteId),JSON.stringify(project),'NX'))return project;
   }
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
