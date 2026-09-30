@@ -1,8 +1,10 @@
-import {randomBytes} from 'node:crypto';
+import {createHash,randomBytes} from 'node:crypto';
 
 const invalid=(message,status=400)=>Object.assign(new Error(message),{status});
 const validSiteId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{24}$/.test(value);
 const id=()=>randomBytes(18).toString('base64url');
+const activationToken=()=>randomBytes(32).toString('base64url');
+const tokenHash=value=>createHash('sha256').update(String(value||'')).digest('hex');
 const text=(value,max)=>String(value??'').trim().slice(0,max);
 const image=value=>{
  const valueText=text(value,260);
@@ -131,6 +133,18 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
  async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
+ async function requestBuild(siteId,requestedPlan,demoUrl=''){
+  const project=await read(siteId),plan=String(requestedPlan||'').toLowerCase();
+  if(!['publish','business','commerce'].includes(plan))throw invalid('Paket mora biti Publish, Business ili Commerce.');
+  const site=project.siteConfig||{},business=site.businessData||site.business||{},modules=site.modulePlan?.active||[];
+  const booking=Boolean(project.capabilities?.booking),commerce=Boolean(project.capabilities?.commerce);
+  const request={contractVersion:'1.0',siteId:project.siteId,request:{requestedPlan:plan,requestStatus:'requested',createdAt:now()},business:{name:text(business.name,100),primaryType:text(site.businessId||business.type,80),secondaryType:null,businessMode:text(site.businessMode,80),location:text(business.location,160),phone:text(business.phone||site.contact?.phone,35),email:text(business.email,180)},advisor:{goal:text(site.goal,80),style:text(site.style,80),language:'sr'},site:{modules,generatorVersion:text(site.generatorVersion,80)||'web-solutions',demoUrl:text(demoUrl,400)},capabilities:{inquiries:Boolean(site.capabilities?.inquiries||booking),booking:booking,catalog:Boolean(site.capabilities?.catalog||commerce),cart:commerce&&plan==='commerce',orders:commerce&&plan==='commerce',pickAndCollect:Boolean(site.capabilities?.pickAndCollect&&plan==='commerce'),businessPortal:['business','commerce'].includes(plan),},portal:{required:['business','commerce'].includes(plan),pairingStatus:['business','commerce'].includes(plan)?'not_paired':'not_required',businessId:null}};
+  project.buildRequest=request;project.updatedAt=now();await save(project);return request;
+ }
+ const activationKey=token=>queue.key('activation',tokenHash(token));
+ async function createActivation(siteId){const project=await read(siteId),plan=project.buildRequest?.request?.requestedPlan;if(!['business','commerce'].includes(plan))throw invalid('Aktivacioni link je dostupan samo za Business ili Commerce zahtev.');const token=activationToken(),record={siteId:project.siteId,plan,createdAt:now(),status:'sent'};await queue.redis('SET',activationKey(token),JSON.stringify(record),'EX',7*24*60*60,'NX');project.activationLink={createdAt:record.createdAt,status:'sent'};await save(project);return {token,expiresIn:7*24*60*60,siteId:project.siteId};}
+ async function activationInfo(token){const raw=await queue.redis('GET',activationKey(token));if(!raw)throw invalid('Aktivacioni link nije važeći ili je istekao.',404);const record=JSON.parse(raw),project=await read(record.siteId);return {siteId:record.siteId,businessName:project.business?.name||'RMC sajt',plan:record.plan,status:record.status};}
+ async function issueActivationPairing(token){const raw=await queue.redis('GET',activationKey(token));if(!raw)throw invalid('Aktivacioni link nije važeći ili je istekao.',404);const record=JSON.parse(raw);if(record.status==='code_issued'||record.status==='paired')throw invalid('Kod je već izdat. Ako je istekao, zatražite novi aktivacioni link od RMC-a.',409);const project=await read(record.siteId),profile=record.plan==='commerce'?project.profiles.commerce:project.profiles.business;if(!profile)throw invalid('Portal profil nije dostupan za ovaj zahtev.',409);const issued=await queue.issue(profile,{siteId:project.siteId});record.status='code_issued';record.codeIssuedAt=now();await queue.redis('SET',activationKey(token),JSON.stringify(record),'EX',7*24*60*60);project.activationLink={createdAt:project.activationLink?.createdAt||now(),status:'code_issued',codeIssuedAt:record.codeIssuedAt};await save(project);return {siteId:issued.siteId,pairingCode:issued.pairingCode,expiresIn:issued.expiresIn};}
  async function activate(siteId,packageName){
   const project=await read(siteId),name=String(packageName||'').toLowerCase();
   const profile=name==='booking'?project.profiles.booking:name==='commerce'?project.profiles.commerce:name==='business'?project.profiles.business:null;
@@ -161,5 +175,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,updateContent,previewContent,exportProject,activate,activateExport};
+ return {register,summary,updateContent,previewContent,exportProject,requestBuild,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
 }

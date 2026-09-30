@@ -130,12 +130,19 @@ app.post('/api/advisor/resolve',(req,res)=>{
   try{const p=buildSitePayload(req.body||{});res.json({siteConfig:p.siteConfig});}
   catch(e){res.status(400).json({error:e.message});}
 });
-app.post('/api/site/generate',(req,res)=>{
+app.post('/api/site/generate',async(req,res)=>{
   try{
     const payload=buildSitePayload(req.body||{});
+    const project=await projectRegistry.register(payload);payload.siteConfig.projectId=project.siteId;
     res.set('Cache-Control','no-store').json({...payload,previewHtml:renderHtml(payload)});
   }catch(e){res.status(400).json({error:e.message});}
 });
+app.post('/api/site/build-request',async(req,res)=>{
+ try{const request=await projectRegistry.requestBuild(req.body?.siteId,req.body?.requestedPlan,req.body?.demoUrl);res.status(201).set('Cache-Control','no-store').json({request});}
+ catch(e){res.status(e.status||400).json({error:e.message||'Zahtev nije moguće pripremiti.'});}
+});
+app.get('/api/activation/:token',async(req,res)=>{try{res.set('Cache-Control','no-store').json(await projectRegistry.activationInfo(req.params.token));}catch(e){res.status(e.status||400).json({error:e.message});}});
+app.post('/api/activation/:token/pairing',async(req,res)=>{try{res.set('Cache-Control','no-store').json(await projectRegistry.issueActivationPairing(req.params.token));}catch(e){res.status(e.status||400).json({error:e.message});}});
 const exportHits=new Map();
 app.post('/api/site/export',async(req,res)=>{
   const who=req.ip;const now=Date.now(),prior=(exportHits.get(who)||[]).filter(t=>now-t<60000);

@@ -8,6 +8,7 @@ import './advisor-final-v454.css';
 import {Landing,PreviewDialog,InfoDialog,LeadDialog,SHOWCASE} from './landing-react.jsx';
 import {buildAdvisorDraft} from './advisor-flow.js';
 import {ProjectAdmin} from './project-admin.jsx';
+import {ActivationPage} from './activation-page.jsx';
 
 const goals=[
   {id:'purchase',label:'Prodaja i porudžbine',desc:'Kupac pronalazi proizvode i priprema porudžbinu.'},
@@ -274,6 +275,7 @@ function App(){
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
+  async function requestBuild(requestedPlan){try{const siteId=result?.siteConfig?.projectId;if(!siteId)throw new Error('Demo nema Site ID. Generišite ga ponovo.');const data=await json('/api/site/build-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({siteId,requestedPlan})});const blob=new Blob([JSON.stringify(data.request,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`RMC_BUILD_REQUEST_${siteId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setError('Zahtev je pripremljen i preuzet. RMC će ga obraditi.');}catch(ex){setError(ex.message)}}
   // The last Advisor section continues as four short questions. No change to
   // resolveBusinessData, bookingProfile, siteConfig or API request structure.
   function acceptCompanyName(event){
@@ -403,7 +405,7 @@ function App(){
       styles={samplePreview?[]:definition?.styles||[]} selectedStyle={style}
       styleBusy={styleSwitchBusy} styleError={styleSwitchError} onStyleChange={switchPreviewStyle}
       onExport={exportZip} exporting={exporting||styleSwitchBusy}
-      onEdit={editSite} device={device} onDevice={setDevice} frameRef={previewFrame}/>
+      onEdit={editSite} onBuildRequest={requestBuild} device={device} onDevice={setDevice} frameRef={previewFrame}/>
     <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>
     <LeadDialog packageName={leadPackage} onClose={()=>setLeadPackage('')}/>
     {advisorOpen&&<div className="advisor-overlay rmc-ai-overlay" id="advisorOverlay" role="presentation">
@@ -556,4 +558,5 @@ function App(){
   </>;
 }
 const adminMode=new URLSearchParams(window.location.search).get('admin')==='1';
-createRoot(document.getElementById('root')).render(adminMode?<ProjectAdmin/>:<App/>);
+const activationToken=new URLSearchParams(window.location.search).get('activation');
+createRoot(document.getElementById('root')).render(activationToken?<ActivationPage token={activationToken}/>:adminMode?<ProjectAdmin/>:<App/>);

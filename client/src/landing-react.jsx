@@ -159,7 +159,7 @@ function preventBackgroundScroll(active){
 }
 
 export function PreviewDialog({open,mode='site',siteName,html,loading,error,device,onDevice,
-  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,onEdit,frameRef,
+  selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,onEdit,onBuildRequest,frameRef,
   styles=[],selectedStyle,styleBusy=false,styleError='',onStyleChange}){
  const close=useRef(null);
  useEffect(()=>{if(!open)return;const done=preventBackgroundScroll(true);close.current?.focus();
@@ -216,9 +216,9 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
      <footer className="rmc-preview-footer">
        {isSample?<><span>Ovo je samostalan marketinški DEMO; ne koristi Advisor i ne šalje stvarne zahteve.</span>
          <button type="button" className="rmc-primary" onClick={onStart}>Napravi moj sajt ↗</button></>:
-         <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
+          <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
            {exporting?'Pripremam ZIP…':<><span className="rmc-label-mobile">Preuzmi sajt ↓</span><span className="rmc-label-desktop">Preuzmi besplatan sajt (ZIP) ↓</span></>}</button>
-           <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div>
+            <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div><div className="rmc-preview-export">{[['publish','Publish — 14.900 RSD'],['business','Business — 29.900 RSD'],['commerce','Commerce — 59.900 RSD']].map(([plan,label])=><button key={plan} type="button" className="rmc-secondary" onClick={()=>onBuildRequest?.(plan)}>{label}</button>)}</div>
 
          </>}
      </footer>
