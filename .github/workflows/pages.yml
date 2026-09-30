@@ -1,4 +1,4 @@
-name: RMC Web Solutions — GitHub Pages
+name: RMC Web Solutions — GitHub Pages # canonical deployment
 
 on:
   push:
