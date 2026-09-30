@@ -25,6 +25,7 @@ export function adminRouter(projects,{now=Date.now}={}){
   router.post('/projects/:siteId/preview',(req,res,next)=>projects.previewContent(req.params.siteId,req.body?.content).then(({payload})=>res.json({html:renderHtml(payload)})).catch(next));
   router.post('/projects/:siteId/export',async(req,res,next)=>{try{const result=await projects.exportProject(req.params.siteId),zip=exportSiteZip(result.payload);res.set({'Content-Type':'application/zip','Content-Disposition':'attachment; filename="rmc-publish-sajt.zip"','Cache-Control':'no-store','Content-Length':String(zip.length)}).status(201).end(zip);}catch(error){next(error);}});
   router.post('/projects/:siteId/activate',(req,res,next)=>projects.activate(req.params.siteId,req.body?.package).then(result=>res.status(201).json(result)).catch(next));
+  router.post('/projects/:siteId/package-change',(req,res,next)=>projects.requestPackageChange(req.params.siteId,req.body?.requestedPlan).then(request=>res.status(201).json({buildRequest:request})).catch(next));
   router.post('/projects/:siteId/activation-link',(req,res,next)=>projects.createActivation(req.params.siteId).then(result=>res.status(201).json(result)).catch(next));
   router.post('/projects/:siteId/activated-export',async(req,res,next)=>{
    try{

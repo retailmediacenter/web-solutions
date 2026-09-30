@@ -83,3 +83,28 @@ test('a project without a Portal capability still receives a Project ID for cont
  assert.equal(exported.payload.siteConfig.projectId,created.siteId);
  await assert.rejects(()=>projects.activate(created.siteId,'booking'),/nije dostupan/);
 });
+
+test('Build Request serializes the Advisor business context instead of rendered fallbacks',async()=>{
+ const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue,{now:()=> '2026-09-30T14:19:23.000Z'});
+ const payload={siteConfig:{business:{id:'bookshop',name:'Booka'},businessData:{businessName:'Booka',phone:'6544565445',email:'booka@example.com',city:'Beograd',address:'Kralja Petra 12',locationMode:'physical',locations:[{city:'Beograd',address:'Kralja Petra 12'}]},advisorContext:{businessId:'bookshop',description:'Knjižara sa beletristikom i dečjim knjigama.',goal:'catalog',style:'modern',businessMode:'inquiry'},modulePlan:{active:['header','hero','featured','catalog','location','contact']},capabilities:{booking:{enabled:false},commerce:false,inquiries:true}},catalog:{headline:'Knjige',services:[]}};
+ const created=await projects.register(payload),request=await projects.requestBuild(created.siteId,'publish');
+ assert.equal(request.business.name,'Booka');
+ assert.equal(request.business.primaryType,'bookshop');
+ assert.equal(request.business.businessMode,'inquiry');
+ assert.equal(request.business.location,'Kralja Petra 12, Beograd');
+ assert.equal(request.business.email,'booka@example.com');
+ assert.equal(request.advisor.goal,'catalog');
+ assert.equal(request.advisor.description,'Knjižara sa beletristikom i dečjim knjigama.');
+});
+
+test('package change keeps the Site ID and records an upgrade without re-running Advisor',async()=>{
+ const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue,{now:()=> '2026-09-30T16:30:00.000Z'});
+ const payload={siteConfig:{business:{id:'bookshop',name:'Booka'},businessData:{businessName:'Booka'},advisorContext:{businessId:'bookshop',description:'Knjižara.',goal:'catalog',style:'modern',businessMode:'inquiry'},modulePlan:{active:['header','hero','catalog']},capabilities:{booking:{enabled:false},commerce:false}},catalog:{headline:'Knjige',services:[]}};
+ const created=await projects.register(payload);
+ const request=await projects.requestPackageChange(created.siteId,'commerce');
+ assert.equal(request.siteId,created.siteId);
+ assert.equal(request.request.kind,'package_change');
+ assert.equal(request.request.previousPlan,'publish');
+ assert.equal(request.request.requestedPlan,'commerce');
+ assert.equal((await projects.summary(created.siteId)).buildRequest.request.requestedPlan,'commerce');
+});

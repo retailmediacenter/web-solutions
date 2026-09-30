@@ -133,12 +133,29 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
  async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
- async function requestBuild(siteId,requestedPlan,demoUrl=''){
-  const project=await read(siteId),plan=String(requestedPlan||'').toLowerCase();
+ const buildRequestFor=(project,requestedPlan,demoUrl='',requestMeta={})=>{
+  const plan=String(requestedPlan||'').toLowerCase();
   if(!['publish','business','commerce'].includes(plan))throw invalid('Paket mora biti Publish, Business ili Commerce.');
-  const site=project.siteConfig||{},business=site.businessData||site.business||{},modules=site.modulePlan?.active||[];
+  const site=project.siteConfig||{},data=site.businessData||{},siteBusiness=site.business||{},profileBusiness=project.profiles?.business?.business||project.profiles?.commerce?.business||{},advisor=site.advisorContext||{},modules=site.modulePlan?.active||[];
   const booking=Boolean(project.capabilities?.booking),commerce=Boolean(project.capabilities?.commerce);
-  const request={contractVersion:'1.0',siteId:project.siteId,request:{requestedPlan:plan,requestStatus:'requested',createdAt:now()},business:{name:text(business.name,100),primaryType:text(site.businessId||business.type,80),secondaryType:null,businessMode:text(site.businessMode,80),location:text(business.location,160),phone:text(business.phone||site.contact?.phone,35),email:text(business.email,180)},advisor:{goal:text(site.goal,80),style:text(site.style,80),language:'sr'},site:{modules,generatorVersion:text(site.generatorVersion,80)||'web-solutions',demoUrl:text(demoUrl,400)},capabilities:{inquiries:Boolean(site.capabilities?.inquiries||booking),booking:booking,catalog:Boolean(site.capabilities?.catalog||commerce),cart:commerce&&plan==='commerce',orders:commerce&&plan==='commerce',pickAndCollect:Boolean(site.capabilities?.pickAndCollect&&plan==='commerce'),businessPortal:['business','commerce'].includes(plan),},portal:{required:['business','commerce'].includes(plan),pairingStatus:['business','commerce'].includes(plan)?'not_paired':'not_required',businessId:null}};
+  const locationEntry=Array.isArray(data.locations)?data.locations[0]||{}:{};
+  const location=[locationEntry.address||data.address,locationEntry.city||data.city].filter(Boolean).join(', ');
+  const inferredGoal=commerce?'purchase':booking?'visit':site.capabilities?.catalog?'catalog':'inquiry';
+  const inferredMode=commerce?'commerce':booking?'booking':site.capabilities?.inquiries?'inquiry':'publish';
+  return {contractVersion:'1.0',siteId:project.siteId,request:{requestedPlan:plan,requestStatus:'requested',createdAt:now(),...requestMeta},business:{name:text(data.businessName||profileBusiness.name||siteBusiness.name||project.business?.name,100),primaryType:text(advisor.businessId||site.businessId||siteBusiness.id||siteBusiness.type,80),secondaryType:null,businessMode:text(advisor.businessMode||site.businessMode||inferredMode,100),location:text(location,160),phone:text(data.phone||profileBusiness.phone||site.contact?.phone,35),email:text(data.email||profileBusiness.email,180)},advisor:{description:text(advisor.description,800),goal:text(advisor.goal||site.goal||inferredGoal,80),style:text(advisor.style||site.style,80),language:'sr'},site:{modules,generatorVersion:text(site.generatorVersion,80)||'web-solutions',demoUrl:text(demoUrl,400)},capabilities:{inquiries:Boolean(site.capabilities?.inquiries||booking),booking:booking,catalog:Boolean(site.capabilities?.catalog||commerce),cart:commerce&&plan==='commerce',orders:commerce&&plan==='commerce',pickAndCollect:Boolean(site.capabilities?.pickAndCollect&&plan==='commerce'),businessPortal:['business','commerce'].includes(plan),},portal:{required:['business','commerce'].includes(plan),pairingStatus:['business','commerce'].includes(plan)?'not_paired':'not_required',businessId:null}};
+ };
+ async function requestBuild(siteId,requestedPlan,demoUrl=''){
+  const project=await read(siteId),request=buildRequestFor(project,requestedPlan,demoUrl);
+  project.buildRequest=request;project.updatedAt=now();await save(project);return request;
+ }
+ async function requestPackageChange(siteId,requestedPlan){
+  const project=await read(siteId),plan=String(requestedPlan||'').toLowerCase();
+  const activated=String(project.activation?.package||'').toLowerCase();
+  const current=project.buildRequest?.request?.requestedPlan||({booking:'business',business:'business',commerce:'commerce'}[activated]||'publish');
+  if(plan===current)throw invalid('Ovaj paket je već izabran za projekat.');
+  const request=buildRequestFor(project,plan,'',{kind:'package_change',previousPlan:current});
+  const history=Array.isArray(project.packageChanges)?project.packageChanges:[];
+  project.packageChanges=[...history.slice(-9),{fromPlan:current,toPlan:plan,createdAt:request.request.createdAt,status:'requested'}];
   project.buildRequest=request;project.updatedAt=now();await save(project);return request;
  }
  const activationKey=token=>queue.key('activation',tokenHash(token));
@@ -175,5 +192,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,updateContent,previewContent,exportProject,requestBuild,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
+ return {register,summary,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
 }

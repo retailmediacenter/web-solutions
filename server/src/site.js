@@ -49,10 +49,19 @@ function bookingProfile(siteConfig){
 
 // Advisor-owned presentation preference; never write renderer details into fact-only Registry.
 export function buildSitePayload(input){
- const payload=baseSitePayload(input);
+  const payload=baseSitePayload(input);
  // Public API callers cannot remove DEMO status; production is a separate trusted publishing workflow (V44).
  if(input?.siteMode==='production')throw new Error('Produkcioni izvoz zahteva odobren tok objavljivanja.');
- payload.siteConfig.businessData=resolveBusinessData(input,payload.siteConfig);
+  payload.siteConfig.businessData=resolveBusinessData(input,payload.siteConfig);
+  // Keep the concise, authoritative Advisor decision with the generated site.
+  // Build Requests must never reconstruct this from a partially-rendered page.
+  payload.siteConfig.advisorContext={
+   businessId:String(input?.businessId||payload.siteConfig.business?.id||'').slice(0,80),
+   description:String(input?.description||'').trim().slice(0,800),
+   goal:String(input?.goal||'').slice(0,80),
+   style:String(input?.style||'').slice(0,80),
+   businessMode:String(input?.answers?.businessMode||'').slice(0,100)
+  };
  ensureWineBookingContract(payload.siteConfig);
  payload.siteConfig.bookingPairing=resolveBookingPairing(input?.bookingPairing); // optional public key; never a private key
  payload.siteConfig.contact={...(payload.siteConfig.contact||{}),phone:payload.siteConfig.businessData.phone}; // backward compatibility
