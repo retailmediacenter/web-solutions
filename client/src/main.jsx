@@ -507,8 +507,7 @@ function App(){
             </details>
             {['hotel','apartments'].includes(definition?.id)&&/spoljni booking/i.test(answers.businessMode||'')&&
              <label className="field">HTTPS link ka spoljnom sistemu za rezervacije<input type="url" required pattern="https://.*" value={externalBookingUrl} onChange={e=>setExternalBookingUrl(e.target.value)} placeholder="https://booking-partner.example/..." /></label>}
-            <p className="rmc-ai-booking-note">Besplatan ZIP nema pristup Business Portalu. Sačuvajte Project ID iz ZIP-a; RMC izdaje kod za povezivanje tek nakon aktivacije Business ili Commerce paketa.</p>
-            <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Želite li da posetilac pri prvom otvaranju vidi jednu izdvojenu preporuku?</span><small>Opcionalno · Welcome prozor prikazuje prvu stvarnu stavku iz „Izdvajamo”, nikada hero fotografiju. Prikazuje se jednom po poseti.</small></label>
+            <label className="field welcome-option"><span><input type="checkbox" checked={showWelcome} onChange={e=>setShowWelcome(e.target.checked)}/> Želim da se pri otvaranju sajta prikazuju promocije.</span><small>Prikazuje se jedna izdvojena preporuka iz ponude.</small></label>
 
                 <button className="action" type="submit" disabled={loading||!businessName.trim()||!contactPhone.trim()||
                   (locationMode!=='online'&&!city.trim())||(locationMode==='physical'&&!address.trim())}>

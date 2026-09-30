@@ -70,20 +70,24 @@ html body dialog.site-dialog[data-modal-system="v419"] *,html body dialog.site-d
 @media(max-height:520px) and (orientation:landscape){html body dialog.site-dialog[data-modal-system="v419"]{height:96dvh;max-height:96dvh}}
 @media(prefers-reduced-motion:reduce){.site-dialog[data-modal-system="v419"]{transition:none!important;animation:none!important}}
 
-/* V33 Welcome: three real featured items, responsive from desktop down to iOS portrait. */
-.site-dialog[data-modal-system="v419"] .welcome-featured{display:grid;gap:13px}
-.site-dialog[data-modal-system="v419"] .welcome-stage{min-height:0}
-.site-dialog[data-modal-system="v419"] .welcome-photo{width:100%;height:clamp(145px,27dvh,230px);object-fit:cover;border-radius:12px;display:block}
-.site-dialog[data-modal-system="v419"] .modal-body .welcome-dialog p{margin:0;color:var(--modal-muted)}
-.site-dialog[data-modal-system="v419"] .welcome-slider-controls{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:8px;align-items:center}
-.site-dialog[data-modal-system="v419"] .welcome-arrow{width:42px;height:42px;border:1px solid #d8e1ed;border-radius:50%;background:#fff;color:#182b43;font-size:21px;font-weight:800;cursor:pointer}
-.site-dialog[data-modal-system="v419"] .welcome-arrow:hover,.site-dialog[data-modal-system="v419"] .welcome-arrow:focus-visible{border-color:var(--modal-accent);color:var(--modal-accent)}
-.site-dialog[data-modal-system="v419"] .welcome-thumbs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.site-dialog[data-modal-system="v419"] .welcome-thumb{min-width:0;padding:4px;border:1px solid #d8e1ed;border-radius:9px;background:#fff;color:#233750;font:700 10px/1.2 inherit;text-align:left;cursor:pointer;overflow:hidden}
-.site-dialog[data-modal-system="v419"] .welcome-thumb.is-active{border-color:var(--modal-accent);box-shadow:0 0 0 1px var(--modal-accent)}
-.site-dialog[data-modal-system="v419"] .welcome-thumb img{display:block;width:100%;height:42px;object-fit:cover;border-radius:5px;margin-bottom:4px}
-.site-dialog[data-modal-system="v419"] .welcome-thumb span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px 2px}
-@media(max-width:520px){.site-dialog[data-modal-system="v419"] .welcome-photo{height:clamp(135px,25dvh,190px)}.site-dialog[data-modal-system="v419"] .welcome-slider-controls{grid-template-columns:36px minmax(0,1fr) 36px;gap:6px}.site-dialog[data-modal-system="v419"] .welcome-arrow{width:36px;height:36px;font-size:18px}.site-dialog[data-modal-system="v419"] .welcome-thumbs{gap:5px}.site-dialog[data-modal-system="v419"] .welcome-thumb{padding:3px;font-size:9px}.site-dialog[data-modal-system="v419"] .welcome-thumb img{height:34px;margin-bottom:3px}}
+/* V33 Welcome: a promotional card, not a miniature product catalogue. */
+.site-dialog[data-modal-system="v419"].welcome-dialog{width:min(92vw,720px);max-height:min(88dvh,760px);border:1px solid #ffffff9c;border-radius:22px;background:rgba(255,255,255,.94);box-shadow:0 28px 80px #0c172c77,0 0 0 1px #c6283514}
+.site-dialog[data-modal-system="v419"].welcome-dialog::backdrop{background:rgba(7,18,34,.70);backdrop-filter:blur(6px)}
+@supports(backdrop-filter:blur(1px)){.site-dialog[data-modal-system="v419"].welcome-dialog{backdrop-filter:blur(16px)}.site-dialog[data-modal-system="v419"].welcome-dialog :is(.modal-header,.modal-body,.modal-footer){background-color:transparent}}
+@media(prefers-reduced-motion:no-preference){.site-dialog[data-modal-system="v419"].welcome-dialog{animation:welcome-glow 4.5s ease-in-out infinite}@keyframes welcome-glow{0%,100%{box-shadow:0 28px 80px #0c172c77,0 0 0 1px #c6283514}50%{box-shadow:0 28px 80px #0c172c77,0 0 30px #d735421f,0 0 0 1px #c628355c}}}
+.site-dialog[data-modal-system="v419"] .welcome-featured{display:grid;gap:15px}
+.site-dialog[data-modal-system="v419"] .welcome-featured>.kicker{color:#c62835;font-size:14px;font-weight:950;letter-spacing:.14em}
+.site-dialog[data-modal-system="v419"] .welcome-stage{display:grid;place-items:center;min-height:clamp(260px,47dvh,440px);padding:12px;border-radius:16px;background:linear-gradient(145deg,#f7f7f8,#eef0f3)}
+.site-dialog[data-modal-system="v419"] .welcome-photo{display:block;max-width:100%;width:100%;height:clamp(250px,45dvh,420px);object-fit:contain;border-radius:11px}
+.site-dialog[data-modal-system="v419"] .modal-body .welcome-dialog p{margin:0;color:var(--modal-muted);font-size:16px;line-height:1.5}
+.site-dialog[data-modal-system="v419"] .welcome-slider-controls{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:12px;align-items:center}
+.site-dialog[data-modal-system="v419"] .welcome-arrow{width:44px;height:44px;border:1px solid #d7dde6;border-radius:50%;background:#fff;color:#263449;font-size:23px;font-weight:800;cursor:pointer;box-shadow:0 3px 12px #20365412}
+.site-dialog[data-modal-system="v419"] .welcome-arrow:hover,.site-dialog[data-modal-system="v419"] .welcome-arrow:focus-visible{border-color:#c62835;color:#c62835;outline:none}
+.site-dialog[data-modal-system="v419"] .welcome-dots{display:flex;justify-content:center;gap:8px}
+.site-dialog[data-modal-system="v419"] .welcome-dot{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:#cbd2db;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.site-dialog[data-modal-system="v419"] .welcome-dot.is-active{background:#c62835;transform:scale(1.25)}
+.site-dialog[data-modal-system="v419"] .welcome-dot:focus-visible{outline:3px solid #f0a0a8;outline-offset:3px}
+@media(max-width:520px){.site-dialog[data-modal-system="v419"].welcome-dialog{width:min(94vw,430px);max-height:82dvh;border-radius:18px}.site-dialog[data-modal-system="v419"] .welcome-featured{gap:11px}.site-dialog[data-modal-system="v419"] .welcome-featured>.kicker{font-size:12px}.site-dialog[data-modal-system="v419"] .welcome-stage{min-height:clamp(165px,27dvh,220px);padding:8px;border-radius:12px}.site-dialog[data-modal-system="v419"] .welcome-photo{height:clamp(155px,25dvh,205px);border-radius:9px}.site-dialog[data-modal-system="v419"] .modal-body .welcome-dialog p{font-size:13px}.site-dialog[data-modal-system="v419"] .welcome-slider-controls{grid-template-columns:36px minmax(0,1fr) 36px;gap:8px}.site-dialog[data-modal-system="v419"] .welcome-arrow{width:36px;height:36px;font-size:18px}.site-dialog[data-modal-system="v419"] .welcome-dot{width:8px;height:8px}}
 
 /* Native <dialog> provides focus isolation; lock scrolling behind it as well. */
 html.has-site-modal,html.has-site-modal body{overflow:hidden!important;overscroll-behavior:none}
