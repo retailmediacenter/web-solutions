@@ -15,17 +15,18 @@ import source from '../src/data/v418-source-assets.json' with {type:'json'};
 import parity from '../src/data/parity-matrix-v418.json' with {type:'json'};
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/public');
 const request=(id,enabled)=>({businessId:id,businessName:'Test '+id,goal:'visit',style:'modern',description:'Testiram '+id,answers:{verticalEnabled:enabled,contactPhone:'+381 60 123456'}});
-const missingAssets=['marketing-agency','print-shop','interior-design','photo-video'];
-test('V41.8 contains 72 UNIQUE migratable scenarios while fact-only registry remains 72',()=>{
- assert.equal(getRegistryCount(),72);assert.equal(PILOT_BUSINESSES.length,72);
- assert.equal(new Set(PILOT_BUSINESSES).size,72);
- assert.equal(listBusinesses().filter(x=>x.pilot).length,72);
- assert.equal(VERTICAL_IDS.length,19);
+const missingV395Assets=['interior-design'];
+test('expanded catalog contains 77 UNIQUE scenarios while the V41.8 parity matrix preserves its original 72',()=>{
+ assert.equal(getRegistryCount(),77);assert.equal(PILOT_BUSINESSES.length,77);
+ assert.equal(new Set(PILOT_BUSINESSES).size,77);
+ assert.equal(listBusinesses().filter(x=>x.pilot).length,77);
+ assert.equal(VERTICAL_IDS.length,24);
  assert.equal(parity.length,72);
- assert.deepEqual(new Set(parity.map(x=>x.id)),new Set(PILOT_BUSINESSES));
+ const activeIds=new Set(PILOT_BUSINESSES);
+ for(const entry of parity)assert.ok(activeIds.has(entry.id),entry.id);
  for(const id of VERTICAL_IDS){let f=getBusinessFacts(id);assert.equal(f.cta,undefined);assert.equal(f.renderer,undefined);}
 });
-test('19 sector profiles keep explicit Advisor choice (no invented booking, product stock or payment)',()=>{
+test('24 sector profiles keep explicit Advisor choice (no invented booking, product stock or payment)',()=>{
  for(const id of VERTICAL_IDS.filter(id=>id!=='pharmacy')){
   const d=getAdvisorDefinition(id),p=verticalProfile(id);
   assert.equal(d.verticalKind,p.kind);
@@ -54,7 +55,7 @@ test('19 sector profiles keep explicit Advisor choice (no invented booking, prod
  }
 });
 test('Original V39.5 source photos: every included V41.8 photo has verified SHA256 and business provenance',()=>{
- assert.equal(missingAssets.filter(x=>!verticalProfile(x).hero).length,4);
+ assert.equal(missingV395Assets.filter(x=>!verticalProfile(x).hero).length,1);
  assert.ok(Object.keys(source).length>=50);
  for(const [asset,meta] of Object.entries(source)){
   const p=path.resolve(root,asset);
@@ -63,7 +64,7 @@ test('Original V39.5 source photos: every included V41.8 photo has verified SHA2
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex'),meta.sha256,asset);
   assert.equal(getBusinessFacts(meta.businessId).assetRoot!==null,true,asset);
  }
- for(const id of missingAssets){
+ for(const id of missingV395Assets){
   const h=renderHtml(buildSitePayload(request(id,true)));
   assert.ok(h.includes('Fotografije i reference vlasnik može dodati'),id);
   assert.ok(h.includes('no-card-photo'),id);

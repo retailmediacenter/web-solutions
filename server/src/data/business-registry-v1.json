@@ -670,9 +670,9 @@
   },
   "marketing-agency": {
     "domain": "marketing",
-    "assetRoot": null,
-    "assetExists": false,
-    "assetRoles": [],
+    "assetRoot": "assets/images/curated/professional-office/marketing-agency",
+    "assetExists": true,
+    "assetRoles": ["hero", "services", "featured"],
     "catalogDimensions": [],
     "productAttributes": []
   },
@@ -720,9 +720,9 @@
   },
   "print-shop": {
     "domain": "printing",
-    "assetRoot": null,
-    "assetExists": false,
-    "assetRoles": [],
+    "assetRoot": "assets/images/curated/professional-office/print-shop",
+    "assetExists": true,
+    "assetRoles": ["hero"],
     "catalogDimensions": [],
     "productAttributes": []
   },
@@ -917,9 +917,9 @@
   },
   "photo-video": {
     "domain": "photography",
-    "assetRoot": null,
-    "assetExists": false,
-    "assetRoles": [],
+    "assetRoot": "assets/images/curated/professional-office/photo-video",
+    "assetExists": true,
+    "assetRoles": ["hero"],
     "catalogDimensions": [],
     "productAttributes": []
   },

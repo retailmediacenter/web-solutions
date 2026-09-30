@@ -48,22 +48,22 @@
     "kind": "quote",
     "headline": "Marketing sa jasnim poslovnim ciljem",
     "subtitle": "Kampanje, strategija i kreativna podrška. Pošaljite projektni zahtev.",
-    "hero": null,
+    "hero": "assets/images/curated/professional-office/marketing-agency/hero/marketing_agency_hero_01.jpg",
     "cards": [
-      {
-        "title": "Digitalne kampanje",
-        "description": "Planiranje kampanja i kanala.",
-        "image": null
+    {
+      "title": "Digitalne kampanje",
+      "description": "Planiranje kampanja i kanala.",
+      "image": "assets/images/curated/professional-office/marketing-agency/services/marketing_agency_service_01.jpg"
       },
-      {
-        "title": "Strategija brenda",
-        "description": "Pozicioniranje i komunikaciona strategija.",
-        "image": null
+    {
+      "title": "Strategija brenda",
+      "description": "Pozicioniranje i komunikaciona strategija.",
+      "image": "assets/images/curated/professional-office/marketing-agency/services/marketing_agency_service_02.jpg"
       },
-      {
-        "title": "Kreativna produkcija",
-        "description": "Izrada sadržaja i marketinških materijala.",
-        "image": null
+    {
+      "title": "Kreativna produkcija",
+      "description": "Izrada sadržaja i marketinških materijala.",
+      "image": "assets/images/curated/professional-office/marketing-agency/services/marketing_agency_service_03.jpg"
       }
     ],
     "question": "Da li primate zahteve za ponudu kroz sajt?",
@@ -79,18 +79,18 @@
         "kind": "text"
       }
     ],
-    "assetRoot": null,
-    "assetExists": false,
+    "assetRoot": "assets/images/curated/professional-office/marketing-agency",
+    "assetExists": true,
     "reference": "V39.5"
   },
   "print-shop": {
     "id": "print-shop",
-    "label": "Štamparija",
+    "label": "Štamparija i fotokopirnica",
     "group": "Professional",
     "kind": "quote",
     "headline": "Štampa po meri vaše ideje",
     "subtitle": "Od vizitkarti do promotivnih materijala — pošaljite specifikaciju.",
-    "hero": null,
+    "hero": "assets/images/curated/professional-office/print-shop/hero/print_shop_hero_01.jpg",
     "cards": [
       {
         "title": "Poslovna štampa",
@@ -126,8 +126,8 @@
         "kind": "date"
       }
     ],
-    "assetRoot": null,
-    "assetExists": false,
+    "assetRoot": "assets/images/curated/professional-office/print-shop",
+    "assetExists": true,
     "reference": "V39.5"
   },
   "real-estate": {
@@ -615,7 +615,7 @@
     "kind": "quote",
     "headline": "Priče koje zaslužuju dobar kadar",
     "subtitle": "Fotografisanje, snimanje i montaža prema vašem projektu.",
-    "hero": null,
+    "hero": "assets/images/curated/professional-office/photo-video/hero/photo_video_hero_01.jpg",
     "cards": [
       {
         "title": "Fotografisanje",
@@ -651,8 +651,8 @@
         "kind": "textarea"
       }
     ],
-    "assetRoot": null,
-    "assetExists": false,
+    "assetRoot": "assets/images/curated/professional-office/photo-video",
+    "assetExists": true,
     "reference": "V39.5"
   },
   "dentist": {

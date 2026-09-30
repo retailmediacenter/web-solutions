@@ -13,7 +13,7 @@ Stanje: 30. septembar 2026.
 
 | ID | Delatnost | Stanje scenarija | Tip sajta | Fotografije |
 | --- | --- | --- | --- | --- |
-| `marketing-agency` | Marketing agencija | Postoji, bez fotografija | Portfolio + zahtev za ponudu | 1 hero, 3 usluge, 2 izdvojena rada |
+| `marketing-agency` | Marketing agencija | Kompletan JPG bundle | Portfolio + zahtev za ponudu | 1 hero, 3 usluge, 2 izdvojena rada |
 | `print-shop` | Štamparija i fotokopirnica | Postoji, bez fotografija | Katalog usluga + zahtev sa specifikacijom | 1 hero, 3 usluge, 2 detalja materijala |
 | `photo-video` | Foto/video studio i video produkcija | Postoji, bez fotografija | Portfolio + upit za termin/projekat | 1 hero, 3 usluge, 2 izdvojena rada |
 | `bookshop` | Knjižara | Novo | Katalog + upit o dostupnosti | 1 hero, 3 kategorije, 2 izdvojena naslova/atmosfere |
@@ -36,7 +36,7 @@ assets/images/curated/<grupa>/<id>/
   featured/<id>_featured_02.jpg
 ```
 
-Fotografije su ilustrativne, bez logotipa, natpisa, izmišljenih cena, brendiranih pakovanja ili prepoznatljivih lica. Stvarne fotografije klijenta se kasnije biraju kroz Editor i ulaze samo u njegov Publish ZIP.
+Fotografije su ilustrativne, bez logotipa, natpisa, izmišljenih cena, brendiranih pakovanja ili prepoznatljivih lica. Stvarne fotografije klijenta se kasnije biraju kroz Editor i ulaze samo u njegov Publish ZIP. Isporučujemo JPG (kvalitet 85); PNG iz generatora ostaje izvan repozitorijuma.
 
 ## Automatizacija
 

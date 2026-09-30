@@ -99,7 +99,7 @@ export function recognizeBusiness(description){
   const verticalAliases=[
     ['sports-shop',/\b(sportsk.*prodavnic|sportsk.*oprem|sports shop)/],
     ['marketing-agency',/\b(marketing.*agenc|reklamn.*agenc|digital.*marketing)/],
-    ['print-shop',/\b(stamparij|stampars|print shop)/],
+    ['print-shop',/\b(stamparij|stampars|print shop|fotokopirnic|kopirnic|copy centar)/],
     ['bookshop',/\b(knjizar|prodavnic.*knjig|knjige.*prodaj)/],
     ['pet-shop',/\b(pet shop|prodavnic.*ljubim|hrana.*(?:pse|macke)|oprema.*ljubim)/],
     ['pet-grooming',/\b(pet grooming|sisan(?:je|ja).*pas|frizer.*(?:pse|pasa)|nega.*pasa)/],
