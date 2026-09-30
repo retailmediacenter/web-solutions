@@ -28,15 +28,15 @@
   "pet-grooming": {
     "id": "pet-grooming", "label": "Pet grooming", "group": "Services", "kind": "quote",
     "headline": "Nega u kojoj se svaki ljubimac oseća dobro", "subtitle": "Šišanje, kupanje i nega uz zahtev za željeni termin.",
-    "hero": null,
+    "hero": "assets/images/curated/services/pet-grooming/hero/pet_grooming_hero_01.jpg",
     "cards": [
-      {"title":"Kupanje i sušenje","description":"Osnovna nega prilagođena dlaci ljubimca.","image":null},
-      {"title":"Šišanje i trimovanje","description":"Dogovor prema rasi, dlaci i željenom izgledu.","image":null},
-      {"title":"Nega šapa i dlake","description":"Uredan završni tretman i savet za kućnu negu.","image":null}
+      {"title":"Kupanje i sušenje","description":"Osnovna nega prilagođena dlaci ljubimca.","image":"assets/images/curated/services/pet-grooming/services/pet_grooming_service_01.jpg"},
+      {"title":"Šišanje i trimovanje","description":"Dogovor prema rasi, dlaci i željenom izgledu.","image":"assets/images/curated/services/pet-grooming/services/pet_grooming_service_02.jpg"},
+      {"title":"Nega šapa i dlake","description":"Uredan završni tretman i savet za kućnu negu.","image":"assets/images/curated/services/pet-grooming/services/pet_grooming_service_03.jpg"}
     ],
     "question":"Da li primate zahteve za termin preko sajta?",
     "fields":[{"name":"pet","label":"Vrsta ljubimca","kind":"select:Pas|Mačka|Drugo"},{"name":"date","label":"Željeni datum","kind":"date"},{"name":"scope","label":"Rasa ili napomena o nezi","kind":"textarea"}],
-    "assetRoot":null,"assetExists":false,"reference":"V49"
+    "assetRoot":"assets/images/curated/services/pet-grooming","assetExists":true,"reference":"V49"
   },
   "cosmetics-perfumery": {
     "id": "cosmetics-perfumery", "label": "Kozmetika i parfimerija", "group": "Retail", "kind": "catalog",
