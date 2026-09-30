@@ -21,13 +21,12 @@ const outputOpt=args.find(s=>s.startsWith('--out='));
 const out=outputOpt?path.resolve(outputOpt.slice(6)):path.join(path.dirname(repo),'RMC_PUBLICATION_OUT');
 const pub=path.join(out,'web-solutions-public'),preview=path.join(out,'web-solutions-preview');
 const assetPrefix='assets/images/curated/';
-const publicBase=process.env.RMC_PUBLIC_BASE_PATH||'/web-solutions-public/';
+const publicBase='./';
 const apiBase=process.env.RMC_PUBLIC_API_URL||'https://rmc-web-solutions-api-staging.onrender.com';
 const liveNames=(process.env.RMC_QA_LIVE_SLUGS||'').split(',').map(x=>x.trim()).filter(Boolean);
 // An explicit operator-only "all" enables all nine test sites for a controlled QA run.
 const liveQa=new Set(liveNames.length===1&&liveNames[0]==='all'?scenarios.map(s=>s.slug):liveNames);
 function assertPublicConfig(){
- assert(/^\/[a-zA-Z0-9/_-]*\/$/.test(publicBase),`Neispravan RMC_PUBLIC_BASE_PATH: ${publicBase}`);
  const parsed=new URL(apiBase);
  assert(parsed.protocol==='https:'&&parsed.origin===apiBase,`RMC_PUBLIC_API_URL mora biti HTTPS origin bez putanje i bez završne kose crte: ${apiBase}`);
 }
@@ -296,9 +295,9 @@ async function main(){
  if(!skipTests)command('Postojeći Node regresioni testovi',process.platform==='win32'?'npm.cmd':'npm',['test']);
  const staged=clearPreparedTarget();
  try{
-  status('Build javnog React Indexa sa BASE_URL='+publicBase);
+  status('Build javnog React Indexa sa relativnim asset putanjama.');
   command('Vite build',process.platform==='win32'?'npm.cmd':'npm',['run','build','-w','client'],
-   {env:{...process.env,VITE_BASE_PATH:publicBase,VITE_API_BASE_URL:apiBase}});
+   {env:{...process.env,VITE_API_BASE_URL:apiBase}});
   const built=path.join(client,'dist'),dst=path.join(staged,'web-solutions-public');
   assert(existsSync(path.join(built,'index.html')),'Vite nije napravio index.html');
   mkdirSync(path.dirname(dst),{recursive:true});
@@ -322,7 +321,7 @@ async function main(){
   }
   for(const file of requiredMarketing())assert(existsSync(path.join(built,file)),`Fali marketing fotografija u DIST: ${file}`);
   const index=readFileSync(path.join(built,'index.html'),'utf8');
-  assert(index.includes(publicBase+'assets/'),'Vite je objavljen sa pogrešnim BASE_PATH');
+  assert(index.includes('./assets/'),'Vite nije objavljen sa relativnim asset putanjama.');
   cpSync(built,dst,{recursive:true});
   writeFileSync(path.join(dst,'.nojekyll'),'');
   writeFileSync(path.join(dst,'robots.txt'),'User-agent: *\nAllow: /\n');
