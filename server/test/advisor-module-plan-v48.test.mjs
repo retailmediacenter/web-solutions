@@ -4,7 +4,7 @@ import {recognizeBusiness} from '../src/advisor.js';
 import {buildSitePayload} from '../src/site.js';
 
 test('construction language is recognized without a clarification loop',()=>{
- for(const description of ['Gradim zgrade','Izgradnja stanova','Građevinska kompanija'])assert.equal(recognizeBusiness(description),'construction');
+ for(const description of ['Građevina','Gradim stanove','Gradim zgrade','Izgradnja stanova','Građevinska kompanija'])assert.equal(recognizeBusiness(description),'construction');
 });
 
 test('every generated site records the V31–V42 library plus the optional V34.5 Commerce Controller',()=>{

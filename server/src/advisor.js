@@ -100,7 +100,7 @@ export function recognizeBusiness(description){
     ['marketing-agency',/\b(marketing.*agenc|reklamn.*agenc|digital.*marketing)/],
     ['print-shop',/\b(stamparij|stampars|print shop)/],
     ['real-estate',/\b(nekretnin|agencij.*stanov)/],
-    ['construction',/\b(investitor|gradnja objek|gradim zgrad|gradnj|izgradnj.*stanov|stamben.*gradnj|gradjevinsk.*kompan)/],
+    ['construction',/\b(investitor|gradjevin\w*|gradnja objek|gradim (?:zgrad|stan)|gradnj|izgradnj.*stanov|stamben.*gradnj)/],
     ['interior-design',/\b(dizajn enterijer|projektovanje enterijer)/],
     ['language-school',/\b(skola jezik|casov.*englesk)/],
     ['training-center',/\b(centar za obuk|edukativni centar|strucne obuke)/],
