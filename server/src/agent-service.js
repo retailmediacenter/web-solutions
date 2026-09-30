@@ -32,7 +32,9 @@ export function createAgentService({fetchImpl=fetch,apiKey=process.env.OPENAI_AG
   const schema={type:'object',additionalProperties:false,properties:{status:{type:'string',enum:[...STATUSES]},summary:{type:'string'},missing:{type:'array',items:{type:'string'}},clientMessage:{type:'string'},recommendations:{type:'array',items:{type:'string'}},buildReady:{type:'boolean'}},required:['status','summary','missing','clientMessage','recommendations','buildReady']};
   const response=await fetchImpl('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${apiKey}`,'Content-Type':'application/json'},body:JSON.stringify({model,instructions,input:JSON.stringify(context),text:{format:{type:'json_schema',name:'rmc_agent_assessment',strict:true,schema}}})});
   if(!response.ok)throw Object.assign(new Error('Agent Desk trenutno nije dostupan.'),{status:503});
-  const payload=await response.json();let parsed={};try{parsed=JSON.parse(payload.output_text||'{}');}catch{}
+  const payload=await response.json();
+  const outputText=payload.output_text||payload.output?.flatMap(item=>item?.content||[]).find(item=>item?.type==='output_text')?.text||'';
+  let parsed;try{parsed=JSON.parse(outputText);}catch{throw Object.assign(new Error('Agent Desk je dobio nečitljiv strukturisani odgovor.'),{status:503});}
   return {...validated(parsed,context),agentMode:'live'};
  }};
 }
