@@ -31,7 +31,8 @@ export function listBusinesses(){
 function advisorRegistry(){return registryIdsHolder;}
 // Registry entries are obtained once from the real V39.5 data-only registry.
 import registryFacts from './data/business-registry-v1.json' with { type: 'json' };
-const registryIdsHolder = registryFacts;
+import expansionRegistryFacts from './data/industry-expansion-registry-v49.json' with { type: 'json' };
+const registryIdsHolder = {...registryFacts,...expansionRegistryFacts};
 
 export function recognizeBusiness(description){
   const text=clean(description);
@@ -99,6 +100,11 @@ export function recognizeBusiness(description){
     ['sports-shop',/\b(sportsk.*prodavnic|sportsk.*oprem|sports shop)/],
     ['marketing-agency',/\b(marketing.*agenc|reklamn.*agenc|digital.*marketing)/],
     ['print-shop',/\b(stamparij|stampars|print shop)/],
+    ['bookshop',/\b(knjizar|prodavnic.*knjig|knjige.*prodaj)/],
+    ['pet-shop',/\b(pet shop|prodavnic.*ljubim|hrana.*(?:pse|macke)|oprema.*ljubim)/],
+    ['pet-grooming',/\b(pet grooming|sisan(?:je|ja).*pas|frizer.*(?:pse|pasa)|nega.*pasa)/],
+    ['cosmetics-perfumery',/\b(parfimerij|prodavnic.*kozmetik|kozmetick.*prodavnic)/],
+    ['freight-carrier',/\b(autoprevoz|prevoz robe|kamionsk.*prevoz|transport robe)/],
     ['real-estate',/\b(nekretnin|agencij.*stanov)/],
     ['construction',/\b(investitor|gradjevin\w*|gradnja objek|gradim (?:zgrad|stan)|gradnj|izgradnj.*stanov|stamben.*gradnj)/],
     ['interior-design',/\b(dizajn enterijer|projektovanje enterijer)/],

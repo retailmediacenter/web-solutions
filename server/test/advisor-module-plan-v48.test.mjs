@@ -7,6 +7,17 @@ test('construction language is recognized without a clarification loop',()=>{
  for(const description of ['Građevina','Gradim stanove','Gradim zgrade','Izgradnja stanova','Građevinska kompanija'])assert.equal(recognizeBusiness(description),'construction');
 });
 
+test('V49 small-business additions have deterministic Serbian recognition',()=>{
+ const cases={
+  'Knjižara sa stranim knjigama':'bookshop',
+  'Pet shop i hrana za pse':'pet-shop',
+  'Šišanje pasa i pet grooming':'pet-grooming',
+  'Parfimerija i kozmetika':'cosmetics-perfumery',
+  'Autoprevoz i transport robe':'freight-carrier'
+ };
+ for(const [description,id] of Object.entries(cases))assert.equal(recognizeBusiness(description),id);
+});
+
 test('every generated site records the V31–V42 library plus the optional V34.5 Commerce Controller',()=>{
  const service=buildSitePayload({businessId:'hair-salon',businessName:'Salon',answers:{acceptsTimeRequests:true}}).siteConfig;
  const construction=buildSitePayload({businessId:'construction',businessName:'Gradnja',answers:{verticalEnabled:true}}).siteConfig;

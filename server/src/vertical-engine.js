@@ -1,7 +1,9 @@
 // V41.8 - Advisor-owned sector-specific decisions. V39.5 Registry remains data-only.
-import profiles from './data/vertical-profiles-v418.json' with {type:'json'};
+import baseProfiles from './data/vertical-profiles-v418.json' with {type:'json'};
+import expansionProfiles from './data/industry-expansion-v49.json' with {type:'json'};
 import {getBusinessFacts} from './registry.js';
 import {createModulePlan} from './module-plan.js';
+const profiles=Object.freeze({...baseProfiles,...expansionProfiles});
 export const VERTICAL_IDS=Object.freeze(Object.keys(profiles));
 export const verticalProfile=id=>profiles[id]||null;
 export function verticalQuestion(id){

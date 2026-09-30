@@ -1,0 +1,67 @@
+{
+  "bookshop": {
+    "id": "bookshop", "label": "Knjižara", "group": "Retail", "kind": "catalog",
+    "headline": "Priče koje čekaju svog čitaoca", "subtitle": "Pregledajte žanrove i pošaljite upit o dostupnosti naslova.",
+    "hero": null,
+    "cards": [
+      {"title":"Beletristika","description":"Romani i savremena književnost.","image":null},
+      {"title":"Dečje knjige","description":"Slikovnice i naslovi za mlade čitaoce.","image":null},
+      {"title":"Stručna literatura","description":"Knjige za učenje, posao i svakodnevna interesovanja.","image":null}
+    ],
+    "question":"Da li primate upite o dostupnosti knjiga preko sajta?",
+    "fields":[{"name":"scope","label":"Naslov ili autor koji tražite","kind":"text"}],
+    "assetRoot":null,"assetExists":false,"reference":"V49"
+  },
+  "pet-shop": {
+    "id": "pet-shop", "label": "Pet shop", "group": "Retail", "kind": "catalog",
+    "headline": "Sve za srećan život ljubimaca", "subtitle": "Istražite kategorije i proverite dostupnost proizvoda.",
+    "hero": null,
+    "cards": [
+      {"title":"Hrana i poslastice","description":"Asortiman za pse, mačke i druge ljubimce.","image":null},
+      {"title":"Oprema i igračke","description":"Ogrlice, povoci, ležajevi i zabava.","image":null},
+      {"title":"Nega i higijena","description":"Osnovna nega za svakodnevnu rutinu.","image":null}
+    ],
+    "question":"Da li primate upite o dostupnosti proizvoda preko sajta?",
+    "fields":[{"name":"pet","label":"Vrsta ljubimca","kind":"select:Pas|Mačka|Drugo"},{"name":"scope","label":"Proizvod koji tražite","kind":"text"}],
+    "assetRoot":null,"assetExists":false,"reference":"V49"
+  },
+  "pet-grooming": {
+    "id": "pet-grooming", "label": "Pet grooming", "group": "Services", "kind": "quote",
+    "headline": "Nega u kojoj se svaki ljubimac oseća dobro", "subtitle": "Šišanje, kupanje i nega uz zahtev za željeni termin.",
+    "hero": null,
+    "cards": [
+      {"title":"Kupanje i sušenje","description":"Osnovna nega prilagođena dlaci ljubimca.","image":null},
+      {"title":"Šišanje i trimovanje","description":"Dogovor prema rasi, dlaci i željenom izgledu.","image":null},
+      {"title":"Nega šapa i dlake","description":"Uredan završni tretman i savet za kućnu negu.","image":null}
+    ],
+    "question":"Da li primate zahteve za termin preko sajta?",
+    "fields":[{"name":"pet","label":"Vrsta ljubimca","kind":"select:Pas|Mačka|Drugo"},{"name":"date","label":"Željeni datum","kind":"date"},{"name":"scope","label":"Rasa ili napomena o nezi","kind":"textarea"}],
+    "assetRoot":null,"assetExists":false,"reference":"V49"
+  },
+  "cosmetics-perfumery": {
+    "id": "cosmetics-perfumery", "label": "Kozmetika i parfimerija", "group": "Retail", "kind": "catalog",
+    "headline": "Mala rutina koja pravi razliku", "subtitle": "Istražite kategorije i pošaljite upit o dostupnosti proizvoda.",
+    "hero": null,
+    "cards": [
+      {"title":"Nega lica","description":"Rutine i proizvodi za svakodnevnu negu.","image":null},
+      {"title":"Mirisi","description":"Parfemi i mirisne preporuke za različite prilike.","image":null},
+      {"title":"Pokloni i setovi","description":"Pažljivo složeni setovi za poklanjanje.","image":null}
+    ],
+    "question":"Da li primate upite o dostupnosti proizvoda preko sajta?",
+    "fields":[{"name":"scope","label":"Proizvod ili kategorija koja vas zanima","kind":"text"}],
+    "assetRoot":null,"assetExists":false,"reference":"V49"
+  },
+  "freight-carrier": {
+    "id": "freight-carrier", "label": "Autoprevoznik", "group": "Services", "kind": "quote",
+    "headline": "Prevoz koji prati vaš posao", "subtitle": "Pošaljite podatke o ruti i teretu za pripremu ponude.",
+    "hero": null,
+    "cards": [
+      {"title":"Domaći transport","description":"Prevoz robe na dogovorenim relacijama.","image":null},
+      {"title":"Distribucija","description":"Planirana isporuka za poslovne potrebe.","image":null},
+      {"title":"Logistička podrška","description":"Dogovor o utovaru, ruti i terminu.","image":null}
+    ],
+    "question":"Da li primate zahteve za ponudu preko sajta?",
+    "fields":[{"name":"pickup","label":"Mesto utovara","kind":"text"},{"name":"returnLocation","label":"Mesto istovara","kind":"text"},{"name":"scope","label":"Opis tereta","kind":"textarea"}],
+    "assetRoot":null,"assetExists":false,"reference":"V49"
+  }
+}

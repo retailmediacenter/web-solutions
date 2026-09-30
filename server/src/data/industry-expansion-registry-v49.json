@@ -1,0 +1,7 @@
+{
+  "bookshop":{"domain":"books","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":["category"],"productAttributes":["author","format"]},
+  "pet-shop":{"domain":"pets","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":["pet","category"],"productAttributes":["pet","size"]},
+  "pet-grooming":{"domain":"pet-care","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":[],"productAttributes":[]},
+  "cosmetics-perfumery":{"domain":"beauty-retail","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":["category"],"productAttributes":["brand","size"]},
+  "freight-carrier":{"domain":"transport","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":[],"productAttributes":[]}
+}
