@@ -104,6 +104,15 @@
 .rmc-preview-v4532 .rmc-preview-footer>span {color:#c4d2e4;}
 .rmc-preview-v4532 .rmc-preview-footer .rmc-primary {min-height:40px;}
 .rmc-preview-v4532 .rmc-preview-footer .rmc-secondary {min-height:40px;}
+.rmc-preview-v4532 .rmc-package-actions{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:9px;width:min(610px,100%);margin-left:auto}
+.rmc-preview-v4532 .rmc-package-card{appearance:none;position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 8px;min-height:54px;padding:9px 12px;cursor:pointer;text-align:left;color:#f8fbff;background:linear-gradient(135deg,#29496b,#1d334d);border:1px solid #547495;border-radius:11px;box-shadow:0 7px 16px rgba(6,18,34,.2);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+.rmc-preview-v4532 .rmc-package-card:hover{transform:translateY(-2px);border-color:#99c3f2;box-shadow:0 11px 22px rgba(5,19,37,.32)}
+.rmc-preview-v4532 .rmc-package-card:focus-visible{outline:3px solid #9dc5ff;outline-offset:2px}
+.rmc-preview-v4532 .rmc-package-business{background:linear-gradient(135deg,#176d83,#124f68)}
+.rmc-preview-v4532 .rmc-package-commerce{background:linear-gradient(135deg,#5d477d,#3e315f)}
+.rmc-preview-v4532 .rmc-package-name{font:800 13px/1.15 Inter,system-ui,sans-serif;letter-spacing:.01em}
+.rmc-preview-v4532 .rmc-package-price{font:800 11px/1.15 Inter,system-ui,sans-serif;color:#dbeaff;white-space:nowrap}
+.rmc-preview-v4532 .rmc-package-description{grid-column:1/-1;font:600 10px/1.25 Inter,system-ui,sans-serif;color:#c8d9ea}
 .rmc-preview-v4532 .rmc-pairing {color:#fff;}
 .rmc-preview-v4532 .rmc-pairing small {color:#dce7fa;}
 .rmc-preview-v4532 .rmc-pairing button {background:#fff;color:#192a40;}
@@ -145,6 +154,9 @@
   .rmc-preview-v4532 .rmc-preview-export {gap:6px;}
   .rmc-preview-v4532 .rmc-preview-export .rmc-primary,
   .rmc-preview-v4532 .rmc-preview-export .rmc-secondary {font-size:12px;padding:8px 11px;}
+  .rmc-preview-v4532 .rmc-package-actions{order:3;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%;margin-left:0}
+  .rmc-preview-v4532 .rmc-package-card{min-height:47px;padding:7px 6px;border-radius:9px;grid-template-columns:1fr;text-align:center;gap:2px}
+  .rmc-preview-v4532 .rmc-package-name{font-size:11px}.rmc-preview-v4532 .rmc-package-price{font-size:10px}.rmc-preview-v4532 .rmc-package-description{display:none}
   .rmc-preview-v4532.is-generated .rmc-preview-head {min-height:56px;}
 }
 @media(prefers-reduced-motion:reduce){

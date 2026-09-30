@@ -218,7 +218,12 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
          <button type="button" className="rmc-primary" onClick={onStart}>Napravi moj sajt ↗</button></>:
           <><div className="rmc-preview-export"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
            {exporting?'Pripremam ZIP…':<><span className="rmc-label-mobile">Preuzmi sajt ↓</span><span className="rmc-label-desktop">Preuzmi besplatan sajt (ZIP) ↓</span></>}</button>
-            <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div><div className="rmc-preview-export">{[['publish','Publish — 14.900 RSD'],['business','Business — 29.900 RSD'],['commerce','Commerce — 59.900 RSD']].map(([plan,label])=><button key={plan} type="button" className="rmc-secondary" onClick={()=>onBuildRequest?.(plan)}>{label}</button>)}</div>
+            <button type="button" className="rmc-secondary" onClick={onEdit}><span className="rmc-label-mobile">Izmeni</span><span className="rmc-label-desktop">Izmeni odgovore</span></button></div>
+            <div className="rmc-package-actions" aria-label="Izaberite paket">
+              {[['publish','Publish','14.900 RSD','Objava gotovog sajta'],['business','Business','29.900 RSD','Sajt i Business Portal'],['commerce','Commerce','59.900 RSD','Prodaja i Commerce Portal']].map(([plan,name,price,description])=><button key={plan} type="button" className={`rmc-package-card rmc-package-${plan}`} onClick={()=>onBuildRequest?.(plan)}>
+                <span className="rmc-package-name">{name}</span><span className="rmc-package-price">{price}</span><span className="rmc-package-description">{description}</span>
+              </button>)}
+            </div>
 
          </>}
      </footer>

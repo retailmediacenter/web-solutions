@@ -275,7 +275,30 @@ function App(){
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
     }catch(ex){setError(ex.message)}finally{setExporting(false)}
   }
-  async function requestBuild(requestedPlan){try{const siteId=result?.siteConfig?.projectId;if(!siteId)throw new Error('Demo nema Site ID. Generišite ga ponovo.');const data=await json('/api/site/build-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({siteId,requestedPlan})});const blob=new Blob([JSON.stringify(data.request,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`RMC_BUILD_REQUEST_${siteId}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setError('Zahtev je pripremljen i preuzet. RMC će ga obraditi.');}catch(ex){setError(ex.message)}}
+  async function requestBuild(requestedPlan){
+    try{
+      const siteId=result?.siteConfig?.projectId;
+      if(!siteId)throw new Error('Demo nema Site ID. Generišite ga ponovo.');
+      const data=await json('/api/site/build-request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({siteId,requestedPlan})});
+      const request=data.request||{};
+      const packageLabel={publish:'Publish',business:'Business',commerce:'Commerce'}[requestedPlan]||requestedPlan;
+      const body=[
+        'Poštovani RMC Web Solutions,',
+        '',
+        `želim paket: ${packageLabel}.`,
+        `Naziv biznisa: ${request.business?.name||businessName||'nije unet'}`,
+        `Site ID: ${siteId}`,
+        `Delatnost: ${request.business?.primaryType||definition?.label||'nije uneta'}`,
+        `Cilj sajta: ${request.advisor?.goal||goal}`,
+        '',
+        'Molim vas da me kontaktirate za sledeći korak.',
+        '',
+        'RMC Build Request je bezbedno zabeležen u sistemu.'
+      ].join('\r\n');
+      window.location.assign(`mailto:hello@retailmediacenter.com?subject=${encodeURIComponent(`RMC Web Solutions — ${packageLabel} — ${request.business?.name||siteId}`)}&body=${encodeURIComponent(body)}`);
+      setError('Zahtev je zabeležen. Otvoren je e-mail sa popunjenim podacima za RMC.');
+    }catch(ex){setError(ex.message)}
+  }
   // The last Advisor section continues as four short questions. No change to
   // resolveBusinessData, bookingProfile, siteConfig or API request structure.
   function acceptCompanyName(event){
