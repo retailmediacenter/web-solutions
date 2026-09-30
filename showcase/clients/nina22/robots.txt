@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+# DEMO pages have their own noindex meta tag.
