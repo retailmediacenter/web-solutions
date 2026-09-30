@@ -144,7 +144,11 @@ function App(){
       const card=advisorDialogRef.current;
       // History stays visible; LiveThread follows the latest message.
       const field=card?.querySelector(current==='intro'?'#rmc-ai-description':current==='company'?(companyStage===0?'#rmc-company-name':companyStage===1?'#rmc-company-phone':'.rmc-company-stage'):'#rmc-live-answer');
-      if(field && (replyComplete||current==='intro'))field.focus({preventScroll:true});
+      // Safari raises its keyboard as soon as a textarea receives focus. On the
+      // opening screen, keep the introduction and example choices visible until
+      // a visitor deliberately taps the field.
+      const isTouchOpening=current==='intro'&&window.matchMedia?.('(pointer: coarse)').matches;
+      if(field && !isTouchOpening && (replyComplete||current==='intro'))field.focus({preventScroll:true});
     });
     return()=>cancelAnimationFrame(task);
   },[advisorOpen,current,companyStage,replyComplete]);
@@ -535,7 +539,7 @@ function App(){
               <button type="submit" disabled={!replyComplete||loading||clarifyText.trim().length<3}>Pošalji →</button>
             </form>:
             <form id="introForm" onSubmit={begin} className="rmc-live-composer">
-              <textarea id="rmc-ai-description" autoFocus value={description} rows={2} maxLength={800} minLength={3} required
+              <textarea id="rmc-ai-description" value={description} rows={2} maxLength={800} minLength={3} required
                 aria-label="Opišite svoj posao" onChange={e=>{setDescription(e.target.value);setSelectedId('');setError('');}}
                 placeholder="Opišite svoj posao svojim rečima…"/>
               <button type="submit" disabled={!replyComplete||loading||description.trim().length<3}>Pošalji →</button>
