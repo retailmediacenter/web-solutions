@@ -63,5 +63,18 @@
     "question":"Da li primate zahteve za ponudu preko sajta?",
     "fields":[{"name":"pickup","label":"Mesto utovara","kind":"text"},{"name":"returnLocation","label":"Mesto istovara","kind":"text"},{"name":"scope","label":"Opis tereta","kind":"textarea"}],
     "assetRoot":null,"assetExists":false,"reference":"V49"
+  },
+  "laundry-dry-cleaning": {
+    "id":"laundry-dry-cleaning","label":"Perionica i hemijsko čišćenje","group":"Services","kind":"quote",
+    "headline":"Sveže i pažljivo negovano","subtitle":"Pošaljite upit za pranje, peglanje ili hemijsko čišćenje.",
+    "hero":"assets/images/curated/services/laundry-dry-cleaning/hero/laundry_hero_01.jpg",
+    "cards":[
+      {"title":"Pranje i slaganje","description":"Svakodnevna nega garderobe i tekstila.","image":"assets/images/curated/services/laundry-dry-cleaning/services/laundry_service_01.jpg"},
+      {"title":"Hemijsko čišćenje","description":"Pažljiv tretman osetljivih komada.","image":"assets/images/curated/services/laundry-dry-cleaning/services/laundry_service_02.jpg"},
+      {"title":"Peglanje i završna nega","description":"Uredna garderoba spremna za preuzimanje.","image":"assets/images/curated/services/laundry-dry-cleaning/services/laundry_service_03.jpg"}
+    ],
+    "question":"Da li primate zahteve za pranje i hemijsko čišćenje preko sajta?",
+    "fields":[{"name":"item","label":"Vrsta usluge","kind":"select:Pranje|Hemijsko čišćenje|Peglanje"},{"name":"scope","label":"Opis garderobe ili tekstila","kind":"textarea"},{"name":"pickup","label":"Adresa za preuzimanje (opciono)","kind":"text"}],
+    "assetRoot":"assets/images/curated/services/laundry-dry-cleaning","assetExists":true,"reference":"V50"
   }
 }

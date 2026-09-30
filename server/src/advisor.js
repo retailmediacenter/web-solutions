@@ -104,6 +104,7 @@ export function recognizeBusiness(description){
     ['pet-shop',/\b(pet shop|prodavnic.*ljubim|hrana.*(?:pse|macke)|oprema.*ljubim)/],
     ['pet-grooming',/\b(pet grooming|sisan(?:je|ja).*pas|frizer.*(?:pse|pasa)|nega.*pasa)/],
     ['cosmetics-perfumery',/\b(parfimerij|prodavnic.*kozmetik|kozmetick.*prodavnic)/],
+    ['laundry-dry-cleaning',/\b(hemijsk.*ciscen|perionic.*ves|pranje.*ves|peglanje.*ves)/],
     ['freight-carrier',/\b(autoprevoz|prevoz robe|kamionsk.*prevoz|transport robe)/],
     ['real-estate',/\b(nekretnin|agencij.*stanov)/],
     ['construction',/\b(investitor|gradjevin\w*|gradnja objek|gradim (?:zgrad|stan)|gradnj|izgradnj.*stanov|stamben.*gradnj)/],
