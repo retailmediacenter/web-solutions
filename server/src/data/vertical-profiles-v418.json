@@ -93,19 +93,19 @@
     "hero": "assets/images/curated/professional-office/print-shop/hero/print_shop_hero_01.jpg",
     "cards": [
       {
-        "title": "Poslovna štampa",
-        "description": "Vizitkarte, memorandumi i promotivna štampa.",
-        "image": null
+      "title": "Poslovna štampa",
+      "description": "Vizitkarte, memorandumi i promotivna štampa.",
+      "image": "assets/images/curated/professional-office/print-shop/services/print_shop_service_01.jpg"
       },
       {
-        "title": "Reklamni materijal",
-        "description": "Brošure, katalozi i materijali za događaje.",
-        "image": null
+      "title": "Reklamni materijal",
+      "description": "Brošure, katalozi i materijali za događaje.",
+      "image": "assets/images/curated/professional-office/print-shop/services/print_shop_service_02.jpg"
       },
       {
-        "title": "Veliki formati",
-        "description": "Baneri, posteri i izložbena grafika.",
-        "image": null
+      "title": "Veliki formati",
+      "description": "Baneri, posteri i izložbena grafika.",
+      "image": "assets/images/curated/professional-office/print-shop/services/print_shop_service_03.jpg"
       }
     ],
     "question": "Da li primate zahteve za štampu i ponude preko sajta?",
@@ -618,19 +618,19 @@
     "hero": "assets/images/curated/professional-office/photo-video/hero/photo_video_hero_01.jpg",
     "cards": [
       {
-        "title": "Fotografisanje",
-        "description": "Događaji, portreti i poslovne fotografije.",
-        "image": null
+      "title": "Fotografisanje",
+      "description": "Događaji, portreti i poslovne fotografije.",
+      "image": "assets/images/curated/professional-office/photo-video/services/photo_video_service_01.jpg"
       },
       {
-        "title": "Video produkcija",
-        "description": "Snimanje i obrada videa.",
-        "image": null
+      "title": "Video produkcija",
+      "description": "Snimanje i obrada videa.",
+      "image": "assets/images/curated/professional-office/photo-video/services/photo_video_service_02.jpg"
       },
       {
-        "title": "Montaža i postprodukcija",
-        "description": "Obrada materijala po dogovoru.",
-        "image": null
+      "title": "Montaža i postprodukcija",
+      "description": "Obrada materijala po dogovoru.",
+      "image": "assets/images/curated/professional-office/photo-video/services/photo_video_service_03.jpg"
       }
     ],
     "question": "Da li primate upite za snimanja i termine preko sajta?",

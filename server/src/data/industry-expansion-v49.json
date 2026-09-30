@@ -2,28 +2,28 @@
   "bookshop": {
     "id": "bookshop", "label": "Knjižara", "group": "Retail", "kind": "catalog",
     "headline": "Priče koje čekaju svog čitaoca", "subtitle": "Pregledajte žanrove i pošaljite upit o dostupnosti naslova.",
-    "hero": null,
+    "hero": "assets/images/curated/retail/bookshop/hero/bookshop_hero_01.jpg",
     "cards": [
-      {"title":"Beletristika","description":"Romani i savremena književnost.","image":null},
-      {"title":"Dečje knjige","description":"Slikovnice i naslovi za mlade čitaoce.","image":null},
-      {"title":"Stručna literatura","description":"Knjige za učenje, posao i svakodnevna interesovanja.","image":null}
+      {"title":"Beletristika","description":"Romani i savremena književnost.","image":"assets/images/curated/retail/bookshop/services/bookshop_service_01.jpg"},
+      {"title":"Dečje knjige","description":"Slikovnice i naslovi za mlade čitaoce.","image":"assets/images/curated/retail/bookshop/services/bookshop_service_02.jpg"},
+      {"title":"Stručna literatura","description":"Knjige za učenje, posao i svakodnevna interesovanja.","image":"assets/images/curated/retail/bookshop/services/bookshop_service_03.jpg"}
     ],
     "question":"Da li primate upite o dostupnosti knjiga preko sajta?",
     "fields":[{"name":"scope","label":"Naslov ili autor koji tražite","kind":"text"}],
-    "assetRoot":null,"assetExists":false,"reference":"V49"
+    "assetRoot":"assets/images/curated/retail/bookshop","assetExists":true,"reference":"V49"
   },
   "pet-shop": {
     "id": "pet-shop", "label": "Pet shop", "group": "Retail", "kind": "catalog",
     "headline": "Sve za srećan život ljubimaca", "subtitle": "Istražite kategorije i proverite dostupnost proizvoda.",
-    "hero": null,
+    "hero": "assets/images/curated/retail/pet-shop/hero/pet_shop_hero_01.jpg",
     "cards": [
-      {"title":"Hrana i poslastice","description":"Asortiman za pse, mačke i druge ljubimce.","image":null},
-      {"title":"Oprema i igračke","description":"Ogrlice, povoci, ležajevi i zabava.","image":null},
-      {"title":"Nega i higijena","description":"Osnovna nega za svakodnevnu rutinu.","image":null}
+      {"title":"Hrana i poslastice","description":"Asortiman za pse, mačke i druge ljubimce.","image":"assets/images/curated/retail/pet-shop/services/pet_shop_service_01.jpg"},
+      {"title":"Oprema i igračke","description":"Ogrlice, povoci, ležajevi i zabava.","image":"assets/images/curated/retail/pet-shop/services/pet_shop_service_02.jpg"},
+      {"title":"Nega i higijena","description":"Osnovna nega za svakodnevnu rutinu.","image":"assets/images/curated/retail/pet-shop/services/pet_shop_service_03.jpg"}
     ],
     "question":"Da li primate upite o dostupnosti proizvoda preko sajta?",
     "fields":[{"name":"pet","label":"Vrsta ljubimca","kind":"select:Pas|Mačka|Drugo"},{"name":"scope","label":"Proizvod koji tražite","kind":"text"}],
-    "assetRoot":null,"assetExists":false,"reference":"V49"
+    "assetRoot":"assets/images/curated/retail/pet-shop","assetExists":true,"reference":"V49"
   },
   "pet-grooming": {
     "id": "pet-grooming", "label": "Pet grooming", "group": "Services", "kind": "quote",

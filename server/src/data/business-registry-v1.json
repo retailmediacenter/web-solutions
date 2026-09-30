@@ -722,7 +722,7 @@
     "domain": "printing",
     "assetRoot": "assets/images/curated/professional-office/print-shop",
     "assetExists": true,
-    "assetRoles": ["hero"],
+    "assetRoles": ["hero", "services", "featured"],
     "catalogDimensions": [],
     "productAttributes": []
   },
@@ -919,7 +919,7 @@
     "domain": "photography",
     "assetRoot": "assets/images/curated/professional-office/photo-video",
     "assetExists": true,
-    "assetRoles": ["hero"],
+    "assetRoles": ["hero", "services", "featured"],
     "catalogDimensions": [],
     "productAttributes": []
   },

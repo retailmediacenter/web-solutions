@@ -14,9 +14,9 @@ Stanje: 30. septembar 2026.
 | ID | Delatnost | Stanje scenarija | Tip sajta | Fotografije |
 | --- | --- | --- | --- | --- |
 | `marketing-agency` | Marketing agencija | Kompletan JPG bundle | Portfolio + zahtev za ponudu | 1 hero, 3 usluge, 2 izdvojena rada |
-| `print-shop` | Štamparija i fotokopirnica | Postoji, bez fotografija | Katalog usluga + zahtev sa specifikacijom | 1 hero, 3 usluge, 2 detalja materijala |
-| `photo-video` | Foto/video studio i video produkcija | Postoji, bez fotografija | Portfolio + upit za termin/projekat | 1 hero, 3 usluge, 2 izdvojena rada |
-| `bookshop` | Knjižara | Novo | Katalog + upit o dostupnosti | 1 hero, 3 kategorije, 2 izdvojena naslova/atmosfere |
+| `print-shop` | Štamparija i fotokopirnica | Kompletan JPG bundle | Katalog usluga + zahtev sa specifikacijom | 1 hero, 3 usluge, 2 detalja materijala |
+| `photo-video` | Foto/video studio i video produkcija | Kompletan JPG bundle | Portfolio + upit za termin/projekat | 1 hero, 3 usluge, 2 izdvojena rada |
+| `bookshop` | Knjižara | Kompletan JPG bundle | Katalog + upit o dostupnosti | 1 hero, 3 kategorije, 2 izdvojena naslova/atmosfere |
 | `pet-shop` | Pet shop | Novo | Katalog + upit o dostupnosti | 1 hero, 3 kategorije, 2 izdvojena proizvoda |
 | `pet-grooming` | Pet grooming / šišanje pasa | Novo | Usluge + zahtev za termin | 1 hero, 3 usluge, 2 detalja salona/nege |
 | `cosmetics-perfumery` | Kozmetika i parfimerija | Novo | Katalog + upit o dostupnosti | 1 hero, 3 kategorije, 2 izdvojena proizvoda |
