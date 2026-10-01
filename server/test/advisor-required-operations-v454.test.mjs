@@ -45,7 +45,7 @@ test('pharmacy product orders and optional consultation are independent across a
 });
 
 test('72 business questionnaires do not skip compulsory known server decisions',()=>{
-  const businesses=listBusinesses();assert.equal(businesses.length,72);
+  const businesses=listBusinesses();assert.equal(businesses.length,80);
   for(const {id} of businesses){
     const def=getAdvisorDefinition(id);
     const plan=buildAdvisorDraft(def,{});

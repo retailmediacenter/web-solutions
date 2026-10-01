@@ -13,9 +13,9 @@ const publicRoot=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../.
 const input=(id,enabled)=>({businessId:id,businessName:'Demo '+id,description:'Imam '+id,goal:'purchase',style:'modern',answers:{[getServiceSpecial(id).id]:enabled}});
 
 test('V41.5 adds exactly 24 service modes without touching 72 fact-only registry entries',()=>{
-  assert.equal(getRegistryCount(),72);
+  assert.equal(getRegistryCount(),80);
   assert.equal(SERVICE_BUSINESSES.length,36);
-  assert.equal(PILOT_BUSINESSES.length,72);
+  assert.equal(PILOT_BUSINESSES.length,80);
   assert.equal(listBusinesses().filter(x=>x.pilot).length,72);
   assert.deepEqual(new Set(SERVICE_BUSINESSES.map(id=>serviceProfile(id).mode)),new Set(BOOKING_MODES));
   for(const id of SERVICE_BUSINESSES){const fact=getBusinessFacts(id);assert.ok(fact,id);assert.equal(fact.bookingMode,undefined);assert.equal(fact.cta,undefined);}

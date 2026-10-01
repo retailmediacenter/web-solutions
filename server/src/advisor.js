@@ -42,6 +42,11 @@ export function recognizeBusiness(description){
   if(/\b(mesar|mesnic|butcher)/.test(text)||/\b(?:prodajem|prodajemo|prodaja)\s+(?:sveze\s+)?meso\b/.test(text))return 'butcher-shop';
   if(/\b(vinotek|wine shop|prodavnic.*vin|vino.*degust)/.test(text))return 'wine-shop';
   if(/\b(obuc|obuv|cipel|patik|shoe shop)/.test(text))return 'shoe-shop';
+  // These sector names contain generic retail vocabulary (clothing, hair and
+  // repairs), so they must win before the broad retail/service aliases.
+  if(/\b(pet grooming|sisan(?:je|ja).*pas|frizer.*(?:pse|pasa)|nega.*pasa)/.test(text))return 'pet-grooming';
+  if(/\b(krojac|prepravk.*odec|sivenje po meri|skracivanje pantal)/.test(text))return 'tailor';
+  if(/\b(bicikl servis|servis bicik|popravk.*bicikl|bajsa)/.test(text))return 'bicycle-service';
   // Explicit Serbian synonyms for the ten new profiles. Do not infer unknown
   // professions from a generic retail description: ask the user to select.
   const retailAliases=[

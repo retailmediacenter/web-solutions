@@ -39,7 +39,7 @@ test('One free location and optional extra locations remain supported, but not m
  assert.throws(()=>build('butcher-shop',{...main,locations:Array.from({length:5},(_,i)=>({city:'Niš',address:'Test '+i}))}),/četiri/);
 });
 test('No user-facing DEMO in actual output across ALL 72 render families',()=>{
- const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,72);
+ const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,80);
  for(const b of all){
   const html=renderHtml(build(b.id,main));const visible=textVisible(html);
   assert.doesNotMatch(visible,/\bDEMO\b/i,b.id);

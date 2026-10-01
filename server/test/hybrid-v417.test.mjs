@@ -25,7 +25,7 @@ test('Natural Serbian descriptions recognize existing primary before asking the 
  assert.equal(recognizeBusiness('Auto servis i prodaja vozila'),'auto-service');
 });
 test('V41.7: hybrid options belong to Advisor, never fact-only Business Registry',()=>{
- assert.equal(getRegistryCount(),72);
+ assert.equal(getRegistryCount(),80);
  assert.equal(pairs.length,10);
  for(const pair of pairs){
   const fact=getBusinessFacts(pair.primary);

@@ -107,7 +107,7 @@ test('Preview and ZIP have the same system layers, on-demand map and own runtime
  assert.match(files['site-system.js'].toString('utf8'),/data-ws-map/);
 });
 test('All 72 supported scenario families can render global badge without contact duplication',()=>{
- const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,72);
+ const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,80);
  for(const {id} of all){
   const payload=buildSitePayload(req(id,{businessData:{phone:'+381601234567'}}));
   const html=renderHtml(payload);

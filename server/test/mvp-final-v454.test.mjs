@@ -14,7 +14,7 @@ function payload(id, businessData={phone:'+381 60 123 4567',locationMode:'physic
  return buildSitePayload({businessId:id,businessName:'Test firma',style:'warm',goal:'visit',answers,businessData});
 }
 test('V45.4: all 72 renderers have exactly one end contact with actual callable phone',()=>{
- const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,72);
+ const all=listBusinesses().filter(x=>x.pilot);assert.equal(all.length,80);
  for(const {id} of all){
   const html=renderHtml(payload(id));
   assert.equal((html.match(/id="kontakt"/g)||[]).length,1,id);

@@ -12,8 +12,8 @@ const butcher=(mode='grilled')=>input('butcher-shop',{butcherGrillService:mode})
 const wine=(enabled=true)=>input('wine-shop',{wineTastings:enabled});
 
 test('original V39.5 Registry: all 72 facts preserved; no render responsibilities',()=>{
-  assert.equal(getRegistryCount(),72);
-  assert.equal(listBusinesses().length,72);
+  assert.equal(getRegistryCount(),80);
+  assert.equal(listBusinesses().length,80);
   for(const id of ['butcher-shop','wine-shop','shoe-shop'])assert.ok(getBusinessFacts(id));
   assert.ok(getBusinessFacts('butcher-shop').productAttributes.includes('preparation'));
   assert.equal(getBusinessFacts('butcher-shop').cta,undefined);
@@ -126,9 +126,9 @@ import path from 'node:path';
 const publicDir=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../client/public');
 
 test('V41.3 registers exactly 10 additional functional retail/catalogue profiles',()=>{
-  assert.equal(PILOT_BUSINESSES.length,72);
+  assert.equal(PILOT_BUSINESSES.length,80);
   const supported=listBusinesses().filter(x=>x.pilot);
-  assert.equal(supported.length,72);
+  assert.equal(supported.length,80);
   for(const id of RETAIL_WAVE){
     const d=getAdvisorDefinition(id);
     assert.equal(d.pilot,true);

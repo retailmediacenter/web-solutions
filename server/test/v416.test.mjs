@@ -20,7 +20,7 @@ const retailRequest=(id,enabled,goal='visit')=>({businessId:id,businessName:'Pri
   style:'modern',goal,description:'Prodajem '+id,answers:{ordersEnabled:enabled}});
 
 test('V41.6 preserves 72 data-only fact entries and covers 72 distinct functional scenarios after V41.8',()=>{
-  assert.equal(getRegistryCount(),72);
+  assert.equal(getRegistryCount(),80);
   assert.equal(new Set(PILOT_BUSINESSES).size,72);
   assert.equal(listBusinesses().filter(x=>x.pilot).length,72);
   assert.equal(SERVICE_BUSINESSES.length,36);

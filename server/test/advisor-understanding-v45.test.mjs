@@ -77,7 +77,7 @@ test('V45 essential non-guessing invariants',()=>{
   assert.equal(plan.steps.at(-1),'company',id);
   if(d.hybrid)assert.equal(plan.answers.hybridChoice,'none',id);
  }
- assert.equal(listBusinesses().length,72);
+ assert.equal(listBusinesses().length,80);
  const runtime=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
  assert.match(runtime,/understandAdvisorDescription/);
  assert.match(runtime,/app\.get\('\/api\/advisor\/recognize'/);

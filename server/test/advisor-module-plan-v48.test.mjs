@@ -13,7 +13,10 @@ test('V49 small-business additions have deterministic Serbian recognition',()=>{
   'Pet shop i hrana za pse':'pet-shop',
   'Šišanje pasa i pet grooming':'pet-grooming',
   'Parfimerija i kozmetika':'cosmetics-perfumery',
-  'Autoprevoz i transport robe':'freight-carrier'
+  'Autoprevoz i transport robe':'freight-carrier',
+  'Hemijsko čišćenje i peglanje veša':'laundry-dry-cleaning',
+  'Krojač i prepravke odeće':'tailor',
+  'Servis bicikala i popravka bajsa':'bicycle-service'
  };
  for(const [description,id] of Object.entries(cases))assert.equal(recognizeBusiness(description),id);
 });

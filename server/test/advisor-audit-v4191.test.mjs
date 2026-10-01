@@ -22,8 +22,8 @@ function request(id,{goal='purchase',orders,extra={}}={}){
 }
 
 test('Advisor audit covers ALL 72 IDs; every business has valid, distinct, answerable questions',()=>{
- const businesses=listBusinesses();assert.equal(businesses.length,72);
- const ids=new Set(businesses.map(b=>b.id));assert.equal(ids.size,72);
+ const businesses=listBusinesses();assert.equal(businesses.length,80);
+ const ids=new Set(businesses.map(b=>b.id));assert.equal(ids.size,80);
  for(const {id} of businesses){
    const d=getAdvisorDefinition(id);
    for(const [stage,question] of [['operation',d.operation],['emphasis',d.emphasis],...d.specials.map(s=>['special:'+s.id,s])]){

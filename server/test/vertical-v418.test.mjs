@@ -17,10 +17,10 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../../clie
 const request=(id,enabled)=>({businessId:id,businessName:'Test '+id,goal:'visit',style:'modern',description:'Testiram '+id,answers:{verticalEnabled:enabled,contactPhone:'+381 60 123456'}});
 const missingV395Assets=['interior-design'];
 test('expanded catalog contains 77 UNIQUE scenarios while the V41.8 parity matrix preserves its original 72',()=>{
- assert.equal(getRegistryCount(),77);assert.equal(PILOT_BUSINESSES.length,77);
+ assert.equal(getRegistryCount(),80);assert.equal(PILOT_BUSINESSES.length,80);
  assert.equal(new Set(PILOT_BUSINESSES).size,77);
- assert.equal(listBusinesses().filter(x=>x.pilot).length,77);
- assert.equal(VERTICAL_IDS.length,24);
+ assert.equal(listBusinesses().filter(x=>x.pilot).length,80);
+ assert.equal(VERTICAL_IDS.length,27);
  assert.equal(parity.length,72);
  const activeIds=new Set(PILOT_BUSINESSES);
  for(const entry of parity)assert.ok(activeIds.has(entry.id),entry.id);

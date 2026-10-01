@@ -4,5 +4,7 @@
   "pet-grooming":{"domain":"pet-care","assetRoot":"assets/images/curated/services/pet-grooming","assetExists":true,"assetRoles":["hero","services","featured"],"catalogDimensions":[],"productAttributes":[]},
   "cosmetics-perfumery":{"domain":"beauty-retail","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":["category"],"productAttributes":["brand","size"]},
   "freight-carrier":{"domain":"transport","assetRoot":null,"assetExists":false,"assetRoles":[],"catalogDimensions":[],"productAttributes":[]},
-  "laundry-dry-cleaning":{"domain":"garment-care","assetRoot":"assets/images/curated/services/laundry-dry-cleaning","assetExists":true,"assetRoles":["hero","services","featured"],"catalogDimensions":[],"productAttributes":[]}
+  "laundry-dry-cleaning":{"domain":"garment-care","assetRoot":"assets/images/curated/services/laundry-dry-cleaning","assetExists":true,"assetRoles":["hero","services","featured"],"catalogDimensions":[],"productAttributes":[]},
+  "tailor":{"domain":"tailoring","assetRoot":"assets/images/curated/services/tailor","assetExists":true,"assetRoles":["hero","services","featured"],"catalogDimensions":[],"productAttributes":[]},
+  "bicycle-service":{"domain":"bicycle-service","assetRoot":"assets/images/curated/services/bicycle-service","assetExists":true,"assetRoles":["hero","services","featured"],"catalogDimensions":[],"productAttributes":[]}
 }
