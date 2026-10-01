@@ -20,9 +20,8 @@ test('Agent returns a safe structured waiting state without a configured key',as
  assert.ok(result.missing.some(item=>item.includes('fotografije')));
 });
 
-test('Agent reads the Responses API output text and validates it before it becomes application state',async()=>{
- const answer=JSON.stringify({status:'READY_TO_BUILD',summary:'Sve je spremno.',missing:[],clientMessage:'Dragan, kreni sa izradom.',recommendations:['Zadrži stil.'],buildReady:true});
- const fetchImpl=async()=>new Response(JSON.stringify({output:[{content:[{type:'output_text',text:answer}]}]}),{status:200});
+test('Agent validates structured OpenAI output before it becomes application state',async()=>{
+ const fetchImpl=async()=>new Response(JSON.stringify({output_text:JSON.stringify({status:'READY_TO_BUILD',summary:'Sve je spremno.',missing:[],clientMessage:'Dragan, kreni sa izradom.',recommendations:['Zadrži stil.'],buildReady:true})}),{status:200});
  const result=await createAgentService({apiKey:'test',fetchImpl}).assess({...project,agentDesk:{...project.agentDesk,materials:[{name:'IMG_1.jpg'}]}});
  assert.equal(result.status,'READY_TO_BUILD');
  assert.equal(result.buildReady,true);

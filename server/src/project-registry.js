@@ -77,7 +77,7 @@ function applyEditorContent(project,content,now){
   const original=catalog[key],byId=new Map(original.map(item=>[String(item.id),item]));
   const used=new Set();
   catalog[key]=incoming.map((item,index)=>{
-   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=text(previous?.id,120)||suppliedId||'item-'+(index+1);
+   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=previous?String(previous.id):suppliedId;
    if(!/^[A-Za-z0-9:_-]{2,120}$/.test(itemId))throw invalid('Nova stavka zahteva ispravan stabilan identifikator.');
    if(used.has(itemId))throw invalid('Stavke ponude moraju imati različite identifikatore.');used.add(itemId);
    const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image);

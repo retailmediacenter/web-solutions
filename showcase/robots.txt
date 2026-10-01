@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-# Demo pages carry meta noindex, and must remain crawlable so Google can see it.
