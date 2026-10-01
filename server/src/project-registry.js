@@ -77,7 +77,7 @@ function applyEditorContent(project,content,now){
   const original=catalog[key],byId=new Map(original.map(item=>[String(item.id),item]));
   const used=new Set();
   catalog[key]=incoming.map((item,index)=>{
-   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=previous?String(previous.id):suppliedId;
+   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=text(previous?.id,120)||suppliedId||'item-'+(index+1);
    if(!/^[A-Za-z0-9:_-]{2,120}$/.test(itemId))throw invalid('Nova stavka zahteva ispravan stabilan identifikator.');
    if(used.has(itemId))throw invalid('Stavke ponude moraju imati različite identifikatore.');used.add(itemId);
    const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image);
@@ -129,7 +129,15 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   }
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
  }
- async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,buildRequest:p.buildRequest||null,activation:p.activation};}
+ async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,buildRequest:p.buildRequest||null,activation:p.activation,agentDesk:p.agentDesk||{notes:'',materials:[],lastAssessment:null}};}
+ async function agentProject(siteId){return read(siteId);}
+ async function updateAgentDesk(siteId,{notes,material}={}){
+  const project=await read(siteId),desk=project.agentDesk||{notes:'',materials:[],lastAssessment:null};
+  if(notes!==undefined)desk.notes=text(notes,4000);
+  if(material){const name=text(material.name,180);if(!name)throw invalid('Materijal mora imati naziv.');desk.materials=[...(Array.isArray(desk.materials)?desk.materials:[]),{id:`material-${randomBytes(9).toString('base64url')}`,name,kind:text(material.kind,80)||'photo',note:text(material.note,400),addedAt:now()}].slice(-80);}
+  project.agentDesk=desk;project.updatedAt=now();await save(project);return summary(siteId);
+ }
+ async function saveAgentAssessment(siteId,assessment){const project=await read(siteId);project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),lastAssessment:{...assessment,assessedAt:now()}};project.updatedAt=now();await save(project);return project.agentDesk.lastAssessment;}
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
  async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
@@ -192,5 +200,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
+ return {register,summary,agentProject,updateAgentDesk,saveAgentAssessment,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
 }
