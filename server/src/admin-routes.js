@@ -9,7 +9,7 @@ const active=()=>String(process.env.RMC_ADMIN_KEY||'').length>=32;
 const origins=()=>String(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
 const trusted=req=>{const origin=req.get('origin');return !origin||origins().includes(origin)||(process.env.NODE_ENV!=='production'&&/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(origin));};
 
-export function adminRouter(projects,{now=Date.now,agentService=null}={}){
+export function adminRouter(projects,{now=Date.now}={}){
  const router=Router(),sessions=new Map(),failed=new Map();
  const valid=token=>{const until=sessions.get(hash(token||''));if(!until||until<=now()){sessions.delete(hash(token||''));return false;}return true;};
  const auth=req=>(req.get('authorization')||'').replace(/^Bearer\s+/i,'');
@@ -21,8 +21,6 @@ export function adminRouter(projects,{now=Date.now,agentService=null}={}){
  });
   router.use((req,res,next)=>valid(auth(req))?next():res.status(401).json({error:'Administratorska sesija je istekla.'}));
   router.get('/projects/:siteId',(req,res,next)=>projects.summary(req.params.siteId).then(project=>res.json({project})).catch(next));
-  router.put('/projects/:siteId/agent-desk',(req,res,next)=>projects.updateAgentDesk(req.params.siteId,req.body||{}).then(project=>res.json({project})).catch(next));
-  router.post('/projects/:siteId/agent-assess',async(req,res,next)=>{try{if(!agentService)throw Object.assign(new Error('Agent Desk nije podešen.'),{status:503});const assessment=await agentService.assess(await projects.agentProject(req.params.siteId));await projects.saveAgentAssessment(req.params.siteId,assessment);const project=await projects.summary(req.params.siteId);res.json({assessment,project});}catch(error){next(error);}});
   router.put('/projects/:siteId/content',(req,res,next)=>projects.updateContent(req.params.siteId,req.body?.content).then(project=>res.json({project})).catch(next));
   router.post('/projects/:siteId/preview',(req,res,next)=>projects.previewContent(req.params.siteId,req.body?.content).then(({payload})=>res.json({html:renderHtml(payload)})).catch(next));
   router.post('/projects/:siteId/export',async(req,res,next)=>{try{const result=await projects.exportProject(req.params.siteId),zip=exportSiteZip(result.payload);res.set({'Content-Type':'application/zip','Content-Disposition':'attachment; filename="rmc-publish-sajt.zip"','Cache-Control':'no-store','Content-Length':String(zip.length)}).status(201).end(zip);}catch(error){next(error);}});
