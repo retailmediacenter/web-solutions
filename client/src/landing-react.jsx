@@ -160,7 +160,7 @@ function preventBackgroundScroll(active){
 
 export function PreviewDialog({open,mode='site',siteName,html,loading,error,device,onDevice,
   selectedDemo,onSelectDemo,onClose,onStart,onExport,exporting,onEdit,onBuildRequest,frameRef,
-  styles=[],selectedStyle,styleBusy=false,styleError='',onStyleChange}){
+  styles=[],selectedStyle,styleBusy=false,styleError='',onStyleChange,projectId=''}){
  const close=useRef(null);
  useEffect(()=>{if(!open)return;const done=preventBackgroundScroll(true);close.current?.focus();
    function key(e){if(e.key==='Escape'){e.preventDefault();onClose()}}
@@ -218,6 +218,7 @@ export function PreviewDialog({open,mode='site',siteName,html,loading,error,devi
          <button type="button" className="rmc-primary" onClick={onStart}>Napravi moj sajt ↗</button></>:
           <><div className="rmc-preview-export rmc-preview-main-actions"><button type="button" className="rmc-primary" disabled={exporting} onClick={onExport}>
            {exporting?'Pripremam ZIP…':<><span className="rmc-label-mobile">Preuzmi besplatno!</span><span className="rmc-label-desktop">Preuzmi besplatan sajt (ZIP) ↓</span></>}</button>
+            {projectId&&<small className="rmc-preview-project-id">Site ID: <strong>{projectId}</strong></small>}
             </div>
             <div className="rmc-package-actions" aria-label="Izaberite paket">
               {[['publish','Publish','14.900 RSD','Objava gotovog sajta'],['business','Business','29.900 RSD','Sajt i Business Portal'],['commerce','Commerce','59.900 RSD','Prodaja i Commerce Portal']].map(([plan,name,price,description])=><button key={plan} type="button" className={`rmc-package-card rmc-package-${plan}`} onClick={()=>onBuildRequest?.(plan)}>
