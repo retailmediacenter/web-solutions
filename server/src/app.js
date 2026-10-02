@@ -22,16 +22,17 @@ app.disable('x-powered-by');
 app.use(express.json({limit:'40kb'}));
 // A published Webglobe frontend requires CLIENT_ORIGIN=https://retailmediacenter.com
 const origins=(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
+const stagingPagesOrigin='https://e-izvestaj.github.io';
 app.use((req,res,next)=>{
   const origin=req.get('origin');
   const publicSubmit=['/api/booking/requests','/api/commerce/orders'].includes(req.path) && (req.method==='POST'||req.method==='OPTIONS');
   // The protected B4 login works on the same public QA Preview page.
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
-  if(origin&&(origins.includes(origin)||publicSubmit||qaPreview)){
+  if(origin&&(origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)){
     res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
   }
-  if(req.method==='OPTIONS')return (origins.includes(origin)||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
+  if(req.method==='OPTIONS')return (origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
   next();
 });
 const bookingQueue=createBookingQueue(),projectRegistry=createProjectRegistry(bookingQueue),agentService=createAgentService();
