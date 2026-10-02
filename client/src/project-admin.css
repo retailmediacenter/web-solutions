@@ -18,3 +18,15 @@
 .rmc-agent-notes textarea{min-height:116px}
 .rmc-agent-notes button{margin:0;align-self:end}
 @media(max-width:980px){.rmc-agent-workspace{grid-template-columns:1fr}.rmc-agent-record{border-right:0;border-bottom:1px solid #cbdcda}.rmc-agent-notes{grid-template-columns:1fr}.rmc-agent-notes button{justify-self:start}.rmc-agent-frame{height:560px}}
+.rmc-agent-steps button{margin:0;border:0;background:transparent;color:#71808d;font-size:12px;font-weight:800;padding:6px 10px;cursor:pointer}
+.rmc-agent-steps button.active{color:#196f67}
+.rmc-agent-next{margin-top:18px!important}
+.rmc-agent-personalization{margin-top:18px;padding:18px;border:1px solid #d5e1df;border-radius:10px;background:#fff}
+.rmc-agent-personalization>header{display:flex;align-items:start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.rmc-agent-personalization>header button{margin:0}
+.rmc-agent-personalization-grid{display:grid;grid-template-columns:minmax(250px,30%) minmax(0,70%);gap:14px}
+.rmc-agent-personalization-grid>aside{padding:16px;border:1px solid #d5e1df;border-radius:8px}
+.rmc-agent-personalization-grid h4{margin:0 0 10px}
+.rmc-agent-personalization-grid ul{margin:0;padding-left:18px}
+.rmc-agent-personalization-grid li{padding:7px 0;border-bottom:1px solid #e4edeb;font-weight:700}
+@media(max-width:980px){.rmc-agent-personalization-grid{grid-template-columns:1fr}}
