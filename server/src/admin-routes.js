@@ -7,7 +7,8 @@ const hash=value=>createHash('sha256').update(value).digest('hex');
 const same=(a,b)=>typeof a==='string'&&typeof b==='string'&&timingSafeEqual(Buffer.from(hash(a),'hex'),Buffer.from(hash(b),'hex'));
 const active=()=>String(process.env.RMC_ADMIN_KEY||'').length>=32;
 const origins=()=>String(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
-const trusted=req=>{const origin=req.get('origin');return !origin||origins().includes(origin)||(process.env.NODE_ENV!=='production'&&/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(origin));};
+const stagingPagesOrigin='https://e-izvestaj.github.io';
+const trusted=req=>{const origin=req.get('origin');return !origin||origins().includes(origin)||origin===stagingPagesOrigin||(process.env.NODE_ENV!=='production'&&/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(origin));};
 
 export function adminRouter(projects,{now=Date.now,agentService=null}={}){
  const router=Router(),sessions=new Map(),failed=new Map();
