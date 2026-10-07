@@ -31,7 +31,7 @@ app.use((req,res,next)=>{
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
   if(origin&&(origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)){
-    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
+    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization, X-RMC-Asset-Role, X-RMC-Asset-Name','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
   }
   if(req.method==='OPTIONS')return (origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
   next();
