@@ -42,7 +42,10 @@ export function createAssetService(env=process.env){
   const key=`projects/${siteId}/${role}/${safeSegment(fileName)||'slika'}-${randomBytes(12).toString('base64url')}.${ext}`;
   const request=signedRequest({method:'PUT',key,contentType,body});
   const response=await fetch(request.url,{method:'PUT',headers:request.headers,body});
-  if(!response.ok)throw Object.assign(new Error('R2 nije prihvatio upload slike.'),{status:502});
+  if(!response.ok){
+   const detail=(await response.text()).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,220);
+   throw Object.assign(new Error(`R2 nije prihvatio upload (HTTP ${response.status})${detail?`: ${detail}`:''}`),{status:502});
+  }
   return {ref:`r2://${key}`,key,contentType,fileName:clean(fileName).slice(0,160)};
  }
  async function previewUrl(ref){
