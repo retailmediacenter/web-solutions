@@ -64,7 +64,8 @@ function applyEditorContent(project,content,now){
  const services=modules.services&&typeof modules.services==='object'?modules.services:{};
  const booking=modules.booking&&typeof modules.booking==='object'?modules.booking:{};
  const contactModule=modules.contact&&typeof modules.contact==='object'?modules.contact:{};
- const custom=Array.isArray(content.customSections)?content.customSections:[];
+  const custom=Array.isArray(content.customSections)?content.customSections:[];
+  const presentation=content.presentation&&typeof content.presentation==='object'&&!Array.isArray(content.presentation)?content.presentation:{};
  if(custom.length>12)throw invalid('Možete dodati najviše 12 novih sadržajnih blokova.');
  const bookingForm=booking.form&&typeof booking.form==='object'&&!Array.isArray(booking.form)?booking.form:{};
  const safeForm={title:moduleText(bookingForm.title,120,''),description:moduleText(bookingForm.description,600,''),submitLabel:moduleText(bookingForm.submitLabel,80,''),successMessage:moduleText(bookingForm.successMessage,240,''),fields:formFields(bookingForm.fields)};
@@ -72,7 +73,7 @@ function applyEditorContent(project,content,now){
  if(site.bookingProfile)site.bookingProfile.form=safeForm;
  site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const type=entry?.type==='form'?'form':'content',title=moduleText(entry?.title,120);if(!title)throw invalid(`Novi blok ${index+1} mora imati naslov.`);const base={id:text(entry?.id,80)||`custom-${index+1}`,type,kicker:moduleText(entry?.kicker,40,''),title};if(type==='form'){const form=entry?.form&&typeof entry.form==='object'?entry.form:{};return {...base,body:moduleText(entry?.body,600,''),form:{recipient:email(form.recipient),submitLabel:moduleText(form.submitLabel,80,'Pošalji upit'),successMessage:moduleText(form.successMessage,240,'Otvaramo poruku za slanje.'),fields:creatorFields(form.fields)}};}const body=moduleText(entry?.body,1200);if(!body)throw invalid(`Novi blok ${index+1} mora imati tekst.`);return {...base,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
  const key=listKey(catalog),incoming=content.items;
- if(key&&incoming!==undefined){
+  if(key&&incoming!==undefined){
   if(!Array.isArray(incoming)||incoming.length<1||incoming.length>500)throw invalid('Ponuda mora imati između 1 i 500 stavki.');
   const original=catalog[key],byId=new Map(original.map(item=>[String(item.id),item]));
   const used=new Set();
@@ -99,8 +100,14 @@ function applyEditorContent(project,content,now){
   if(key==='products'&&site.siteProfile?.commerce){
    site.siteProfile.commerce.products=catalog.products.map((item,index)=>({...site.siteProfile.commerce.products[index],id:item.id,name:item.title,image:item.image,price:item.price}));
   }
- }
- project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
+  }
+  // These are presentation choices only: items remain owned by the catalog.
+  // They allow Agent Desk to select existing catalog entries for the featured
+  // section/welcome modal and to group the same entries in the controller.
+  const allowedIds=new Set((catalog[key]||[]).map(item=>String(item.id)));
+  const ids=value=>Array.isArray(value)?[...new Set(value.map(String).filter(id=>allowedIds.has(id)))].slice(0,12):[];
+  site.presentation={...(site.presentation||{}),featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
+  project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
  return project;
 }
 
