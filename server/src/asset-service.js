@@ -44,7 +44,9 @@ export function createAssetService(env=process.env){
   const response=await fetch(request.url,{method:'PUT',headers:request.headers,body});
   if(!response.ok){
    const detail=(await response.text()).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim().slice(0,220);
-   throw Object.assign(new Error(`R2 nije prihvatio upload (HTTP ${response.status})${detail?`: ${detail}`:''}`),{status:502});
+   // Keep the actionable R2 result first: the UI has limited space and the
+   // response body is useful only after its HTTP status is visible.
+   throw Object.assign(new Error(`R2 HTTP ${response.status}${detail?`: ${detail}`:''}`),{status:502});
   }
   return {ref:`r2://${key}`,key,contentType,fileName:clean(fileName).slice(0,160)};
  }
