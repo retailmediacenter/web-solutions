@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import {Router,raw} from 'express';
 import {createHash,randomBytes,timingSafeEqual} from 'node:crypto';
 import {exportSiteZip} from './exporter.js';
 import {renderHtml} from './render-site.js';
@@ -10,7 +10,7 @@ const origins=()=>String(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim
 const stagingPagesOrigin='https://e-izvestaj.github.io';
 const trusted=req=>{const origin=req.get('origin');return !origin||origins().includes(origin)||origin===stagingPagesOrigin||(process.env.NODE_ENV!=='production'&&/^http:\/\/(?:localhost|127\.0\.0\.1):\d+$/.test(origin));};
 
-export function adminRouter(projects,{now=Date.now,agentService=null}={}){
+export function adminRouter(projects,{now=Date.now,agentService=null,assets=null}={}){
  const router=Router(),sessions=new Map(),failed=new Map();
  const valid=token=>{const until=sessions.get(hash(token||''));if(!until||until<=now()){sessions.delete(hash(token||''));return false;}return true;};
  const auth=req=>(req.get('authorization')||'').replace(/^Bearer\s+/i,'');
@@ -23,6 +23,17 @@ export function adminRouter(projects,{now=Date.now,agentService=null}={}){
   router.use((req,res,next)=>valid(auth(req))?next():res.status(401).json({error:'Administratorska sesija je istekla.'}));
   router.get('/projects/:siteId',(req,res,next)=>projects.summary(req.params.siteId).then(project=>res.json({project})).catch(next));
   router.put('/projects/:siteId/agent-desk',(req,res,next)=>projects.updateAgentDesk(req.params.siteId,req.body||{}).then(project=>res.json({project})).catch(next));
+  // The browser sends the image body to the authenticated API. Render then
+  // writes it to private R2; no R2 credential ever reaches the browser.
+  router.post('/projects/:siteId/assets',raw({type:['image/jpeg','image/png','image/webp'],limit:'8mb'}),async(req,res,next)=>{
+   try{
+    if(!assets?.configured)throw Object.assign(new Error('R2 storage nije podešen na staging serveru.'),{status:503});
+    const role=String(req.get('x-rmc-asset-role')||'');
+    const fileName=String(req.get('x-rmc-asset-name')||'slika');
+    const asset=await assets.upload({siteId:req.params.siteId,role,fileName,contentType:req.get('content-type')||'',body:req.body});
+    res.status(201).json({asset:{...asset,url:await assets.previewUrl(asset.ref)}});
+   }catch(error){next(error);}
+  });
   router.post('/projects/:siteId/agent-assess',async(req,res,next)=>{try{if(!agentService)throw Object.assign(new Error('Agent Desk nije podešen.'),{status:503});if(req.body?.notes!==undefined)await projects.updateAgentDesk(req.params.siteId,{notes:req.body.notes});const assessment=await agentService.assess(await projects.agentProject(req.params.siteId));await projects.saveAgentAssessment(req.params.siteId,assessment);const project=await projects.summary(req.params.siteId);res.json({assessment,project});}catch(error){next(error);}});
   router.put('/projects/:siteId/content',(req,res,next)=>projects.updateContent(req.params.siteId,req.body?.content).then(project=>res.json({project})).catch(next));
   router.post('/projects/:siteId/preview',(req,res,next)=>projects.previewContent(req.params.siteId,req.body?.content).then(({payload})=>res.json({html:renderHtml(payload)})).catch(next));

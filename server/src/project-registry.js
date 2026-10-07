@@ -6,9 +6,13 @@ const id=()=>randomBytes(18).toString('base64url');
 const activationToken=()=>randomBytes(32).toString('base64url');
 const tokenHash=value=>createHash('sha256').update(String(value||'')).digest('hex');
 const text=(value,max)=>String(value??'').trim().slice(0,max);
-const image=value=>{
+const image=(value,siteId='')=>{
  const valueText=text(value,260);
  if(!valueText)return '';
+ if(siteId&&/^r2:\/\//i.test(valueText)){
+  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
+  return valueText;
+ }
  if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
  return valueText;
 };
@@ -58,7 +62,7 @@ function applyEditorContent(project,content,now){
  catalog.headline=text(content.headline,180);
  catalog.subtitle=text(content.subtitle,500);
  catalog.offerTitle=text(content.offerTitle,120);
- catalog.hero=image(content.hero);
+ catalog.hero=image(content.hero,project.siteId);
  if(!catalog.headline||!catalog.subtitle)throw invalid('Hero naslov i opis su obavezni.');
  const modules=content.modules&&typeof content.modules==='object'&&!Array.isArray(content.modules)?content.modules:{};
  const services=modules.services&&typeof modules.services==='object'?modules.services:{};
@@ -81,7 +85,7 @@ function applyEditorContent(project,content,now){
    const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=text(previous?.id,120)||suppliedId||'item-'+(index+1);
    if(!/^[A-Za-z0-9:_-]{2,120}$/.test(itemId))throw invalid('Nova stavka zahteva ispravan stabilan identifikator.');
    if(used.has(itemId))throw invalid('Stavke ponude moraju imati različite identifikatore.');used.add(itemId);
-   const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image);
+   const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image,project.siteId);
    if(!title)throw invalid('Svaka stavka ponude mora imati naziv.');
    const next={...(previous||{}),id:itemId,title,image:itemImage};
    if('description' in (previous||{})||description)next.description=description;
@@ -106,12 +110,12 @@ function applyEditorContent(project,content,now){
   // section/welcome modal and to group the same entries in the controller.
   const allowedIds=new Set((catalog[key]||[]).map(item=>String(item.id)));
   const ids=value=>Array.isArray(value)?[...new Set(value.map(String).filter(id=>allowedIds.has(id)))].slice(0,12):[];
-  site.presentation={...(site.presentation||{}),featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
+  site.presentation={...(site.presentation||{}),featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,image:image(group?.image,project.siteId),itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
   project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
  return project;
 }
 
-export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={}){
+export function createProjectRegistry(queue,{now=()=>new Date().toISOString(),assets=null}={}){
  if(!queue?.redis||!queue?.key||!queue?.validateProfile)throw new Error('Project Registry zahteva Booking Redis sloj.');
  const key=siteId=>queue.key('project',siteId);
  const read=async siteId=>{
@@ -146,7 +150,7 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
  }
  async function saveAgentAssessment(siteId,assessment){const project=await read(siteId);project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),lastAssessment:{...assessment,assessedAt:now()}};project.updatedAt=now();await save(project);return project.agentDesk.lastAssessment;}
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
- async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
+ async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload:assets?.configured?await assets.materialize(payload):payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  const buildRequestFor=(project,requestedPlan,demoUrl='',requestMeta={})=>{
   const plan=String(requestedPlan||'').toLowerCase();
