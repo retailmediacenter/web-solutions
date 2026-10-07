@@ -48,6 +48,14 @@ export function createAssetService(env=process.env){
   }
   return {ref:`r2://${key}`,key,contentType,fileName:clean(fileName).slice(0,160)};
  }
+ async function probe(){
+  ensure();
+  const key='health/rmc-r2-probe.txt',body=Buffer.from(`RMC staging R2 probe ${new Date().toISOString()}\n`,'utf8');
+  const request=signedRequest({method:'PUT',key,contentType:'text/plain',body});
+  const response=await fetch(request.url,{method:'PUT',headers:request.headers,body});
+  if(!response.ok)throw Object.assign(new Error(`R2 probe nije uspeo (HTTP ${response.status}).`),{status:502});
+  return {reachable:true};
+ }
  async function previewUrl(ref){
   ensure();const key=assetKey(ref);if(!key)throw Object.assign(new Error('Neispravna R2 slika.'),{status:400});
   const {amz,day}=nowStamp(),path=canonicalPath(key),scope=`${day}/auto/s3/aws4_request`,query={
@@ -64,5 +72,5 @@ export function createAssetService(env=process.env){
   if(value&&typeof value==='object'){const out={};for(const [key,entry] of Object.entries(value))out[key]=await materialize(entry);return out;}
   return value;
  }
- return {configured,upload,previewUrl,materialize,allowRef};
+ return {configured,upload,probe,previewUrl,materialize,allowRef};
 }
