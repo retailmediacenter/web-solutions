@@ -51,4 +51,4 @@
 .rmc-agent-image-card>div{min-width:0}.rmc-agent-upload-status{display:block!important;max-width:100%!important;min-width:0!important;overflow:visible!important;overflow-wrap:anywhere!important;word-break:break-word!important;white-space:normal!important}
 
 .rmc-agent-package-choice-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center}.rmc-agent-package-choice-compact button{margin:0;white-space:nowrap}@media(max-width:720px){.rmc-agent-package-choice-compact{grid-template-columns:1fr}.rmc-agent-package-choice-compact button{justify-self:start}}
-.rmc-agent-preview .rmc-agent-editor-actions{flex-wrap:nowrap;align-items:center}.rmc-agent-preview .rmc-agent-editor-actions button{white-space:nowrap}
+.rmc-agent-preview .rmc-agent-editor-actions{display:flex;flex-wrap:nowrap;align-items:center}.rmc-agent-preview .rmc-agent-editor-actions button{white-space:nowrap}
