@@ -47,10 +47,16 @@ function sections(data,site,retainedForm=''){
  const website=data.website?`<a class="ws-v454-extra" href="${esc(data.website)}" target="_blank" rel="noopener noreferrer">Naš sajt ↗</a>`:'';
  const editor=site.editorModules||{},contactCopy=editor.contact||{},custom=Array.isArray(editor.customSections)?editor.customSections:[];
  const customSections=custom.map((entry,index)=>`<section class="site-section ws-editor-section" id="${esc(entry.id||`custom-${index+1}`)}"><div class="kicker">${esc(entry.kicker||'VIŠE INFORMACIJA')}</div><h2>${esc(entry.title)}</h2>${entry.body?`<p>${esc(entry.body)}</p>`:''}${entry.type==='form'?creatorForm(entry):entry.linkLabel&&entry.linkHref?`<a class="primary" href="${esc(entry.linkHref)}"${/^https:/i.test(entry.linkHref)?' target="_blank" rel="noopener noreferrer"':''}>${esc(entry.linkLabel)}</a>`:''}</section>`).join('');
- const contact=`<section class="site-section ws-v454-contact" id="kontakt" aria-labelledby="ws-v454-contact-heading">
+ const structured=editor.structured||{},active=new Set(site.modulePlan?.active||[]);
+ const cards=(id,heading,rows,kind='cards')=>!active.has(id)||!rows?.length?'':`<section class="site-section ws-editor-section ws-structured ${esc(kind)}" id="${esc(id)}"><div class="kicker">${esc(heading)}</div><h2>${esc(heading)}</h2><div class="ws-structured-grid">${rows.map(row=>`<article><h3>${esc(row.title)}</h3>${row.label?`<strong>${esc(row.label)}</strong>`:''}${row.rating?`<p aria-label="Ocena ${esc(row.rating)} od 5">${'★'.repeat(row.rating)}${'☆'.repeat(5-row.rating)}</p>`:''}${row.body?`<p>${esc(row.body)}</p>`:''}${row.linkLabel&&row.linkHref?`<a class="primary" href="${esc(row.linkHref)}">${esc(row.linkLabel)}</a>`:''}</article>`).join('')}</div></section>`;
+ const portfolio=cards('portfolio','Portfolio',structured.portfolio,'portfolio');
+ const trust=cards('trust','Zašto nam veruju',structured.trust,'trust');
+ const reviews=cards('reviews','Utisci klijenata',structured.reviews,'reviews');
+ const faq=!active.has('faq')||!structured.faq?.length?'':`<section class="site-section ws-editor-section ws-structured faq" id="faq"><div class="kicker">FAQ</div><h2>Česta pitanja</h2>${structured.faq.map(row=>`<details><summary>${esc(row.title)}</summary><p>${esc(row.body)}</p></details>`).join('')}</section>`;
+ const booking=!active.has('booking')?'':`<section class="site-section ws-editor-section ws-structured booking" id="zakazivanje"><div class="kicker">${esc(structured.booking?.kicker||'ZAKAZIVANJE')}</div><h2>${esc(structured.booking?.title||'Zakažite termin')}</h2><p>${esc(structured.booking?.body||'')}</p>${structured.booking?.linkLabel&&structured.booking?.linkHref?`<a class="primary" href="${esc(structured.booking.linkHref)}">${esc(structured.booking.linkLabel)}</a>`:''}</section>`; const contact=`<section class="site-section ws-v454-contact" id="kontakt" aria-labelledby="ws-v454-contact-heading">
  <div class="kicker">${esc(contactCopy.kicker||'KONTAKT')}</div><h2 id="ws-v454-contact-heading">${esc(contactCopy.title||'Kontaktirajte nas')}</h2>${contactCopy.description?`<p>${esc(contactCopy.description)}</p>`:''}
  <div class="ws-v454-contact-row">${mainContact}${mail}${website}</div>${retainedForm}</section>`;
- return places+customSections+contact;
+ return places+portfolio+trust+reviews+faq+booking+customSections+contact;
 }
 /** Replaces only the three known old GENERIC contact wrappers. Never removes a
  * booking section, Booking IDs, or the inactive-service inquiry form. */
