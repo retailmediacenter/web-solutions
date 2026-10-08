@@ -1,4 +1,5 @@
 import {createHash,randomBytes} from 'node:crypto';
+import {MODULE_LIBRARY} from './module-plan.js';
 
 const invalid=(message,status=400)=>Object.assign(new Error(message),{status});
 const validSiteId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{24}$/.test(value);
@@ -6,6 +7,8 @@ const id=()=>randomBytes(18).toString('base64url');
 const activationToken=()=>randomBytes(32).toString('base64url');
 const tokenHash=value=>createHash('sha256').update(String(value||'')).digest('hex');
 const text=(value,max)=>String(value??'').trim().slice(0,max);
+const moduleIds=new Set(MODULE_LIBRARY.map(module=>module.id));
+const selectedModules=value=>[...new Set((Array.isArray(value)?value:[]).map(String).filter(id=>moduleIds.has(id)))];
 const image=(value,siteId='')=>{
  const valueText=text(value,260);
  if(!valueText)return '';
@@ -148,6 +151,16 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString(),as
   if(material){const name=text(material.name,180);if(!name)throw invalid('Materijal mora imati naziv.');desk.materials=[...(Array.isArray(desk.materials)?desk.materials:[]),{id:`material-${randomBytes(9).toString('base64url')}`,name,kind:text(material.kind,80)||'photo',note:text(material.note,400),addedAt:now()}].slice(-80);}
   project.agentDesk=desk;project.updatedAt=now();await save(project);return summary(siteId);
  }
+ async function updateProposedModules(siteId,{plan,modules}={}){
+  const project=await read(siteId),selected=selectedModules(modules);
+  const core=['header','hero','location','contact'];
+  const active=[...new Set([...core,...selected])];
+  if(!['publish','business','commerce'].includes(String(plan||'')))throw invalid('Predloženi paket nije ispravan.');
+  project.siteConfig.modulePlan={...(project.siteConfig.modulePlan||{}),active};
+  if(project.sourcePayload?.siteConfig)project.sourcePayload.siteConfig.modulePlan={...(project.sourcePayload.siteConfig.modulePlan||{}),active};
+  project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),packageSelection:{plan,modules:active,updatedAt:now()}};
+  project.updatedAt=now();await save(project);return summary(siteId);
+ }
  async function saveAgentAssessment(siteId,assessment){const project=await read(siteId);project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),lastAssessment:{...assessment,assessedAt:now()}};project.updatedAt=now();await save(project);return project.agentDesk.lastAssessment;}
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
  async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload:assets?.configured?await assets.materialize(payload):payload};}
@@ -211,5 +224,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString(),as
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,agentProject,updateAgentDesk,saveAgentAssessment,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
+ return {register,summary,agentProject,updateAgentDesk,updateProposedModules,saveAgentAssessment,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
 }

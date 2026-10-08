@@ -1,3 +1,5 @@
+import {recommendPackage} from './package-recommendation.js';
+
 const STATUSES=new Set(['WAITING_MATERIAL','READY_TO_BUILD','BUILDING','REVIEW','APPROVED']);
 const text=(value,max=1000)=>String(value??'').trim().slice(0,max);
 const strings=value=>(Array.isArray(value)?value:[]).map(item=>typeof item==='string'?text(item,240):text(item?.label||item?.name||item?.purpose||item?.type,240)).filter(Boolean);
@@ -16,14 +18,15 @@ function baseline(context){
  const genericAssetsAllowed=/\b(generi(?:čke|cke)|stock|slobodno.*fotograf)/i.test(context.rmcNotes);
  if(!context.uploadedAssetMetadata.length&&!genericAssetsAllowed)missing.push('fotografije klijenta ili RMC napomena da se koriste generičke fotografije');
  const buildReady=missing.length===0;
- return {status:buildReady?'READY_TO_BUILD':'WAITING_MATERIAL',summary:buildReady?'Projektni podaci su dovoljni za osnovni generički build.':'Advisor i renderer podaci su učitani; nedostaje materijal za personalizaciju.',missing,clientMessage:buildReady?'Osnovni generički preview je spreman. Sledeći korak je pregled i eventualna personalizacija.':`Pošaljite nam materijal kako vam je najlakše. Za nastavak su nam potrebni: ${missing.join(', ')}.`,recommendations:['Zadržati postojeći Advisor module plan i odobreni vizuelni pravac kao osnovu finalnog sajta.'],buildReady};
+ const packageProposal=recommendPackage({notes:context.rmcNotes,modulePlan:context.modulePlan,items:context.currentContent.items});
+ return {status:buildReady?'READY_TO_BUILD':'WAITING_MATERIAL',summary:buildReady?'Projektni podaci su dovoljni za osnovni generički build.':'Advisor i renderer podaci su učitani; nedostaje materijal za personalizaciju.',missing,clientMessage:buildReady?'Osnovni generički preview je spreman. Sledeći korak je pregled i eventualna personalizacija.':`Pošaljite nam materijal kako vam je najlakše. Za nastavak su nam potrebni: ${missing.join(', ')}.`,recommendations:['Zadržati postojeći Advisor module plan i odobreni vizuelni pravac kao osnovu finalnog sajta.'],packageProposal,buildReady};
 }
 
 function validated(result,context){
  const safe=baseline(context),data=result&&typeof result==='object'&&!Array.isArray(result)?result:{};
  const status=STATUSES.has(data.status)?data.status:safe.status;
  const missing=strings(data.missing).slice(0,12);
- return {status,summary:text(data.summary,1200)||safe.summary,missing:missing.length?missing:safe.missing,clientMessage:text(data.clientMessage,1400)||safe.clientMessage,recommendations:strings(data.recommendations).slice(0,12),buildReady:Boolean(data.buildReady)&&status==='READY_TO_BUILD'};
+ return {status,summary:text(data.summary,1200)||safe.summary,missing:missing.length?missing:safe.missing,clientMessage:text(data.clientMessage,1400)||safe.clientMessage,recommendations:strings(data.recommendations).slice(0,12),packageProposal:safe.packageProposal,buildReady:Boolean(data.buildReady)&&status==='READY_TO_BUILD'};
 }
 
 export function createAgentService({fetchImpl=fetch,apiKey=process.env.OPENAI_AGENT_API_KEY,model=process.env.OPENAI_AGENT_MODEL||'gpt-4.1-mini'}={}){

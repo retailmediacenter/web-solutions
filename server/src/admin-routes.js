@@ -24,6 +24,7 @@ export function adminRouter(projects,{now=Date.now,agentService=null,assets=null
   router.get('/projects/:siteId',(req,res,next)=>projects.summary(req.params.siteId).then(project=>res.json({project})).catch(next));
   router.post('/r2-check',async(_req,res,next)=>{try{if(!assets?.configured)throw Object.assign(new Error('R2 storage nije podešen na staging serveru.'),{status:503});res.json(await assets.probe());}catch(error){next(error);}});
   router.put('/projects/:siteId/agent-desk',(req,res,next)=>projects.updateAgentDesk(req.params.siteId,req.body||{}).then(project=>res.json({project})).catch(next));
+  router.put('/projects/:siteId/proposed-modules',(req,res,next)=>projects.updateProposedModules(req.params.siteId,req.body||{}).then(project=>res.json({project})).catch(next));
   // The browser sends the image body to the authenticated API. Render then
   // writes it to private R2; no R2 credential ever reaches the browser.
   router.post('/projects/:siteId/assets',raw({type:['image/jpeg','image/png','image/webp'],limit:'8mb'}),async(req,res,next)=>{
