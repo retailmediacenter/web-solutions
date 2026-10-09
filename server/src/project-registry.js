@@ -13,7 +13,7 @@ const image=(value,siteId='')=>{
  const valueText=text(value,260);
  if(!valueText)return '';
  if(siteId&&/^r2:\/\//i.test(valueText)){
-  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
+  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category|trust)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
   return valueText;
  }
  if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
@@ -73,7 +73,7 @@ function applyEditorContent(project,content,now){
  const contactModule=modules.contact&&typeof modules.contact==='object'?modules.contact:{};
   const custom=Array.isArray(content.customSections)?content.customSections:[];
  const structured=content.structuredModules&&typeof content.structuredModules==='object'&&!Array.isArray(content.structuredModules)?content.structuredModules:{};
- const cardList=(value,limit,label)=>{const rows=Array.isArray(value)?value:[];if(rows.length>limit)throw invalid(`${label} može imati najviše ${limit} stavki.`);return rows.map((row,index)=>{const title=moduleText(row?.title||row?.name,120);if(!title)throw invalid(`${label}: stavka ${index+1} mora imati naziv.`);return {id:text(row?.id,80)||`${label.toLowerCase()}-${index+1}`,title,body:moduleText(row?.body||row?.description,800,''),label:moduleText(row?.label,80,''),rating:Math.max(0,Math.min(5,Number(row?.rating)||0)),value:Math.max(0,Math.min(1000000,Number(row?.value)||0)),suffix:moduleText(row?.suffix,24,''),linkLabel:moduleText(row?.linkLabel,80,''),linkHref:href(row?.linkHref)};});};
+ const cardList=(value,limit,label)=>{const rows=Array.isArray(value)?value:[];if(rows.length>limit)throw invalid(`${label} može imati najviše ${limit} stavki.`);return rows.map((row,index)=>{const title=moduleText(row?.title||row?.name,120);if(!title)throw invalid(`${label}: stavka ${index+1} mora imati naziv.`);return {id:text(row?.id,80)||`${label.toLowerCase()}-${index+1}`,type:row?.type==='reference'?'reference':'counter',kind:['sertifikat','diploma','klijent','partner','nagrada','medijska-referenca'].includes(row?.kind)?row.kind:'sertifikat',title,issuer:moduleText(row?.issuer,120,''),year:text(row?.year,4).replace(/[^0-9]/g,''),image:image(row?.image,project.siteId),body:moduleText(row?.body||row?.description,800,''),label:moduleText(row?.label,80,''),rating:Math.max(0,Math.min(5,Number(row?.rating)||0)),value:Math.max(0,Math.min(1000000,Number(row?.value)||0)),suffix:moduleText(row?.suffix,24,''),linkLabel:moduleText(row?.linkLabel,80,''),linkHref:href(row?.linkHref)};});};
  const presentation=content.presentation&&typeof content.presentation==='object'&&!Array.isArray(content.presentation)?content.presentation:{};
  if(custom.length>12)throw invalid('Možete dodati najviše 12 novih sadržajnih blokova.');
  const bookingForm=booking.form&&typeof booking.form==='object'&&!Array.isArray(booking.form)?booking.form:{};

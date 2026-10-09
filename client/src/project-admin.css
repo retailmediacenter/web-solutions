@@ -53,3 +53,5 @@
 .rmc-agent-package-choice-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center}.rmc-agent-package-choice-compact button{margin:0;white-space:nowrap}@media(max-width:720px){.rmc-agent-package-choice-compact{grid-template-columns:1fr}.rmc-agent-package-choice-compact button{justify-self:start}}
 .rmc-agent-preview .rmc-agent-editor-actions{display:flex;flex-wrap:nowrap;align-items:center}.rmc-agent-preview .rmc-agent-editor-actions button{white-space:nowrap}
 .rmc-agent-remove{justify-self:start!important;margin:4px 0 0!important;background:#8b3c3c!important;font-size:12px!important}
+.rmc-agent-trust-group{border-top:1px solid #d7e3e2;padding:14px 0}.rmc-agent-trust-group>header{display:flex;justify-content:space-between;gap:12px;align-items:center}.rmc-agent-trust-group>header div{display:grid;gap:3px}.rmc-agent-trust-group small{color:#597084}.rmc-agent-trust-group .rmc-agent-add{margin:0;white-space:nowrap}@media(max-width:560px){.rmc-agent-trust-group>header{align-items:flex-start;flex-direction:column}
+}
