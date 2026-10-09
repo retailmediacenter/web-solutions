@@ -52,3 +52,4 @@
 
 .rmc-agent-package-choice-compact{grid-template-columns:minmax(0,1fr) auto;align-items:center}.rmc-agent-package-choice-compact button{margin:0;white-space:nowrap}@media(max-width:720px){.rmc-agent-package-choice-compact{grid-template-columns:1fr}.rmc-agent-package-choice-compact button{justify-self:start}}
 .rmc-agent-preview .rmc-agent-editor-actions{display:flex;flex-wrap:nowrap;align-items:center}.rmc-agent-preview .rmc-agent-editor-actions button{white-space:nowrap}
+.rmc-agent-remove{justify-self:start!important;margin:4px 0 0!important;background:#8b3c3c!important;font-size:12px!important}
