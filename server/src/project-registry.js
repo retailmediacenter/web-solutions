@@ -1,4 +1,5 @@
 import {createHash,randomBytes} from 'node:crypto';
+import {MODULE_LIBRARY} from './module-plan.js';
 
 const invalid=(message,status=400)=>Object.assign(new Error(message),{status});
 const validSiteId=value=>typeof value==='string'&&/^[A-Za-z0-9_-]{24}$/.test(value);
@@ -6,9 +7,15 @@ const id=()=>randomBytes(18).toString('base64url');
 const activationToken=()=>randomBytes(32).toString('base64url');
 const tokenHash=value=>createHash('sha256').update(String(value||'')).digest('hex');
 const text=(value,max)=>String(value??'').trim().slice(0,max);
-const image=value=>{
+const moduleIds=new Set(MODULE_LIBRARY.map(module=>module.id));
+const selectedModules=value=>[...new Set((Array.isArray(value)?value:[]).map(String).filter(id=>moduleIds.has(id)))];
+const image=(value,siteId='')=>{
  const valueText=text(value,260);
  if(!valueText)return '';
+ if(siteId&&/^r2:\/\//i.test(valueText)){
+  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category|trust|portfolio|about)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
+  return valueText;
+ }
  if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
  return valueText;
 };
@@ -55,32 +62,41 @@ function applyEditorContent(project,content,now){
  if(site.businessData)site.businessData.phone=phone;
  if(site.bookingProfile?.business)site.bookingProfile.business.phone=phone;
  if(site.siteProfile?.business)site.siteProfile.business.phone=phone;
+ const suppliedData=content.businessData&&typeof content.businessData==='object'&&!Array.isArray(content.businessData)?content.businessData:{};
+ const safeUrl=value=>{const valueText=text(value,300);return valueText?href(valueText):'';};
+ const rawLocations=Array.isArray(suppliedData.locations)?suppliedData.locations:[];
+ if(rawLocations.length>5)throw invalid('Možete uneti najviše 5 lokacija.');
+ const locations=rawLocations.map((row,index)=>{const address=text(row?.address,180),city=text(row?.city,80);if(address&&!city)throw invalid(`Lokacija ${index+1}: uz adresu unesite i grad.`);return {id:text(row?.id,80)||`lokacija-${index+1}`,label:text(row?.label,80),address,city,hours:text(row?.hours,140)};}).filter(row=>row.address||row.city||row.label||row.hours);
+ site.businessData={...(site.businessData||{}),phone,email:text(suppliedData.email,160),website:safeUrl(suppliedData.website),instagram:safeUrl(suppliedData.instagram),linkedin:safeUrl(suppliedData.linkedin),locations};
  catalog.headline=text(content.headline,180);
  catalog.subtitle=text(content.subtitle,500);
  catalog.offerTitle=text(content.offerTitle,120);
- catalog.hero=image(content.hero);
+ catalog.hero=image(content.hero,project.siteId);
  if(!catalog.headline||!catalog.subtitle)throw invalid('Hero naslov i opis su obavezni.');
  const modules=content.modules&&typeof content.modules==='object'&&!Array.isArray(content.modules)?content.modules:{};
  const services=modules.services&&typeof modules.services==='object'?modules.services:{};
  const booking=modules.booking&&typeof modules.booking==='object'?modules.booking:{};
  const contactModule=modules.contact&&typeof modules.contact==='object'?modules.contact:{};
- const custom=Array.isArray(content.customSections)?content.customSections:[];
+  const custom=Array.isArray(content.customSections)?content.customSections:[];
+ const structured=content.structuredModules&&typeof content.structuredModules==='object'&&!Array.isArray(content.structuredModules)?content.structuredModules:{};
+ const cardList=(value,limit,label)=>{const rows=Array.isArray(value)?value:[];if(rows.length>limit)throw invalid(`${label} može imati najviše ${limit} stavki.`);return rows.map((row,index)=>{const title=moduleText(row?.title||row?.name,120);if(!title)throw invalid(`${label}: stavka ${index+1} mora imati naziv.`);return {id:text(row?.id,80)||`${label.toLowerCase()}-${index+1}`,type:row?.type==='reference'?'reference':'counter',kind:['partner','klijent'].includes(row?.kind)?'partner':'document',title,image:image(row?.image,project.siteId),body:moduleText(row?.body||row?.description,800,''),label:moduleText(row?.label,80,''),rating:Math.max(0,Math.min(5,Number(row?.rating)||0)),value:Math.max(0,Math.min(1000000,Number(row?.value)||0)),suffix:moduleText(row?.suffix,24,''),linkLabel:moduleText(row?.linkLabel,80,''),linkHref:href(row?.linkHref)};});};
+ const presentation=content.presentation&&typeof content.presentation==='object'&&!Array.isArray(content.presentation)?content.presentation:{};
  if(custom.length>12)throw invalid('Možete dodati najviše 12 novih sadržajnih blokova.');
  const bookingForm=booking.form&&typeof booking.form==='object'&&!Array.isArray(booking.form)?booking.form:{};
  const safeForm={title:moduleText(bookingForm.title,120,''),description:moduleText(bookingForm.description,600,''),submitLabel:moduleText(bookingForm.submitLabel,80,''),successMessage:moduleText(bookingForm.successMessage,240,''),fields:formFields(bookingForm.fields)};
  catalog.editorModules={services:{kicker:moduleText(services.kicker,40,'PONUDA'),description:moduleText(services.description,500,'Izaberite uslugu i pošaljite zahtev ili nas kontaktirajte.')},booking:{kicker:moduleText(booking.kicker,40,''),title:moduleText(booking.title,120,''),description:moduleText(booking.description,600,''),form:safeForm}};
  if(site.bookingProfile)site.bookingProfile.form=safeForm;
- site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},customSections:custom.map((entry,index)=>{const type=entry?.type==='form'?'form':'content',title=moduleText(entry?.title,120);if(!title)throw invalid(`Novi blok ${index+1} mora imati naslov.`);const base={id:text(entry?.id,80)||`custom-${index+1}`,type,kicker:moduleText(entry?.kicker,40,''),title};if(type==='form'){const form=entry?.form&&typeof entry.form==='object'?entry.form:{};return {...base,body:moduleText(entry?.body,600,''),form:{recipient:email(form.recipient),submitLabel:moduleText(form.submitLabel,80,'Pošalji upit'),successMessage:moduleText(form.successMessage,240,'Otvaramo poruku za slanje.'),fields:creatorFields(form.fields)}};}const body=moduleText(entry?.body,1200);if(!body)throw invalid(`Novi blok ${index+1} mora imati tekst.`);return {...base,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
+ site.editorModules={contact:{kicker:moduleText(contactModule.kicker,40,'KONTAKT'),title:moduleText(contactModule.title,120,'Kontaktirajte nas'),description:moduleText(contactModule.description,600,'')},structured:{about:{kicker:moduleText(structured.about?.kicker,40,'O NAMA'),title:moduleText(structured.about?.title,120,'Upoznajte nas'),body:moduleText(structured.about?.body,1200,''),team:cardList(structured.about?.team,12,'Tim')},portfolio:cardList(structured.portfolio,24,'Portfolio'),portfolioMeta:{title:moduleText(structured.portfolioMeta?.title,120,'Naše realizacije'),subtitle:moduleText(structured.portfolioMeta?.subtitle,500,'')},trust:cardList(structured.trust,12,'Trust'),trustMeta:{countersKicker:moduleText(structured.trustMeta?.countersKicker,40,'ZAŠTO NAM VERUJU'),countersTitle:moduleText(structured.trustMeta?.countersTitle,120,'Rezultati koji govore'),referencesKicker:moduleText(structured.trustMeta?.referencesKicker,40,'SERTIFIKATI I REFERENCE'),referencesTitle:moduleText(structured.trustMeta?.referencesTitle,120,'Partneri, priznanja i sertifikati')},reviews:cardList(structured.reviews,20,'Utisci'),faq:cardList(structured.faq,24,'FAQ'),booking:{kicker:moduleText(structured.booking?.kicker,40,'ZAKAZIVANJE'),title:moduleText(structured.booking?.title,120,'Zakažite termin'),body:moduleText(structured.booking?.body,600,'Pošaljite nam željeni termin, a mi ćemo vam se javiti sa potvrdom.'),linkLabel:moduleText(structured.booking?.linkLabel,80,'Pošaljite zahtev'),linkHref:href(structured.booking?.linkHref)}},customSections:custom.map((entry,index)=>{const type=entry?.type==='form'?'form':'content',title=moduleText(entry?.title,120);if(!title)throw invalid(`Novi blok ${index+1} mora imati naslov.`);const base={id:text(entry?.id,80)||`custom-${index+1}`,type,kicker:moduleText(entry?.kicker,40,''),title};if(type==='form'){const form=entry?.form&&typeof entry.form==='object'?entry.form:{};return {...base,body:moduleText(entry?.body,600,''),form:{recipient:email(form.recipient),submitLabel:moduleText(form.submitLabel,80,'Pošalji upit'),successMessage:moduleText(form.successMessage,240,'Otvaramo poruku za slanje.'),fields:creatorFields(form.fields)}};}const body=moduleText(entry?.body,1200);if(!body)throw invalid(`Novi blok ${index+1} mora imati tekst.`);return {...base,body,linkLabel:moduleText(entry?.linkLabel,80,''),linkHref:href(entry?.linkHref)};})};
  const key=listKey(catalog),incoming=content.items;
- if(key&&incoming!==undefined){
+  if(key&&incoming!==undefined){
   if(!Array.isArray(incoming)||incoming.length<1||incoming.length>500)throw invalid('Ponuda mora imati između 1 i 500 stavki.');
   const original=catalog[key],byId=new Map(original.map(item=>[String(item.id),item]));
   const used=new Set();
   catalog[key]=incoming.map((item,index)=>{
-   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=previous?String(previous.id):suppliedId;
+   const suppliedId=text(item?.id,120),previous=byId.get(suppliedId)||original[index],itemId=text(previous?.id,120)||suppliedId||'item-'+(index+1);
    if(!/^[A-Za-z0-9:_-]{2,120}$/.test(itemId))throw invalid('Nova stavka zahteva ispravan stabilan identifikator.');
    if(used.has(itemId))throw invalid('Stavke ponude moraju imati različite identifikatore.');used.add(itemId);
-   const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image);
+   const title=text(item?.title??item?.name,120),description=text(item?.description,600),itemImage=image(item?.image,project.siteId);
    if(!title)throw invalid('Svaka stavka ponude mora imati naziv.');
    const next={...(previous||{}),id:itemId,title,image:itemImage};
    if('description' in (previous||{})||description)next.description=description;
@@ -99,12 +115,18 @@ function applyEditorContent(project,content,now){
   if(key==='products'&&site.siteProfile?.commerce){
    site.siteProfile.commerce.products=catalog.products.map((item,index)=>({...site.siteProfile.commerce.products[index],id:item.id,name:item.title,image:item.image,price:item.price}));
   }
- }
- project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
+  }
+  // These are presentation choices only: items remain owned by the catalog.
+  // They allow Agent Desk to select existing catalog entries for the featured
+  // section/welcome modal and to group the same entries in the controller.
+  const allowedIds=new Set((catalog[key]||[]).map(item=>String(item.id)));
+  const ids=value=>Array.isArray(value)?[...new Set(value.map(String).filter(id=>allowedIds.has(id)))].slice(0,12):[];
+  site.presentation={...(site.presentation||{}),featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,image:image(group?.image,project.siteId),itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
+  project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
  return project;
 }
 
-export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={}){
+export function createProjectRegistry(queue,{now=()=>new Date().toISOString(),assets=null}={}){
  if(!queue?.redis||!queue?.key||!queue?.validateProfile)throw new Error('Project Registry zahteva Booking Redis sloj.');
  const key=siteId=>queue.key('project',siteId);
  const read=async siteId=>{
@@ -129,9 +151,27 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   }
   throw invalid('Nije moguće dodeliti Project ID. Pokušajte ponovo.',503);
  }
- async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,buildRequest:p.buildRequest||null,activation:p.activation};}
+ async function summary(siteId){const p=await read(siteId);return {siteId:p.siteId,business:p.business,capabilities:p.capabilities,profiles:p.profiles,siteConfig:p.siteConfig,content:p.sourcePayload?{siteConfig:p.sourcePayload.siteConfig,catalog:p.sourcePayload.catalog,secondary:p.sourcePayload.secondary||null}:null,createdAt:p.createdAt,updatedAt:p.updatedAt||null,buildRequest:p.buildRequest||null,activation:p.activation,agentDesk:p.agentDesk||{notes:'',materials:[],lastAssessment:null}};}
+ async function agentProject(siteId){return read(siteId);}
+ async function updateAgentDesk(siteId,{notes,material}={}){
+  const project=await read(siteId),desk=project.agentDesk||{notes:'',materials:[],lastAssessment:null};
+  if(notes!==undefined)desk.notes=text(notes,4000);
+  if(material){const name=text(material.name,180);if(!name)throw invalid('Materijal mora imati naziv.');desk.materials=[...(Array.isArray(desk.materials)?desk.materials:[]),{id:`material-${randomBytes(9).toString('base64url')}`,name,kind:text(material.kind,80)||'photo',note:text(material.note,400),addedAt:now()}].slice(-80);}
+  project.agentDesk=desk;project.updatedAt=now();await save(project);return summary(siteId);
+ }
+ async function updateProposedModules(siteId,{plan,modules}={}){
+  const project=await read(siteId),selected=selectedModules(modules);
+  const core=['header','hero','location','contact'];
+  const active=[...new Set([...core,...selected])];
+  if(!['publish','business','commerce'].includes(String(plan||'')))throw invalid('Predloženi paket nije ispravan.');
+  project.siteConfig.modulePlan={...(project.siteConfig.modulePlan||{}),active};
+  if(project.sourcePayload?.siteConfig)project.sourcePayload.siteConfig.modulePlan={...(project.sourcePayload.siteConfig.modulePlan||{}),active};
+  project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),packageSelection:{plan,modules:active,updatedAt:now()}};
+  project.updatedAt=now();await save(project);return summary(siteId);
+ }
+ async function saveAgentAssessment(siteId,assessment){const project=await read(siteId);project.agentDesk={...(project.agentDesk||{notes:'',materials:[]}),lastAssessment:{...assessment,assessedAt:now()}};project.updatedAt=now();await save(project);return project.agentDesk.lastAssessment;}
  async function updateContent(siteId,content){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);if(project.profiles.booking)project.profiles.booking=queue.validateProfile(project.sourcePayload.siteConfig.bookingProfile);if(project.profiles.business&&project.sourcePayload.siteConfig.siteProfile)project.profiles.business=queue.validateProfile(project.sourcePayload.siteConfig.siteProfile);await save(project);return summary(siteId);}
- async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
+ async function previewContent(siteId,content){const project=structuredClone(await read(siteId));if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za uređivanje. Generišite ga ponovo.',409);applyEditorContent(project,content,now);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload:assets?.configured?await assets.materialize(payload):payload};}
  async function exportProject(siteId){const project=await read(siteId);if(!project.sourcePayload)throw invalid('Ovaj stariji projekat nema sačuvan sadržaj za Publish ZIP. Generišite ga ponovo.',409);const payload=structuredClone(project.sourcePayload);payload.siteConfig.projectId=project.siteId;return {siteId:project.siteId,payload};}
  const buildRequestFor=(project,requestedPlan,demoUrl='',requestMeta={})=>{
   const plan=String(requestedPlan||'').toLowerCase();
@@ -192,5 +232,5 @@ export function createProjectRegistry(queue,{now=()=>new Date().toISOString()}={
   project.activation={package:name,issuedAt:now()};await save(project);
   return {...issued,package:name,payload};
  }
- return {register,summary,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
+ return {register,summary,agentProject,updateAgentDesk,updateProposedModules,saveAgentAssessment,updateContent,previewContent,exportProject,requestBuild,requestPackageChange,createActivation,activationInfo,issueActivationPairing,activate,activateExport};
 }

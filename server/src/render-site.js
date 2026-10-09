@@ -27,14 +27,16 @@ function renderBaseHtml({siteConfig:site,catalog,secondary}){
   // The independent V34.5 controller sits after featured content and filters
   // the V34 catalog below. Old payloads without a module plan keep no hidden
   // controller added behind the Advisor's back.
-  const commerceController=site.modulePlan?.active?.includes('commerce-controller')?renderCommerceController(site.business.id):'';
+  const commerceController=site.modulePlan?.active?.includes('commerce-controller')?renderCommerceController(site.business.id,site.presentation?.controllerGroups,catalog.products):'';
   const tastingSection=wine?`<section class="site-section tasting" id="degustacije"><div class="tasting-photo"><img src="${asset(catalog.tastingImage)}" loading="lazy" alt="Vođena degustacija vina"></div><div class="tasting-copy"><div class="kicker">DOŽIVLJAJ</div><h2>Degustacije vina</h2><p>Vođena degustacija uz pažljivo odabrana vina. Pošaljite željeni datum i broj osoba, a vinoteka će potvrditi mogućnosti.</p>
   <form id="tastingForm" class="booking-form"><label>Vrsta degustacije<select name="experience" required>${(site.capabilities?.booking?.offerings||['Vođena degustacija']).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select></label>
   <label>Datum<input type="date" name="date" required></label><label>Željeno vreme<input type="time" name="time" required></label><label>Broj osoba<input type="number" name="partySize" min="1" max="30" value="2" required></label>
   <label>Ime<input name="name" maxlength="90" required autocomplete="name"></label><label>Telefon<input name="phone" type="tel" required maxlength="35" autocomplete="tel"></label>
   <label class="wide">Napomena (opciono)<textarea name="note" maxlength="300" rows="2"></textarea></label><button class="primary wide" type="submit">Pošalji zahtev za degustaciju</button></form><p class="hint">Termin nije potvrđen dok vam vinoteka ne odgovori.</p></div></section>`:'';
   const heroCTA=butcher && site.capabilities.butcherGrillService && site.capabilities.commerce?'Poručite meso za pripremu':'Pogledajte proizvode';
-  const featured=catalog.products.slice(0,3).map(itemCard).join('');
+  const featuredIds=Array.isArray(site.presentation?.featuredItemIds)?site.presentation.featuredItemIds:[];
+  const featuredProducts=featuredIds.length?featuredIds.map(id=>catalog.products.find(item=>item.id===id)).filter(Boolean):catalog.products.slice(0,3);
+  const featured=featuredProducts.slice(0,3).map(itemCard).join('');
   // Ship only presentation data needed by the standalone site, never full Advisor state.
   const publicSite={business:{id:site.business.id,name:site.business.name},
     capabilities:{commerce:!!site.capabilities.commerce,butcherGrillService:!!site.capabilities.butcherGrillService,wineTastings:!!site.capabilities.wineTastings,
@@ -62,7 +64,9 @@ function renderBaseHtml({siteConfig:site,catalog,secondary}){
 /** Presentation-only system. One HTML output for React iframe and static ZIP. */
 export function renderHtml(payload){
   let html=renderBaseHtml(payload);
-  const featuredItems=payload.catalog?.products||payload.catalog?.services||payload.catalog?.cards||[];
+  const sourceItems=payload.catalog?.products||payload.catalog?.services||payload.catalog?.cards||[];
+  const selectedIds=Array.isArray(payload.siteConfig?.presentation?.featuredItemIds)?payload.siteConfig.presentation.featuredItemIds:[];
+  const featuredItems=selectedIds.length?selectedIds.map(id=>sourceItems.find(item=>item.id===id)).filter(Boolean):sourceItems;
   // V33 owns the Welcome content.  Keep a compact, real three-item selection
   // rather than substituting the hero image when a site has no highlighted item.
   const welcomeItems=featuredItems.slice(0,3).filter(item=>item&&item.title);

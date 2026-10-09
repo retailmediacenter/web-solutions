@@ -107,6 +107,8 @@
 .rmc-preview-v4532 .rmc-preview-footer{justify-content:flex-start;flex-wrap:nowrap}
 .rmc-preview-v4532 .rmc-preview-main-actions{display:block;flex:0 0 min(35%,430px);width:min(35%,430px)}
 .rmc-preview-v4532 .rmc-preview-main-actions .rmc-primary{width:100%}
+.rmc-preview-v4532 .rmc-preview-project-id{display:block;margin-top:5px;color:#c4d2e4;font:600 10px/1.3 Inter,system-ui,sans-serif;overflow-wrap:anywhere}
+.rmc-preview-v4532 .rmc-preview-project-id strong{color:#fff}
 .rmc-preview-v4532 .rmc-package-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;flex:1;width:auto;margin-left:0}
 .rmc-preview-v4532 .rmc-package-card{appearance:none;position:relative;display:grid;grid-template-columns:1fr auto;gap:2px 8px;min-height:54px;padding:9px 12px;cursor:pointer;text-align:left;color:#f8fbff;background:linear-gradient(135deg,#29496b,#1d334d);border:1px solid #547495;border-radius:11px;box-shadow:0 7px 16px rgba(6,18,34,.2);transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
 .rmc-preview-v4532 .rmc-package-card:hover{transform:translateY(-2px);border-color:#99c3f2;box-shadow:0 11px 22px rgba(5,19,37,.32)}

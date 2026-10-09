@@ -43,7 +43,7 @@ export function resolveBusinessData(input,site){
  const unique=locations.filter(x=>{const k=(x.address+'|'+x.city).toLocaleLowerCase('sr');if(!x.address&&!x.city||seen.has(k))return false;seen.add(k);return true;});
  const name=text(site?.business?.name,100);
  return {locationMode,businessName:name,phone:mainPhone,email:email(supplied.email),city,address,website:url(supplied.website),
-  whatsapp:channelPhone(supplied.whatsapp,'WhatsApp'),viber:channelPhone(supplied.viber,'Viber'),hours,locations:unique};
+  whatsapp:channelPhone(supplied.whatsapp,'WhatsApp'),viber:channelPhone(supplied.viber,'Viber'),instagram:url(supplied.instagram),linkedin:url(supplied.linkedin),hours,locations:unique};
 }
 export function demoBrandFromEnvironment(env=process.env){
  const fallback='https://retailmediacenter.com/web-solutions/';

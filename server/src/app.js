@@ -12,6 +12,8 @@ import {commerceRouter} from './commerce-routes.js';
 import {createBookingQueue} from './booking-queue.js';
 import {createProjectRegistry} from './project-registry.js';
 import {adminRouter} from './admin-routes.js';
+import {createAgentService} from './agent-service.js';
+import {createAssetService} from './asset-service.js';
 import {qaRouter} from './qa-routes.js';
 import {mergeAdvisorSignals,changedAdvisorSignals,safeAdvisorAcknowledgement,interpretShortAnswer} from './advisor-dialog.js';
 import {phraseVerifiedTurn,answerApprovedAdvisorQuestion} from './advisor-dialog-ai.js';
@@ -21,24 +23,25 @@ app.disable('x-powered-by');
 app.use(express.json({limit:'40kb'}));
 // A published Webglobe frontend requires CLIENT_ORIGIN=https://retailmediacenter.com
 const origins=(process.env.CLIENT_ORIGIN||'').split(',').map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
+const stagingPagesOrigin='https://e-izvestaj.github.io';
 app.use((req,res,next)=>{
   const origin=req.get('origin');
   const publicSubmit=['/api/booking/requests','/api/commerce/orders'].includes(req.path) && (req.method==='POST'||req.method==='OPTIONS');
   // The protected B4 login works on the same public QA Preview page.
   // Production remains disabled at the router even if this CORS check matches.
   const qaPreview=process.env.RMC_QA_MODE==='1'&&req.path.startsWith('/api/qa/')&&origin==='https://retailmediacenter.github.io';
-  if(origin&&(origins.includes(origin)||publicSubmit||qaPreview)){
-    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
+  if(origin&&(origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)){
+    res.set({'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'Content-Type, Authorization, X-RMC-Asset-Role, X-RMC-Asset-Name','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS'});
   }
-  if(req.method==='OPTIONS')return (origins.includes(origin)||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
+  if(req.method==='OPTIONS')return (origins.includes(origin)||origin===stagingPagesOrigin||publicSubmit||qaPreview)?res.status(204).end():res.status(403).end();
   next();
 });
-const bookingQueue=createBookingQueue(),projectRegistry=createProjectRegistry(bookingQueue);
+const bookingQueue=createBookingQueue(),assetService=createAssetService(),projectRegistry=createProjectRegistry(bookingQueue,{assets:assetService}),agentService=createAgentService();
 app.use('/api/booking',bookingRouter(bookingQueue));
 app.use('/api/commerce',commerceRouter(bookingQueue));
-app.use('/api/admin',adminRouter(projectRegistry));
+app.use('/api/admin',adminRouter(projectRegistry,{agentService,assets:assetService}));
 app.use('/api/qa',qaRouter()); // disabled unless explicit STAGING-only RMC_QA_MODE=1 + secret
-app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true}));
+app.get('/api/health',(_req,res)=>res.json({status:'ok',service:'rmc-web-solutions-api',stage:'v42.1-location-free',registryEntries:getRegistryCount(),export:true,r2Configured:assetService.configured}));
 app.get('/api/registry/basic',(_req,res)=>res.json({count:getRegistryCount(),businesses:listBusinesses()}));
 app.get('/api/advisor/recognize',(req,res)=>res.set('Cache-Control','no-store').json(understandAdvisorDescription(String(req.query.text||'').slice(0,800),{businessId:listBusinesses().some(b=>b.id===req.query.businessId)?req.query.businessId:null})));
 // AI budget guard is best-effort per-process; use edge/Redis quotas before large public rollout.

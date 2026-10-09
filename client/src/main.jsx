@@ -428,6 +428,7 @@ function App(){
       styles={samplePreview?[]:definition?.styles||[]} selectedStyle={style}
       styleBusy={styleSwitchBusy} styleError={styleSwitchError} onStyleChange={switchPreviewStyle}
       onExport={exportZip} exporting={exporting||styleSwitchBusy}
+      projectId={samplePreview?'':result?.siteConfig?.projectId||''}
       onEdit={editSite} onBuildRequest={requestBuild} device={device} onDevice={setDevice} frameRef={previewFrame}/>
     <InfoDialog type={infoType} onClose={()=>setInfoType('')}/>
     <LeadDialog packageName={leadPackage} onClose={()=>setLeadPackage('')}/>

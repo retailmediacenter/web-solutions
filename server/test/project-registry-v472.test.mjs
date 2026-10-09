@@ -108,3 +108,12 @@ test('package change keeps the Site ID and records an upgrade without re-running
  assert.equal(request.request.requestedPlan,'commerce');
  assert.equal((await projects.summary(created.siteId)).buildRequest.request.requestedPlan,'commerce');
 });
+
+test('preview assigns stable identifiers to legacy catalog rows that have no IDs',async()=>{
+ const queue=createBookingQueue(mockRedis()),projects=createProjectRegistry(queue);
+ const payload={siteConfig:{business:{name:'Booka'},capabilities:{booking:{enabled:false},commerce:false}},catalog:{headline:'Naslov',subtitle:'Opis',offerTitle:'Izdvajamo',hero:'',cards:[{title:'Prva knjiga',description:'Opis'},{title:'Druga knjiga',description:'Opis'}]}};
+ const created=await projects.register(payload);
+ const preview=await projects.previewContent(created.siteId,{businessName:'Booka',phone:'',headline:'Naslov',subtitle:'Opis',offerTitle:'Izdvajamo',hero:'',modules:{services:{},booking:{form:{fields:[]}},contact:{}},customSections:[],items:[{id:'item-1',title:'Prva knjiga',description:'Opis',image:''},{id:'item-2',title:'Druga knjiga',description:'Opis',image:''}]});
+ assert.equal(preview.payload.catalog.cards[0].id,'item-1');
+ assert.equal(preview.payload.catalog.cards[1].id,'item-2');
+});
