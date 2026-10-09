@@ -1,7 +1,7 @@
 import {createHash,createHmac,randomBytes} from 'node:crypto';
 
 const allowedTypes=new Set(['image/jpeg','image/png','image/webp']);
-const allowedRoles=new Set(['hero','product','category','trust']);
+const allowedRoles=new Set(['hero','product','category','trust','portfolio']);
 const clean=value=>String(value??'').trim();
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const hmac=(key,value)=>createHmac('sha256',key).update(value).digest();
@@ -14,7 +14,7 @@ const extension=(name,type)=>{
 };
 const safeSegment=value=>clean(value).replace(/[^A-Za-z0-9_-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,80);
 
-export const isAssetRef=value=>/^r2:\/\/projects\/[A-Za-z0-9_-]{24}\/(?:hero|product|category|trust)\/[A-Za-z0-9_-]+\.(?:jpg|png|webp)$/i.test(String(value||''));
+export const isAssetRef=value=>/^r2:\/\/projects\/[A-Za-z0-9_-]{24}\/(?:hero|product|category|trust|portfolio)\/[A-Za-z0-9_-]+\.(?:jpg|png|webp)$/i.test(String(value||''));
 export const assetKey=value=>isAssetRef(value)?String(value).slice(5):null;
 
 export function createAssetService(env=process.env){

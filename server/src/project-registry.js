@@ -13,7 +13,7 @@ const image=(value,siteId='')=>{
  const valueText=text(value,260);
  if(!valueText)return '';
  if(siteId&&/^r2:\/\//i.test(valueText)){
-  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category|trust)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
+  if(!new RegExp(`^r2://projects/${siteId}/(?:hero|product|category|trust|portfolio)/[A-Za-z0-9_-]+\\.(?:jpg|png|webp)$`,'i').test(valueText))throw invalid('R2 slika ne pripada ovom projektu.');
   return valueText;
  }
  if(!/^assets\/[A-Za-z0-9/_-]+\.(?:jpg|jpeg|png|webp)$/i.test(valueText)||valueText.includes('..'))throw invalid('Putanja slike mora biti lokalna assets/ putanja iz paketa.');
