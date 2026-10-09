@@ -62,6 +62,12 @@ function applyEditorContent(project,content,now){
  if(site.businessData)site.businessData.phone=phone;
  if(site.bookingProfile?.business)site.bookingProfile.business.phone=phone;
  if(site.siteProfile?.business)site.siteProfile.business.phone=phone;
+ const suppliedData=content.businessData&&typeof content.businessData==='object'&&!Array.isArray(content.businessData)?content.businessData:{};
+ const safeUrl=value=>{const valueText=text(value,300);return valueText?href(valueText):'';};
+ const rawLocations=Array.isArray(suppliedData.locations)?suppliedData.locations:[];
+ if(rawLocations.length>5)throw invalid('Možete uneti najviše 5 lokacija.');
+ const locations=rawLocations.map((row,index)=>{const address=text(row?.address,180),city=text(row?.city,80);if(address&&!city)throw invalid(`Lokacija ${index+1}: uz adresu unesite i grad.`);return {id:text(row?.id,80)||`lokacija-${index+1}`,label:text(row?.label,80),address,city,hours:text(row?.hours,140)};}).filter(row=>row.address||row.city||row.label||row.hours);
+ site.businessData={...(site.businessData||{}),phone,email:text(suppliedData.email,160),website:safeUrl(suppliedData.website),instagram:safeUrl(suppliedData.instagram),linkedin:safeUrl(suppliedData.linkedin),locations};
  catalog.headline=text(content.headline,180);
  catalog.subtitle=text(content.subtitle,500);
  catalog.offerTitle=text(content.offerTitle,120);
