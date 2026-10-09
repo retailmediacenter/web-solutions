@@ -74,11 +74,18 @@ function removeLegacyContact(html){
  // original requestForm ID and JavaScript handlers, in the new final contact.
  return {html:html.replace(old,''),retainedForm:inquiry?.[0]||''};
 }
+/** Remove only legacy generated sections that represent the old About/team module.
+ * The structured About module is appended separately and becomes the sole source
+ * of editable copy and team cards. */
+function removeLegacyAbout(html){
+ return html.replace(/<section\b(?=[^>]*(?:\bid=["'][^"']*(?:o-nama|about|team|people)[^"']*["']|\bclass=["'][^"']*(?:about|team|people)[^"']*["']))[^>]*>[\s\S]*?<\/section>/gi,'');
+}
 export function renderSystemLayer(html,site){
  const data=site.businessData||{phone:site.contact?.phone||'',locations:[]};
  const isDemo=site.siteMode!=='production';
  const cleaned=removeLegacyContact(html);
- let result=cleaned.html;
+ const withoutLegacyAbout=(site.modulePlan?.active||[]).includes('about')?removeLegacyAbout(cleaned.html):cleaned.html;
+ let result=withoutLegacyAbout;
  const locations=Array.isArray(data.locations)?data.locations:[];
  const unified=sections({...data,locations},site,cleaned.retainedForm);
  result=result.replace('</main>',unified+'</main>');
