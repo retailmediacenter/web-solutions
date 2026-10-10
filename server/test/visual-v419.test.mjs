@@ -13,15 +13,17 @@ const modal=readFileSync(path.join(root,'global-modal.css'),'utf8');
 const behavior=readFileSync(path.join(root,'global-modal.js'),'utf8');
 const cafe=(style)=>buildSitePayload({businessId:'butcher-shop',businessName:'Test mesara',goal:'purchase',style,answers:{butcherGrillService:'grilled'}});
 const service=()=>buildSitePayload({businessId:'hair-salon',businessName:'Test frizer',goal:'visit',style:'warm',answers:{acceptsTimeRequests:true}});
-const vertical=()=>buildSitePayload({businessId:'real-estate',businessName:'Test nekretnine',goal:'visit',style:'tech',answers:{verticalEnabled:true}});
-test('V41.9 five styles use approved tokens but neutral modal is NOT style-dependent',()=>{
-  for(const style of ['traditional','modern','warm','tech','premium']){
+const vertical=()=>buildSitePayload({businessId:'real-estate',businessName:'Test nekretnine',goal:'visit',style:'modern',answers:{verticalEnabled:true}});
+test('V48 public CSS themes use approved tokens; 3D owns a separate Hero renderer and modal stays neutral',()=>{
+  for(const style of ['traditional','modern','warm','premium']){
     assert.ok(visual.includes(`html[data-style="${style}"]`));
     const h=renderHtml(cafe(style));assert.ok(h.includes(`data-style="${style}"`));
     assert.ok(h.includes('visual-system.css')&&h.includes('global-modal.css')&&h.includes('global-modal.js'));
     const z=exportSiteZip(cafe(style));
     for(const name of ['visual-system.css','global-modal.css','global-modal.js','index.html'])assert.ok(z.includes(Buffer.from(name)),`${style}/${name}`);
   }
+  const legacyTech=renderHtml(cafe('tech'));
+  assert.ok(legacyTech.includes('data-style="modern"'),'retired Tech must reopen as Modern');
   assert.ok(!modal.includes('html[data-style='),'modal design must not vary by website style');
   assert.ok(modal.includes('.modal-header')&&modal.includes('.modal-body')&&modal.includes('.modal-footer'));
 });

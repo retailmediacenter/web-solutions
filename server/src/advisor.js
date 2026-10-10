@@ -13,8 +13,9 @@ import {hasCommerceController} from './commerce-controller.js';
 export const PILOT_BUSINESSES = Object.freeze([...Object.keys(pilotData), ...Object.keys(retailData), ...SERVICE_BUSINESSES,...VERTICAL_IDS]);
 export const STYLES = Object.freeze([
   {id:'traditional',label:'Tradicionalni'}, {id:'modern',label:'Moderni'},
-  {id:'warm',label:'Topao'}, {id:'tech',label:'Tehnološki'}, {id:'premium',label:'Premium'}
+  {id:'warm',label:'Topao'}, {id:'premium',label:'Premium'}, {id:'3d',label:'3D'}
 ]);
+const normalizeStyle=style=>style==='tech'?'modern':style;
 const legacyNames={
   'butcher-shop':'Mesara','wine-shop':'Vinoteka','grocery-store':'Mini market',
   'liquor-store':'Prodavnica pića','phone-store':'Prodavnica telefona',
@@ -199,13 +200,14 @@ const maxName=100;
 function isNonEmptyChoice(value,options){return typeof value==='string'&&options.includes(value);}
 export function resolvePilotSiteConfig({businessId,businessName,description='',answers={},style='modern',goal='purchase'}={}){
   if(!PILOT_BUSINESSES.includes(businessId))throw new Error('Delatnost još nije migrirana.');
-  if(SERVICE_BUSINESSES.includes(businessId))return resolveServiceSiteConfig({businessId,businessName,description,answers,style,goal},STYLES).siteConfig;
-  if(VERTICAL_IDS.includes(businessId))return resolveVerticalSiteConfig({businessId,businessName,description,answers,style,goal},STYLES).siteConfig;
+  const resolvedStyle=normalizeStyle(style);
+  if(SERVICE_BUSINESSES.includes(businessId))return resolveServiceSiteConfig({businessId,businessName,description,answers,style:resolvedStyle,goal},STYLES).siteConfig;
+  if(VERTICAL_IDS.includes(businessId))return resolveVerticalSiteConfig({businessId,businessName,description,answers,style:resolvedStyle,goal},STYLES).siteConfig;
   const facts=getBusinessFacts(businessId),def=getAdvisorDefinition(businessId);
   if(!facts)throw new Error('Nepoznata delatnost.');
   const name=String(businessName??'').trim();
   if(!name||name.length>maxName)throw new Error('Naziv firme mora imati 1–100 znakova.');
-  if(!STYLES.some(x=>x.id===style))throw new Error('Nepoznat stil.');
+  if(!STYLES.some(x=>x.id===resolvedStyle))throw new Error('Nepoznat stil.');
   if(!['purchase','visit','catalog'].includes(goal))throw new Error('Nepoznat cilj sajta.');
   // V39.5 matrix is historical default. The business's explicit answer is
   // authoritative for the three audited retail profiles, irrespective of the
@@ -254,7 +256,7 @@ export function resolvePilotSiteConfig({businessId,businessName,description='',a
     schemaVersion:'41.9.1-advisor-audit',reference:'V39.5',siteStatus:'preview-and-export',
     business:{id:businessId,name,label:def.label},
     input:{description:String(description??'').slice(0,800),goal,mode,emphasis},
-    style,capabilities:features,modules,
+    style:resolvedStyle,capabilities:features,modules,
     modulePlan:createModulePlan({family:'retail',commerce:features.commerce,commerceController:features.commerceController,request:features.inquiry}),
     commerce:{...commerceData[businessId],mode:features.commerce?'cart':features.inquiry?'inquiry':'catalog',currency:'RSD',prices:'illustrative-demo'},
     contact:{phone:cleanPhone},
@@ -325,11 +327,11 @@ export function understandAdvisorDescription(description,{businessId=null}={}){
   if(booking!==undefined)signals.bookingEnabled=booking;
 
   const styles=[['traditional',/\btradicional(?:an|no|ni)?\b|\bklasic(?:an|no|ni)?\b/],
-    ['modern',/\bmoder(?:an|no|ni)\b|\bmodern(?:an|o|i)?\b|\bsavremen(?:o|i|an)?\b/],
+    ['modern',/\bmoder(?:an|no|ni)\b|\bmodern(?:an|o|i)?\b|\bsavremen(?:o|i|an)?\b|\btehnolosk(?:i|o)?\b|\bhigh.?tech\b/],
     ['warm',/\btopao\b|\btopli\b|\bprijatan\b/],
-    ['tech',/\btehnolosk(?:i|o)?\b|\bhigh.?tech\b/],
-    ['premium',/\bpremium\b|\bluksuzn(?:o|i|an)?\b|\belegant(?:an|no|ni)?\b/]];
-  const foundStyles=styles.filter(([,re])=>re.test(t)&&!/(?:ne|bez)\s+(?:zelim\s+|zelimo\s+)?(?:modern|premium|tradicional|klasic|topao|topli|tehnolos|elegant)/.test(t));
+    ['premium',/\bpremium\b|\bluksuzn(?:o|i|an)?\b|\belegant(?:an|no|ni)?\b/],
+    ['3d',/\b3d\b|\btrodimenzional(?:an|no|ni)?\b|\bimmersive\b/]];
+  const foundStyles=styles.filter(([,re])=>re.test(t)&&!/(?:ne|bez)\s+(?:zelim\s+|zelimo\s+)?(?:modern|premium|tradicional|klasic|topao|topli|tehnolos|elegant|3d|trodimenzional|immersive)/.test(t));
   if(foundStyles.length===1)signals.style=foundStyles[0][0];
   const noCatalog=/\b(?:samo|iskljucivo)\s+(?:katalog|predstavljanje|prikaz)(?:\s+ponude|\s+proizvoda)?\b/.test(t);
   if(noCatalog)signals.goal='catalog';
@@ -391,7 +393,7 @@ export function understandAdvisorDescription(description,{businessId=null}={}){
   if(signals.bookingEnabled===true)statements.push('online zahteve za termin');
   if(signals.bookingEnabled===false)statements.push('bez online rezervacija');
   if(signals.hybridChoice){const opt=def.hybrid?.options.find(o=>o.id===signals.hybridChoice);if(opt)statements.push(opt.label.toLowerCase());}
-  if(signals.style){const styleLabels={modern:'modernom',traditional:'tradicionalnom',warm:'toplom',tech:'tehnološkom',premium:'premium'};statements.push('u '+styleLabels[signals.style]+' stilu');}
+  if(signals.style){const styleLabels={modern:'modernom',traditional:'tradicionalnom',warm:'toplom',premium:'premium','3d':'3D'};statements.push('u '+styleLabels[signals.style]+' stilu');}
   const acknowledgement=id?`Razumem — ${label}${statements.length?'; '+statements.join(', '):''}.`:'';
   return {businessId:id,signals,warnings,acknowledgement,engine:'rules-v45.1'};
 }
