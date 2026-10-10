@@ -28,13 +28,34 @@ test('legacy tech payloads reopen as Modern instead of colliding with 3D',()=>{
   assert.doesNotMatch(html,/ws-hero-3d/);
 });
 
-test('3D is a real shared Hero presentation slot',()=>{
+test('3D default is a motion/depth Hero, not decorative spheres',()=>{
   const payload=buildSitePayload(phoneRequest('3d'));
-  assert.equal(payload.siteConfig.style,'3d');
   const html=renderHtml(payload);
   assert.match(html,/data-style="3d"/);
   assert.match(html,/ws-hero-3d/);
-  assert.match(html,/ws-hero-3d-css/);
+  assert.match(html,/ws-motion-hero__base/);
+  assert.match(html,/ws-motion-hero__depth/);
+  assert.match(html,/data-motion="focus-sweep"/);
+  assert.match(html,/data-depth="medium"/);
+  assert.match(html,/data-cta-sequence="sequential"/);
+  assert.doesNotMatch(html,/ws-hero-3d-orb/);
+  assert.doesNotMatch(html,/ws-hero-3d-plane/);
+});
+
+test('3D Motion Hero accepts Agent-controlled motion, depth, focus layout and CTA choreography',()=>{
+  const payload=buildSitePayload(phoneRequest('3d'));
+  payload.siteConfig.presentation={
+    ...(payload.siteConfig.presentation||{}),
+    heroMotion:{mode:'zoom-right',depth:'light',intensity:'strong',duration:5,textPosition:'right',ctaLayout:'spread',ctaSequence:'together'}
+  };
+  const html=renderHtml(payload);
+  assert.match(html,/data-motion="zoom-right"/);
+  assert.match(html,/data-depth="light"/);
+  assert.match(html,/data-intensity="strong"/);
+  assert.match(html,/data-duration="5"/);
+  assert.match(html,/data-text="right"/);
+  assert.match(html,/data-cta-layout="spread"/);
+  assert.match(html,/data-cta-sequence="together"/);
 });
 
 test('Advisor language understands 3D and folds retired technological wording into Modern',()=>{

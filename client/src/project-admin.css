@@ -56,3 +56,14 @@
 .rmc-agent-trust-group{border-top:1px solid #d7e3e2;padding:14px 0}.rmc-agent-trust-group>header{display:flex;justify-content:space-between;gap:12px;align-items:center}.rmc-agent-trust-group>header div{display:grid;gap:3px}.rmc-agent-trust-group small{color:#597084}.rmc-agent-trust-group .rmc-agent-add{margin:0;white-space:nowrap}@media(max-width:560px){.rmc-agent-trust-group>header{align-items:flex-start;flex-direction:column}
 }
 .rmc-agent-portfolio-group{border-top:1px solid #d7e3e2;padding:14px 0}.rmc-agent-portfolio-group>header{display:flex;justify-content:space-between;gap:12px;align-items:center}.rmc-agent-portfolio-group>header div{display:grid;gap:3px}.rmc-agent-portfolio-group small{color:#597084}.rmc-agent-portfolio-group .rmc-agent-add{margin:0;white-space:nowrap}@media(max-width:560px){.rmc-agent-portfolio-group>header{align-items:flex-start;flex-direction:column}}
+
+/* V48.2 Motion Hero controls */
+.rmc-agent-motion{display:grid;gap:11px;margin-top:13px;padding:13px;border:1px solid #c8d8d6;border-radius:8px;background:#f0f8f7}
+.rmc-agent-motion>header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.rmc-agent-motion>header strong,.rmc-agent-motion>header small{display:block}
+.rmc-agent-motion>header small{margin-top:3px;color:#61757b;font-size:11px;line-height:1.4}
+.rmc-agent-motion-reset{margin:0!important;padding:7px 9px!important;background:#52606d!important;font-size:11px!important;white-space:nowrap}
+.rmc-agent-motion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.rmc-agent-module-form select{box-sizing:border-box;width:100%;padding:9px;border:1px solid #c6d4d2;border-radius:6px;background:#fff;color:#20262d;font:inherit}
+.rmc-agent-motion-note{margin:0!important;font-size:11px!important;color:#61757b!important}
+@media(max-width:640px){.rmc-agent-motion-grid{grid-template-columns:1fr}.rmc-agent-motion>header{display:grid}}

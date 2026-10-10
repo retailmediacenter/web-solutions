@@ -121,7 +121,18 @@ function applyEditorContent(project,content,now){
   // section/welcome modal and to group the same entries in the controller.
   const allowedIds=new Set((catalog[key]||[]).map(item=>String(item.id)));
   const ids=value=>Array.isArray(value)?[...new Set(value.map(String).filter(id=>allowedIds.has(id)))].slice(0,12):[];
-  site.presentation={...(site.presentation||{}),featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,image:image(group?.image,project.siteId),itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
+  const rawHeroMotion=presentation.heroMotion&&typeof presentation.heroMotion==='object'&&!Array.isArray(presentation.heroMotion)?presentation.heroMotion:{};
+  const motionPick=(value,allowed,fallback)=>allowed.includes(value)?value:fallback;
+  const heroMotion={
+   mode:motionPick(rawHeroMotion.mode,['zoom-center','zoom-left','zoom-right','focus-sweep'],'focus-sweep'),
+   depth:motionPick(rawHeroMotion.depth,['off','light','medium'],'medium'),
+   intensity:motionPick(rawHeroMotion.intensity,['subtle','standard','strong'],'standard'),
+   duration:[3,4,5].includes(Number(rawHeroMotion.duration))?Number(rawHeroMotion.duration):4,
+   textPosition:motionPick(rawHeroMotion.textPosition,['left','center','right'],'left'),
+   ctaLayout:motionPick(rawHeroMotion.ctaLayout,['grouped','spread'],'grouped'),
+   ctaSequence:motionPick(rawHeroMotion.ctaSequence,['together','sequential'],'sequential')
+  };
+  site.presentation={...(site.presentation||{}),heroMotion,featuredItemIds:ids(presentation.featuredItemIds),controllerGroups:Array.isArray(presentation.controllerGroups)?presentation.controllerGroups.slice(0,12).map((group,index)=>({id:`group-${index+1}`,label:text(group?.label,80)||`Kategorija ${index+1}`,image:image(group?.image,project.siteId),itemIds:ids(group?.itemIds)})).filter(group=>group.itemIds.length):[]};
   project.business={name:businessName};project.siteConfig=site;project.sourcePayload=payload;project.updatedAt=now();
  return project;
 }
