@@ -4,6 +4,7 @@ import {renderServiceHtml} from './render-service.js';
 import {renderVerticalHtml} from './render-vertical.js';
 import {addHybridToHtml} from './hybrid-render.js';
 import {renderCommerceController} from './commerce-controller.js';
+import {applyHeroRenderer} from './render-hero.js';
 // Single renderer shared by in-app preview and standalone ZIP export.
 // Business decisions are already resolved by Advisor; this module only renders.
 const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -94,5 +95,6 @@ export function renderHtml(payload){
   // older module-local styles. No business decisions or module order changed.
   const visualLinks='<link rel="stylesheet" href="visual-system.css"><link rel="stylesheet" href="global-modal.css">';
   const visual=html.replace('</head>',visualLinks+'</head>').replace('</body>','<script src="global-modal.js" defer></script></body>');
-  return renderSystemLayer(visual,payload.siteConfig);
+  const withHero=applyHeroRenderer(visual,payload.siteConfig);
+  return renderSystemLayer(withHero,payload.siteConfig);
 }

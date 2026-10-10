@@ -48,7 +48,11 @@ function bookingProfile(siteConfig){
 }
 
 // Advisor-owned presentation preference; never write renderer details into fact-only Registry.
+function normalizeLegacyBuildInput(input){
+  return input?.style==='tech'?{...input,style:'modern'}:input;
+}
 export function buildSitePayload(input){
+  input=normalizeLegacyBuildInput(input);
   const payload=baseSitePayload(input);
  // Public API callers cannot remove DEMO status; production is a separate trusted publishing workflow (V44).
  if(input?.siteMode==='production')throw new Error('Produkcioni izvoz zahteva odobren tok objavljivanja.');
